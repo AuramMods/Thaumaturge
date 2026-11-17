@@ -113,6 +113,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/multiplayer/ClientLevelEntityTickMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/crafting/RecipeManagerMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/server/ReloadableServerResourcesMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/network/PacketDecoderRegistryContextMixin.java'
         compileClasspath += sourceSets.portCodec.output + sourceSets.main.compileClasspath
     }
 }

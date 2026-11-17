@@ -118,7 +118,8 @@ ingredient serializer, normally registered by ForgeMod's recipe-serializer
 event, so native JSON parsing works without full mod construction.
 
 The focused config currently applies the two entity-tick mixins, recipe
-manager lifetime/context mixin and server-resource lookup constructor hook. The five earlier persistence/item mixins compile with
+manager lifetime/context mixin, server-resource lookup constructor hook and
+connection-owned packet-decoder registry hook. The five earlier persistence/item mixins compile with
 the real processor/refmap but are not applied here yet. Full gameplay subscriber
 execution, mod recipe serializers/inputs/IDs, live worlds, rendering, all other
 mixins and actual distribution installation remain pending.
@@ -139,3 +140,15 @@ JSON apply path, and exercise native-buffer serialization, source-lookup
 retention, ID binding, lookup-only providers, malformed data and concurrency.
 The callback tests do not establish login packet ordering, a live connection,
 all full-mod recipe data, or a complete Forge/mod load.
+
+Cycle 024 adds eight native packet cases (189 server / 196 client). They pass
+real Minecraft PacketEncoder/PacketDecoder bodies through Netty EmbeddedChannel
+and decode login followed by recipe synchronization before invoking any world
+handler. Tests cover received holder identities, different numeric registry IDs
+on independent connections, later re-encoding, vanilla recipes and keepalives,
+the serverbound path, missing login registries, unknown holder IDs and native
+trailing-byte rejection. The fifth focused production mixin composes a lookup
+from the validated login's received registries and actual built-in registries,
+owned by that decoder instance. Packet validation and exceptions remain native.
+This is packet-body codec evidence; it does not exercise TCP, compression,
+encryption, Forge handshake/mod construction, live worlds or multiplayer clients.
