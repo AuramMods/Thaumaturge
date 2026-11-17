@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -18,9 +19,9 @@ import net.minecraft.world.phys.Vec3;
 
 public record WindBurstAction(float base, float perPower, float max) implements SpellAction {
     public static final MapCodec<WindBurstAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("base", 1.0F).forGetter(WindBurstAction::base),
-                    Codec.FLOAT.optionalFieldOf("per_power", 0.4F).forGetter(WindBurstAction::perPower),
-                    Codec.FLOAT.optionalFieldOf("max", 3.0F).forGetter(WindBurstAction::max))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 1.0F).forGetter(WindBurstAction::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 0.4F).forGetter(WindBurstAction::perPower),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "max", 3.0F).forGetter(WindBurstAction::max))
             .apply(i, WindBurstAction::new));
 
     @Override

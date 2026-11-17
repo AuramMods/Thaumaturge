@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -17,8 +18,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public record PlaceBlockAction(BlockState state, float chance, boolean needsFloor) implements SpellAction {
     public static final MapCodec<PlaceBlockAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     BlockState.CODEC.fieldOf("state").forGetter(PlaceBlockAction::state),
-                    Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(PlaceBlockAction::chance),
-                    Codec.BOOL.optionalFieldOf("needs_floor", true).forGetter(PlaceBlockAction::needsFloor))
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 1.0F), "chance", 1.0F).forGetter(PlaceBlockAction::chance),
+                    Codecs.optionalFieldOf(Codec.BOOL, "needs_floor", true).forGetter(PlaceBlockAction::needsFloor))
             .apply(i, PlaceBlockAction::new));
 
     @Override

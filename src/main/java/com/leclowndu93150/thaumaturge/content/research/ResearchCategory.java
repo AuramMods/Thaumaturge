@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import com.mojang.serialization.Codec;
@@ -17,16 +18,14 @@ public record ResearchCategory(
         int index)
         implements IResearchCategory {
     public static final Codec<ResearchCategory> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    ResourceLocation.CODEC
-                            .optionalFieldOf("required_research")
+                    Codecs.optionalFieldOf(ResourceLocation.CODEC, "required_research")
                             .forGetter(ResearchCategory::requiredResearch),
                     AspectList.CODEC.fieldOf("formula").forGetter(ResearchCategory::formula),
                     ResourceLocation.CODEC.fieldOf("icon").forGetter(ResearchCategory::icon),
                     ResourceLocation.CODEC.fieldOf("background").forGetter(ResearchCategory::background),
-                    ResourceLocation.CODEC
-                            .optionalFieldOf("overlay_background")
+                    Codecs.optionalFieldOf(ResourceLocation.CODEC, "overlay_background")
                             .forGetter(ResearchCategory::overlayBackground),
-                    ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("index", 0).forGetter(ResearchCategory::index))
+                    Codecs.optionalFieldOf(ExtraCodecs.NON_NEGATIVE_INT, "index", 0).forGetter(ResearchCategory::index))
             .apply(instance, ResearchCategory::new));
 
     public static final Codec<IResearchCategory> CODEC =

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.site;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.labyrinth.ObeliskSiteBehavior;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
@@ -33,15 +34,13 @@ public record ObeliskSite(
 
     public static final Codec<ObeliskSite> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     ResourceLocation.CODEC.fieldOf("template").forGetter(ObeliskSite::template),
-                    StructureProcessorType.LIST_CODEC
-                            .optionalFieldOf("processors")
+                    Codecs.optionalFieldOf(StructureProcessorType.LIST_CODEC, "processors")
                             .forGetter(ObeliskSite::processors),
                     ObeliskSiteBehavior.CODEC.fieldOf("behavior").forGetter(ObeliskSite::behavior),
-                    SiteAwakening.CODEC.optionalFieldOf("awakening").forGetter(ObeliskSite::awakening),
-                    NodeType.CODEC.optionalFieldOf("node", NodeType.DARK).forGetter(ObeliskSite::node),
-                    SimpleWeightedRandomList.wrappedCodecAllowingEmpty(
-                                    ResourceKey.codec(LabyrinthDefinition.REGISTRY_KEY))
-                            .optionalFieldOf("labyrinths", SimpleWeightedRandomList.empty())
+                    Codecs.optionalFieldOf(SiteAwakening.CODEC, "awakening").forGetter(ObeliskSite::awakening),
+                    Codecs.optionalFieldOf(NodeType.CODEC, "node", NodeType.DARK).forGetter(ObeliskSite::node),
+                    Codecs.optionalFieldOf(SimpleWeightedRandomList.wrappedCodecAllowingEmpty(
+                                    ResourceKey.codec(LabyrinthDefinition.REGISTRY_KEY)), "labyrinths", SimpleWeightedRandomList.empty())
                             .forGetter(ObeliskSite::labyrinths))
             .apply(instance, ObeliskSite::new));
 }

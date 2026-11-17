@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.research.scan;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -54,14 +55,11 @@ public record ScanEntry(
      */
     public static final Codec<ScanEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     ResourceLocation.CODEC.fieldOf("key").forGetter(ScanEntry::key),
-                    RegistryCodecs.homogeneousList(Registries.BLOCK)
-                            .optionalFieldOf("blocks")
+                    Codecs.optionalFieldOf(RegistryCodecs.homogeneousList(Registries.BLOCK), "blocks")
                             .forGetter(ScanEntry::blocks),
-                    RegistryCodecs.homogeneousList(Registries.ITEM)
-                            .optionalFieldOf("items")
+                    Codecs.optionalFieldOf(RegistryCodecs.homogeneousList(Registries.ITEM), "items")
                             .forGetter(ScanEntry::items),
-                    RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE)
-                            .optionalFieldOf("entities")
+                    Codecs.optionalFieldOf(RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE), "entities")
                             .forGetter(ScanEntry::entities))
             .apply(instance, ScanEntry::new));
 

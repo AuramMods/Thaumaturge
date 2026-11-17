@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -17,9 +18,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 
 public record FreezeWaterAction(float base, float perPower, float max) implements SpellAction {
     public static final MapCodec<FreezeWaterAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("base", 0.0F).forGetter(FreezeWaterAction::base),
-                    Codec.FLOAT.optionalFieldOf("per_power", 1.0F).forGetter(FreezeWaterAction::perPower),
-                    Codec.FLOAT.optionalFieldOf("max", 6.0F).forGetter(FreezeWaterAction::max))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 0.0F).forGetter(FreezeWaterAction::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 1.0F).forGetter(FreezeWaterAction::perPower),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "max", 6.0F).forGetter(FreezeWaterAction::max))
             .apply(i, FreezeWaterAction::new));
 
     private static final int MELT_MIN_TICKS = 60;

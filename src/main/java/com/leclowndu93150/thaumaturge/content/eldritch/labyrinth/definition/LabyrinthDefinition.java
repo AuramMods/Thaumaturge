@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -25,16 +26,13 @@ public record LabyrinthDefinition(
             ResourceKey.createRegistryKey(TTIds.rl("labyrinth"));
     public static final Codec<LabyrinthDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     IntProvider.POSITIVE_CODEC.fieldOf("size").forGetter(LabyrinthDefinition::size),
-                    LayoutSettings.CODEC
-                            .optionalFieldOf("layout", LayoutSettings.DEFAULT)
+                    Codecs.optionalFieldOf(LayoutSettings.CODEC, "layout", LayoutSettings.DEFAULT)
                             .forGetter(LabyrinthDefinition::layout),
                     RoomPools.CODEC.fieldOf("rooms").forGetter(LabyrinthDefinition::rooms),
                     EncounterEntry.CODEC.listOf().fieldOf("encounters").forGetter(LabyrinthDefinition::encounters),
-                    StructureProcessorType.LIST_CODEC
-                            .optionalFieldOf("palette")
+                    Codecs.optionalFieldOf(StructureProcessorType.LIST_CODEC, "palette")
                             .forGetter(LabyrinthDefinition::palette),
-                    StructureProcessorType.LIST_CODEC
-                            .optionalFieldOf("decoration")
+                    Codecs.optionalFieldOf(StructureProcessorType.LIST_CODEC, "decoration")
                             .forGetter(LabyrinthDefinition::decoration),
                     GuardianTable.CODEC.fieldOf("guardians").forGetter(LabyrinthDefinition::guardians),
                     LabyrinthGameplay.CODEC.fieldOf("gameplay").forGetter(LabyrinthDefinition::gameplay))

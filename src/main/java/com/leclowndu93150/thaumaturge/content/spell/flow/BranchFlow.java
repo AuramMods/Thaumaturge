@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.flow;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -12,8 +13,8 @@ import java.util.List;
 
 public record BranchFlow(int branches, int required) implements SpellBehavior {
     public static final MapCodec<BranchFlow> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.intRange(2, 8).optionalFieldOf("branches", 3).forGetter(BranchFlow::branches),
-                    Codec.intRange(1, 8).optionalFieldOf("required", 2).forGetter(BranchFlow::required))
+                    Codecs.optionalFieldOf(Codec.intRange(2, 8), "branches", 3).forGetter(BranchFlow::branches),
+                    Codecs.optionalFieldOf(Codec.intRange(1, 8), "required", 2).forGetter(BranchFlow::required))
             .apply(i, BranchFlow::new));
 
     @Override

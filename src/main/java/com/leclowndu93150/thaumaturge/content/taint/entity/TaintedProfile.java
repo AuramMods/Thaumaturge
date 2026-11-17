@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
 import com.mojang.serialization.Codec;
@@ -25,18 +26,15 @@ public record TaintedProfile(
         boolean naturalSpawns,
         Optional<ResourceKey<LootTable>> lootTable) {
     public static final Codec<TaintedProfile> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Codec.unboundedMap(Attribute.CODEC, Codec.DOUBLE)
-                            .optionalFieldOf("attributes", Map.of())
+                    Codecs.optionalFieldOf(Codec.unboundedMap(Attribute.CODEC, Codec.DOUBLE), "attributes", Map.of())
                             .forGetter(TaintedProfile::attributes),
-                    Codec.BOOL.optionalFieldOf("hunts_villagers", false).forGetter(TaintedProfile::huntsVillagers),
-                    Codec.BOOL.optionalFieldOf("hunts_animals", false).forGetter(TaintedProfile::huntsAnimals),
-                    RegistryFixedCodec.create(MobTrait.REGISTRY_KEY)
-                            .listOf()
-                            .optionalFieldOf("traits", List.of())
+                    Codecs.optionalFieldOf(Codec.BOOL, "hunts_villagers", false).forGetter(TaintedProfile::huntsVillagers),
+                    Codecs.optionalFieldOf(Codec.BOOL, "hunts_animals", false).forGetter(TaintedProfile::huntsAnimals),
+                    Codecs.optionalFieldOf(RegistryFixedCodec.create(MobTrait.REGISTRY_KEY)
+                            .listOf(), "traits", List.of())
                             .forGetter(TaintedProfile::traits),
-                    Codec.BOOL.optionalFieldOf("natural_spawns", false).forGetter(TaintedProfile::naturalSpawns),
-                    ResourceKey.codec(Registries.LOOT_TABLE)
-                            .optionalFieldOf("loot_table")
+                    Codecs.optionalFieldOf(Codec.BOOL, "natural_spawns", false).forGetter(TaintedProfile::naturalSpawns),
+                    Codecs.optionalFieldOf(ResourceKey.codec(Registries.LOOT_TABLE), "loot_table")
                             .forGetter(TaintedProfile::lootTable))
             .apply(instance, TaintedProfile::new));
 

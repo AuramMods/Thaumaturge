@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.research;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.mojang.serialization.Codec;
@@ -39,8 +40,7 @@ public record ResearchRequirement(HolderSet<Item> items, ItemDataPatch component
                     RegistryCodecs.homogeneousList(Registries.ITEM)
                             .fieldOf("items")
                             .forGetter(ResearchRequirement::items),
-                    ItemDataPatch.CODEC
-                            .optionalFieldOf("components", ItemDataPatch.EMPTY)
+                    Codecs.optionalFieldOf(ItemDataPatch.CODEC, "components", ItemDataPatch.EMPTY)
                             .forGetter(ResearchRequirement::components),
                     Codec.INT.fieldOf("amount").forGetter(ResearchRequirement::amount))
             .apply(instance, ResearchRequirement::new));

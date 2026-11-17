@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.spell;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import com.mojang.serialization.Codec;
@@ -30,7 +31,7 @@ public record Spell(CastStyle style, SpellNode root) {
 
     /** Disk codec. */
     public static final Codec<Spell> CODEC = RecordCodecBuilder.create(i -> i.group(
-                    CastStyle.CODEC.optionalFieldOf("style", CastStyle.INSTANT).forGetter(Spell::style),
+                    Codecs.optionalFieldOf(CastStyle.CODEC, "style", CastStyle.INSTANT).forGetter(Spell::style),
                     SpellNode.CODEC.fieldOf("root").forGetter(Spell::root))
             .apply(i, Spell::new));
 

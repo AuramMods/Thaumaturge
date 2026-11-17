@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -77,6 +78,12 @@ public final class CodecReferenceProbe {
     private JsonElement value(Object object) {
         if (object == null) return JsonNull.INSTANCE;
         if (object instanceof JsonElement json) return json;
+        if (object instanceof Optional<?> optional) {
+            JsonObject json = new JsonObject();
+            json.addProperty("present", optional.isPresent());
+            json.add("value", value(optional.orElse(null)));
+            return json;
+        }
         if (object instanceof Node node) {
             JsonObject json = new JsonObject();
             json.addProperty("n", node.n());
@@ -229,6 +236,42 @@ public final class CodecReferenceProbe {
         return out;
     }
 
+    private MapCodec<?> optional(Codec<Integer> element, boolean lenient, boolean defaults) {
+        String method = lenient ? "lenientOptionalFieldOf" : "optionalFieldOf";
+        if (!reference) return defaults ? call(method, new Class<?>[]{Codec.class, String.class, Object.class}, element, "field", 7)
+                : call(method, new Class<?>[]{Codec.class, String.class}, element, "field");
+        try {
+            return defaults ? (MapCodec<?>) Codec.class.getMethod(method, String.class, Object.class).invoke(element, "field", 7)
+                    : (MapCodec<?>) Codec.class.getMethod(method, String.class).invoke(element, "field");
+        } catch (ReflectiveOperationException e) { throw new AssertionError(e); }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public JsonObject optionalFields() {
+        JsonObject out = new JsonObject();
+        for (boolean lenient : List.of(false, true)) {
+            for (boolean defaults : List.of(false, true)) {
+                for (boolean partial : List.of(false, true)) {
+                    Codec<Integer> element = validate(Codec.INT, n -> n >= 0 ? DataResult.success(n, Lifecycle.deprecated(1))
+                            : partial ? DataResult.error(() -> "negative", 0) : DataResult.error(() -> "negative"));
+                    Codec codec = optional(element, lenient, defaults).codec();
+                    String prefix = lenient + ":" + defaults + ":" + partial + ":";
+                    for (String input : List.of("{}", "{\"field\":2}", "{\"field\":-2}", "{\"field\":\"bad\"}",
+                            "{\"field\":null}", "\"bad\"")) {
+                        out.add(prefix + "decode:" + input, result(codec.decode(JsonOps.INSTANCE, JsonParser.parseString(input))));
+                    }
+                    for (int n : new int[]{2, 7, -2}) out.add(prefix + "encode:" + n,
+                            result(codec.encodeStart(JsonOps.INSTANCE, defaults ? n : Optional.of(n))));
+                    if (!defaults) out.add(prefix + "encode:empty", result(codec.encodeStart(JsonOps.INSTANCE, Optional.empty())));
+                    for (String input : List.of("[null]", "[2]", "[-2]", "[\"bad\"]")) {
+                        out.add(prefix + "compressed:" + input, result(codec.decode(JsonOps.COMPRESSED, JsonParser.parseString(input))));
+                    }
+                }
+            }
+        }
+        return out;
+    }
+
     public JsonObject all() {
         JsonObject out = new JsonObject();
         out.add("validation", validations());
@@ -238,6 +281,7 @@ public final class CodecReferenceProbe {
         out.add("alternatives", alternatives());
         out.add("lazy", lazyCodecs());
         out.add("recursive", recursiveCodecs());
+        out.add("optional", optionalFields());
         return out;
     }
 

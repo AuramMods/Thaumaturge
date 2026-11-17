@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarker;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarkerType;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MarkerPhase;
@@ -19,11 +20,9 @@ import net.minecraft.world.level.storage.loot.LootTable;
 
 public record ReliquaryMarker(Direction facing, Optional<ResourceKey<LootTable>> loot) implements LabyrinthMarker {
     public static final MapCodec<ReliquaryMarker> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    RoomSocket.HORIZONTAL
-                            .optionalFieldOf("facing", Direction.NORTH)
+                    Codecs.optionalFieldOf(RoomSocket.HORIZONTAL, "facing", Direction.NORTH)
                             .forGetter(ReliquaryMarker::facing),
-                    ResourceKey.codec(Registries.LOOT_TABLE)
-                            .optionalFieldOf("loot")
+                    Codecs.optionalFieldOf(ResourceKey.codec(Registries.LOOT_TABLE), "loot")
                             .forGetter(ReliquaryMarker::loot))
             .apply(instance, ReliquaryMarker::new));
 

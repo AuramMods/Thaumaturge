@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -22,8 +23,7 @@ import net.minecraft.world.phys.Vec3;
 
 public final class BlinkEffect extends AbstractEffectBehavior {
     public static final MapCodec<BlinkEffect> CODEC =
-            RecordCodecBuilder.mapCodec(i -> i.group(Codec.doubleRange(1.0, 256.0)
-                            .optionalFieldOf("max_distance", 48.0)
+            RecordCodecBuilder.mapCodec(i -> i.group(Codecs.optionalFieldOf(Codec.doubleRange(1.0, 256.0), "max_distance", 48.0)
                             .forGetter(BlinkEffect::maxDistance))
                     .apply(i, BlinkEffect::new));
 

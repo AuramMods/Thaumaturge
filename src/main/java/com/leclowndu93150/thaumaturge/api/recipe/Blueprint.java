@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -42,11 +43,10 @@ public record Blueprint(
                     Codec.INT.fieldOf("x_size").forGetter(Blueprint::xSize),
                     Codec.INT.fieldOf("y_size").forGetter(Blueprint::ySize),
                     Codec.INT.fieldOf("z_size").forGetter(Blueprint::zSize),
-                    KEYS_CODEC.optionalFieldOf("keys", new HashMap<>()).forGetter(Blueprint::keys),
-                    Codec.STRING
+                    Codecs.optionalFieldOf(KEYS_CODEC, "keys", new HashMap<>()).forGetter(Blueprint::keys),
+                    Codecs.optionalFieldOf(Codec.STRING
                             .listOf()
-                            .listOf()
-                            .optionalFieldOf("pattern", new ArrayList<>())
+                            .listOf(), "pattern", new ArrayList<>())
                             .forGetter(Blueprint::pattern))
             .apply(i, Blueprint::new));
 

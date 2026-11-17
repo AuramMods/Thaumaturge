@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion.instability;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityStabilizer;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
@@ -56,20 +57,16 @@ public record EjectEffect(
     public static final float DEFAULT_EXPLOSION_POWER = 1.0F;
 
     public static final MapCodec<EjectEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    Codec.BOOL.optionalFieldOf("consume", false).forGetter(EjectEffect::consume),
-                    EjectAftermath.CODEC
-                            .optionalFieldOf("aftermath", EjectAftermath.NONE)
+                    Codecs.optionalFieldOf(Codec.BOOL, "consume", false).forGetter(EjectEffect::consume),
+                    Codecs.optionalFieldOf(EjectAftermath.CODEC, "aftermath", EjectAftermath.NONE)
                             .forGetter(EjectEffect::aftermath),
-                    IntProvider.CODEC
-                            .optionalFieldOf("mitigation", DEFAULT_MITIGATION)
+                    Codecs.optionalFieldOf(IntProvider.CODEC, "mitigation", DEFAULT_MITIGATION)
                             .forGetter(EjectEffect::mitigation),
-                    IntProvider.CODEC
-                            .optionalFieldOf("pollution", DEFAULT_POLLUTION)
+                    Codecs.optionalFieldOf(IntProvider.CODEC, "pollution", DEFAULT_POLLUTION)
                             .forGetter(EjectEffect::pollution),
-                    Codec.FLOAT
-                            .optionalFieldOf("explosion_power", DEFAULT_EXPLOSION_POWER)
+                    Codecs.optionalFieldOf(Codec.FLOAT, "explosion_power", DEFAULT_EXPLOSION_POWER)
                             .forGetter(EjectEffect::explosionPower),
-                    Codec.FLOAT.optionalFieldOf("consume_at_or_below").forGetter(EjectEffect::consumeAtOrBelow))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "consume_at_or_below").forGetter(EjectEffect::consumeAtOrBelow))
             .apply(instance, EjectEffect::new));
 
     public EjectEffect(

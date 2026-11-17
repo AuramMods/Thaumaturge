@@ -31,14 +31,12 @@ public final class InfusionRecipe extends AbstractRecipe<InfusionInput> implemen
                             Ingredient.CODEC.fieldOf("catalyst").forGetter(r -> r.catalyst),
                             Codecs.list(Ingredient.CODEC, 1, 64).fieldOf("components").forGetter(r -> r.components),
                             AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
-                            Codec.intRange(0, 100)
-                                    .optionalFieldOf("instability", 0)
+                            Codecs.optionalFieldOf(Codec.intRange(0, 100), "instability", 0)
                                     .forGetter(r -> r.instability),
-                            ItemStack.CODEC.optionalFieldOf("result").forGetter(r -> r.result),
-                            ItemDataPatch.CODEC
-                                    .optionalFieldOf("catalyst_patch")
+                            Codecs.optionalFieldOf(ItemStack.CODEC, "result").forGetter(r -> r.result),
+                            Codecs.optionalFieldOf(ItemDataPatch.CODEC, "catalyst_patch")
                                     .forGetter(r -> r.catalystPatch),
-                            ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))
+                            Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))
                     .apply(i, InfusionRecipe::new)), recipe -> recipe.result.isPresent() == recipe.catalystPatch.isPresent()
                     ? DataResult.error(() -> "Infusion recipe needs exactly one of result or catalyst_patch")
                     : DataResult.success(recipe));

@@ -25,13 +25,12 @@ public record Aspect(
     public static final Codec<Aspect> DIRECT_CODEC = Codecs.validate(RecordCodecBuilder.<Aspect>create(builder -> builder.group(
                             Codec.STRING.fieldOf("tag").forGetter(Aspect::tag),
                             Codec.INT.fieldOf("color").forGetter(Aspect::color),
-                            RegistryFixedCodec.create(IAspect.REGISTRY_KEY)
-                                    .listOf()
-                                    .optionalFieldOf("components", List.of())
+                            Codecs.optionalFieldOf(RegistryFixedCodec.create(IAspect.REGISTRY_KEY)
+                                    .listOf(), "components", List.of())
                                     .forGetter(Aspect::components),
-                            Codec.STRING.optionalFieldOf("chat_color").forGetter(Aspect::chatColor),
-                            ResourceLocation.CODEC.optionalFieldOf("texture").forGetter(Aspect::optionalTexture),
-                            Codec.INT.optionalFieldOf("blend", DEFAULT_BLEND).forGetter(Aspect::blend))
+                            Codecs.optionalFieldOf(Codec.STRING, "chat_color").forGetter(Aspect::chatColor),
+                            Codecs.optionalFieldOf(ResourceLocation.CODEC, "texture").forGetter(Aspect::optionalTexture),
+                            Codecs.optionalFieldOf(Codec.INT, "blend", DEFAULT_BLEND).forGetter(Aspect::blend))
                     .apply(builder, Aspect::create)), Aspect::validate);
 
     private Optional<ResourceLocation> optionalTexture() {

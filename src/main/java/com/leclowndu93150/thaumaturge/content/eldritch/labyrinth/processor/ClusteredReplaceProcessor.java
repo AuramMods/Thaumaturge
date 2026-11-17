@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.processor;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.LabyrinthNoise;
 import com.leclowndu93150.thaumaturge.registry.TTStructureProcessors;
 import com.mojang.serialization.Codec;
@@ -26,10 +27,9 @@ public final class ClusteredReplaceProcessor extends StructureProcessor {
                             Codec.floatRange(0.0F, 1.0F)
                                     .fieldOf("threshold")
                                     .forGetter(processor -> processor.threshold),
-                            ProcessorSeeds.PITCH_CODEC
-                                    .optionalFieldOf("pitch", ProcessorSeeds.DEFAULT_PITCH)
+                            Codecs.optionalFieldOf(ProcessorSeeds.PITCH_CODEC, "pitch", ProcessorSeeds.DEFAULT_PITCH)
                                     .forGetter(processor -> processor.pitch),
-                            Codec.INT.optionalFieldOf("salt", 0).forGetter(processor -> processor.salt))
+                            Codecs.optionalFieldOf(Codec.INT, "salt", 0).forGetter(processor -> processor.salt))
                     .apply(instance, ClusteredReplaceProcessor::new));
 
     private final RuleTest target;

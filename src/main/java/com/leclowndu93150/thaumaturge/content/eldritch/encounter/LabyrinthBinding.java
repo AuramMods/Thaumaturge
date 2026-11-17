@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.encounter;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterRole;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MazeId;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -14,7 +15,7 @@ public record LabyrinthBinding(int maze, EncounterRole role, boolean sharedBar) 
     public static final MapCodec<LabyrinthBinding> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     Codec.INT.fieldOf("maze").forGetter(LabyrinthBinding::maze),
                     EncounterRole.CODEC.fieldOf("role").forGetter(LabyrinthBinding::role),
-                    Codec.BOOL.optionalFieldOf("shared_bar", false).forGetter(LabyrinthBinding::sharedBar))
+                    Codecs.optionalFieldOf(Codec.BOOL, "shared_bar", false).forGetter(LabyrinthBinding::sharedBar))
             .apply(instance, LabyrinthBinding::new));
 
     public static Optional<LabyrinthBinding> on(Entity entity) {

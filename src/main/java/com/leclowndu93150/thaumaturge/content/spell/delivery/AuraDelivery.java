@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.delivery;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
@@ -18,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 
 public record AuraDelivery(int maxTargets) implements SpellBehavior {
     public static final MapCodec<AuraDelivery> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.intRange(1, 64).optionalFieldOf("max_targets", 16).forGetter(AuraDelivery::maxTargets))
+                    Codecs.optionalFieldOf(Codec.intRange(1, 64), "max_targets", 16).forGetter(AuraDelivery::maxTargets))
             .apply(i, AuraDelivery::new));
 
     private static final String RADIUS = "radius";

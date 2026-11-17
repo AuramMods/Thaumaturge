@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion.instability;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.registry.TTInstabilityEffects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -11,7 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 public record HarmEffect(boolean everyone, List<MobEffectInstance> effects) implements InstabilityEffect {
     public static final MapCodec<HarmEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    Codec.BOOL.optionalFieldOf("everyone", false).forGetter(HarmEffect::everyone),
+                    Codecs.optionalFieldOf(Codec.BOOL, "everyone", false).forGetter(HarmEffect::everyone),
                     ExtraCodecs.nonEmptyList(MobEffectInstance.CODEC.listOf())
                             .fieldOf("effects")
                             .forGetter(HarmEffect::effects))

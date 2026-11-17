@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -14,10 +15,10 @@ import net.minecraft.world.phys.Vec3;
 
 public record KnockbackAction(float base, float perPower, float lift, boolean pull) implements SpellAction {
     public static final MapCodec<KnockbackAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("base", 0.4F).forGetter(KnockbackAction::base),
-                    Codec.FLOAT.optionalFieldOf("per_power", 0.2F).forGetter(KnockbackAction::perPower),
-                    Codec.FLOAT.optionalFieldOf("lift", 0.2F).forGetter(KnockbackAction::lift),
-                    Codec.BOOL.optionalFieldOf("pull", false).forGetter(KnockbackAction::pull))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 0.4F).forGetter(KnockbackAction::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 0.2F).forGetter(KnockbackAction::perPower),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "lift", 0.2F).forGetter(KnockbackAction::lift),
+                    Codecs.optionalFieldOf(Codec.BOOL, "pull", false).forGetter(KnockbackAction::pull))
             .apply(i, KnockbackAction::new));
 
     private static final float MAX_STRENGTH = 3.0F;

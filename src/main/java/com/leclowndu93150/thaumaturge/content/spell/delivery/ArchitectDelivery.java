@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.delivery;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.casters.FocusCaster;
 import com.leclowndu93150.thaumaturge.api.items.AreaPreviewer;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
@@ -40,7 +41,7 @@ import org.jspecify.annotations.Nullable;
 
 public record ArchitectDelivery(double range) implements SpellBehavior, AreaPreviewer {
     public static final MapCodec<ArchitectDelivery> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.doubleRange(1.0, 64.0).optionalFieldOf("range", 16.0).forGetter(ArchitectDelivery::range))
+                    Codecs.optionalFieldOf(Codec.doubleRange(1.0, 64.0), "range", 16.0).forGetter(ArchitectDelivery::range))
             .apply(i, ArchitectDelivery::new));
 
     private static final String METHOD = "method";

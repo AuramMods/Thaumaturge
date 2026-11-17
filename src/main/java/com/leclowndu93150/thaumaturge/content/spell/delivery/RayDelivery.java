@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.delivery;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
@@ -23,11 +24,11 @@ import net.minecraft.world.phys.Vec3;
 public record RayDelivery(double range, boolean reach, Visual visual, float width, int linger)
         implements SpellBehavior {
     public static final MapCodec<RayDelivery> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.doubleRange(0.5, 64.0).optionalFieldOf("range", 16.0).forGetter(RayDelivery::range),
-                    Codec.BOOL.optionalFieldOf("reach", false).forGetter(RayDelivery::reach),
-                    Visual.CODEC.optionalFieldOf("visual", Visual.ARC).forGetter(RayDelivery::visual),
-                    Codec.FLOAT.optionalFieldOf("width", 0.66F).forGetter(RayDelivery::width),
-                    Codec.intRange(1, 100).optionalFieldOf("linger", 6).forGetter(RayDelivery::linger))
+                    Codecs.optionalFieldOf(Codec.doubleRange(0.5, 64.0), "range", 16.0).forGetter(RayDelivery::range),
+                    Codecs.optionalFieldOf(Codec.BOOL, "reach", false).forGetter(RayDelivery::reach),
+                    Codecs.optionalFieldOf(Visual.CODEC, "visual", Visual.ARC).forGetter(RayDelivery::visual),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "width", 0.66F).forGetter(RayDelivery::width),
+                    Codecs.optionalFieldOf(Codec.intRange(1, 100), "linger", 6).forGetter(RayDelivery::linger))
             .apply(i, RayDelivery::new));
 
     private static final String RANGE = "range";

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -14,9 +15,9 @@ import net.minecraft.server.level.ServerLevel;
 
 public record SapAction(float base, float perPower, float max) implements SpellAction {
     public static final MapCodec<SapAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("base", 0.0F).forGetter(SapAction::base),
-                    Codec.FLOAT.optionalFieldOf("per_power", 0.75F).forGetter(SapAction::perPower),
-                    Codec.FLOAT.optionalFieldOf("max", 5.0F).forGetter(SapAction::max))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 0.0F).forGetter(SapAction::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 0.75F).forGetter(SapAction::perPower),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "max", 5.0F).forGetter(SapAction::max))
             .apply(i, SapAction::new));
 
     @Override

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
@@ -20,10 +21,9 @@ import net.minecraft.world.phys.Vec3;
 
 public final class PrimalEffect extends AbstractEffectBehavior {
     public static final MapCodec<PrimalEffect> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("damage", 4.0F).forGetter(PrimalEffect::damage),
-                    Codec.FLOAT.optionalFieldOf("explosion", 1.5F).forGetter(PrimalEffect::explosion),
-                    Codec.floatRange(0.0F, 1.0F)
-                            .optionalFieldOf("chaos_chance", 0.01F)
+                    Codecs.optionalFieldOf(Codec.FLOAT, "damage", 4.0F).forGetter(PrimalEffect::damage),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "explosion", 1.5F).forGetter(PrimalEffect::explosion),
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 1.0F), "chaos_chance", 0.01F)
                             .forGetter(PrimalEffect::chaosChance))
             .apply(i, PrimalEffect::new));
 

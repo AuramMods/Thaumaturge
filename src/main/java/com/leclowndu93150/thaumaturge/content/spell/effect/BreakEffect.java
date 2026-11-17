@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
@@ -20,9 +21,9 @@ import net.minecraft.world.phys.Vec3;
 
 public final class BreakEffect extends AbstractEffectBehavior {
     public static final MapCodec<BreakEffect> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("vis_cost", 0.25F).forGetter(BreakEffect::visCost),
-                    Codec.FLOAT.optionalFieldOf("silk_vis", 0.25F).forGetter(BreakEffect::silkVis),
-                    Codec.FLOAT.optionalFieldOf("fortune_vis", 0.1F).forGetter(BreakEffect::fortuneVis))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "vis_cost", 0.25F).forGetter(BreakEffect::visCost),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "silk_vis", 0.25F).forGetter(BreakEffect::silkVis),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "fortune_vis", 0.1F).forGetter(BreakEffect::fortuneVis))
             .apply(i, BreakEffect::new));
 
     private static final String POWER = "power";

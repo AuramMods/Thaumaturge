@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -23,8 +24,8 @@ public record WispyMoteParticleOptions(int color, int age, float gravity, int ta
                     Codec.INT.fieldOf("color").forGetter(WispyMoteParticleOptions::color),
                     Codec.INT.fieldOf("age").forGetter(WispyMoteParticleOptions::age),
                     Codec.FLOAT.fieldOf("gravity").forGetter(WispyMoteParticleOptions::gravity),
-                    Codec.INT.optionalFieldOf("target", NO_ENTITY).forGetter(WispyMoteParticleOptions::targetEntityId),
-                    Codec.BOOL.optionalFieldOf("emissive", false).forGetter(WispyMoteParticleOptions::emissive))
+                    Codecs.optionalFieldOf(Codec.INT, "target", NO_ENTITY).forGetter(WispyMoteParticleOptions::targetEntityId),
+                    Codecs.optionalFieldOf(Codec.BOOL, "emissive", false).forGetter(WispyMoteParticleOptions::emissive))
             .apply(inst, WispyMoteParticleOptions::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, WispyMoteParticleOptions> STREAM_CODEC =

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
@@ -38,7 +39,7 @@ public final class DustTriggerTagRecipe extends AbstractRecipe<DustTriggerInput>
     public static final MapCodec<DustTriggerTagRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     TagKey.codec(Registries.BLOCK).fieldOf("target_tag").forGetter(r -> r.targetTag),
                     ItemStack.CODEC.fieldOf("result").forGetter(r -> r.result),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))
+                    Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))
             .apply(i, DustTriggerTagRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DustTriggerTagRecipe> STREAM_CODEC = StreamCodec.composite(

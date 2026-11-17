@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.processor;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.LabyrinthNoise;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.StateOrientation;
 import com.leclowndu93150.thaumaturge.registry.TTStructureProcessors;
@@ -28,20 +29,16 @@ public final class ExposedSurfaceProcessor extends StructureProcessor {
     public static final MapCodec<ExposedSurfaceProcessor> CODEC =
             RecordCodecBuilder.mapCodec(instance -> instance.group(
                             RuleTest.CODEC.fieldOf("target").forGetter(processor -> processor.target),
-                            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(BlockState.CODEC)
-                                    .optionalFieldOf("floor", SimpleWeightedRandomList.empty())
+                            Codecs.optionalFieldOf(SimpleWeightedRandomList.wrappedCodecAllowingEmpty(BlockState.CODEC), "floor", SimpleWeightedRandomList.empty())
                                     .forGetter(processor -> processor.floor),
-                            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(BlockState.CODEC)
-                                    .optionalFieldOf("wall", SimpleWeightedRandomList.empty())
+                            Codecs.optionalFieldOf(SimpleWeightedRandomList.wrappedCodecAllowingEmpty(BlockState.CODEC), "wall", SimpleWeightedRandomList.empty())
                                     .forGetter(processor -> processor.wall),
-                            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(BlockState.CODEC)
-                                    .optionalFieldOf("ceiling", SimpleWeightedRandomList.empty())
+                            Codecs.optionalFieldOf(SimpleWeightedRandomList.wrappedCodecAllowingEmpty(BlockState.CODEC), "ceiling", SimpleWeightedRandomList.empty())
                                     .forGetter(processor -> processor.ceiling),
                             Codec.floatRange(0.0F, 1.0F).fieldOf("density").forGetter(processor -> processor.density),
-                            ProcessorSeeds.PITCH_CODEC
-                                    .optionalFieldOf("cluster_pitch", ProcessorSeeds.DEFAULT_PITCH)
+                            Codecs.optionalFieldOf(ProcessorSeeds.PITCH_CODEC, "cluster_pitch", ProcessorSeeds.DEFAULT_PITCH)
                                     .forGetter(processor -> processor.clusterPitch),
-                            Codec.INT.optionalFieldOf("salt", 0).forGetter(processor -> processor.salt))
+                            Codecs.optionalFieldOf(Codec.INT, "salt", 0).forGetter(processor -> processor.salt))
                     .apply(instance, ExposedSurfaceProcessor::new));
 
     private final RuleTest target;

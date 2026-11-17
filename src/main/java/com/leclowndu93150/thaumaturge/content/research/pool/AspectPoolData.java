@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.pool;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
@@ -18,7 +19,7 @@ public final class AspectPoolData {
                     Codec.unboundedMap(LegacyIds.IDENTIFIER_CODEC, Codec.INT)
                             .fieldOf("pool")
                             .forGetter(d -> d.pool),
-                    Codec.INT.optionalFieldOf("completed_notes", 0).forGetter(AspectPoolData::completedNotes))
+                    Codecs.optionalFieldOf(Codec.INT, "completed_notes", 0).forGetter(AspectPoolData::completedNotes))
             .apply(instance, AspectPoolData::of));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AspectPoolData> STREAM_CODEC = StreamCodec.composite(

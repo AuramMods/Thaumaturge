@@ -9,9 +9,8 @@ import net.minecraft.world.level.block.Rotation;
 public record RoomTransforms(List<Rotation> rotations, boolean mirror) {
     public static final RoomTransforms ALL = new RoomTransforms(List.of(Rotation.values()), true);
     public static final Codec<RoomTransforms> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Codecs.list(Rotation.CODEC, 1, Rotation.values().length)
-                            .optionalFieldOf("rotations", ALL.rotations)
+                    Codecs.optionalFieldOf(Codecs.list(Rotation.CODEC, 1, Rotation.values().length), "rotations", ALL.rotations)
                             .forGetter(RoomTransforms::rotations),
-                    Codec.BOOL.optionalFieldOf("mirror", true).forGetter(RoomTransforms::mirror))
+                    Codecs.optionalFieldOf(Codec.BOOL, "mirror", true).forGetter(RoomTransforms::mirror))
             .apply(instance, RoomTransforms::new));
 }

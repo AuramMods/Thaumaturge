@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.flow;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -20,8 +21,7 @@ import net.minecraft.world.phys.Vec3;
 
 public record RelayFlow(double seekRange) implements SpellBehavior {
     public static final MapCodec<RelayFlow> CODEC =
-            RecordCodecBuilder.mapCodec(i -> i.group(Codec.doubleRange(1.0, 64.0)
-                            .optionalFieldOf("seek_range", 12.0)
+            RecordCodecBuilder.mapCodec(i -> i.group(Codecs.optionalFieldOf(Codec.doubleRange(1.0, 64.0), "seek_range", 12.0)
                             .forGetter(RelayFlow::seekRange))
                     .apply(i, RelayFlow::new));
 

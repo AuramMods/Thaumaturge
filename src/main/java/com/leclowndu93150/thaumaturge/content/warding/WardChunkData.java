@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -13,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 
 public final class WardChunkData {
     public static final MapCodec<WardChunkData> CODEC =
-            Entry.CODEC.listOf().optionalFieldOf("wards", List.of()).xmap(WardChunkData::new, WardChunkData::entries);
+            Codecs.optionalFieldOf(Entry.CODEC.listOf(), "wards", List.of()).xmap(WardChunkData::new, WardChunkData::entries);
 
     private final Map<BlockPos, UUID> owners = new ConcurrentHashMap<>();
     private final Map<BlockPos, Access> access = new ConcurrentHashMap<>();
@@ -109,13 +110,11 @@ public final class WardChunkData {
         private static final Codec<Entry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
                         BlockPos.CODEC.fieldOf("pos").forGetter(Entry::pos),
                         UUIDUtil.CODEC.fieldOf("owner").forGetter(Entry::owner),
-                        UUIDUtil.CODEC
-                                .listOf()
-                                .optionalFieldOf("iron_access", List.of())
+                        Codecs.optionalFieldOf(UUIDUtil.CODEC
+                                .listOf(), "iron_access", List.of())
                                 .forGetter(Entry::ironAccess),
-                        UUIDUtil.CODEC
-                                .listOf()
-                                .optionalFieldOf("gold_access", List.of())
+                        Codecs.optionalFieldOf(UUIDUtil.CODEC
+                                .listOf(), "gold_access", List.of())
                                 .forGetter(Entry::goldAccess))
                 .apply(inst, Entry::new));
     }

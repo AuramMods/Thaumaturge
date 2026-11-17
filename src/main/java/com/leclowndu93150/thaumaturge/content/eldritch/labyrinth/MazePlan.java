@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthEncounter;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MazeId;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.LabyrinthDefinition;
@@ -34,15 +35,14 @@ public record MazePlan(
     private static final Codec<int[]> INTS = Codec.INT_STREAM.xmap(IntStream::toArray, Arrays::stream);
     public static final Codec<MazePlan> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     MazeId.CODEC.fieldOf("id").forGetter(MazePlan::id),
-                    Codec.INT.optionalFieldOf("generation", 0).forGetter(MazePlan::generation),
+                    Codecs.optionalFieldOf(Codec.INT, "generation", 0).forGetter(MazePlan::generation),
                     GlobalPos.CODEC.fieldOf("origin").forGetter(MazePlan::origin),
                     MazeGeometry.CODEC.fieldOf("geometry").forGetter(MazePlan::geometry),
                     Codec.LONG.fieldOf("seed").forGetter(MazePlan::seed),
                     ResourceKey.codec(LabyrinthDefinition.REGISTRY_KEY)
                             .fieldOf("definition")
                             .forGetter(MazePlan::definition),
-                    ResourceKey.codec(LabyrinthEncounter.REGISTRY_KEY)
-                            .optionalFieldOf("encounter")
+                    Codecs.optionalFieldOf(ResourceKey.codec(LabyrinthEncounter.REGISTRY_KEY), "encounter")
                             .forGetter(MazePlan::encounter),
                     LabyrinthTuning.CODEC.fieldOf("tuning").forGetter(MazePlan::tuning),
                     ResourceKey.codec(RoomType.REGISTRY_KEY)

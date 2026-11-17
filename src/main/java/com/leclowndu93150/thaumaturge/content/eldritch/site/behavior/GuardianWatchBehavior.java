@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.site.behavior;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.ObeliskSiteBehavior;
 import com.leclowndu93150.thaumaturge.api.labyrinth.ObeliskSiteBehaviorType;
 import com.leclowndu93150.thaumaturge.api.labyrinth.SiteContext;
@@ -20,12 +21,11 @@ public record GuardianWatchBehavior(
                             .fieldOf("guardian")
                             .forGetter(GuardianWatchBehavior::guardian),
                     ExtraCodecs.NON_NEGATIVE_INT.fieldOf("budget").forGetter(GuardianWatchBehavior::budget),
-                    ExtraCodecs.POSITIVE_INT.optionalFieldOf("max_alive", 1).forGetter(GuardianWatchBehavior::maxAlive),
+                    Codecs.optionalFieldOf(ExtraCodecs.POSITIVE_INT, "max_alive", 1).forGetter(GuardianWatchBehavior::maxAlive),
                     ExtraCodecs.POSITIVE_INT
                             .fieldOf("activation_range")
                             .forGetter(GuardianWatchBehavior::activationRange),
-                    ExtraCodecs.POSITIVE_INT
-                            .optionalFieldOf("spawn_radius", MIN_SPAWN_RADIUS * 2)
+                    Codecs.optionalFieldOf(ExtraCodecs.POSITIVE_INT, "spawn_radius", MIN_SPAWN_RADIUS * 2)
                             .forGetter(GuardianWatchBehavior::spawnRadius))
             .apply(instance, GuardianWatchBehavior::new));
 

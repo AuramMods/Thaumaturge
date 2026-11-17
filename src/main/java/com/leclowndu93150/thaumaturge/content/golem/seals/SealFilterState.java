@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealFilterMode;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealFilterSpec;
@@ -25,12 +26,11 @@ public final class SealFilterState implements ISealFilter {
 
     public static MapCodec<SealFilterState> codec(SealFilterSpec spec) {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
-                        ItemStack.OPTIONAL_CODEC
-                                .listOf()
-                                .optionalFieldOf("filter", List.of())
+                        Codecs.optionalFieldOf(ItemStack.OPTIONAL_CODEC
+                                .listOf(), "filter", List.of())
                                 .forGetter(SealFilterState::stacks),
-                        Codec.BOOL.optionalFieldOf("bl", true).forGetter(state -> state.blacklist),
-                        Codec.INT.listOf().optionalFieldOf("sizes", List.of()).forGetter(SealFilterState::limits))
+                        Codecs.optionalFieldOf(Codec.BOOL, "bl", true).forGetter(state -> state.blacklist),
+                        Codecs.optionalFieldOf(Codec.INT.listOf(), "sizes", List.of()).forGetter(SealFilterState::limits))
                 .apply(instance, (stacks, blacklist, limits) -> restore(spec, stacks, blacklist, limits)));
     }
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.delivery;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -17,14 +18,12 @@ import net.minecraft.world.entity.LivingEntity;
 public record ProjectileDelivery(float speed, float speedPerStep, double gravity, float splash)
         implements SpellBehavior {
     public static final MapCodec<ProjectileDelivery> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.floatRange(0.05F, 5.0F)
-                            .optionalFieldOf("speed", 0.66F)
+                    Codecs.optionalFieldOf(Codec.floatRange(0.05F, 5.0F), "speed", 0.66F)
                             .forGetter(ProjectileDelivery::speed),
-                    Codec.floatRange(0.0F, 2.0F)
-                            .optionalFieldOf("speed_per_step", 0.33F)
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 2.0F), "speed_per_step", 0.33F)
                             .forGetter(ProjectileDelivery::speedPerStep),
-                    Codec.doubleRange(0.0, 0.2).optionalFieldOf("gravity", 0.01).forGetter(ProjectileDelivery::gravity),
-                    Codec.floatRange(0.0F, 8.0F).optionalFieldOf("splash", 0.0F).forGetter(ProjectileDelivery::splash))
+                    Codecs.optionalFieldOf(Codec.doubleRange(0.0, 0.2), "gravity", 0.01).forGetter(ProjectileDelivery::gravity),
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 8.0F), "splash", 0.0F).forGetter(ProjectileDelivery::splash))
             .apply(i, ProjectileDelivery::new));
 
     private static final String SPEED = "speed";

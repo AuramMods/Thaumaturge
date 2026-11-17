@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintPart;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintTarget;
@@ -39,7 +40,7 @@ public final class DustTriggerMultiblockRecipe extends AbstractRecipe<DustTrigge
     public static final MapCodec<DustTriggerMultiblockRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     ResourceLocation.CODEC.fieldOf("blueprint").forGetter(r -> r.blueprintId),
                     ItemStack.CODEC.fieldOf("result").forGetter(r -> r.result),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))
+                    Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))
             .apply(i, DustTriggerMultiblockRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DustTriggerMultiblockRecipe> STREAM_CODEC =

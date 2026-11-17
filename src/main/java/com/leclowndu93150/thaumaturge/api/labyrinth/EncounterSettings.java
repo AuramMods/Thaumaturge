@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.labyrinth;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -43,17 +44,14 @@ public record EncounterSettings(
     public static final MapCodec<EncounterSettings> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     ComponentSerialization.CODEC.fieldOf("name").forGetter(EncounterSettings::name),
                     ComponentSerialization.CODEC.fieldOf("announcement").forGetter(EncounterSettings::announcement),
-                    ResourceLocation.CODEC.optionalFieldOf("arena").forGetter(EncounterSettings::arena),
+                    Codecs.optionalFieldOf(ResourceLocation.CODEC, "arena").forGetter(EncounterSettings::arena),
                     ResourceKey.codec(Registries.LOOT_TABLE).fieldOf("reward").forGetter(EncounterSettings::reward),
-                    EncounterScaling.CODEC
-                            .optionalFieldOf("scaling", EncounterScaling.DEFAULT)
+                    Codecs.optionalFieldOf(EncounterScaling.CODEC, "scaling", EncounterScaling.DEFAULT)
                             .forGetter(EncounterSettings::scaling),
-                    ExtraCodecs.NON_NEGATIVE_INT
-                            .optionalFieldOf("victory_delay", DEFAULT_VICTORY_DELAY)
+                    Codecs.optionalFieldOf(ExtraCodecs.NON_NEGATIVE_INT, "victory_delay", DEFAULT_VICTORY_DELAY)
                             .forGetter(EncounterSettings::victoryDelay),
-                    Codec.STRING
-                            .xmap(BossEvent.BossBarColor::byName, BossEvent.BossBarColor::getName)
-                            .optionalFieldOf("bar_color", BossEvent.BossBarColor.PURPLE)
+                    Codecs.optionalFieldOf(Codec.STRING
+                            .xmap(BossEvent.BossBarColor::byName, BossEvent.BossBarColor::getName), "bar_color", BossEvent.BossBarColor.PURPLE)
                             .forGetter(EncounterSettings::barColor))
             .apply(instance, EncounterSettings::new));
 }

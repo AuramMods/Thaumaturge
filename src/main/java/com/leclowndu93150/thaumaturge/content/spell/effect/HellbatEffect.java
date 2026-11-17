@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -22,9 +23,8 @@ import net.minecraft.world.phys.Vec3;
 
 public final class HellbatEffect extends AbstractEffectBehavior {
     public static final MapCodec<HellbatEffect> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.intRange(1, 64).optionalFieldOf("max_active", 16).forGetter(HellbatEffect::maxActive),
-                    Codec.doubleRange(1.0, 128.0)
-                            .optionalFieldOf("count_range", 32.0)
+                    Codecs.optionalFieldOf(Codec.intRange(1, 64), "max_active", 16).forGetter(HellbatEffect::maxActive),
+                    Codecs.optionalFieldOf(Codec.doubleRange(1.0, 128.0), "count_range", 32.0)
                             .forGetter(HellbatEffect::countRange))
             .apply(i, HellbatEffect::new));
 

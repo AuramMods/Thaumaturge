@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarker;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarkerType;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MarkerPhase;
@@ -18,8 +19,8 @@ public record GuardianPostMarker(Optional<Integer> radius, Optional<String> ward
         implements LabyrinthMarker, WardedMarker {
     private static final int MAX_RADIUS = 64;
     public static final MapCodec<GuardianPostMarker> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    Codec.intRange(1, MAX_RADIUS).optionalFieldOf("radius").forGetter(GuardianPostMarker::radius),
-                    Codec.STRING.optionalFieldOf("ward").forGetter(GuardianPostMarker::ward))
+                    Codecs.optionalFieldOf(Codec.intRange(1, MAX_RADIUS), "radius").forGetter(GuardianPostMarker::radius),
+                    Codecs.optionalFieldOf(Codec.STRING, "ward").forGetter(GuardianPostMarker::ward))
             .apply(instance, GuardianPostMarker::new));
 
     @Override

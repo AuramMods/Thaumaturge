@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -25,11 +26,10 @@ public record DamageAction(
                     ResourceKey.codec(Registries.DAMAGE_TYPE)
                             .fieldOf("damage_type")
                             .forGetter(DamageAction::damageType),
-                    Codec.FLOAT.optionalFieldOf("base", 0.0F).forGetter(DamageAction::base),
-                    Codec.FLOAT.optionalFieldOf("per_power", 1.0F).forGetter(DamageAction::perPower),
-                    Codec.FLOAT.optionalFieldOf("undead_multiplier", 1.0F).forGetter(DamageAction::undeadMultiplier),
-                    Codec.BOOL
-                            .optionalFieldOf("water_sensitive_only", false)
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 0.0F).forGetter(DamageAction::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 1.0F).forGetter(DamageAction::perPower),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "undead_multiplier", 1.0F).forGetter(DamageAction::undeadMultiplier),
+                    Codecs.optionalFieldOf(Codec.BOOL, "water_sensitive_only", false)
                             .forGetter(DamageAction::waterSensitiveOnly))
             .apply(i, DamageAction::new));
 

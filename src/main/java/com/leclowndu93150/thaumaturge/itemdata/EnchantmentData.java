@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.itemdata;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -22,7 +23,7 @@ public record EnchantmentData(Map<ResourceLocation, Integer> levels, boolean sho
                     .flatXmap(EnchantmentData::validateLevels, EnchantmentData::validateLevels);
     public static final Codec<EnchantmentData> CODEC = RecordCodecBuilder.create(i -> i.group(
             LEVELS_CODEC.fieldOf("levels").forGetter(EnchantmentData::levels),
-            Codec.BOOL.optionalFieldOf("show_in_tooltip", true).forGetter(EnchantmentData::showInTooltip))
+            Codecs.optionalFieldOf(Codec.BOOL, "show_in_tooltip", true).forGetter(EnchantmentData::showInTooltip))
             .apply(i, EnchantmentData::new));
 
     private static DataResult<Map<ResourceLocation, Integer>> validateLevels(Map<ResourceLocation, Integer> levels) {

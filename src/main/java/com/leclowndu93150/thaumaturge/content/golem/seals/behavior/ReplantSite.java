@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals.behavior;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -12,12 +13,11 @@ final class ReplantSite {
     private static final byte DEFAULT_FACE = 0;
 
     static final Codec<ReplantSite> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Codec.LONG.optionalFieldOf("pos", DEFAULT_POS).forGetter(site -> site.pos.asLong()),
-                    Codec.BYTE.optionalFieldOf("face", DEFAULT_FACE).forGetter(site ->
+                    Codecs.optionalFieldOf(Codec.LONG, "pos", DEFAULT_POS).forGetter(site -> site.pos.asLong()),
+                    Codecs.optionalFieldOf(Codec.BYTE, "face", DEFAULT_FACE).forGetter(site ->
                             (byte) site.face.get3DDataValue()),
-                    Codec.BOOL.optionalFieldOf("tilled", false).forGetter(site -> site.tilled),
-                    ItemStack.OPTIONAL_CODEC
-                            .optionalFieldOf("seed", ItemStack.EMPTY)
+                    Codecs.optionalFieldOf(Codec.BOOL, "tilled", false).forGetter(site -> site.tilled),
+                    Codecs.optionalFieldOf(ItemStack.OPTIONAL_CODEC, "seed", ItemStack.EMPTY)
                             .forGetter(site -> site.seed))
             .apply(
                     instance,
@@ -25,15 +25,13 @@ final class ReplantSite {
                             new ReplantSite(BlockPos.of(pos), Direction.from3DDataValue(face), seed, tilled)));
 
     static final Codec<ReplantSite> LEGACY_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Codec.either(Codec.LONG, BlockPos.CODEC)
-                            .xmap(either -> either.map(value -> value, BlockPos::asLong), Either::left)
-                            .optionalFieldOf("taskloc", DEFAULT_POS)
+                    Codecs.optionalFieldOf(Codec.either(Codec.LONG, BlockPos.CODEC)
+                            .xmap(either -> either.map(value -> value, BlockPos::asLong), Either::left), "taskloc", DEFAULT_POS)
                             .forGetter(site -> site.pos.asLong()),
-                    Codec.BYTE.optionalFieldOf("taskface", DEFAULT_FACE).forGetter(site ->
+                    Codecs.optionalFieldOf(Codec.BYTE, "taskface", DEFAULT_FACE).forGetter(site ->
                             (byte) site.face.get3DDataValue()),
-                    Codec.BOOL.optionalFieldOf("farmland", false).forGetter(site -> site.tilled),
-                    ItemStack.OPTIONAL_CODEC
-                            .optionalFieldOf("seed", ItemStack.EMPTY)
+                    Codecs.optionalFieldOf(Codec.BOOL, "farmland", false).forGetter(site -> site.tilled),
+                    Codecs.optionalFieldOf(ItemStack.OPTIONAL_CODEC, "seed", ItemStack.EMPTY)
                             .forGetter(site -> site.seed))
             .apply(
                     instance,

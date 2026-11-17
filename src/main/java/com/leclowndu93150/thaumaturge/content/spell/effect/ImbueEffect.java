@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.AspectAffinity;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 public final class ImbueEffect extends AbstractEffectBehavior {
     public static final MapCodec<ImbueEffect> CODEC = RecordCodecBuilder.mapCodec(
-            i -> i.group(Codec.FLOAT.optionalFieldOf("default_duration", 3.0F).forGetter(ImbueEffect::defaultDuration))
+            i -> i.group(Codecs.optionalFieldOf(Codec.FLOAT, "default_duration", 3.0F).forGetter(ImbueEffect::defaultDuration))
                     .apply(i, ImbueEffect::new));
 
     private static final String POTENCY = "potency";

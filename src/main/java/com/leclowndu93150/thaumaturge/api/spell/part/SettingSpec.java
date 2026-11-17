@@ -42,12 +42,12 @@ public record SettingSpec(
                             Codec.STRING.fieldOf("key").forGetter(SettingSpec::key),
                             Codec.INT.fieldOf("min").forGetter(SettingSpec::min),
                             Codec.INT.fieldOf("max").forGetter(SettingSpec::max),
-                            Codec.INT.optionalFieldOf("step", 1).forGetter(SettingSpec::step),
-                            Codec.INT.optionalFieldOf("default").forGetter(spec -> Optional.of(spec.defaultValue())),
-                            Codec.FLOAT.optionalFieldOf("complexity", 0.0F).forGetter(SettingSpec::complexity),
-                            Codec.FLOAT.optionalFieldOf("vis", 0.0F).forGetter(SettingSpec::vis),
-                            Codec.STRING.listOf().optionalFieldOf("labels").forGetter(SettingSpec::labels),
-                            Codec.STRING.optionalFieldOf("name").forGetter(SettingSpec::name))
+                            Codecs.optionalFieldOf(Codec.INT, "step", 1).forGetter(SettingSpec::step),
+                            Codecs.optionalFieldOf(Codec.INT, "default").forGetter(spec -> Optional.of(spec.defaultValue())),
+                            Codecs.optionalFieldOf(Codec.FLOAT, "complexity", 0.0F).forGetter(SettingSpec::complexity),
+                            Codecs.optionalFieldOf(Codec.FLOAT, "vis", 0.0F).forGetter(SettingSpec::vis),
+                            Codecs.optionalFieldOf(Codec.STRING.listOf(), "labels").forGetter(SettingSpec::labels),
+                            Codecs.optionalFieldOf(Codec.STRING, "name").forGetter(SettingSpec::name))
                     .apply(
                             i,
                             (key, min, max, step, def, complexity, vis, labels, name) -> new SettingSpec(

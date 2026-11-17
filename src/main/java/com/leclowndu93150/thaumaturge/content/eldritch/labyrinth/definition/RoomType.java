@@ -42,27 +42,21 @@ public record RoomType(
                             SimpleWeightedRandomList.wrappedCodec(ResourceLocation.CODEC)
                                     .fieldOf("templates")
                                     .forGetter(RoomType::templates),
-                            FOOTPRINT.optionalFieldOf("width", 1).forGetter(RoomType::width),
-                            FOOTPRINT.optionalFieldOf("depth", 1).forGetter(RoomType::depth),
+                            Codecs.optionalFieldOf(FOOTPRINT, "width", 1).forGetter(RoomType::width),
+                            Codecs.optionalFieldOf(FOOTPRINT, "depth", 1).forGetter(RoomType::depth),
                             RoomSocket.CODEC.listOf().fieldOf("sockets").forGetter(RoomType::sockets),
-                            RoomTransforms.CODEC
-                                    .optionalFieldOf("transforms", RoomTransforms.ALL)
+                            Codecs.optionalFieldOf(RoomTransforms.CODEC, "transforms", RoomTransforms.ALL)
                                     .forGetter(RoomType::transforms),
-                            ExtraCodecs.NON_NEGATIVE_INT
-                                    .optionalFieldOf("weight", 1)
+                            Codecs.optionalFieldOf(ExtraCodecs.NON_NEGATIVE_INT, "weight", 1)
                                     .forGetter(RoomType::weight),
-                            ExtraCodecs.POSITIVE_INT
-                                    .optionalFieldOf("max_per_maze", UNLIMITED)
+                            Codecs.optionalFieldOf(ExtraCodecs.POSITIVE_INT, "max_per_maze", UNLIMITED)
                                     .forGetter(RoomType::maxPerMaze),
-                            ExtraCodecs.NON_NEGATIVE_INT
-                                    .optionalFieldOf("min_portal_distance", 0)
+                            Codecs.optionalFieldOf(ExtraCodecs.NON_NEGATIVE_INT, "min_portal_distance", 0)
                                     .forGetter(RoomType::minPortalDistance),
-                            StructureProcessorType.LIST_CODEC
-                                    .optionalFieldOf("processors")
+                            Codecs.optionalFieldOf(StructureProcessorType.LIST_CODEC, "processors")
                                     .forGetter(RoomType::processors),
-                            Codec.BOOL.optionalFieldOf("decorate", true).forGetter(RoomType::decorate),
-                            ResourceLocation.CODEC
-                                    .optionalFieldOf("variety_group")
+                            Codecs.optionalFieldOf(Codec.BOOL, "decorate", true).forGetter(RoomType::decorate),
+                            Codecs.optionalFieldOf(ResourceLocation.CODEC, "variety_group")
                                     .forGetter(RoomType::varietyGroup))
                     .apply(instance, RoomType::new)), RoomType::validate);
 

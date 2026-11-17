@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.mojang.serialization.Codec;
@@ -96,10 +97,9 @@ public sealed interface BlueprintTarget {
     record BlockTarget(Block block, boolean applyPlayerFacing, boolean opposite) implements BlueprintTarget {
         static final MapCodec<BlockTarget> CODEC_INSTANCE = RecordCodecBuilder.mapCodec(i -> i.group(
                         BuiltInRegistries.BLOCK.byNameCodec().fieldOf("block").forGetter(BlockTarget::block),
-                        Codec.BOOL
-                                .optionalFieldOf("apply_player_facing", false)
+                        Codecs.optionalFieldOf(Codec.BOOL, "apply_player_facing", false)
                                 .forGetter(BlockTarget::applyPlayerFacing),
-                        Codec.BOOL.optionalFieldOf("opposite", false).forGetter(BlockTarget::opposite))
+                        Codecs.optionalFieldOf(Codec.BOOL, "opposite", false).forGetter(BlockTarget::opposite))
                 .apply(i, BlockTarget::new));
 
         static final StreamCodec<RegistryFriendlyByteBuf, BlockTarget> STREAM_CODEC_INSTANCE = StreamCodec.composite(

@@ -30,8 +30,7 @@ public record ResearchConstruct(int xSize, int ySize, int zSize, List<String> ce
                                     Codec.INT.fieldOf("y_size").forGetter(ResearchConstruct::ySize),
                                     Codec.INT.fieldOf("z_size").forGetter(ResearchConstruct::zSize),
                                     Codec.STRING.listOf().fieldOf("cells").forGetter(ResearchConstruct::cells),
-                                    AspectList.CODEC
-                                            .optionalFieldOf("cost", AspectList.EMPTY)
+                                    Codecs.optionalFieldOf(AspectList.CODEC, "cost", AspectList.EMPTY)
                                             .forGetter(ResearchConstruct::cost))
                             .apply(instance, ResearchConstruct::new)), construct -> construct.cells().size() == construct.xSize() * construct.ySize() * construct.zSize()
                     ? DataResult.success(construct)

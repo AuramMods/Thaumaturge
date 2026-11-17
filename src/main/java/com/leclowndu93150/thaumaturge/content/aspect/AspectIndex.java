@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -44,12 +45,10 @@ public final class AspectIndex implements IAspectIndex {
         public static final ItemEntry EMPTY = new ItemEntry(AspectList.EMPTY, List.of());
 
         private static final Codec<ItemEntry> FULL_CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                        AspectList.CODEC
-                                .optionalFieldOf("base", AspectList.EMPTY)
+                        Codecs.optionalFieldOf(AspectList.CODEC, "base", AspectList.EMPTY)
                                 .forGetter(ItemEntry::base),
-                        Variant.CODEC
-                                .listOf()
-                                .optionalFieldOf("variants", List.of())
+                        Codecs.optionalFieldOf(Variant.CODEC
+                                .listOf(), "variants", List.of())
                                 .forGetter(ItemEntry::variants))
                 .apply(builder, ItemEntry::new));
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.research;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -19,13 +20,11 @@ public record ResearchAddendum(
     /** Codec for datapack serialization. */
     public static final Codec<ResearchAddendum> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codec.STRING.fieldOf("text").forGetter(ResearchAddendum::textKey),
-                    ResourceLocation.CODEC
-                            .listOf()
-                            .optionalFieldOf("recipes", List.of())
+                    Codecs.optionalFieldOf(ResourceLocation.CODEC
+                            .listOf(), "recipes", List.of())
                             .forGetter(ResearchAddendum::recipes),
-                    ResourceLocation.CODEC
-                            .listOf()
-                            .optionalFieldOf("required_research", List.of())
+                    Codecs.optionalFieldOf(ResourceLocation.CODEC
+                            .listOf(), "required_research", List.of())
                             .forGetter(ResearchAddendum::requiredResearch))
             .apply(instance, ResearchAddendum::new));
 }

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.spell.part;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.api.spell.SpellRegistries;
@@ -69,24 +70,22 @@ public record SpellPart(
     public static final Codec<SpellPart> CODEC = RecordCodecBuilder.create(i -> i.group(
                     SpellRegistries.BEHAVIOR_CODEC.fieldOf("behavior").forGetter(SpellPart::behavior),
                     ResourceLocation.CODEC.fieldOf("icon").forGetter(SpellPart::icon),
-                    Codec.INT.optionalFieldOf("color", 0x999999).forGetter(SpellPart::color),
-                    Codec.INT.optionalFieldOf("complexity", 0).forGetter(SpellPart::complexity),
-                    Codec.FLOAT.optionalFieldOf("vis", 0.0F).forGetter(SpellPart::vis),
-                    Codec.FLOAT.optionalFieldOf("power", 1.0F).forGetter(SpellPart::power),
-                    AspectInput.CODEC
-                            .optionalFieldOf("aspect", AspectInput.NONE)
+                    Codecs.optionalFieldOf(Codec.INT, "color", 0x999999).forGetter(SpellPart::color),
+                    Codecs.optionalFieldOf(Codec.INT, "complexity", 0).forGetter(SpellPart::complexity),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "vis", 0.0F).forGetter(SpellPart::vis),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "power", 1.0F).forGetter(SpellPart::power),
+                    Codecs.optionalFieldOf(AspectInput.CODEC, "aspect", AspectInput.NONE)
                             .forGetter(SpellPart::aspect),
-                    SettingSpec.CODEC
-                            .listOf()
-                            .optionalFieldOf("settings", List.of())
+                    Codecs.optionalFieldOf(SettingSpec.CODEC
+                            .listOf(), "settings", List.of())
                             .forGetter(SpellPart::settings),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(SpellPart::research),
-                    Codec.INT.optionalFieldOf("max_per_spell", 0).forGetter(SpellPart::maxPerSpell),
-                    Codec.BOOL.optionalFieldOf("hidden", false).forGetter(SpellPart::hidden),
-                    SoundEvent.CODEC.optionalFieldOf("sound").forGetter(SpellPart::sound),
-                    Codec.FLOAT.optionalFieldOf("vis_multiplier", 1.0F).forGetter(SpellPart::visMultiplier),
-                    Codec.FLOAT.optionalFieldOf("cooldown_multiplier", 1.0F).forGetter(SpellPart::cooldownMultiplier),
-                    ResourceLocation.CODEC.optionalFieldOf("fx", DEFAULT_FX).forGetter(SpellPart::fx))
+                    Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(SpellPart::research),
+                    Codecs.optionalFieldOf(Codec.INT, "max_per_spell", 0).forGetter(SpellPart::maxPerSpell),
+                    Codecs.optionalFieldOf(Codec.BOOL, "hidden", false).forGetter(SpellPart::hidden),
+                    Codecs.optionalFieldOf(SoundEvent.CODEC, "sound").forGetter(SpellPart::sound),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "vis_multiplier", 1.0F).forGetter(SpellPart::visMultiplier),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "cooldown_multiplier", 1.0F).forGetter(SpellPart::cooldownMultiplier),
+                    Codecs.optionalFieldOf(ResourceLocation.CODEC, "fx", DEFAULT_FX).forGetter(SpellPart::fx))
             .apply(i, SpellPart::new));
 
     /**

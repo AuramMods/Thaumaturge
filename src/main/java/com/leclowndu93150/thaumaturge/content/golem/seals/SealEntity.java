@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealBehavior;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
@@ -95,13 +96,13 @@ public final class SealEntity implements ISealEntity {
         Codec<Contents> contents = Contents.codec(type).codec();
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
                         SealPos.CODEC.fieldOf("pos").forGetter(SealEntity::pos),
-                        Codec.BYTE.optionalFieldOf("priority", (byte) 0).forGetter(SealEntity::priority),
-                        Codec.BYTE.optionalFieldOf("color", (byte) 0).forGetter(SealEntity::color),
-                        Codec.BOOL.optionalFieldOf("locked", false).forGetter(SealEntity::isLocked),
-                        Codec.BOOL.optionalFieldOf("redstone", false).forGetter(SealEntity::isRedstoneControlled),
-                        UUIDUtil.CODEC.optionalFieldOf("owner").forGetter(seal -> Optional.ofNullable(seal.owner)),
-                        BlockPos.CODEC.optionalFieldOf("area", UNIT_AREA).forGetter(SealEntity::area),
-                        contents.lenientOptionalFieldOf("data").forGetter(seal -> Optional.of(seal.contents)))
+                        Codecs.optionalFieldOf(Codec.BYTE, "priority", (byte) 0).forGetter(SealEntity::priority),
+                        Codecs.optionalFieldOf(Codec.BYTE, "color", (byte) 0).forGetter(SealEntity::color),
+                        Codecs.optionalFieldOf(Codec.BOOL, "locked", false).forGetter(SealEntity::isLocked),
+                        Codecs.optionalFieldOf(Codec.BOOL, "redstone", false).forGetter(SealEntity::isRedstoneControlled),
+                        Codecs.optionalFieldOf(UUIDUtil.CODEC, "owner").forGetter(seal -> Optional.ofNullable(seal.owner)),
+                        Codecs.optionalFieldOf(BlockPos.CODEC, "area", UNIT_AREA).forGetter(SealEntity::area),
+                        Codecs.lenientOptionalFieldOf(contents, "data").forGetter(seal -> Optional.of(seal.contents)))
                 .apply(instance, (pos, priority, color, locked, redstone, owner, area, data) -> {
                     SealEntity seal =
                             new SealEntity(pos, typeId, type, data.orElseGet(() -> Contents.fresh(type)), area);

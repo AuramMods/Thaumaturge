@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -18,7 +19,7 @@ public record ShieldSparkParticleOptions(int color, float alpha, float scale, in
                     Codec.FLOAT.fieldOf("alpha").forGetter(ShieldSparkParticleOptions::alpha),
                     Codec.FLOAT.fieldOf("scale").forGetter(ShieldSparkParticleOptions::scale),
                     Codec.INT.fieldOf("age").forGetter(ShieldSparkParticleOptions::age),
-                    Codec.INT.optionalFieldOf("delay", 0).forGetter(ShieldSparkParticleOptions::delay),
+                    Codecs.optionalFieldOf(Codec.INT, "delay", 0).forGetter(ShieldSparkParticleOptions::delay),
                     Codec.BOOL.fieldOf("additive").forGetter(ShieldSparkParticleOptions::additive))
             .apply(inst, ShieldSparkParticleOptions::new));
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.delivery;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -28,8 +29,8 @@ public record SpellLook(ResourceLocation fx, int color) {
     public static final SpellLook DEFAULT = new SpellLook(DEFAULT_FX, 0xFFFFFF);
 
     public static final Codec<SpellLook> CODEC = RecordCodecBuilder.create(i -> i.group(
-                    ResourceLocation.CODEC.optionalFieldOf("fx", DEFAULT_FX).forGetter(SpellLook::fx),
-                    Codec.INT.optionalFieldOf("color", 0xFFFFFF).forGetter(SpellLook::color))
+                    Codecs.optionalFieldOf(ResourceLocation.CODEC, "fx", DEFAULT_FX).forGetter(SpellLook::fx),
+                    Codecs.optionalFieldOf(Codec.INT, "color", 0xFFFFFF).forGetter(SpellLook::color))
             .apply(i, SpellLook::new));
 
     public static final StreamCodec<ByteBuf, SpellLook> STREAM_CODEC = StreamCodec.composite(

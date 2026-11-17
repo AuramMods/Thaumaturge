@@ -40,7 +40,7 @@ public final class InfusionRunicAugmentRecipe extends AbstractRecipe<InfusionInp
                     Ingredient.CODEC.fieldOf("per_level").forGetter(r -> r.perLevel),
                     AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.baseAspects),
                     Ingredient.CODEC.fieldOf("display_catalyst").forGetter(r -> r.displayCatalyst),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))
+                    Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))
             .apply(i, InfusionRunicAugmentRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, InfusionRunicAugmentRecipe> STREAM_CODEC =

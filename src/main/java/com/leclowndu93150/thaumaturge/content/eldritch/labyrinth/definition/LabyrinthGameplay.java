@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.Registries;
@@ -13,8 +14,8 @@ public record LabyrinthGameplay(
                     ResourceKey.codec(Registries.LOOT_TABLE)
                             .fieldOf("key_room_loot")
                             .forGetter(LabyrinthGameplay::keyRoomLoot),
-                    Codec.BOOL.optionalFieldOf("glyph_hints", true).forGetter(LabyrinthGameplay::glyphHints),
-                    Codec.BOOL.optionalFieldOf("tablet_resonance", true).forGetter(LabyrinthGameplay::tabletResonance),
+                    Codecs.optionalFieldOf(Codec.BOOL, "glyph_hints", true).forGetter(LabyrinthGameplay::glyphHints),
+                    Codecs.optionalFieldOf(Codec.BOOL, "tablet_resonance", true).forGetter(LabyrinthGameplay::tabletResonance),
                     BlockState.CODEC.fieldOf("arrival_pad").forGetter(LabyrinthGameplay::arrivalPad))
             .apply(instance, LabyrinthGameplay::new));
 }

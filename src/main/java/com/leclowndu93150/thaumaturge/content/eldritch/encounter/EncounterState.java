@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.encounter;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthEncounter;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -13,18 +14,16 @@ public final class EncounterState {
     private static final Codec<ResourceKey<LabyrinthEncounter>> KEY =
             ResourceKey.codec(LabyrinthEncounter.REGISTRY_KEY);
     public static final Codec<EncounterState> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    KEY.optionalFieldOf("override").forGetter(EncounterState::override),
-                    KEY.optionalFieldOf("active").forGetter(EncounterState::active),
-                    BoundEntity.CODEC
-                            .listOf()
-                            .optionalFieldOf("bound", List.of())
+                    Codecs.optionalFieldOf(KEY, "override").forGetter(EncounterState::override),
+                    Codecs.optionalFieldOf(KEY, "active").forGetter(EncounterState::active),
+                    Codecs.optionalFieldOf(BoundEntity.CODEC
+                            .listOf(), "bound", List.of())
                             .forGetter(EncounterState::bound),
-                    Codec.INT.optionalFieldOf("scaled_for", 0).forGetter(EncounterState::scaledFor),
-                    Codec.LONG.optionalFieldOf("charged_at", -1L).forGetter(EncounterState::chargedAt),
-                    Codec.LONG.optionalFieldOf("empty_since", -1L).forGetter(EncounterState::emptySince),
-                    Codec.LONG.optionalFieldOf("victory_at", -1L).forGetter(EncounterState::victoryAt),
-                    Participation.CODEC
-                            .optionalFieldOf("participation")
+                    Codecs.optionalFieldOf(Codec.INT, "scaled_for", 0).forGetter(EncounterState::scaledFor),
+                    Codecs.optionalFieldOf(Codec.LONG, "charged_at", -1L).forGetter(EncounterState::chargedAt),
+                    Codecs.optionalFieldOf(Codec.LONG, "empty_since", -1L).forGetter(EncounterState::emptySince),
+                    Codecs.optionalFieldOf(Codec.LONG, "victory_at", -1L).forGetter(EncounterState::victoryAt),
+                    Codecs.optionalFieldOf(Participation.CODEC, "participation")
                             .forGetter(state -> Optional.of(state.participation)))
             .apply(instance, EncounterState::new));
 

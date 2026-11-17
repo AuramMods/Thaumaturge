@@ -40,7 +40,7 @@ public final class InfusionEnchantmentRecipe extends AbstractRecipe<InfusionInpu
                     Codecs.list(Ingredient.CODEC, 1, 64).fieldOf("components").forGetter(r -> r.components),
                     AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
                     Ingredient.CODEC.fieldOf("display_catalyst").forGetter(r -> r.displayCatalyst),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))
+                    Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))
             .apply(i, InfusionEnchantmentRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, InfusionEnchantmentRecipe> STREAM_CODEC =

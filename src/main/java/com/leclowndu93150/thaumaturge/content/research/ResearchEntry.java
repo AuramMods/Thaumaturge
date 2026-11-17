@@ -40,13 +40,11 @@ public record ResearchEntry(
                                             .fieldOf("category")
                                             .forGetter(ResearchEntry::category),
                                     Codec.STRING.fieldOf("name").forGetter(ResearchEntry::nameKey),
-                                    ResearchParent.CODEC
-                                            .listOf()
-                                            .optionalFieldOf("parents", List.of())
+                                    Codecs.optionalFieldOf(ResearchParent.CODEC
+                                            .listOf(), "parents", List.of())
                                             .forGetter(e -> List.copyOf(e.parents())),
-                                    ResourceLocation.CODEC
-                                            .listOf()
-                                            .optionalFieldOf("siblings", List.of())
+                                    Codecs.optionalFieldOf(ResourceLocation.CODEC
+                                            .listOf(), "siblings", List.of())
                                             .forGetter(e -> List.copyOf(e.siblings())),
                                     Codec.INT.fieldOf("column").forGetter(ResearchEntry::column),
                                     Codec.INT.fieldOf("row").forGetter(ResearchEntry::row),
@@ -56,23 +54,18 @@ public record ResearchEntry(
                                             .forGetter(e -> e.stages().stream()
                                                     .map(s -> (ResearchStage) s)
                                                     .toList()),
-                                    ResearchEntryMeta.CODEC
-                                            .listOf()
-                                            .optionalFieldOf("meta", List.of())
+                                    Codecs.optionalFieldOf(ResearchEntryMeta.CODEC
+                                            .listOf(), "meta", List.of())
                                             .forGetter(e -> List.copyOf(e.meta())),
-                                    ResearchIcon.CODEC
-                                            .listOf()
-                                            .optionalFieldOf("icons", List.of())
+                                    Codecs.optionalFieldOf(ResearchIcon.CODEC
+                                            .listOf(), "icons", List.of())
                                             .forGetter(ResearchEntry::icons),
-                                    ResearchAddendum.CODEC
-                                            .listOf()
-                                            .optionalFieldOf("addenda", List.of())
+                                    Codecs.optionalFieldOf(ResearchAddendum.CODEC
+                                            .listOf(), "addenda", List.of())
                                             .forGetter(ResearchEntry::addenda),
-                                    AspectList.CODEC
-                                            .optionalFieldOf("note_aspects", AspectList.EMPTY)
+                                    Codecs.optionalFieldOf(AspectList.CODEC, "note_aspects", AspectList.EMPTY)
                                             .forGetter(ResearchEntry::noteAspects),
-                                    Codec.intRange(1, 3)
-                                            .optionalFieldOf("complexity", 1)
+                                    Codecs.optionalFieldOf(Codec.intRange(1, 3), "complexity", 1)
                                             .forGetter(ResearchEntry::complexity))
                             .apply(instance, ResearchEntry::create)), ResearchEntry::validate);
 

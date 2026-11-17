@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.model.connected;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -29,8 +30,7 @@ public record ConnectedStairsModel(
                     FrameKit.CODEC.fieldOf("top").forGetter(ConnectedStairsModel::top),
                     FrameKit.CODEC.fieldOf("bottom").forGetter(ConnectedStairsModel::bottom),
                     ResourceLocation.CODEC.fieldOf("particle").forGetter(ConnectedStairsModel::particle),
-                    TagKey.hashedCodec(Registries.BLOCK)
-                            .optionalFieldOf("connects_with")
+                    Codecs.optionalFieldOf(TagKey.hashedCodec(Registries.BLOCK), "connects_with")
                             .forGetter(ConnectedStairsModel::group))
             .apply(instance, ConnectedStairsModel::new));
 

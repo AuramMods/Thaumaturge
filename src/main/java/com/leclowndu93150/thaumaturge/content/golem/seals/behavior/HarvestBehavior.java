@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals.behavior;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.GolemDispatch;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
@@ -44,10 +45,9 @@ public final class HarvestBehavior implements ISealBehavior {
     private static final String SITES_KEY = "replant_sites";
     private static final String LEGACY_SITES_KEY = "replant";
     public static final MapCodec<HarvestBehavior> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    ReplantSite.CODEC.listOf().optionalFieldOf(SITES_KEY).forGetter(HarvestBehavior::storedSites),
-                    ReplantSite.LEGACY_CODEC
-                            .listOf()
-                            .lenientOptionalFieldOf(LEGACY_SITES_KEY)
+                    Codecs.optionalFieldOf(ReplantSite.CODEC.listOf(), SITES_KEY).forGetter(HarvestBehavior::storedSites),
+                    Codecs.lenientOptionalFieldOf(ReplantSite.LEGACY_CODEC
+                            .listOf(), LEGACY_SITES_KEY)
                             .forGetter(behavior -> Optional.empty()))
             .apply(instance, HarvestBehavior::restore));
 

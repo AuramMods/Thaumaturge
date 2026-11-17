@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
@@ -18,7 +19,7 @@ public record WandParts(WandCap cap, WandRod rod, boolean sceptre) {
     public static final Codec<WandParts> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     TTWandParts.caps().byNameCodec().fieldOf("cap").forGetter(WandParts::cap),
                     TTWandParts.rods().byNameCodec().fieldOf("rod").forGetter(WandParts::rod),
-                    Codec.BOOL.optionalFieldOf("sceptre", false).forGetter(WandParts::sceptre))
+                    Codecs.optionalFieldOf(Codec.BOOL, "sceptre", false).forGetter(WandParts::sceptre))
             .apply(instance, WandParts::new));
 
     public static final StreamCodec<ByteBuf, WandParts> STREAM_CODEC = StreamCodec.composite(

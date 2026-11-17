@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.encounter;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
@@ -15,15 +16,13 @@ import net.minecraft.core.UUIDUtil;
 
 public final class Participation {
     public static final Codec<Participation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Codec.unboundedMap(UUIDUtil.STRING_CODEC, Codec.INT)
-                            .optionalFieldOf("presence", Map.of())
+                    Codecs.optionalFieldOf(Codec.unboundedMap(UUIDUtil.STRING_CODEC, Codec.INT), "presence", Map.of())
                             .forGetter(state -> state.presence),
-                    Codec.unboundedMap(UUIDUtil.STRING_CODEC, Codec.FLOAT)
-                            .optionalFieldOf("damage", Map.of())
+                    Codecs.optionalFieldOf(Codec.unboundedMap(UUIDUtil.STRING_CODEC, Codec.FLOAT), "damage", Map.of())
                             .forGetter(state -> state.damage),
-                    Codec.FLOAT.optionalFieldOf("pool", 0.0F).forGetter(state -> state.pool),
-                    UUIDUtil.CODEC.listOf().optionalFieldOf("eligible").forGetter(Participation::eligibleList),
-                    UUIDUtil.CODEC.optionalFieldOf("top").forGetter(state -> state.top))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "pool", 0.0F).forGetter(state -> state.pool),
+                    Codecs.optionalFieldOf(UUIDUtil.CODEC.listOf(), "eligible").forGetter(Participation::eligibleList),
+                    Codecs.optionalFieldOf(UUIDUtil.CODEC, "top").forGetter(state -> state.top))
             .apply(instance, Participation::new));
 
     private final Map<UUID, Integer> presence;

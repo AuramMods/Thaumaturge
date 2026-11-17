@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -7,9 +8,9 @@ import net.minecraft.util.Mth;
 
 public final class TaintPressure {
     public static final MapCodec<TaintPressure> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    Codec.FLOAT.optionalFieldOf("saturation", 0.0F).forGetter(pressure -> pressure.saturation),
-                    Codec.LONG.optionalFieldOf("last_update", 0L).forGetter(pressure -> pressure.lastUpdate),
-                    Codec.LONG.optionalFieldOf("last_active_seed", 0L).forGetter(pressure -> pressure.lastActiveSeed))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "saturation", 0.0F).forGetter(pressure -> pressure.saturation),
+                    Codecs.optionalFieldOf(Codec.LONG, "last_update", 0L).forGetter(pressure -> pressure.lastUpdate),
+                    Codecs.optionalFieldOf(Codec.LONG, "last_active_seed", 0L).forGetter(pressure -> pressure.lastActiveSeed))
             .apply(instance, TaintPressure::new));
 
     private float saturation;

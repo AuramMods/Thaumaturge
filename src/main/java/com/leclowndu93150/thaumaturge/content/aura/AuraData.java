@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aura.IAuraChunk;
 import com.leclowndu93150.thaumaturge.api.transaction.SnapshotJournal;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
@@ -14,11 +15,11 @@ import net.minecraft.world.level.ChunkPos;
 
 public final class AuraData implements IAuraChunk {
     public static final MapCodec<AuraData> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    Codec.SHORT.optionalFieldOf("base", (short) 0).forGetter(AuraData::getBase),
-                    Codec.FLOAT.optionalFieldOf("vis", 0.0F).forGetter(AuraData::getVis),
-                    Codec.FLOAT.optionalFieldOf("flux", 0.0F).forGetter(AuraData::getFlux),
-                    Codec.BOOL.optionalFieldOf("initialized", false).forGetter(AuraData::isInitialized),
-                    Codec.INT.optionalFieldOf("rift_pressure_seconds", 0).forGetter(data -> data.riftPressureSeconds))
+                    Codecs.optionalFieldOf(Codec.SHORT, "base", (short) 0).forGetter(AuraData::getBase),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "vis", 0.0F).forGetter(AuraData::getVis),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "flux", 0.0F).forGetter(AuraData::getFlux),
+                    Codecs.optionalFieldOf(Codec.BOOL, "initialized", false).forGetter(AuraData::isInitialized),
+                    Codecs.optionalFieldOf(Codec.INT, "rift_pressure_seconds", 0).forGetter(data -> data.riftPressureSeconds))
             .apply(instance, AuraData::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AuraData> STREAM_CODEC = StreamCodec.composite(

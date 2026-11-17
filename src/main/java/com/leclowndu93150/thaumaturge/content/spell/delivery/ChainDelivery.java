@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.delivery;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -24,14 +25,12 @@ import net.minecraft.world.phys.Vec3;
 
 public record ChainDelivery(double range, double jumpRange, float falloff, float width) implements SpellBehavior {
     public static final MapCodec<ChainDelivery> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.doubleRange(1.0, 64.0).optionalFieldOf("range", 16.0).forGetter(ChainDelivery::range),
-                    Codec.doubleRange(1.0, 32.0)
-                            .optionalFieldOf("jump_range", 6.0)
+                    Codecs.optionalFieldOf(Codec.doubleRange(1.0, 64.0), "range", 16.0).forGetter(ChainDelivery::range),
+                    Codecs.optionalFieldOf(Codec.doubleRange(1.0, 32.0), "jump_range", 6.0)
                             .forGetter(ChainDelivery::jumpRange),
-                    Codec.floatRange(0.0F, 1.0F)
-                            .optionalFieldOf("falloff", 0.8F)
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 1.0F), "falloff", 0.8F)
                             .forGetter(ChainDelivery::falloff),
-                    Codec.FLOAT.optionalFieldOf("width", 0.5F).forGetter(ChainDelivery::width))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "width", 0.5F).forGetter(ChainDelivery::width))
             .apply(i, ChainDelivery::new));
 
     private static final String JUMPS = "jumps";

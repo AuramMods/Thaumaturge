@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.delivery;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -22,11 +23,10 @@ import net.minecraft.world.phys.Vec3;
 
 public record SprayDelivery(float angle, int maxTargets, int puffs) implements SpellBehavior {
     public static final MapCodec<SprayDelivery> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.floatRange(5.0F, 180.0F)
-                            .optionalFieldOf("angle", 60.0F)
+                    Codecs.optionalFieldOf(Codec.floatRange(5.0F, 180.0F), "angle", 60.0F)
                             .forGetter(SprayDelivery::angle),
-                    Codec.intRange(1, 32).optionalFieldOf("max_targets", 8).forGetter(SprayDelivery::maxTargets),
-                    Codec.intRange(0, 16).optionalFieldOf("puffs", 6).forGetter(SprayDelivery::puffs))
+                    Codecs.optionalFieldOf(Codec.intRange(1, 32), "max_targets", 8).forGetter(SprayDelivery::maxTargets),
+                    Codecs.optionalFieldOf(Codec.intRange(0, 16), "puffs", 6).forGetter(SprayDelivery::puffs))
             .apply(i, SprayDelivery::new));
 
     private static final String RANGE = "range";

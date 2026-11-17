@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.spell.affinity;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.api.spell.SpellRegistries;
@@ -45,24 +46,20 @@ public record AspectAffinity(
 
     /** Disk and network codec. */
     public static final Codec<AspectAffinity> CODEC = RecordCodecBuilder.create(i -> i.group(
-                    ResourceLocation.CODEC
-                            .optionalFieldOf("fx", TTIds.rl("sparkle"))
+                    Codecs.optionalFieldOf(ResourceLocation.CODEC, "fx", TTIds.rl("sparkle"))
                             .forGetter(AspectAffinity::fx),
-                    Codec.INT.optionalFieldOf("complexity", 0).forGetter(AspectAffinity::complexity),
-                    Codec.FLOAT.optionalFieldOf("vis", 0.0F).forGetter(AspectAffinity::vis),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(AspectAffinity::research),
-                    SoundEvent.CODEC.optionalFieldOf("sound").forGetter(AspectAffinity::sound),
-                    SpellRegistries.ACTION_CODEC
-                            .listOf()
-                            .optionalFieldOf("entity", List.of())
+                    Codecs.optionalFieldOf(Codec.INT, "complexity", 0).forGetter(AspectAffinity::complexity),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "vis", 0.0F).forGetter(AspectAffinity::vis),
+                    Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(AspectAffinity::research),
+                    Codecs.optionalFieldOf(SoundEvent.CODEC, "sound").forGetter(AspectAffinity::sound),
+                    Codecs.optionalFieldOf(SpellRegistries.ACTION_CODEC
+                            .listOf(), "entity", List.of())
                             .forGetter(AspectAffinity::entity),
-                    SpellRegistries.ACTION_CODEC
-                            .listOf()
-                            .optionalFieldOf("block", List.of())
+                    Codecs.optionalFieldOf(SpellRegistries.ACTION_CODEC
+                            .listOf(), "block", List.of())
                             .forGetter(AspectAffinity::block),
-                    SpellRegistries.ACTION_CODEC
-                            .listOf()
-                            .optionalFieldOf("imbue", List.of())
+                    Codecs.optionalFieldOf(SpellRegistries.ACTION_CODEC
+                            .listOf(), "imbue", List.of())
                             .forGetter(AspectAffinity::imbue))
             .apply(i, AspectAffinity::new));
 

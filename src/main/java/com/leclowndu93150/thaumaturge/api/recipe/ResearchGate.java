@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.mojang.serialization.Codec;
@@ -16,8 +17,8 @@ import org.jspecify.annotations.Nullable;
 public record ResearchGate(ResourceLocation entry, Optional<Integer> stage, boolean negate) {
     public static final Codec<ResearchGate> CODEC = RecordCodecBuilder.create(i -> i.group(
                     ResourceLocation.CODEC.fieldOf("entry").forGetter(ResearchGate::entry),
-                    Codec.INT.optionalFieldOf("stage").forGetter(ResearchGate::stage),
-                    Codec.BOOL.optionalFieldOf("negate", false).forGetter(ResearchGate::negate))
+                    Codecs.optionalFieldOf(Codec.INT, "stage").forGetter(ResearchGate::stage),
+                    Codecs.optionalFieldOf(Codec.BOOL, "negate", false).forGetter(ResearchGate::negate))
             .apply(i, ResearchGate::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ResearchGate> STREAM_CODEC = StreamCodec.composite(

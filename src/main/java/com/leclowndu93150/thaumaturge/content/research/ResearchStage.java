@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
 import com.leclowndu93150.thaumaturge.api.research.KnowledgeReward;
 import com.leclowndu93150.thaumaturge.api.research.ResearchConstruct;
@@ -23,31 +24,25 @@ public record ResearchStage(
         implements IResearchStage {
     public static final Codec<ResearchStage> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codec.STRING.fieldOf("text").forGetter(ResearchStage::textKey),
-                    ResourceLocation.CODEC
-                            .listOf()
-                            .optionalFieldOf("recipes", List.of())
+                    Codecs.optionalFieldOf(ResourceLocation.CODEC
+                            .listOf(), "recipes", List.of())
                             .forGetter(ResearchStage::recipes),
-                    ResearchConstruct.CODEC.optionalFieldOf("construct").forGetter(ResearchStage::construct),
-                    ResearchRequirement.CODEC
-                            .listOf()
-                            .optionalFieldOf("obtain", List.of())
+                    Codecs.optionalFieldOf(ResearchConstruct.CODEC, "construct").forGetter(ResearchStage::construct),
+                    Codecs.optionalFieldOf(ResearchRequirement.CODEC
+                            .listOf(), "obtain", List.of())
                             .forGetter(ResearchStage::obtain),
-                    ResearchRequirement.CODEC
-                            .listOf()
-                            .optionalFieldOf("craft", List.of())
+                    Codecs.optionalFieldOf(ResearchRequirement.CODEC
+                            .listOf(), "craft", List.of())
                             .forGetter(ResearchStage::craft),
-                    KnowledgeReward.CODEC
-                            .listOf()
-                            .optionalFieldOf("knowledge", List.of())
+                    Codecs.optionalFieldOf(KnowledgeReward.CODEC
+                            .listOf(), "knowledge", List.of())
                             .forGetter(ResearchStage::knowledge),
-                    KnowledgeReward.CODEC
-                            .listOf()
-                            .optionalFieldOf("required_knowledge", List.of())
+                    Codecs.optionalFieldOf(KnowledgeReward.CODEC
+                            .listOf(), "required_knowledge", List.of())
                             .forGetter(ResearchStage::requiredKnowledge),
-                    ResourceLocation.CODEC
-                            .listOf()
-                            .optionalFieldOf("required_research", List.of())
+                    Codecs.optionalFieldOf(ResourceLocation.CODEC
+                            .listOf(), "required_research", List.of())
                             .forGetter(ResearchStage::requiredResearch),
-                    Codec.INT.optionalFieldOf("warp", 0).forGetter(ResearchStage::warp))
+                    Codecs.optionalFieldOf(Codec.INT, "warp", 0).forGetter(ResearchStage::warp))
             .apply(instance, ResearchStage::new));
 }

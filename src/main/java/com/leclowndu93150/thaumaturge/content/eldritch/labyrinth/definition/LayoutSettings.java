@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.valueproviders.IntProvider;
@@ -20,16 +21,14 @@ public record LayoutSettings(
     private static final int MAX_LOOP_LENGTH = 64;
 
     public static final Codec<LayoutSettings> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    UNIT.optionalFieldOf("coverage", DEFAULT.coverage).forGetter(LayoutSettings::coverage),
-                    UNIT.optionalFieldOf("loop_ratio", DEFAULT.loopRatio).forGetter(LayoutSettings::loopRatio),
-                    Codec.intRange(3, MAX_LOOP_LENGTH)
-                            .optionalFieldOf("min_loop_length", DEFAULT.minLoopLength)
+                    Codecs.optionalFieldOf(UNIT, "coverage", DEFAULT.coverage).forGetter(LayoutSettings::coverage),
+                    Codecs.optionalFieldOf(UNIT, "loop_ratio", DEFAULT.loopRatio).forGetter(LayoutSettings::loopRatio),
+                    Codecs.optionalFieldOf(Codec.intRange(3, MAX_LOOP_LENGTH), "min_loop_length", DEFAULT.minLoopLength)
                             .forGetter(LayoutSettings::minLoopLength),
-                    IntProvider.POSITIVE_CODEC
-                            .optionalFieldOf("branch_length", DEFAULT.branchLength)
+                    Codecs.optionalFieldOf(IntProvider.POSITIVE_CODEC, "branch_length", DEFAULT.branchLength)
                             .forGetter(LayoutSettings::branchLength),
-                    UNIT.optionalFieldOf("straightness", DEFAULT.straightness).forGetter(LayoutSettings::straightness),
-                    UNIT.optionalFieldOf("key_distance", DEFAULT.keyDistance).forGetter(LayoutSettings::keyDistance),
-                    UNIT.optionalFieldOf("cost_noise", DEFAULT.costNoise).forGetter(LayoutSettings::costNoise))
+                    Codecs.optionalFieldOf(UNIT, "straightness", DEFAULT.straightness).forGetter(LayoutSettings::straightness),
+                    Codecs.optionalFieldOf(UNIT, "key_distance", DEFAULT.keyDistance).forGetter(LayoutSettings::keyDistance),
+                    Codecs.optionalFieldOf(UNIT, "cost_noise", DEFAULT.costNoise).forGetter(LayoutSettings::costNoise))
             .apply(instance, LayoutSettings::new));
 }

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.items.trim;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -13,7 +14,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  */
 public record TrimMaterialBonus(int visDiscount, int warp) {
     public static final Codec<TrimMaterialBonus> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Codec.intRange(0, 100).optionalFieldOf("vis_discount", 0).forGetter(TrimMaterialBonus::visDiscount),
-                    Codec.intRange(0, 500).optionalFieldOf("warp", 0).forGetter(TrimMaterialBonus::warp))
+                    Codecs.optionalFieldOf(Codec.intRange(0, 100), "vis_discount", 0).forGetter(TrimMaterialBonus::visDiscount),
+                    Codecs.optionalFieldOf(Codec.intRange(0, 500), "warp", 0).forGetter(TrimMaterialBonus::warp))
             .apply(instance, TrimMaterialBonus::new));
 }

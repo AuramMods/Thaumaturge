@@ -48,10 +48,9 @@ public record InfernalBonus(HolderSet<Item> items, IntProvider count, float chan
 
     private static final Codec<InfernalBonus> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     ITEMS_CODEC.fieldOf("items").forGetter(InfernalBonus::items),
-                    IntProvider.codec(1, 64)
-                            .optionalFieldOf("count", ConstantInt.of(1))
+                    Codecs.optionalFieldOf(IntProvider.codec(1, 64), "count", ConstantInt.of(1))
                             .forGetter(InfernalBonus::count),
-                    Codec.floatRange(0, 1).optionalFieldOf("chance", 1.0f).forGetter(InfernalBonus::chance))
+                    Codecs.optionalFieldOf(Codec.floatRange(0, 1), "chance", 1.0f).forGetter(InfernalBonus::chance))
             .apply(instance, InfernalBonus::new));
 
     public static final AdvancedDataMapType<Item, List<InfernalBonus>, Remover> DATA_MAP = AdvancedDataMapType.builder(

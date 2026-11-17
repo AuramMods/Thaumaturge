@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.crystal;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -33,6 +34,6 @@ public record CrystalClusterConfig(
                     Codec.intRange(1, 100)
                             .fieldOf("biome_aspect_chance")
                             .forGetter(CrystalClusterConfig::biomeAspectChance),
-                    Codec.BOOL.optionalFieldOf("at_origin", false).forGetter(CrystalClusterConfig::atOrigin))
+                    Codecs.optionalFieldOf(Codec.BOOL, "at_origin", false).forGetter(CrystalClusterConfig::atOrigin))
             .apply(instance, CrystalClusterConfig::new));
 }

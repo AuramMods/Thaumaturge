@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -18,9 +19,8 @@ public record RoomPools(
                     RoomType.SET_CODEC.fieldOf("passages").forGetter(RoomPools::passages),
                     RoomType.SET_CODEC.fieldOf("fallback").forGetter(RoomPools::fallback),
                     RoomType.SET_CODEC.fieldOf("boss_halls").forGetter(RoomPools::bossHalls),
-                    FeatureQuota.CODEC
-                            .listOf()
-                            .optionalFieldOf("features", List.of())
+                    Codecs.optionalFieldOf(FeatureQuota.CODEC
+                            .listOf(), "features", List.of())
                             .forGetter(RoomPools::features))
             .apply(instance, RoomPools::new));
 }

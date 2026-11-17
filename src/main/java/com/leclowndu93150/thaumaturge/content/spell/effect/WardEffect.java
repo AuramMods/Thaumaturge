@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
@@ -21,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
 
 public final class WardEffect extends AbstractEffectBehavior {
     public static final MapCodec<WardEffect> CODEC = RecordCodecBuilder.mapCodec(
-            i -> i.group(Codec.FLOAT.optionalFieldOf("vis_per_block", 0.5F).forGetter(WardEffect::visPerBlock))
+            i -> i.group(Codecs.optionalFieldOf(Codec.FLOAT, "vis_per_block", 0.5F).forGetter(WardEffect::visPerBlock))
                     .apply(i, WardEffect::new));
 
     private static final float ZAP_VOLUME = 0.25F;

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public record ExtinguishAction(float radius) implements SpellAction {
     public static final MapCodec<ExtinguishAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.floatRange(0.0F, 8.0F).optionalFieldOf("radius", 1.0F).forGetter(ExtinguishAction::radius))
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 8.0F), "radius", 1.0F).forGetter(ExtinguishAction::radius))
             .apply(i, ExtinguishAction::new));
 
     @Override

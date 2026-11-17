@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.plant;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.propertiesCodec;
 
 import com.mojang.serialization.MapCodec;
@@ -20,7 +21,7 @@ public final class MagicPlantBlock extends AbstractTTPlant {
     public static final MapCodec<MagicPlantBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     TagKey.codec(Registries.BLOCK).fieldOf("soil").forGetter(plant -> plant.soil),
                     PlantAura.CODEC.fieldOf("aura").forGetter(plant -> plant.aura),
-                    PlantContactEffect.CODEC.optionalFieldOf("contact_effect").forGetter(plant -> plant.contactEffect),
+                    Codecs.optionalFieldOf(PlantContactEffect.CODEC, "contact_effect").forGetter(plant -> plant.contactEffect),
                     propertiesCodec())
             .apply(instance, MagicPlantBlock::new));
 

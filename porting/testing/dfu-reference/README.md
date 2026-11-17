@@ -28,7 +28,10 @@ The cycle-025 evidence records that metadata and the actual reference bytecode.
 Adapted production portions retain Microsoft's MIT notice in
 `src/main/resources/META-INF/licenses/thaumaturge-dfu-compat.txt`.
 
-The current fixture contains 189 observations in seven categories. It exercises
+The current fixture contains 297 observations in eight categories. It exercises
 JSON ops and controlled schemas, not every mod codec or native NBT/world load.
-Strict optional-field behavior, map dispatch APIs and several newer vanilla
-ingredient/item schemas still require conversion elsewhere in the port.
+The optional-field comparisons include strict/lenient decoding, defaults,
+partial/error preservation, field omission and compressed JSON. A separate
+production item-data test covers malformed and valid native NBT fields.
+Map dispatch APIs and several newer vanilla ingredient/item schemas still
+require conversion elsewhere in the port.

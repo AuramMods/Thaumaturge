@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
@@ -11,9 +12,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record PolluteAction(float base, float perPower, float chance) implements SpellAction {
     public static final MapCodec<PolluteAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("base", 0.0F).forGetter(PolluteAction::base),
-                    Codec.FLOAT.optionalFieldOf("per_power", 0.1F).forGetter(PolluteAction::perPower),
-                    Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(PolluteAction::chance))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 0.0F).forGetter(PolluteAction::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 0.1F).forGetter(PolluteAction::perPower),
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 1.0F), "chance", 1.0F).forGetter(PolluteAction::chance))
             .apply(i, PolluteAction::new));
 
     @Override

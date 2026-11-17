@@ -159,3 +159,11 @@ Minecraft 1.21.1 DFU 8.0.16 library in a separate JVM/classpath. The tracked
 reference and regeneration procedure are described in `dfu-reference/README.md`.
 These exercise JSON codecs and controlled schemas; complete mod data, native NBT
 loading and gameplay acceptance remain pending.
+
+Cycle 026 preserves strict and explicitly lenient optional-field semantics at
+399 production call sites. The reference grows to 297 observations in eight
+categories, with 108 optional-field cases including compressed JSON. Together
+with a production item-data JSON/native-NBT regression, the final native suites
+execute 199 server / 206 client tests. Defaults still apply to absent fields;
+malformed strict fields retain the baseline errors/partials instead of becoming
+successful defaults. Complete mod data and world persistence remain pending.

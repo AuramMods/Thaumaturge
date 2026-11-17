@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -10,8 +11,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record FreezeAction(float ticks, float perDuration) implements SpellAction {
     public static final MapCodec<FreezeAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("ticks", 0.0F).forGetter(FreezeAction::ticks),
-                    Codec.FLOAT.optionalFieldOf("per_duration", 20.0F).forGetter(FreezeAction::perDuration))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "ticks", 0.0F).forGetter(FreezeAction::ticks),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_duration", 20.0F).forGetter(FreezeAction::perDuration))
             .apply(i, FreezeAction::new));
 
     private static final int THAW_PER_TICK = 2;

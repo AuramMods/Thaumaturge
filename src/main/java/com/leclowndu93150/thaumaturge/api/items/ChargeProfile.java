@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.items;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -20,8 +21,7 @@ public record ChargeProfile(int capacity, ChargeDisplay display) {
     /** The persistent codec. */
     public static final Codec<ChargeProfile> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     ExtraCodecs.POSITIVE_INT.fieldOf("capacity").forGetter(ChargeProfile::capacity),
-                    ChargeDisplay.CODEC
-                            .optionalFieldOf("display", ChargeDisplay.ALWAYS)
+                    Codecs.optionalFieldOf(ChargeDisplay.CODEC, "display", ChargeDisplay.ALWAYS)
                             .forGetter(ChargeProfile::display))
             .apply(instance, ChargeProfile::new));
 

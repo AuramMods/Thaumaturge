@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -23,12 +24,12 @@ public record MobEffectAction(
         implements SpellAction {
     public static final MapCodec<MobEffectAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     MobEffect.CODEC.fieldOf("effect").forGetter(MobEffectAction::effect),
-                    Codec.FLOAT.optionalFieldOf("ticks", 0.0F).forGetter(MobEffectAction::ticks),
-                    Codec.FLOAT.optionalFieldOf("per_duration", 20.0F).forGetter(MobEffectAction::perDuration),
-                    Codec.FLOAT.optionalFieldOf("amplifier", 0.0F).forGetter(MobEffectAction::amplifier),
-                    Codec.FLOAT.optionalFieldOf("per_power", 0.0F).forGetter(MobEffectAction::perPower),
-                    Codec.INT.optionalFieldOf("max_amplifier", 4).forGetter(MobEffectAction::maxAmplifier),
-                    Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(MobEffectAction::chance))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "ticks", 0.0F).forGetter(MobEffectAction::ticks),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_duration", 20.0F).forGetter(MobEffectAction::perDuration),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "amplifier", 0.0F).forGetter(MobEffectAction::amplifier),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 0.0F).forGetter(MobEffectAction::perPower),
+                    Codecs.optionalFieldOf(Codec.INT, "max_amplifier", 4).forGetter(MobEffectAction::maxAmplifier),
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 1.0F), "chance", 1.0F).forGetter(MobEffectAction::chance))
             .apply(i, MobEffectAction::new));
 
     @Override

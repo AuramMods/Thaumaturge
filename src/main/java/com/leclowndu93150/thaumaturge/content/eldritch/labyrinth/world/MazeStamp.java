@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazePlan;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -9,7 +10,7 @@ public record MazeStamp(int maze, int generation) {
     public static final MazeStamp NONE = new MazeStamp(-1, 0);
     public static final MapCodec<MazeStamp> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     Codec.INT.fieldOf("maze").forGetter(MazeStamp::maze),
-                    Codec.INT.optionalFieldOf("generation", 0).forGetter(MazeStamp::generation))
+                    Codecs.optionalFieldOf(Codec.INT, "generation", 0).forGetter(MazeStamp::generation))
             .apply(instance, MazeStamp::new));
 
     public static MazeStamp of(MazePlan plan) {

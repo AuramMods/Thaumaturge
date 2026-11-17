@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.link;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -26,8 +27,8 @@ public final class ResearchLinkData extends SavedData {
 
     public record Progress(int stage, boolean complete) {
         static final Codec<Progress> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                        Codec.INT.optionalFieldOf("stage", 0).forGetter(Progress::stage),
-                        Codec.BOOL.optionalFieldOf("complete", false).forGetter(Progress::complete))
+                        Codecs.optionalFieldOf(Codec.INT, "stage", 0).forGetter(Progress::stage),
+                        Codecs.optionalFieldOf(Codec.BOOL, "complete", false).forGetter(Progress::complete))
                 .apply(instance, Progress::new));
 
         Progress merge(Progress other) {
@@ -66,13 +67,11 @@ public final class ResearchLinkData extends SavedData {
         static final Codec<Link> CODEC = RecordCodecBuilder.create(builder -> builder.group(
                         UUIDUtil.CODEC.fieldOf("first").forGetter(link -> link.first),
                         UUIDUtil.CODEC.fieldOf("second").forGetter(link -> link.second),
-                        LegacyIds.IDENTIFIER_CODEC
-                                .listOf()
-                                .optionalFieldOf("union", List.of())
+                        Codecs.optionalFieldOf(LegacyIds.IDENTIFIER_CODEC
+                                .listOf(), "union", List.of())
                                 .xmap(Set::copyOf, List::copyOf)
                                 .forGetter(link -> Set.of()),
-                        Codec.unboundedMap(LegacyIds.IDENTIFIER_CODEC, Progress.CODEC)
-                                .optionalFieldOf("progress", Map.of())
+                        Codecs.optionalFieldOf(Codec.unboundedMap(LegacyIds.IDENTIFIER_CODEC, Progress.CODEC), "progress", Map.of())
                                 .forGetter(link -> link.progress))
                 .apply(builder, Link::new));
     }

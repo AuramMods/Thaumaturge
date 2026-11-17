@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -16,8 +17,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public record GrowAction(float base, float perPower) implements SpellAction {
     public static final MapCodec<GrowAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("base", 0.0F).forGetter(GrowAction::base),
-                    Codec.FLOAT.optionalFieldOf("per_power", 0.5F).forGetter(GrowAction::perPower))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 0.0F).forGetter(GrowAction::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 0.5F).forGetter(GrowAction::perPower))
             .apply(i, GrowAction::new));
 
     @Override

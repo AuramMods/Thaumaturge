@@ -8,8 +8,12 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.MapLike;
+import com.mojang.serialization.RecordBuilder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -62,6 +66,60 @@ public final class Codecs {
                     + value.length() + ", expected range [" + min + "-" + max + "]");
             return DataResult.success(value);
         });
+    }
+
+    public static <A> MapCodec<Optional<A>> optionalFieldOf(Codec<A> codec, String name) {
+        return new OptionalField<>(name, codec, false);
+    }
+
+    public static <A> MapCodec<A> optionalFieldOf(Codec<A> codec, String name, A fallback) {
+        return optionalFieldOf(codec, name).xmap(value -> value.orElse(fallback),
+                value -> Objects.equals(value, fallback) ? Optional.empty() : Optional.of(value));
+    }
+
+    public static <A> MapCodec<Optional<A>> lenientOptionalFieldOf(Codec<A> codec, String name) {
+        return new OptionalField<>(name, codec, true);
+    }
+
+    public static <A> MapCodec<A> lenientOptionalFieldOf(Codec<A> codec, String name, A fallback) {
+        return lenientOptionalFieldOf(codec, name).xmap(value -> value.orElse(fallback),
+                value -> Objects.equals(value, fallback) ? Optional.empty() : Optional.of(value));
+    }
+
+    private static final class OptionalField<A> extends MapCodec<Optional<A>> {
+        private final String name;
+        private final Codec<A> element;
+        private final boolean lenient;
+
+        private OptionalField(String name, Codec<A> element, boolean lenient) {
+            this.name = name;
+            this.element = element;
+            this.lenient = lenient;
+        }
+
+        @Override public <T> DataResult<Optional<A>> decode(DynamicOps<T> ops, MapLike<T> input) {
+            T raw = input.get(name);
+            if (raw == null) return DataResult.success(Optional.empty());
+            DataResult<A> parsed = element.parse(ops, raw);
+            if (lenient && parsed.error().isPresent()) return DataResult.success(Optional.empty());
+            // DFU 6 exposes partial values through this logging callback. The
+            // original error remains in the mapped result returned below.
+            Optional<A> partial = parsed.resultOrPartial(error -> {});
+            return parsed.map(Optional::of).setPartial(partial);
+        }
+
+        @Override public <T> RecordBuilder<T> encode(Optional<A> input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+            return input.isPresent() ? prefix.add(name, element.encodeStart(ops, input.get())) : prefix;
+        }
+
+        @Override public <T> Stream<T> keys(DynamicOps<T> ops) { return Stream.of(ops.createString(name)); }
+
+        @Override public boolean equals(Object other) {
+            return other instanceof OptionalField<?> field && name.equals(field.name)
+                    && element.equals(field.element) && lenient == field.lenient;
+        }
+        @Override public int hashCode() { return Objects.hash(name, element, lenient); }
+        @Override public String toString() { return "OptionalFieldCodec[" + name + ": " + element + ']'; }
     }
 
     private static final class RecursiveCodec<A> implements Codec<A> {

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.modifier;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellStat;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellState;
@@ -19,10 +20,10 @@ public record StatChange(
     public static final Codec<StatChange> CODEC = RecordCodecBuilder.create(i -> i.group(
                     ResourceLocation.CODEC.fieldOf("stat").forGetter(StatChange::stat),
                     Operation.CODEC.fieldOf("operation").forGetter(StatChange::operation),
-                    Codec.FLOAT.optionalFieldOf("base", 0.0F).forGetter(StatChange::base),
-                    Codec.FLOAT.optionalFieldOf("per_level", 0.0F).forGetter(StatChange::perLevel),
-                    Codec.STRING.optionalFieldOf("level").forGetter(StatChange::level),
-                    Codec.FLOAT.optionalFieldOf("default").forGetter(StatChange::unwritten))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 0.0F).forGetter(StatChange::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_level", 0.0F).forGetter(StatChange::perLevel),
+                    Codecs.optionalFieldOf(Codec.STRING, "level").forGetter(StatChange::level),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "default").forGetter(StatChange::unwritten))
             .apply(i, StatChange::new));
 
     public SpellState applyTo(CastContext ctx, SpellState state) {

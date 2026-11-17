@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.mojang.serialization.Codec;
@@ -19,8 +20,8 @@ public final class InfusionCraftJob {
                     ItemStack.CODEC.fieldOf("result").forGetter(j -> j.result),
                     ItemStack.CODEC.fieldOf("catalyst").forGetter(j -> j.catalyst),
                     Codec.INT.fieldOf("instability").forGetter(j -> j.instability),
-                    UUIDUtil.CODEC.optionalFieldOf("player").forGetter(j -> j.player),
-                    AspectList.CODEC.optionalFieldOf("cost", AspectList.EMPTY).forGetter(j -> j.cost))
+                    Codecs.optionalFieldOf(UUIDUtil.CODEC, "player").forGetter(j -> j.player),
+                    Codecs.optionalFieldOf(AspectList.CODEC, "cost", AspectList.EMPTY).forGetter(j -> j.cost))
             .apply(i, InfusionCraftJob::new));
 
     private final List<ItemStack> ingredients;

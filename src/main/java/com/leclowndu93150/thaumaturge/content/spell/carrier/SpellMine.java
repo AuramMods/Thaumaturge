@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.carrier;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.content.spell.world.SpellTargeting;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
@@ -107,8 +108,8 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
     private record Trap(boolean armed, boolean allies) {
         static final Trap UNSET = new Trap(false, false);
         static final Codec<Trap> CODEC = RecordCodecBuilder.create(i -> i.group(
-                        Codec.BOOL.optionalFieldOf("armed", false).forGetter(Trap::armed),
-                        Codec.BOOL.optionalFieldOf("allies", false).forGetter(Trap::allies))
+                        Codecs.optionalFieldOf(Codec.BOOL, "armed", false).forGetter(Trap::armed),
+                        Codecs.optionalFieldOf(Codec.BOOL, "allies", false).forGetter(Trap::allies))
                 .apply(i, Trap::new));
     }
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -26,9 +27,9 @@ import net.minecraft.world.level.Level;
 public class ArcaneShapedCraftingRecipe extends ArcaneCraftingRecipe {
 
     public static final MapCodec<ArcaneShapedCraftingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
-                    Codec.STRING.optionalFieldOf("group", "").forGetter((o) -> o.group),
+                    Codecs.optionalFieldOf(Codec.STRING, "group", "").forGetter((o) -> o.group),
                     ExtraCodecs.POSITIVE_INT.fieldOf("vis").forGetter(o -> o.vis),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(o -> o.gate),
+                    Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(o -> o.gate),
                     ArcaneCraftingRecipe.PRIMAL_ASPECTS_CODEC
                             .fieldOf("crystals")
                             .forGetter(o -> o.aspects),

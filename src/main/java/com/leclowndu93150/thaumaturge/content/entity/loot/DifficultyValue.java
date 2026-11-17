@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.loot;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.registry.TTLootTypes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -15,7 +16,7 @@ public record DifficultyValue(Map<Difficulty, Float> values, float fallback) imp
                     Codec.unboundedMap(Difficulty.CODEC, Codec.FLOAT)
                             .fieldOf("values")
                             .forGetter(DifficultyValue::values),
-                    Codec.FLOAT.optionalFieldOf("default", 0.0F).forGetter(DifficultyValue::fallback))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "default", 0.0F).forGetter(DifficultyValue::fallback))
             .apply(instance, DifficultyValue::new));
 
     public static DifficultyValue of(Map<Difficulty, Float> values, float fallback) {

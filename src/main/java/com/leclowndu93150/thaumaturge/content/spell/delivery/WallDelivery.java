@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.delivery;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
@@ -18,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 
 public final class WallDelivery extends AbstractCarrierDelivery {
     public static final MapCodec<WallDelivery> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.doubleRange(1.0, 32.0).optionalFieldOf("reach", 8.0).forGetter(WallDelivery::reach))
+                    Codecs.optionalFieldOf(Codec.doubleRange(1.0, 32.0), "reach", 8.0).forGetter(WallDelivery::reach))
             .apply(i, WallDelivery::new));
 
     private static final String WIDTH = "width";

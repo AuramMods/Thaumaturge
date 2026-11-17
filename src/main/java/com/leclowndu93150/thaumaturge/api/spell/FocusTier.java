@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.spell;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -22,8 +23,8 @@ public record FocusTier(int complexity, int depth, int branches, int repeats) {
     public static final Codec<FocusTier> CODEC = RecordCodecBuilder.create(i -> i.group(
                     Codec.INT.fieldOf("complexity").forGetter(FocusTier::complexity),
                     Codec.INT.fieldOf("depth").forGetter(FocusTier::depth),
-                    Codec.INT.optionalFieldOf("branches", 0).forGetter(FocusTier::branches),
-                    Codec.INT.optionalFieldOf("repeats", 0).forGetter(FocusTier::repeats))
+                    Codecs.optionalFieldOf(Codec.INT, "branches", 0).forGetter(FocusTier::branches),
+                    Codecs.optionalFieldOf(Codec.INT, "repeats", 0).forGetter(FocusTier::repeats))
             .apply(i, FocusTier::new));
 
     /** The item data map {@code thaumaturge:spell_focus}, synced to clients. */

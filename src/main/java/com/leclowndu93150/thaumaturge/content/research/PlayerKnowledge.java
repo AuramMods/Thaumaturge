@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
 import com.leclowndu93150.thaumaturge.api.capability.ResearchFlag;
@@ -29,13 +30,11 @@ import net.minecraft.server.level.ServerPlayer;
 
 public final class PlayerKnowledge implements PlayerResearch {
     public static final MapCodec<PlayerKnowledge> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    ResearchRecord.CODEC
-                            .listOf()
-                            .optionalFieldOf("research", List.of())
+                    Codecs.optionalFieldOf(ResearchRecord.CODEC
+                            .listOf(), "research", List.of())
                             .forGetter(PlayerKnowledge::researchEntries),
-                    KnowledgeRecord.CODEC
-                            .listOf()
-                            .optionalFieldOf("knowledge", List.of())
+                    Codecs.optionalFieldOf(KnowledgeRecord.CODEC
+                            .listOf(), "knowledge", List.of())
                             .forGetter(PlayerKnowledge::knowledgeEntries))
             .apply(instance, PlayerKnowledge::fromRecords));
 
@@ -302,20 +301,18 @@ public final class PlayerKnowledge implements PlayerResearch {
             ResourceLocation key, Optional<Integer> stage, List<ResearchFlag> flags, boolean complete) {
         static final Codec<ResearchRecord> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         LegacyIds.IDENTIFIER_CODEC.fieldOf("id").forGetter(ResearchRecord::key),
-                        Codec.INT.optionalFieldOf("stage").forGetter(ResearchRecord::stage),
-                        ResearchFlag.CODEC
-                                .listOf()
-                                .optionalFieldOf("flags", List.of())
+                        Codecs.optionalFieldOf(Codec.INT, "stage").forGetter(ResearchRecord::stage),
+                        Codecs.optionalFieldOf(ResearchFlag.CODEC
+                                .listOf(), "flags", List.of())
                                 .forGetter(ResearchRecord::flags),
-                        Codec.BOOL.optionalFieldOf("complete", false).forGetter(ResearchRecord::complete))
+                        Codecs.optionalFieldOf(Codec.BOOL, "complete", false).forGetter(ResearchRecord::complete))
                 .apply(instance, ResearchRecord::new));
     }
 
     private record KnowledgeRecord(KnowledgeType type, Optional<ResourceKey<IResearchCategory>> category, int amount) {
         static final Codec<KnowledgeRecord> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         KnowledgeType.CODEC.fieldOf("type").forGetter(KnowledgeRecord::type),
-                        LegacyIds.resourceKeyCodec(IResearchCategory.REGISTRY_KEY)
-                                .optionalFieldOf("category")
+                        Codecs.optionalFieldOf(LegacyIds.resourceKeyCodec(IResearchCategory.REGISTRY_KEY), "category")
                                 .forGetter(KnowledgeRecord::category),
                         Codec.INT.fieldOf("amount").forGetter(KnowledgeRecord::amount))
                 .apply(instance, KnowledgeRecord::new));

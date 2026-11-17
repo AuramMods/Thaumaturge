@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.aspect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -22,8 +23,7 @@ public record AspectInstance(Holder<IAspect> aspect, int amount) {
                     RegistryFixedCodec.create(IAspect.REGISTRY_KEY)
                             .fieldOf("aspect")
                             .forGetter(AspectInstance::aspect),
-                    Codec.intRange(1, Integer.MAX_VALUE)
-                            .optionalFieldOf("amount", 1)
+                    Codecs.optionalFieldOf(Codec.intRange(1, Integer.MAX_VALUE), "amount", 1)
                             .forGetter(AspectInstance::amount))
             .apply(builder, AspectInstance::new));
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
 import com.leclowndu93150.thaumaturge.content.eldritch.encounter.EncounterState;
 import com.leclowndu93150.thaumaturge.content.eldritch.guardian.PostLedger;
@@ -18,9 +19,9 @@ public final class MazeState {
                     Codec.LONG.fieldOf("created_at").forGetter(MazeState::createdAt),
                     Codec.LONG.fieldOf("last_visited").forGetter(MazeState::lastVisited),
                     PendingTrigger.CODEC.listOf().fieldOf("triggers").forGetter(MazeState::triggers),
-                    EncounterState.CODEC.optionalFieldOf("encounter").forGetter(state -> Optional.of(state.encounter)),
-                    ClaimState.CODEC.optionalFieldOf("claims").forGetter(state -> Optional.of(state.claims)),
-                    PostLedger.CODEC.optionalFieldOf("posts").forGetter(state -> Optional.of(state.posts)))
+                    Codecs.optionalFieldOf(EncounterState.CODEC, "encounter").forGetter(state -> Optional.of(state.encounter)),
+                    Codecs.optionalFieldOf(ClaimState.CODEC, "claims").forGetter(state -> Optional.of(state.claims)),
+                    Codecs.optionalFieldOf(PostLedger.CODEC, "posts").forGetter(state -> Optional.of(state.posts)))
             .apply(instance, MazeState::new));
 
     private static final long VISIT_SAVE_INTERVAL_TICKS = 1200L;

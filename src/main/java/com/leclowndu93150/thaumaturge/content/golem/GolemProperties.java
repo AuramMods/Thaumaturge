@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
@@ -47,7 +48,7 @@ public final class GolemProperties implements IGolemProperties {
                     TTGolemParts.arms().byNameCodec().fieldOf("arms").forGetter(GolemProperties::arms),
                     TTGolemParts.legs().byNameCodec().fieldOf("legs").forGetter(GolemProperties::legs),
                     TTGolemParts.addons().byNameCodec().fieldOf("addon").forGetter(GolemProperties::addon),
-                    Codec.intRange(0, MAX_RANK).optionalFieldOf("rank", 0).forGetter(GolemProperties::rank))
+                    Codecs.optionalFieldOf(Codec.intRange(0, MAX_RANK), "rank", 0).forGetter(GolemProperties::rank))
             .apply(instance, GolemProperties::new));
     public static final StreamCodec<ByteBuf, GolemProperties> STREAM_CODEC = StreamCodec.composite(
             byId(TTGolemParts::materials),

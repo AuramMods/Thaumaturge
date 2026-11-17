@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -29,9 +30,8 @@ public final class DustTriggerSwapQueue {
     }
 
     public static final MapCodec<DustTriggerSwapQueue> CODEC =
-            RecordCodecBuilder.mapCodec(i -> i.group(PendingSwap.CODEC
-                            .listOf()
-                            .optionalFieldOf("pending", List.of())
+            RecordCodecBuilder.mapCodec(i -> i.group(Codecs.optionalFieldOf(PendingSwap.CODEC
+                            .listOf(), "pending", List.of())
                             .forGetter(q -> List.copyOf(q.pending)))
                     .apply(i, DustTriggerSwapQueue::fromCodec));
 

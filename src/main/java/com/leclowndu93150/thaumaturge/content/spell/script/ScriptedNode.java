@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.script;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -28,8 +29,8 @@ public final class ScriptedNode implements SpellBehavior {
     public static MapCodec<ScriptedNode> codec(Supplier<SpellBehaviorType<?>> type) {
         return RecordCodecBuilder.mapCodec(i -> i.group(
                         Codec.STRING.fieldOf("key").forGetter(node -> node.key),
-                        Codec.intRange(0, 8).optionalFieldOf("max_children", 1).forGetter(node -> node.children),
-                        Codec.BOOL.optionalFieldOf("standalone", false).forGetter(node -> node.standalone))
+                        Codecs.optionalFieldOf(Codec.intRange(0, 8), "max_children", 1).forGetter(node -> node.children),
+                        Codecs.optionalFieldOf(Codec.BOOL, "standalone", false).forGetter(node -> node.standalone))
                 .apply(i, (key, children, standalone) -> new ScriptedNode(key, children, standalone, type)));
     }
 

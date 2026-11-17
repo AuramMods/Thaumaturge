@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.AspectAffinity;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
@@ -21,9 +22,8 @@ import net.minecraft.world.phys.Vec3;
 
 public final class AspectBurstEffect extends AbstractEffectBehavior {
     public static final MapCodec<AspectBurstEffect> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("default_duration", 2.0F).forGetter(AspectBurstEffect::defaultDuration),
-                    Codec.floatRange(0.0F, 1.0F)
-                            .optionalFieldOf("falloff", 0.75F)
+                    Codecs.optionalFieldOf(Codec.FLOAT, "default_duration", 2.0F).forGetter(AspectBurstEffect::defaultDuration),
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 1.0F), "falloff", 0.75F)
                             .forGetter(AspectBurstEffect::falloff))
             .apply(i, AspectBurstEffect::new));
 

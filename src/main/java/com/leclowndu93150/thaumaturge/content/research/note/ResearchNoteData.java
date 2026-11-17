@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.note;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.mojang.serialization.Codec;
@@ -27,8 +28,7 @@ public record ResearchNoteData(
         public static final Codec<Cell> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         HexGrid.Hex.CODEC.fieldOf("hex").forGetter(Cell::hex),
                         Codec.INT.fieldOf("type").forGetter(Cell::type),
-                        RegistryFixedCodec.create(IAspect.REGISTRY_KEY)
-                                .optionalFieldOf("aspect")
+                        Codecs.optionalFieldOf(RegistryFixedCodec.create(IAspect.REGISTRY_KEY), "aspect")
                                 .forGetter(Cell::aspect))
                 .apply(instance, Cell::new));
 
@@ -45,8 +45,8 @@ public record ResearchNoteData(
                     LegacyIds.IDENTIFIER_CODEC.fieldOf("entry").forGetter(ResearchNoteData::entry),
                     Codec.INT.fieldOf("index").forGetter(ResearchNoteData::index),
                     Codec.INT.fieldOf("color").forGetter(ResearchNoteData::color),
-                    Codec.BOOL.optionalFieldOf("complete", false).forGetter(ResearchNoteData::complete),
-                    Codec.INT.optionalFieldOf("copies", 0).forGetter(ResearchNoteData::copies),
+                    Codecs.optionalFieldOf(Codec.BOOL, "complete", false).forGetter(ResearchNoteData::complete),
+                    Codecs.optionalFieldOf(Codec.INT, "copies", 0).forGetter(ResearchNoteData::copies),
                     Cell.CODEC.listOf().fieldOf("cells").forGetter(ResearchNoteData::cells))
             .apply(instance, ResearchNoteData::new));
 

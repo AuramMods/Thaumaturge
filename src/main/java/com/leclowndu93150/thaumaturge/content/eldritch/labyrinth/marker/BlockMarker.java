@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarker;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarkerType;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MarkerPhase;
@@ -26,10 +27,10 @@ public record BlockMarker(
                     SimpleWeightedRandomList.wrappedCodec(BlockState.CODEC)
                             .fieldOf("states")
                             .forGetter(BlockMarker::states),
-                    Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(BlockMarker::chance),
-                    Codec.BOOL.optionalFieldOf("scaled", true).forGetter(BlockMarker::scaled),
-                    Direction.CODEC.optionalFieldOf("facing").forGetter(BlockMarker::facing),
-                    BlockState.CODEC.optionalFieldOf("otherwise").forGetter(BlockMarker::otherwise))
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 1.0F), "chance", 1.0F).forGetter(BlockMarker::chance),
+                    Codecs.optionalFieldOf(Codec.BOOL, "scaled", true).forGetter(BlockMarker::scaled),
+                    Codecs.optionalFieldOf(Direction.CODEC, "facing").forGetter(BlockMarker::facing),
+                    Codecs.optionalFieldOf(BlockState.CODEC, "otherwise").forGetter(BlockMarker::otherwise))
             .apply(instance, BlockMarker::new));
 
     @Override

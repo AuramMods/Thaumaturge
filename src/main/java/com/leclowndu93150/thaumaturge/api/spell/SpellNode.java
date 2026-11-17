@@ -58,16 +58,13 @@ public record SpellNode(
                                     ResourceKey.codec(SpellPart.REGISTRY_KEY)
                                             .fieldOf("part")
                                             .forGetter(SpellNode::part),
-                                    ResourceKey.codec(IAspect.REGISTRY_KEY)
-                                            .optionalFieldOf("aspect")
+                                    Codecs.optionalFieldOf(ResourceKey.codec(IAspect.REGISTRY_KEY), "aspect")
                                             .forGetter(SpellNode::aspect),
-                                    Codecs.validate(Codec.unboundedMap(Codecs.string(0, MAX_SETTING_KEY), Codec.INT), settings -> settings.size() <= MAX_SETTINGS
+                                    Codecs.optionalFieldOf(Codecs.validate(Codec.unboundedMap(Codecs.string(0, MAX_SETTING_KEY), Codec.INT), settings -> settings.size() <= MAX_SETTINGS
                                                     ? DataResult.success(settings)
-                                                    : DataResult.error(() -> "Too many spell settings"))
-                                            .optionalFieldOf("settings", Map.of())
+                                                    : DataResult.error(() -> "Too many spell settings")), "settings", Map.of())
                                             .forGetter(SpellNode::settings),
-                                    Codecs.sizeLimitedList(self, MAX_CHILDREN)
-                                            .optionalFieldOf("children", List.of())
+                                    Codecs.optionalFieldOf(Codecs.sizeLimitedList(self, MAX_CHILDREN), "children", List.of())
                                             .forGetter(SpellNode::children))
                             .apply(i, SpellNode::new))), node -> node.depth() <= MAX_DEPTH
                     ? DataResult.success(node)

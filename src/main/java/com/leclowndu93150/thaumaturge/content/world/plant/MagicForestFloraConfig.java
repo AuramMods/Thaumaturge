@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.plant;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -53,7 +54,7 @@ public record MagicForestFloraConfig(
         public static final Codec<PlantPatch> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         BlockStateProvider.CODEC.fieldOf("state_provider").forGetter(PlantPatch::state),
                         Codec.intRange(0, 64).fieldOf("attempts").forGetter(PlantPatch::attempts),
-                        Codec.intRange(1, 1000000).optionalFieldOf("rarity", 1).forGetter(PlantPatch::rarity))
+                        Codecs.optionalFieldOf(Codec.intRange(1, 1000000), "rarity", 1).forGetter(PlantPatch::rarity))
                 .apply(instance, PlantPatch::new));
     }
 }

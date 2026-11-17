@@ -35,10 +35,9 @@ public final class LegacyFocusPackage {
     private static final Codec<FocusPackage> PACKAGE_CODEC = Codecs.recursive("LegacyFocusPackage", self -> {
         Codec<FocusUnit> unit = RecordCodecBuilder.create(i -> i.group(
                         LegacyIds.IDENTIFIER_CODEC.fieldOf("key").forGetter(FocusUnit::key),
-                        Codec.unboundedMap(Codec.STRING, Codec.INT)
-                                .optionalFieldOf("settings", Map.of())
+                        Codecs.optionalFieldOf(Codec.unboundedMap(Codec.STRING, Codec.INT), "settings", Map.of())
                                 .forGetter(FocusUnit::settings),
-                        self.listOf().optionalFieldOf("packages", List.of()).forGetter(FocusUnit::packages))
+                        Codecs.optionalFieldOf(self.listOf(), "packages", List.of()).forGetter(FocusUnit::packages))
                 .apply(i, FocusUnit::new));
         return RecordCodecBuilder.create(
                 i -> i.group(unit.listOf().fieldOf("nodes").forGetter(FocusPackage::nodes))

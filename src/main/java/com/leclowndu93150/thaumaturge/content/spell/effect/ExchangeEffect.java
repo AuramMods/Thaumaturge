@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.FocusCaster;
 import com.leclowndu93150.thaumaturge.api.casters.IFocusBlockPicker;
@@ -22,9 +23,9 @@ import net.minecraft.world.phys.Vec3;
 
 public final class ExchangeEffect extends AbstractEffectBehavior implements IFocusBlockPicker {
     public static final MapCodec<ExchangeEffect> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("vis_cost", 0.25F).forGetter(ExchangeEffect::visCost),
-                    Codec.FLOAT.optionalFieldOf("silk_vis", 0.25F).forGetter(ExchangeEffect::silkVis),
-                    Codec.FLOAT.optionalFieldOf("fortune_vis", 0.1F).forGetter(ExchangeEffect::fortuneVis))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "vis_cost", 0.25F).forGetter(ExchangeEffect::visCost),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "silk_vis", 0.25F).forGetter(ExchangeEffect::silkVis),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "fortune_vis", 0.1F).forGetter(ExchangeEffect::fortuneVis))
             .apply(i, ExchangeEffect::new));
 
     private static final int SWAP_FX_COLOR = 0x7AA621;

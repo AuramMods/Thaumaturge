@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.labyrinth;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
@@ -22,14 +23,11 @@ public record EncounterScaling(float healthPerParticipant, float damagePerPartic
      * Codec for the {@code scaling} object of an encounter entry. Every field is optional and falls back to {@link #DEFAULT}.
      */
     public static final Codec<EncounterScaling> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Codec.floatRange(0.0F, Float.MAX_VALUE)
-                            .optionalFieldOf("health_per_participant", DEFAULT.healthPerParticipant)
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, Float.MAX_VALUE), "health_per_participant", DEFAULT.healthPerParticipant)
                             .forGetter(EncounterScaling::healthPerParticipant),
-                    Codec.floatRange(0.0F, Float.MAX_VALUE)
-                            .optionalFieldOf("damage_per_participant", DEFAULT.damagePerParticipant)
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, Float.MAX_VALUE), "damage_per_participant", DEFAULT.damagePerParticipant)
                             .forGetter(EncounterScaling::damagePerParticipant),
-                    ExtraCodecs.POSITIVE_INT
-                            .optionalFieldOf("max_counted_participants", DEFAULT.maxCountedParticipants)
+                    Codecs.optionalFieldOf(ExtraCodecs.POSITIVE_INT, "max_counted_participants", DEFAULT.maxCountedParticipants)
                             .forGetter(EncounterScaling::maxCountedParticipants))
             .apply(instance, EncounterScaling::new));
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.modifier;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractModifierBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -18,8 +19,7 @@ import net.minecraft.util.RandomSource;
 
 public final class ScatterModifier extends AbstractModifierBehavior {
     public static final MapCodec<ScatterModifier> CODEC =
-            RecordCodecBuilder.mapCodec(i -> i.group(Codec.floatRange(1.0F, 16.0F)
-                            .optionalFieldOf("shared_forks", 2.0F)
+            RecordCodecBuilder.mapCodec(i -> i.group(Codecs.optionalFieldOf(Codec.floatRange(1.0F, 16.0F), "shared_forks", 2.0F)
                             .forGetter(ScatterModifier::shareDivisor))
                     .apply(i, ScatterModifier::new));
 

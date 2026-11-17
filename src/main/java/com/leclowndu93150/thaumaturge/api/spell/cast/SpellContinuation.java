@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.spell.cast;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
@@ -27,10 +28,9 @@ public record SpellContinuation(List<SpellNode> nodes, SpellState state, Optiona
     /** Disk codec. */
     public static final Codec<SpellContinuation> CODEC = RecordCodecBuilder.create(i -> i.group(
                     SpellNode.CODEC.listOf().fieldOf("nodes").forGetter(SpellContinuation::nodes),
-                    SpellState.CODEC
-                            .optionalFieldOf("state", SpellState.DEFAULT)
+                    Codecs.optionalFieldOf(SpellState.CODEC, "state", SpellState.DEFAULT)
                             .forGetter(SpellContinuation::state),
-                    UUIDUtil.CODEC.optionalFieldOf("caster").forGetter(SpellContinuation::caster),
+                    Codecs.optionalFieldOf(UUIDUtil.CODEC, "caster").forGetter(SpellContinuation::caster),
                     UUIDUtil.CODEC.fieldOf("cast").forGetter(SpellContinuation::castId))
             .apply(i, SpellContinuation::new));
 

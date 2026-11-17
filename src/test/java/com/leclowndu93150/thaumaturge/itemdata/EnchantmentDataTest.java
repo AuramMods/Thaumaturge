@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
@@ -63,6 +64,27 @@ class EnchantmentDataTest {
         CompoundTag item = new CompoundTag();
         item.put("StoredEnchantments", invalid);
         assertThrows(IllegalArgumentException.class, () -> EnchantmentData.readItemTag(item, "StoredEnchantments", 32));
+    }
+
+    @Test
+    void optionalTooltipDefaultsDoNotHideMalformedJsonOrNativeNbt() {
+        var json = JsonParser.parseString("{\"levels\":{},\"show_in_tooltip\":\"bad\"}");
+        assertTrue(EnchantmentData.CODEC.parse(JsonOps.INSTANCE, json).error().isPresent());
+        CompoundTag nbt = new CompoundTag();
+        nbt.put("levels", new CompoundTag());
+        nbt.putString("show_in_tooltip", "bad");
+        var invalid = EnchantmentData.CODEC.parse(NbtOps.INSTANCE, nbt);
+        assertTrue(invalid.error().isPresent());
+        assertTrue(invalid.result().isEmpty());
+        nbt.remove("show_in_tooltip");
+        assertTrue(EnchantmentData.CODEC.parse(NbtOps.INSTANCE, nbt).result().orElseThrow().showInTooltip());
+        nbt.putBoolean("show_in_tooltip", false);
+        var hidden = EnchantmentData.CODEC.parse(NbtOps.INSTANCE, nbt).result().orElseThrow();
+        assertFalse(hidden.showInTooltip());
+        assertEquals(nbt, EnchantmentData.CODEC.encodeStart(NbtOps.INSTANCE, hidden).result().orElseThrow());
+        CompoundTag defaults = (CompoundTag) EnchantmentData.CODEC.encodeStart(NbtOps.INSTANCE, EnchantmentData.EMPTY)
+                .result().orElseThrow();
+        assertFalse(defaults.contains("show_in_tooltip"));
     }
 
     @Test

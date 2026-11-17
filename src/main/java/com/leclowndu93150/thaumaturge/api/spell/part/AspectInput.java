@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.spell.part;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.AffinityReaction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.AspectAffinity;
@@ -190,13 +191,11 @@ public sealed interface AspectInput
             Optional<ResourceKey<IAspect>> defaultKey) {
         /** Object codec. */
         public static final Codec<ObjectForm> CODEC = RecordCodecBuilder.create(i -> i.group(
-                        ResourceKey.codec(IAspect.REGISTRY_KEY)
-                                .listOf()
-                                .optionalFieldOf("choices")
+                        Codecs.optionalFieldOf(ResourceKey.codec(IAspect.REGISTRY_KEY)
+                                .listOf(), "choices")
                                 .forGetter(ObjectForm::choices),
-                        AffinityReaction.CODEC.optionalFieldOf("affinity").forGetter(ObjectForm::affinity),
-                        ResourceKey.codec(IAspect.REGISTRY_KEY)
-                                .optionalFieldOf("default")
+                        Codecs.optionalFieldOf(AffinityReaction.CODEC, "affinity").forGetter(ObjectForm::affinity),
+                        Codecs.optionalFieldOf(ResourceKey.codec(IAspect.REGISTRY_KEY), "default")
                                 .forGetter(ObjectForm::defaultKey))
                 .apply(i, ObjectForm::new));
 

@@ -20,8 +20,8 @@ public record BandSettings(int baseY, Optional<BlockState> fill) {
                     : DataResult.error(
                             () -> "Band base_y must be a multiple of 16 from 0 to " + MAX_BASE_Y + ", got " + value));
     public static final Codec<BandSettings> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    BASE_Y.optionalFieldOf("base_y", DEFAULT_BASE_Y).forGetter(BandSettings::baseY),
-                    BlockState.CODEC.optionalFieldOf("fill").forGetter(BandSettings::fill))
+                    Codecs.optionalFieldOf(BASE_Y, "base_y", DEFAULT_BASE_Y).forGetter(BandSettings::baseY),
+                    Codecs.optionalFieldOf(BlockState.CODEC, "fill").forGetter(BandSettings::fill))
             .apply(instance, BandSettings::new));
 
     public int floorY() {

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthLandmarks;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarker;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarkerType;
@@ -16,8 +17,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 
 public record KeyReliquaryMarker(Direction facing) implements LabyrinthMarker {
-    public static final MapCodec<KeyReliquaryMarker> CODEC = RoomSocket.HORIZONTAL
-            .optionalFieldOf("facing", Direction.NORTH)
+    public static final MapCodec<KeyReliquaryMarker> CODEC = Codecs.optionalFieldOf(RoomSocket.HORIZONTAL, "facing", Direction.NORTH)
             .xmap(KeyReliquaryMarker::new, KeyReliquaryMarker::facing);
 
     @Override

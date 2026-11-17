@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -21,8 +22,7 @@ public record VisSparkleParticleOptions(double tx, double ty, double tz, int col
                             Codec.DOUBLE.fieldOf("tx").forGetter(VisSparkleParticleOptions::tx),
                             Codec.DOUBLE.fieldOf("ty").forGetter(VisSparkleParticleOptions::ty),
                             Codec.DOUBLE.fieldOf("tz").forGetter(VisSparkleParticleOptions::tz),
-                            Codec.INT
-                                    .optionalFieldOf("color", DEFAULT_COLOR)
+                            Codecs.optionalFieldOf(Codec.INT, "color", DEFAULT_COLOR)
                                     .forGetter(VisSparkleParticleOptions::color))
                     .apply(instance, VisSparkleParticleOptions::new));
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.script;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -15,7 +16,7 @@ import net.minecraftforge.common.MinecraftForge;
 public final class ScriptedEffect extends AbstractEffectBehavior {
     public static final MapCodec<ScriptedEffect> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     Codec.STRING.fieldOf("key").forGetter(ScriptedEffect::key),
-                    Codec.BOOL.optionalFieldOf("widens", true).forGetter(ScriptedEffect::widensAround))
+                    Codecs.optionalFieldOf(Codec.BOOL, "widens", true).forGetter(ScriptedEffect::widensAround))
             .apply(i, ScriptedEffect::new));
 
     private final String key;

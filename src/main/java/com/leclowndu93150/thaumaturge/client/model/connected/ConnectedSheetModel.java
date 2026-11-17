@@ -40,14 +40,12 @@ public record ConnectedSheetModel(
     public static final ResourceLocation TYPE = TTIds.rl("connected");
     public static final MapCodec<ConnectedSheetModel> CODEC = Codecs.validate(RecordCodecBuilder.<ConnectedSheetModel>mapCodec(
                     instance -> instance.group(
-                                    ResourceLocation.CODEC
-                                            .optionalFieldOf("model")
+                                    Codecs.optionalFieldOf(ResourceLocation.CODEC, "model")
                                             .forGetter(ConnectedSheetModel::model),
                                     Codec.unboundedMap(Direction.CODEC, ConnectedTexture.CODEC)
                                             .fieldOf("faces")
                                             .forGetter(ConnectedSheetModel::faces),
-                                    TagKey.hashedCodec(Registries.BLOCK)
-                                            .optionalFieldOf("connects_with")
+                                    Codecs.optionalFieldOf(TagKey.hashedCodec(Registries.BLOCK), "connects_with")
                                             .forGetter(ConnectedSheetModel::group))
                             .apply(instance, ConnectedSheetModel::new)), ConnectedSheetModel::validate);
 

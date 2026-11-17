@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -15,9 +16,8 @@ import org.jspecify.annotations.Nullable;
 
 /** Persistent owner and key permissions for Arcane Doors and Arcane Pressure Plates. */
 public final class ArcaneLockChunkData {
-    public static final MapCodec<ArcaneLockChunkData> CODEC = Entry.CODEC
-            .listOf()
-            .optionalFieldOf("locks", List.of())
+    public static final MapCodec<ArcaneLockChunkData> CODEC = Codecs.optionalFieldOf(Entry.CODEC
+            .listOf(), "locks", List.of())
             .xmap(ArcaneLockChunkData::new, ArcaneLockChunkData::entries);
 
     private final Map<BlockPos, UUID> owners = new ConcurrentHashMap<>();
@@ -116,13 +116,11 @@ public final class ArcaneLockChunkData {
         private static final Codec<Entry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
                         BlockPos.CODEC.fieldOf("pos").forGetter(Entry::pos),
                         UUIDUtil.CODEC.fieldOf("owner").forGetter(Entry::owner),
-                        UUIDUtil.CODEC
-                                .listOf()
-                                .optionalFieldOf("iron_access", List.of())
+                        Codecs.optionalFieldOf(UUIDUtil.CODEC
+                                .listOf(), "iron_access", List.of())
                                 .forGetter(Entry::ironAccess),
-                        UUIDUtil.CODEC
-                                .listOf()
-                                .optionalFieldOf("gold_access", List.of())
+                        Codecs.optionalFieldOf(UUIDUtil.CODEC
+                                .listOf(), "gold_access", List.of())
                                 .forGetter(Entry::goldAccess))
                 .apply(inst, Entry::new));
     }

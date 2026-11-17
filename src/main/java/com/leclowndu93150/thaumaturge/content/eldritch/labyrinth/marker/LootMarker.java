@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarker;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarkerType;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MarkerPhase;
@@ -19,8 +20,8 @@ public record LootMarker(SimpleWeightedRandomList<BlockState> containers, float 
                     SimpleWeightedRandomList.wrappedCodec(BlockState.CODEC)
                             .fieldOf("containers")
                             .forGetter(LootMarker::containers),
-                    Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(LootMarker::chance),
-                    BlockState.CODEC.optionalFieldOf("otherwise").forGetter(LootMarker::otherwise))
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 1.0F), "chance", 1.0F).forGetter(LootMarker::chance),
+                    Codecs.optionalFieldOf(BlockState.CODEC, "otherwise").forGetter(LootMarker::otherwise))
             .apply(instance, LootMarker::new));
 
     public LootMarker embedded(BlockState surface) {

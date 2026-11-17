@@ -1,11 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
 public final class TaintColumns {
     public static final MapCodec<TaintColumns> CODEC =
-            Codec.INT.optionalFieldOf("changed", 0).xmap(TaintColumns::new, columns -> columns.changed);
+            Codecs.optionalFieldOf(Codec.INT, "changed", 0).xmap(TaintColumns::new, columns -> columns.changed);
 
     private static final int QUARTS_PER_SIDE = 4;
     private static final int ALL_COLUMNS = (1 << QUARTS_PER_SIDE * QUARTS_PER_SIDE) - 1;

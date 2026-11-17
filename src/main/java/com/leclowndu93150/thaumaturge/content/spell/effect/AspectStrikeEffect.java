@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.AspectAffinity;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
@@ -13,8 +14,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
 
 public final class AspectStrikeEffect extends AbstractEffectBehavior {
-    public static final MapCodec<AspectStrikeEffect> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(Codec.FLOAT
-                    .optionalFieldOf("default_duration", 2.0F)
+    public static final MapCodec<AspectStrikeEffect> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(Codecs.optionalFieldOf(Codec.FLOAT, "default_duration", 2.0F)
                     .forGetter(AspectStrikeEffect::defaultDuration))
             .apply(i, AspectStrikeEffect::new));
 

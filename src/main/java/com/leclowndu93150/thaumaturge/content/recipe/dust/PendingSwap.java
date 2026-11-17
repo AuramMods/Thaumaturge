@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
@@ -17,8 +18,8 @@ public record PendingSwap(
     public static final Codec<PendingSwap> CODEC = RecordCodecBuilder.create(i -> i.group(
                     BlockPos.CODEC.fieldOf("pos").forGetter(PendingSwap::pos),
                     BlockState.CODEC.fieldOf("original_state").forGetter(PendingSwap::originalState),
-                    ItemStack.CODEC.optionalFieldOf("result_stack").forGetter(PendingSwap::resultStack),
-                    BlockState.CODEC.optionalFieldOf("result_state").forGetter(PendingSwap::resultState),
+                    Codecs.optionalFieldOf(ItemStack.CODEC, "result_stack").forGetter(PendingSwap::resultStack),
+                    Codecs.optionalFieldOf(BlockState.CODEC, "result_state").forGetter(PendingSwap::resultState),
                     Codec.INT.fieldOf("ticks_remaining").forGetter(PendingSwap::ticksRemaining))
             .apply(i, PendingSwap::new));
 

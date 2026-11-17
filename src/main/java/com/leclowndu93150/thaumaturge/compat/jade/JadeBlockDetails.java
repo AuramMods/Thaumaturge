@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -18,7 +19,7 @@ record JadeBlockDetails(
                     ResourceLocation.CODEC.fieldOf("option").forGetter(JadeBlockDetails::option),
                     ComponentSerialization.CODEC.listOf().fieldOf("summary").forGetter(JadeBlockDetails::summary),
                     ComponentSerialization.CODEC.listOf().fieldOf("details").forGetter(JadeBlockDetails::details),
-                    ComponentSerialization.CODEC.optionalFieldOf("title").forGetter(JadeBlockDetails::title),
-                    Codec.BOOL.optionalFieldOf("hide_fluid", false).forGetter(JadeBlockDetails::hideFluid))
+                    Codecs.optionalFieldOf(ComponentSerialization.CODEC, "title").forGetter(JadeBlockDetails::title),
+                    Codecs.optionalFieldOf(Codec.BOOL, "hide_fluid", false).forGetter(JadeBlockDetails::hideFluid))
             .apply(instance, JadeBlockDetails::new));
 }

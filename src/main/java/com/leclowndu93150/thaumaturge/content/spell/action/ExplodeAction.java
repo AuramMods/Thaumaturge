@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -12,10 +13,10 @@ import net.minecraft.world.phys.Vec3;
 
 public record ExplodeAction(float base, float perPower, float max, boolean breaksBlocks) implements SpellAction {
     public static final MapCodec<ExplodeAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("base", 1.0F).forGetter(ExplodeAction::base),
-                    Codec.FLOAT.optionalFieldOf("per_power", 0.3F).forGetter(ExplodeAction::perPower),
-                    Codec.FLOAT.optionalFieldOf("max", 3.0F).forGetter(ExplodeAction::max),
-                    Codec.BOOL.optionalFieldOf("breaks_blocks", false).forGetter(ExplodeAction::breaksBlocks))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 1.0F).forGetter(ExplodeAction::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 0.3F).forGetter(ExplodeAction::perPower),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "max", 3.0F).forGetter(ExplodeAction::max),
+                    Codecs.optionalFieldOf(Codec.BOOL, "breaks_blocks", false).forGetter(ExplodeAction::breaksBlocks))
             .apply(i, ExplodeAction::new));
 
     @Override

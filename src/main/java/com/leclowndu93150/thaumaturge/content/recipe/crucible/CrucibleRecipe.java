@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.crucible;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
@@ -26,7 +27,7 @@ public class CrucibleRecipe extends AbstractRecipe<CrucibleRecipeInput> implemen
                     Ingredient.CODEC.fieldOf("catalyst").forGetter(r -> r.catalyst),
                     AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
                     ItemStack.CODEC.fieldOf("result").forGetter(r -> r.result),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))
+                    Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))
             .apply(i, CrucibleRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CrucibleRecipe> STREAM_CODEC = StreamCodec.composite(

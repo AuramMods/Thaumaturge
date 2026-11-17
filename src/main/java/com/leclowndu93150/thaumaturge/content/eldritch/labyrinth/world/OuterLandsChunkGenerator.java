@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthIndex;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthRuntime;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeGeometry;
@@ -34,8 +35,7 @@ public final class OuterLandsChunkGenerator extends ChunkGenerator {
     public static final MapCodec<OuterLandsChunkGenerator> CODEC =
             RecordCodecBuilder.mapCodec(instance -> instance.group(
                             Biome.CODEC.fieldOf("biome").forGetter(generator -> generator.biome),
-                            BandSettings.CODEC
-                                    .optionalFieldOf("band", BandSettings.DEFAULT)
+                            Codecs.optionalFieldOf(BandSettings.CODEC, "band", BandSettings.DEFAULT)
                                     .forGetter(generator -> generator.band))
                     .apply(instance, OuterLandsChunkGenerator::new));
 

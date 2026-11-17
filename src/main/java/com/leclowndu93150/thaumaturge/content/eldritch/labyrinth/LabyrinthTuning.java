@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthHelper;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarker;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
@@ -22,9 +23,8 @@ public record LabyrinthTuning(
                     Codec.FLOAT.fieldOf("loop_scale").forGetter(LabyrinthTuning::loopScale),
                     Codec.FLOAT.fieldOf("decoration_scale").forGetter(LabyrinthTuning::decorationScale),
                     Codec.FLOAT.fieldOf("loot_scale").forGetter(LabyrinthTuning::lootScale),
-                    ResourceLocation.CODEC
-                            .listOf()
-                            .optionalFieldOf("disabled_markers", List.of())
+                    Codecs.optionalFieldOf(ResourceLocation.CODEC
+                            .listOf(), "disabled_markers", List.of())
                             .forGetter(LabyrinthTuning::disabledMarkers))
             .apply(instance, LabyrinthTuning::new));
 

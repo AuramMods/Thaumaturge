@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.encounter;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterContext;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterRole;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterSettings;
@@ -24,8 +25,7 @@ public record SwarmEncounter(EncounterSettings settings, EntityType<?> entity, i
                             .fieldOf("entity")
                             .forGetter(SwarmEncounter::entity),
                     ExtraCodecs.POSITIVE_INT.fieldOf("count").forGetter(SwarmEncounter::count),
-                    Codec.floatRange(0.0F, Float.MAX_VALUE)
-                            .optionalFieldOf("extra_per_participant", 0.0F)
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, Float.MAX_VALUE), "extra_per_participant", 0.0F)
                             .forGetter(SwarmEncounter::extraPerParticipant))
             .apply(instance, SwarmEncounter::new));
 

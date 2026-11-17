@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.damagesource.TTDamageSources;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
@@ -16,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 
 public final class EldritchRendEffect extends AbstractEffectBehavior {
     public static final MapCodec<EldritchRendEffect> CODEC = RecordCodecBuilder.mapCodec(
-            i -> i.group(Codec.DOUBLE.optionalFieldOf("knockback", 0.35).forGetter(EldritchRendEffect::knockback))
+            i -> i.group(Codecs.optionalFieldOf(Codec.DOUBLE, "knockback", 0.35).forGetter(EldritchRendEffect::knockback))
                     .apply(i, EldritchRendEffect::new));
 
     private static final int DUST_COLOR = 0xAC80D0;

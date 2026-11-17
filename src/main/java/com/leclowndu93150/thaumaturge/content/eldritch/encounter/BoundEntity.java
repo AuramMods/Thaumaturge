@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.encounter;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterRole;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -14,7 +15,7 @@ public record BoundEntity(UUID uuid, EntityType<?> type, EncounterRole role, boo
                     BuiltInRegistries.ENTITY_TYPE.byNameCodec().fieldOf("type").forGetter(BoundEntity::type),
                     EncounterRole.CODEC.fieldOf("role").forGetter(BoundEntity::role),
                     Codec.BOOL.fieldOf("defeated").forGetter(BoundEntity::defeated),
-                    Codec.LONG.optionalFieldOf("missing_since", -1L).forGetter(BoundEntity::missingSince))
+                    Codecs.optionalFieldOf(Codec.LONG, "missing_since", -1L).forGetter(BoundEntity::missingSince))
             .apply(instance, BoundEntity::new));
 
     static BoundEntity spawned(UUID uuid, EntityType<?> type, EncounterRole role) {

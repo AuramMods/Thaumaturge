@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -15,9 +16,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public record ErodeAction(float base, float perPower, float visCost) implements SpellAction {
     public static final MapCodec<ErodeAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("base", 0.0F).forGetter(ErodeAction::base),
-                    Codec.FLOAT.optionalFieldOf("per_power", 0.1F).forGetter(ErodeAction::perPower),
-                    Codec.FLOAT.optionalFieldOf("vis_cost", 0.1F).forGetter(ErodeAction::visCost))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 0.0F).forGetter(ErodeAction::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 0.1F).forGetter(ErodeAction::perPower),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "vis_cost", 0.1F).forGetter(ErodeAction::visCost))
             .apply(i, ErodeAction::new));
 
     @Override

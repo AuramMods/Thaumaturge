@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,11 +17,9 @@ public record GuardianTable(
                     SimpleWeightedRandomList.wrappedCodecAllowingEmpty(BuiltInRegistries.ENTITY_TYPE.byNameCodec())
                             .fieldOf("entries")
                             .forGetter(GuardianTable::entries),
-                    Codec.floatRange(0.0F, 1.0F)
-                            .optionalFieldOf("champion_chance", DEFAULT_CHAMPION_CHANCE)
+                    Codecs.optionalFieldOf(Codec.floatRange(0.0F, 1.0F), "champion_chance", DEFAULT_CHAMPION_CHANCE)
                             .forGetter(GuardianTable::championChance),
-                    IntProvider.NON_NEGATIVE_CODEC
-                            .optionalFieldOf("per_post", DEFAULT_PER_POST)
+                    Codecs.optionalFieldOf(IntProvider.NON_NEGATIVE_CODEC, "per_post", DEFAULT_PER_POST)
                             .forGetter(GuardianTable::perPost))
             .apply(instance, GuardianTable::new));
 }

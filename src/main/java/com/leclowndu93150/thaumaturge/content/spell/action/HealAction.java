@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -11,9 +12,9 @@ import net.minecraft.server.level.ServerLevel;
 
 public record HealAction(float base, float perPower, float undeadMultiplier) implements SpellAction {
     public static final MapCodec<HealAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("base", 0.0F).forGetter(HealAction::base),
-                    Codec.FLOAT.optionalFieldOf("per_power", 1.0F).forGetter(HealAction::perPower),
-                    Codec.FLOAT.optionalFieldOf("undead_multiplier", 1.5F).forGetter(HealAction::undeadMultiplier))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 0.0F).forGetter(HealAction::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 1.0F).forGetter(HealAction::perPower),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "undead_multiplier", 1.5F).forGetter(HealAction::undeadMultiplier))
             .apply(i, HealAction::new));
 
     @Override

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -16,8 +17,8 @@ import net.minecraftforge.common.Tags;
 
 public record TeleportAction(float base, float perPower) implements SpellAction {
     public static final MapCodec<TeleportAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("base", 4.0F).forGetter(TeleportAction::base),
-                    Codec.FLOAT.optionalFieldOf("per_power", 2.0F).forGetter(TeleportAction::perPower))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "base", 4.0F).forGetter(TeleportAction::base),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_power", 2.0F).forGetter(TeleportAction::perPower))
             .apply(i, TeleportAction::new));
 
     private static final int ATTEMPTS = 16;

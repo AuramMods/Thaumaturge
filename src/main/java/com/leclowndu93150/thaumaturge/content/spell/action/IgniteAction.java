@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
@@ -10,8 +11,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record IgniteAction(float seconds, float perDuration) implements SpellAction {
     public static final MapCodec<IgniteAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Codec.FLOAT.optionalFieldOf("seconds", 1.0F).forGetter(IgniteAction::seconds),
-                    Codec.FLOAT.optionalFieldOf("per_duration", 1.0F).forGetter(IgniteAction::perDuration))
+                    Codecs.optionalFieldOf(Codec.FLOAT, "seconds", 1.0F).forGetter(IgniteAction::seconds),
+                    Codecs.optionalFieldOf(Codec.FLOAT, "per_duration", 1.0F).forGetter(IgniteAction::perDuration))
             .apply(i, IgniteAction::new));
 
     @Override
