@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import net.minecraft.tags.EntityTypeTags;
@@ -21,7 +22,7 @@ public final class FluxTaintExposure {
 
     public static void expose(LivingEntity living, int duration, boolean ambient, boolean particles) {
         living.addEffect(
-                new MobEffectInstance(TTMobEffects.FLUX_TAINT, duration, AMPLIFIER, ambient, particles, false));
+                EffectCodecs.instance(TTMobEffects.FLUX_TAINT, duration, AMPLIFIER, ambient, particles, false));
     }
 
     public static void exposeQuietly(LivingEntity living) {

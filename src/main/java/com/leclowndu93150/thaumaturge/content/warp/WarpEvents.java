@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -259,7 +260,7 @@ public final class WarpEvents {
 
     private static void applyEffect(
             ServerPlayer player, Holder<MobEffect> effect, int duration, int amplifier, @Nullable String messageKey) {
-        player.addEffect(new MobEffectInstance(effect, duration, amplifier, true, true));
+        player.addEffect(EffectCodecs.instance(effect, duration, amplifier, true, true));
         if (messageKey != null) {
             WarpManager.sendActionBar(player, messageKey);
         }
@@ -326,7 +327,7 @@ public final class WarpEvents {
             if (!player.hasLineOfSight(entity)) {
                 continue;
             }
-            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 80));
+            entity.addEffect(EffectCodecs.instance(MobEffects.WITHER, 80));
             if (entity instanceof Mob mob) {
                 mob.setTarget(player);
             }

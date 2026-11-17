@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
@@ -340,7 +341,7 @@ public abstract class FluxGooFluid extends ForgeFlowingFluid {
         if (!level.isClientSide() && entity instanceof LivingEntity living) {
             int amp = meta / LEVELS_PER_AMPLIFIER;
             living.addEffect(
-                    new MobEffectInstance(TTMobEffects.VIS_EXHAUST, VIS_EXHAUST_DURATION, amp, true, true, false));
+                    EffectCodecs.instance(TTMobEffects.VIS_EXHAUST, VIS_EXHAUST_DURATION, amp, true, true, false));
         }
     }
 

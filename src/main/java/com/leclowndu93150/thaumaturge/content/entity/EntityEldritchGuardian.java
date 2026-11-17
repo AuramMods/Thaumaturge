@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
@@ -173,7 +174,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob {
             this.playSound(TTSounds.EGATTACK.get(), 2.0F, 1.0F + this.random.nextFloat() * 0.1F);
             this.level().addFreshEntity(blast);
         } else if (this.hasLineOfSight(target)) {
-            target.addEffect(new MobEffectInstance(MobEffects.WITHER, WITHER_TICKS, 0));
+            target.addEffect(EffectCodecs.instance(MobEffects.WITHER, WITHER_TICKS, 0));
             if (target instanceof ServerPlayer player) {
                 WarpHelper.addWarp(player, 1 + this.random.nextInt(3), WarpType.TEMPORARY);
             }

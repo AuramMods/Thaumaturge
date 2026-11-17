@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment.bauble;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -73,9 +74,9 @@ public final class BaubleEvents {
         CriteriaTriggers.USED_TOTEM.trigger(player, charm);
         player.setHealth(1.0F);
         player.removeAllEffects();
-        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, UNDYING_REGEN_TICKS, UNDYING_EFFECT_AMPLIFIER));
+        player.addEffect(EffectCodecs.instance(MobEffects.REGENERATION, UNDYING_REGEN_TICKS, UNDYING_EFFECT_AMPLIFIER));
         player.addEffect(
-                new MobEffectInstance(MobEffects.ABSORPTION, UNDYING_ABSORPTION_TICKS, UNDYING_EFFECT_AMPLIFIER));
+                EffectCodecs.instance(MobEffects.ABSORPTION, UNDYING_ABSORPTION_TICKS, UNDYING_EFFECT_AMPLIFIER));
         player.level().broadcastEntityEvent(player, TOTEM_EVENT);
     }
 

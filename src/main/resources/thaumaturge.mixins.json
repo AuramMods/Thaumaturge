@@ -28,7 +28,8 @@
     "world.item.crafting.RecipeManagerMixin",
     "server.ReloadableServerResourcesMixin",
     "network.PacketDecoderRegistryContextMixin",
-    "resources.RegistryOpsAccessor"
+    "resources.RegistryOpsAccessor",
+    "world.effect.MobEffectInstanceMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",
@@ -49,7 +50,8 @@
     "jei.gui.ingredients.IngredientFilterAccessor",
     "jei.gui.ingredients.IngredientFilterApiAccessor",
     "jei.gui.search.ElementSearchAccessor",
-    "client.multiplayer.ClientLevelEntityTickMixin"
+    "client.multiplayer.ClientLevelEntityTickMixin",
+    "client.multiplayer.ClientPacketListenerEffectMixin"
   ],
   "injectors": {
     "defaultRequire": 1

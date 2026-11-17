@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.manabean;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -57,7 +58,7 @@ public final class ItemManaBean extends Item {
                     effect.value()
                             .applyInstantenousEffect(player, player, player, EFFECT_AMPLIFIER, INSTANT_HEALTH_FACTOR);
                 } else {
-                    player.addEffect(new MobEffectInstance(
+                    player.addEffect(EffectCodecs.instance(
                             effect, EFFECT_BASE_DURATION + random.nextInt(EFFECT_EXTRA_DURATION), 0));
                 }
             });

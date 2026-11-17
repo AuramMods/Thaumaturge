@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.List;
@@ -34,7 +35,7 @@ public final class ExhaustPressureEvent extends AbstractFluxPressureEvent {
             if (target instanceof ServerPlayer player) {
                 WarpManager.sendActionBar(player, MESSAGE);
             }
-            target.addEffect(new MobEffectInstance(
+            target.addEffect(EffectCodecs.instance(
                     TTMobEffects.INFECTIOUS_VIS_EXHAUST, DURATION, AMPLIFIER, false, true, false));
         }
         return true;

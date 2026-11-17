@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
@@ -67,10 +68,10 @@ final class BossRage {
             return damage;
         }
         if (anger() == 0 && !boss.level().isClientSide() && !boss.isInvulnerableTo(source) && boss.isAlive()) {
-            boss.addEffect(new MobEffectInstance(MobEffects.REGENERATION, RAGE_TICKS, (int) (damage / REGEN_DIVISOR)));
+            boss.addEffect(EffectCodecs.instance(MobEffects.REGENERATION, RAGE_TICKS, (int) (damage / REGEN_DIVISOR)));
             boss.addEffect(
-                    new MobEffectInstance(MobEffects.DAMAGE_BOOST, RAGE_TICKS, (int) (damage / STRENGTH_DIVISOR)));
-            boss.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, RAGE_TICKS, (int) (damage / HASTE_DIVISOR)));
+                    EffectCodecs.instance(MobEffects.DAMAGE_BOOST, RAGE_TICKS, (int) (damage / STRENGTH_DIVISOR)));
+            boss.addEffect(EffectCodecs.instance(MobEffects.DIG_SPEED, RAGE_TICKS, (int) (damage / HASTE_DIVISOR)));
             setAnger(RAGE_TICKS);
             if (source.getEntity() instanceof ServerPlayer player) {
                 player.connection.send(new ClientboundSetActionBarTextPacket(

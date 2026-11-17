@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.warp.ItemWarp;
@@ -105,7 +106,7 @@ public final class WarpEventHandler {
             int amplifier = hunger.getAmplifier() - 1;
             int duration = hunger.getDuration() - HUNGER_CURE_DURATION_STEP;
             if (duration > 0 && amplifier >= 0) {
-                player.addEffect(new MobEffectInstance(TTMobEffects.UNNATURAL_HUNGER, duration, amplifier, true, true));
+                player.addEffect(EffectCodecs.instance(TTMobEffects.UNNATURAL_HUNGER, duration, amplifier, true, true));
             }
             WarpManager.sendActionBar(player, "warp.thaumaturge.text.hunger.2");
         } else {

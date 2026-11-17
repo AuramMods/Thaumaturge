@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.effect;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.List;
 import net.minecraft.server.level.ServerLevel;
@@ -33,11 +34,11 @@ public final class InfectiousVisExhaustEffect extends MobEffect {
                 target -> target != mob && !target.hasEffect(TTMobEffects.INFECTIOUS_VIS_EXHAUST));
         for (LivingEntity target : nearby) {
             if (amplification > 0) {
-                target.addEffect(new MobEffectInstance(
+                target.addEffect(EffectCodecs.instance(
                         TTMobEffects.INFECTIOUS_VIS_EXHAUST, EFFECT_DURATION, amplification - 1, false, true, false));
             } else {
                 target.addEffect(
-                        new MobEffectInstance(TTMobEffects.VIS_EXHAUST, EFFECT_DURATION, 0, false, true, false));
+                        EffectCodecs.instance(TTMobEffects.VIS_EXHAUST, EFFECT_DURATION, 0, false, true, false));
             }
         }
         return true;

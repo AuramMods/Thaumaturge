@@ -10,7 +10,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -38,9 +37,9 @@ public record DispelAction(float base, float perPower) implements SpellAction {
     }
 
     private static void removeUpTo(LivingEntity living, MobEffectCategory category, int count) {
-        List<Holder<MobEffect>> matching = new ArrayList<>();
+        List<MobEffect> matching = new ArrayList<>();
         for (MobEffectInstance instance : living.getActiveEffects()) {
-            if (instance.getEffect().value().getCategory() == category) {
+            if (instance.getEffect().getCategory() == category) {
                 matching.add(instance.getEffect());
             }
         }

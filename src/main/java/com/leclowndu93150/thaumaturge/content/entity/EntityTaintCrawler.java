@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
@@ -105,7 +106,7 @@ public final class EntityTaintCrawler extends Monster {
     public boolean doHurtTarget(Entity target) {
         boolean attacked = super.doHurtTarget(target);
         if (attacked && target instanceof LivingEntity living && this.random.nextFloat() < TAINT_CHANCE) {
-            living.addEffect(new MobEffectInstance(
+            living.addEffect(EffectCodecs.instance(
                     TTMobEffects.FLUX_TAINT, FLUX_TAINT_BASE_TICKS, TAINT_AMPLIFIER, true, false, false));
         }
         return attacked;

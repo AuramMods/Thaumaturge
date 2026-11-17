@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
@@ -69,7 +70,7 @@ final class PechAttacks {
 
     private static ItemStack poisonedArrowStack() {
         ItemStack stack = new ItemStack(Items.TIPPED_ARROW);
-        List<MobEffectInstance> effects = List.of(new MobEffectInstance(MobEffects.POISON, POISON_TICKS));
+        List<MobEffectInstance> effects = List.of(EffectCodecs.instance(MobEffects.POISON, POISON_TICKS));
         stack.set(DataComponents.POTION_CONTENTS, new PotionContents(Optional.empty(), Optional.empty(), effects));
         return stack;
     }

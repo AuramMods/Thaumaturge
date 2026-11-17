@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
 
 import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
@@ -35,8 +36,8 @@ public final class BlockEntityEldritchObelisk extends RegistryBlockEntity {
         List<LivingEntity> nearby = level.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(BUFF_RANGE));
         for (LivingEntity entity : nearby) {
             if (entity.getType().is(ThaumaturgeEntityTypeTags.ELDRITCH) && !entity.hasEffect(MobEffects.REGENERATION)) {
-                entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, BUFF_DURATION, 0, true, true));
-                entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, BUFF_DURATION, 0, true, true));
+                entity.addEffect(EffectCodecs.instance(MobEffects.DAMAGE_BOOST, BUFF_DURATION, 0, true, true));
+                entity.addEffect(EffectCodecs.instance(MobEffects.REGENERATION, BUFF_DURATION, 0, true, true));
             }
         }
     }

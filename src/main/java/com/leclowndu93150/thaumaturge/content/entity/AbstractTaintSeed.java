@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.api.taint.ITaintOrigin;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
@@ -173,7 +174,7 @@ public abstract class AbstractTaintSeed extends AbstractRootedTaint implements I
         double radius = getArea() * FLUX_TAINT_RADIUS_MULT;
         for (LivingEntity target : server.getEntitiesOfClass(
                 LivingEntity.class, this.getBoundingBox().inflate(radius), e -> canAfflict(this, e))) {
-            target.addEffect(new MobEffectInstance(
+            target.addEffect(EffectCodecs.instance(
                     TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, Math.max(0, getArea() - 1), true, false, false));
         }
     }

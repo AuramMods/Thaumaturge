@@ -52,6 +52,17 @@ class CodecsTest {
     }
 
     @Test
+    void effectDetailsMatchTheActual1211Game() throws Exception {
+        try (var stream = getClass().getResourceAsStream("effect-details-1.21.1-reference.json")) {
+            assertNotNull(stream);
+            var expected = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
+            var actual = port.effectDetails();
+            for (String key : expected.keySet()) assertEquals(expected.get(key), actual.get(key), key);
+            assertEquals(expected.keySet(), actual.keySet());
+        }
+    }
+
+    @Test
     void concurrentFirstUseBuildsALazyCodecOnce() throws Exception {
         AtomicInteger builds = new AtomicInteger();
         Codec<Integer> codec = Codecs.lazyInitialized(() -> { builds.incrementAndGet(); return Codec.INT; });

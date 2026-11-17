@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataDefaults;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -601,7 +602,7 @@ public final class TTItems {
                             .nutrition(4)
                             .saturationModifier(0.2F)
                             .alwaysEdible()
-                            .effect(() -> new MobEffectInstance(MobEffects.HUNGER, 30, 0), 0.8F)
+                            .effect(() -> EffectCodecs.instance(MobEffects.HUNGER, 30, 0), 0.8F)
                             .build()));
 
     public static final RegistryObject<SpawnEggItem> BRAINY_ZOMBIE_SPAWN_EGG =
@@ -780,7 +781,7 @@ public final class TTItems {
                     .nutrition(6)
                     .saturationModifier(0.8F)
                     .alwaysEdible()
-                    .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 100, 0), 0.66F)
+                    .effect(() -> EffectCodecs.instance(MobEffects.REGENERATION, 100, 0), 0.66F)
                     .build())));
 
     private static RegistryObject<Item> registerChunk(String id) {

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.propertiesCodec;
 
 import com.leclowndu93150.thaumaturge.content.particle.BlockRunesParticleOptions;
@@ -72,8 +73,8 @@ public final class BlockPavingStone extends BaseEntityBlock {
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
         if (!level.isClientSide() && !barrier && entity instanceof LivingEntity living) {
             living.addEffect(
-                    new MobEffectInstance(MobEffects.MOVEMENT_SPEED, SPEED_DURATION, SPEED_AMPLIFIER, false, false));
-            living.addEffect(new MobEffectInstance(MobEffects.JUMP, SPEED_DURATION, 0, false, false));
+                    EffectCodecs.instance(MobEffects.MOVEMENT_SPEED, SPEED_DURATION, SPEED_AMPLIFIER, false, false));
+            living.addEffect(EffectCodecs.instance(MobEffects.JUMP, SPEED_DURATION, 0, false, false));
         }
         super.stepOn(level, pos, state, entity);
     }

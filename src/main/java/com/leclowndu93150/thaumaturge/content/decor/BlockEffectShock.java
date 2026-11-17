@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
 import com.leclowndu93150.thaumaturge.content.particle.SparkParticleOptions;
@@ -78,7 +79,7 @@ public final class BlockEffectShock extends Block {
         }
         if (entity instanceof LivingEntity living && level instanceof ServerLevel serverLevel) {
             living.hurt(serverLevel.damageSources().magic(), SHOCK_DAMAGE);
-            living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, SLOWNESS_DURATION, 0, true, true));
+            living.addEffect(EffectCodecs.instance(MobEffects.MOVEMENT_SLOWDOWN, SLOWNESS_DURATION, 0, true, true));
         }
         if (level.getRandom().nextInt(SELF_REMOVE_ONE_IN) == 0) {
             level.removeBlock(pos, false);

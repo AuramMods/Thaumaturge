@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
@@ -122,8 +123,8 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
                 Blaze blaze = EntityType.BLAZE.create(serverLevel);
                 if (blaze != null) {
                     blaze.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 0.0F, 0.0F);
-                    blaze.addEffect(new MobEffectInstance(MobEffects.REGENERATION, BLAZE_REGEN_TICKS, 2));
-                    blaze.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, BLAZE_RESIST_TICKS, 0));
+                    blaze.addEffect(EffectCodecs.instance(MobEffects.REGENERATION, BLAZE_REGEN_TICKS, 2));
+                    blaze.addEffect(EffectCodecs.instance(MobEffects.DAMAGE_RESISTANCE, BLAZE_RESIST_TICKS, 0));
                     serverLevel.addFreshEntity(blaze);
                 }
             }

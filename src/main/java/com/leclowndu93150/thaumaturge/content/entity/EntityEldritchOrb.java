@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
@@ -59,7 +60,7 @@ public class EntityEldritchOrb extends ThrowableProjectile {
                 this.level().getEntities(owner, this.getBoundingBox().inflate(BLAST_RANGE))) {
             if (entity instanceof LivingEntity living && !living.isInvertedHealAndHarm()) {
                 living.hurt(source, damage);
-                living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_TICKS));
+                living.addEffect(EffectCodecs.instance(MobEffects.WEAKNESS, WEAKNESS_TICKS));
             }
         }
         this.playSound(

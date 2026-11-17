@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.sprayer;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -247,11 +248,11 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
     }
 
     private static void affect(ServerLevel serverLevel, LivingEntity target, MobEffectInstance effect) {
-        MobEffect kind = effect.getEffect().value();
+        MobEffect kind = effect.getEffect();
         if (kind.isInstantenous()) {
             kind.applyInstantenousEffect(null, null, target, effect.getAmplifier(), INSTANT_EFFECT_SCALE);
         } else {
-            target.addEffect(new MobEffectInstance(effect));
+            target.addEffect(EffectCodecs.instance(effect));
         }
     }
 

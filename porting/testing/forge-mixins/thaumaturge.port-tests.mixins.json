@@ -9,10 +9,12 @@
     "world.item.crafting.RecipeManagerMixin",
     "server.ReloadableServerResourcesMixin",
     "network.PacketDecoderRegistryContextMixin",
-    "resources.RegistryOpsAccessor"
+    "resources.RegistryOpsAccessor",
+    "world.effect.MobEffectInstanceMixin"
   ],
   "client": [
-    "client.multiplayer.ClientLevelEntityTickMixin"
+    "client.multiplayer.ClientLevelEntityTickMixin",
+    "client.multiplayer.ClientPacketListenerEffectMixin"
   ],
   "injectors": {
     "defaultRequire": 1

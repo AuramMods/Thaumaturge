@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
@@ -23,7 +24,7 @@ public record MobEffectAction(
         float chance)
         implements SpellAction {
     public static final MapCodec<MobEffectAction> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    MobEffect.CODEC.fieldOf("effect").forGetter(MobEffectAction::effect),
+                    EffectCodecs.MOB_EFFECT.fieldOf("effect").forGetter(MobEffectAction::effect),
                     Codecs.optionalFieldOf(Codec.FLOAT, "ticks", 0.0F).forGetter(MobEffectAction::ticks),
                     Codecs.optionalFieldOf(Codec.FLOAT, "per_duration", 20.0F).forGetter(MobEffectAction::perDuration),
                     Codecs.optionalFieldOf(Codec.FLOAT, "amplifier", 0.0F).forGetter(MobEffectAction::amplifier),
@@ -47,7 +48,7 @@ public record MobEffectAction(
             int level = Mth.clamp(Mth.floor(ActionTargets.magnitude(amplifier, perPower, ctx)), 0, maxAmplifier);
             if (duration > 0) {
                 living.addEffect(
-                        new MobEffectInstance(effect, duration, level),
+                        EffectCodecs.instance(effect, duration, level),
                         ctx.cast().caster());
             }
         });

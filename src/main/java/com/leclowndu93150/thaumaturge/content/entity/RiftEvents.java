@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
@@ -119,7 +120,7 @@ final class RiftEvents {
         for (LivingEntity living : level.getEntitiesOfClass(
                 LivingEntity.class, rift.getBoundingBox().inflate(PHAGE_RADIUS))) {
             living.addEffect(
-                    new MobEffectInstance(TTMobEffects.INFECTIOUS_VIS_EXHAUST, PHAGE_DURATION, PHAGE_AMPLIFIER));
+                    EffectCodecs.instance(TTMobEffects.INFECTIOUS_VIS_EXHAUST, PHAGE_DURATION, PHAGE_AMPLIFIER));
             if (living instanceof ServerPlayer player) {
                 WarpManager.sendActionBar(player, NOTICE_MIND);
             }

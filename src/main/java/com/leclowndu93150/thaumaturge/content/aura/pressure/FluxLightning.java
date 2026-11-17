@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
@@ -98,7 +99,7 @@ public final class FluxLightning {
         }
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, new AABB(strike).inflate(HIT_RADIUS))) {
             target.hurt(level.damageSources().magic(), HIT_DAMAGE);
-            target.addEffect(new MobEffectInstance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true, false));
+            target.addEffect(EffectCodecs.instance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true, false));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
@@ -114,7 +115,7 @@ final class RiftCollapse {
 
     private static void inflict(LivingEntity target, Holder<MobEffect> effect, int seconds) {
         if (seconds > 0) {
-            target.addEffect(new MobEffectInstance(effect, seconds * TICKS_PER_SECOND, 0));
+            target.addEffect(EffectCodecs.instance(effect, seconds * TICKS_PER_SECOND, 0));
         }
     }
 }

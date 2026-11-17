@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
@@ -275,8 +276,8 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
         float bearing = getYRot() * Mth.DEG_TO_RAD;
         target.push(-Mth.sin(bearing) * SCREECH_FLING, FLING_RISE, Mth.cos(bearing) * SCREECH_FLING);
         target.hurtMarked = true;
-        target.addEffect(new MobEffectInstance(MobEffects.WITHER, SCREECH_TICKS, 0));
-        target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, SCREECH_TICKS, 0));
+        target.addEffect(EffectCodecs.instance(MobEffects.WITHER, SCREECH_TICKS, 0));
+        target.addEffect(EffectCodecs.instance(MobEffects.WEAKNESS, SCREECH_TICKS, 0));
         if (target instanceof ServerPlayer player) {
             WarpHelper.addWarp(player, SCREECH_WARP + random.nextInt(SCREECH_WARP_SPREAD), WarpType.TEMPORARY);
         }

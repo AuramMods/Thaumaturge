@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion.instability;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.registry.TTInstabilityEffects;
 import com.mojang.serialization.Codec;
@@ -13,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 public record HarmEffect(boolean everyone, List<MobEffectInstance> effects) implements InstabilityEffect {
     public static final MapCodec<HarmEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     Codecs.optionalFieldOf(Codec.BOOL, "everyone", false).forGetter(HarmEffect::everyone),
-                    ExtraCodecs.nonEmptyList(MobEffectInstance.CODEC.listOf())
+                    ExtraCodecs.nonEmptyList(EffectCodecs.CODEC.listOf())
                             .fieldOf("effects")
                             .forGetter(HarmEffect::effects))
             .apply(instance, HarmEffect::new));
@@ -26,7 +27,7 @@ public record HarmEffect(boolean everyone, List<MobEffectInstance> effects) impl
     @Override
     public void apply(InstabilityContext context) {
         for (LivingEntity target : context.nearby(LivingEntity.class)) {
-            target.addEffect(new MobEffectInstance(effects.get(context.random().nextInt(effects.size()))));
+            target.addEffect(EffectCodecs.instance(effects.get(context.random().nextInt(effects.size()))));
             if (!everyone) {
                 return;
             }

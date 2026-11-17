@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.block;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
 import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
@@ -69,10 +70,10 @@ public final class BlockEffectSap extends Block {
         if (!(entity instanceof LivingEntity living) || living.hasEffect(MobEffects.WITHER)) {
             return;
         }
-        living.addEffect(new MobEffectInstance(MobEffects.WITHER, EFFECT_DURATION_TICKS, 0, true, true));
-        living.addEffect(new MobEffectInstance(
+        living.addEffect(EffectCodecs.instance(MobEffects.WITHER, EFFECT_DURATION_TICKS, 0, true, true));
+        living.addEffect(EffectCodecs.instance(
                 MobEffects.MOVEMENT_SLOWDOWN, EFFECT_DURATION_TICKS, SLOWNESS_AMPLIFIER, true, true));
-        living.addEffect(new MobEffectInstance(MobEffects.HUNGER, EFFECT_DURATION_TICKS, HUNGER_AMPLIFIER, true, true));
+        living.addEffect(EffectCodecs.instance(MobEffects.HUNGER, EFFECT_DURATION_TICKS, HUNGER_AMPLIFIER, true, true));
     }
 
     @Override

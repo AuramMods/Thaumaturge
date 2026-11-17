@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -37,8 +38,8 @@ public class CrimsonBladeItem extends SwordItem {
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!target.level().isClientSide() && EquipmentCombat.canAffect(attacker, target)) {
-            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_TICKS));
-            target.addEffect(new MobEffectInstance(MobEffects.HUNGER, HUNGER_TICKS));
+            target.addEffect(EffectCodecs.instance(MobEffects.WEAKNESS, WEAKNESS_TICKS));
+            target.addEffect(EffectCodecs.instance(MobEffects.HUNGER, HUNGER_TICKS));
         }
         return super.hurtEnemy(stack, target, attacker);
     }

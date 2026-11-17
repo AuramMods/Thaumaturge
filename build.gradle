@@ -71,6 +71,9 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/serialization/Codecs*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/IngredientCodecs*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/RegistryOpsLookup*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/EffectDetails*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/EffectCodecs*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/EffectInstanceAccess*'
         java.include 'com/leclowndu93150/thaumaturge/registry/ForgeRegistration.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/RegistryBlockEntity.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/AbstractSyncedBlockEntity.java'
@@ -105,6 +108,7 @@ sourceSets {
         resources.srcDir 'src/test/resources'
         resources.include 'com/leclowndu93150/thaumaturge/serialization/dfu8-reference.json'
         resources.include 'com/leclowndu93150/thaumaturge/serialization/strict-map-1.21.1-reference.json'
+        resources.include 'com/leclowndu93150/thaumaturge/serialization/effect-details-1.21.1-reference.json'
         java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
         java.include 'com/leclowndu93150/thaumaturge/serialization/RegistryContext*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/ClientRegistryContext*'
@@ -132,10 +136,12 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/level/chunk/storage/ChunkSerializerRegistryContextMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/server/level/ServerLevelEntityTickMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/multiplayer/ClientLevelEntityTickMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/client/multiplayer/ClientPacketListenerEffectMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/crafting/RecipeManagerMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/server/ReloadableServerResourcesMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/network/PacketDecoderRegistryContextMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/resources/RegistryOpsAccessor.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/effect/MobEffectInstanceMixin.java'
         compileClasspath += sourceSets.portCodec.output + sourceSets.main.compileClasspath
     }
 }
@@ -185,6 +191,9 @@ dependencies {
     portDfuReferenceImplementation 'com.google.code.gson:gson:2.10.1'
     portDfuReferenceImplementation 'com.google.guava:guava:32.1.2-jre'
     portDfuReferenceRuntimeOnly 'it.unimi.dsi:fastutil:8.5.12'
+    portDfuReferenceRuntimeOnly 'org.joml:joml:1.10.5'
+    portDfuReferenceRuntimeOnly 'org.apache.commons:commons-lang3:3.14.0'
+    portDfuReferenceRuntimeOnly 'com.mojang:authlib:6.0.54'
 
     // Run with -PportIntegrations to exercise optional JEI and Jade integration.
     if (providers.gradleProperty('portIntegrations').isPresent()) {
@@ -249,6 +258,14 @@ tasks.register('generateStrictMapReference', JavaExec) {
             .orElse('build/port-evidence/cycle-011/reference-1.21.1/client.jar'))
     mainClass = 'com.leclowndu93150.thaumaturge.serialization.CodecReferenceProbe'
     args file('src/test/resources/com/leclowndu93150/thaumaturge/serialization/strict-map-1.21.1-reference.json').absolutePath, 'strict-map'
+}
+
+tasks.register('generateEffectDetailsReference', JavaExec) {
+    dependsOn tasks.named('portDfuReferenceClasses')
+    classpath = sourceSets.portDfuReference.runtimeClasspath + files(providers.gradleProperty('portReferenceMinecraftJar')
+            .orElse('build/port-evidence/cycle-011/reference-1.21.1/client.jar'))
+    mainClass = 'com.leclowndu93150.thaumaturge.serialization.CodecReferenceProbe'
+    args file('src/test/resources/com/leclowndu93150/thaumaturge/serialization/effect-details-1.21.1-reference.json').absolutePath, 'effect-details'
 }
 
 tasks.withType(Jar).configureEach { from('LICENSE', 'CREDITS.md') }

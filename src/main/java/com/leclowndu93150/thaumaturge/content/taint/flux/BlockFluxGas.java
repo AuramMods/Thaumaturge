@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
@@ -284,7 +285,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
         int amount = state.getValue(AMOUNT);
         int thickness = amount - 1;
         if (serverLevel.getRandom().nextBoolean()) {
-            living.addEffect(new MobEffectInstance(
+            living.addEffect(EffectCodecs.instance(
                     TTMobEffects.VIS_EXHAUST,
                     VIS_EXHAUST_DURATION,
                     thickness / LEVELS_PER_AMPLIFIER,
@@ -292,7 +293,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
                     true,
                     false));
         } else {
-            living.addEffect(new MobEffectInstance(
+            living.addEffect(EffectCodecs.instance(
                     MobEffects.CONFUSION, NAUSEA_BASE_DURATION + thickness * NAUSEA_DURATION_PER_LEVEL));
         }
         serverLevel.setBlock(

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.infusion;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.infusion.instability.EjectAftermath;
 import com.leclowndu93150.thaumaturge.content.infusion.instability.EjectEffect;
@@ -53,8 +54,8 @@ public final class InstabilityOutcomeBootstrap {
 
     private static List<MobEffectInstance> harmEffects() {
         return List.of(
-                new MobEffectInstance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true),
-                new MobEffectInstance(TTMobEffects.VIS_EXHAUST, VIS_EXHAUST_TICKS, 0, true, true));
+                EffectCodecs.instance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true),
+                EffectCodecs.instance(TTMobEffects.VIS_EXHAUST, VIS_EXHAUST_TICKS, 0, true, true));
     }
 
     private static void register(

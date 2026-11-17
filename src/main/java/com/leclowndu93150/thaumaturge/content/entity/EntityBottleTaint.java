@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.item.ThrowProfile;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
@@ -128,7 +129,7 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
                 LivingEntity.class,
                 box,
                 e -> !MobTraits.isTainted(e) && !e.getType().is(EntityTypeTags.UNDEAD))) {
-            target.addEffect(new MobEffectInstance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true));
+            target.addEffect(EffectCodecs.instance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity.ability;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityBottleTaint;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -39,7 +40,7 @@ final class TaintBrewing {
         }
         List<MobEffectInstance> stronger = new ArrayList<>();
         for (MobEffectInstance effect : contents.getAllEffects()) {
-            stronger.add(new MobEffectInstance(
+            stronger.add(EffectCodecs.instance(
                     effect.getEffect(),
                     effect.getDuration(),
                     effect.getAmplifier() + EXTRA_AMPLIFIER,

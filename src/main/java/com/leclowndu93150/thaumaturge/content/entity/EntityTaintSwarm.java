@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.content.particle.TaintSwarmParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
@@ -147,7 +148,7 @@ public final class EntityTaintSwarm extends Monster {
             attackTicks = ATTACK_COOLDOWN + this.random.nextInt(10);
             Vec3 targetMotion = target.getDeltaMovement();
             if (this.doHurtTarget(target)) {
-                target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION, 0, true, false, false));
+                target.addEffect(EffectCodecs.instance(MobEffects.WEAKNESS, WEAKNESS_DURATION, 0, true, false, false));
             }
             target.setDeltaMovement(targetMotion);
             this.playSound(TTSounds.SWARMATTACK.get(), 0.3F, 0.9F + this.random.nextFloat() * 0.2F);

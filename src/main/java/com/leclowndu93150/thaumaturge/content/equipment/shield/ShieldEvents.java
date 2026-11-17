@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment.shield;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.registry.TTDamageTypeTags;
 import com.leclowndu93150.thaumaturge.registry.TTItemTags;
@@ -43,7 +44,7 @@ public final class ShieldEvents {
                 && shield.is(TTItemTags.SHIELDS_SAPPING)
                 && !source.is(DamageTypeTags.IS_PROJECTILE)
                 && source.getDirectEntity() instanceof LivingEntity attacker) {
-            attacker.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, SAP_TICKS, SAP_AMPLIFIER), blocker);
+            attacker.addEffect(EffectCodecs.instance(MobEffects.WEAKNESS, SAP_TICKS, SAP_AMPLIFIER), blocker);
         }
     }
 

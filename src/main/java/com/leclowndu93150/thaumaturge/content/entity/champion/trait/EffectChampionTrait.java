@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.champion.trait;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import net.minecraft.core.Holder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -20,7 +21,7 @@ public final class EffectChampionTrait extends AbstractChampionTrait {
     @Override
     public float onAttack(LivingEntity mob, LivingEntity target, DamageSource source, float amount) {
         if (mob.getRandom().nextFloat() < PROC_CHANCE) {
-            target.addEffect(new MobEffectInstance(effect, ticks));
+            target.addEffect(EffectCodecs.instance(effect, ticks));
         }
         return amount;
     }

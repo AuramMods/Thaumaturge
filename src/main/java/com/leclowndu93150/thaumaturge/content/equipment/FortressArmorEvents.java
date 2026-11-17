@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
@@ -112,7 +113,7 @@ public final class FortressArmorEvents {
         if (helm.getItem() instanceof FortressArmorItem
                 && FortressArmorItem.mask(helm) == MASK_ANGRY_GHOST
                 && victim.getRandom().nextFloat() < event.getAmount() / WITHER_CHANCE_DIVISOR) {
-            attacker.addEffect(new MobEffectInstance(MobEffects.WITHER, WITHER_TICKS));
+            attacker.addEffect(EffectCodecs.instance(MobEffects.WITHER, WITHER_TICKS));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.cult;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultist;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -20,7 +21,7 @@ public final class CultRally {
                 EntityCultist.class, rallier.getBoundingBox().inflate(RADIUS), CultRally::lacksRegeneration)) {
             if (cultist != rallier) {
                 cultist.addEffect(
-                        new MobEffectInstance(MobEffects.REGENERATION, REGENERATION_TICKS, REGENERATION_AMPLIFIER));
+                        EffectCodecs.instance(MobEffects.REGENERATION, REGENERATION_TICKS, REGENERATION_AMPLIFIER));
             }
         }
     }

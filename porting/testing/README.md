@@ -205,3 +205,12 @@ The shared strict-map and getOrThrow bridges are compared to the actual 1.21.1
 game/DFU libraries. Final suites execute 237 server / 244 client tests. These
 pattern tests use a controlled workbench view over the real crafting input;
 crystal/vis payment, research, transactions and world crafting remain pending.
+
+
+Cycle 031 adds named effect codecs, native effect NBT and actual client packet
+handler tests. The common effect mixin and client unsigned-amplifier mixin are
+applied through Forge's real transformation pipeline. The focused totals are
+246 server / 254 client; these controlled fixtures do not start a world or a
+multiplayer connection. `generateEffectDetailsReference` runs the actual pinned
+1.21.1 private Details codec in the isolated Java 21 reference JVM; normal tests
+compare its ten tracked observations using only the target Forge/DFU runtime.

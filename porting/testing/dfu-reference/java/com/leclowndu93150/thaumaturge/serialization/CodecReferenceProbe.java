@@ -394,6 +394,34 @@ public final class CodecReferenceProbe {
         return out;
     }
 
+    public JsonObject effectDetails() {
+        Codec<?> codec;
+        try {
+            if (reference) {
+                var field = Class.forName("brz$b").getField("a");
+                field.setAccessible(true);
+                codec = ((MapCodec<?>) field.get(null)).codec();
+            } else codec = (Codec<?>) Class.forName("com.leclowndu93150.thaumaturge.serialization.EffectDetails").getMethod("codec").invoke(null);
+        } catch (ReflectiveOperationException failure) { throw new AssertionError(failure); }
+        JsonObject out = new JsonObject();
+        for (String input : List.of("{}", "{\"duration\":-1}", "{\"amplifier\":255,\"duration\":200}",
+                "{\"amplifier\":-1}", "{\"amplifier\":256}", "{\"show_particles\":false}",
+                "{\"show_particles\":false,\"show_icon\":true}", "{\"ambient\":true,\"hidden_effect\":{\"amplifier\":2,\"duration\":50}}",
+                "{\"show_particles\":\"bad\"}", "{\"hidden_effect\":{\"amplifier\":256}}")) {
+            out.add(input, roundTripResult(codec, JsonParser.parseString(input)));
+        }
+        return out;
+    }
+
+    private <A> JsonObject roundTripResult(Codec<A> codec, JsonElement input) {
+        var parsed = codec.parse(JsonOps.INSTANCE, input);
+        JsonObject out = new JsonObject();
+        out.addProperty("success", parsed.result().isPresent());
+        out.addProperty("error", parsed.error().map(e -> e.message()).orElse(null));
+        parsed.result().ifPresent(value -> out.add("encoded", codec.encodeStart(JsonOps.INSTANCE, value).result().orElseThrow()));
+        return out;
+    }
+
     public JsonObject all() {
         JsonObject out = new JsonObject();
         out.add("validation", validations());
@@ -412,7 +440,10 @@ public final class CodecReferenceProbe {
 
     public static void main(String[] args) throws Exception {
         Files.writeString(Path.of(args[0]), new GsonBuilder().setPrettyPrinting().serializeNulls().create()
-                .toJson(args.length > 1 && args[1].equals("strict-map") ? new CodecReferenceProbe(true).strictMaps()
-                        : new CodecReferenceProbe(true).all()) + "\n");
+                .toJson(args.length > 1 ? switch (args[1]) {
+                    case "strict-map" -> new CodecReferenceProbe(true).strictMaps();
+                    case "effect-details" -> new CodecReferenceProbe(true).effectDetails();
+                    default -> throw new IllegalArgumentException(args[1]);
+                } : new CodecReferenceProbe(true).all()) + "\n");
     }
 }

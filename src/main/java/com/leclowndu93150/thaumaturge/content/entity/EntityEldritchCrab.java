@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
@@ -147,7 +148,7 @@ public class EntityEldritchCrab extends Monster implements ISidedHurt {
         if (level.getDifficulty() == Difficulty.HARD
                 && rand.nextFloat() < HARD_GROUP_EFFECT_CHANCE * difficulty.getSpecialMultiplier()) {
             var effect = randomGroupEffect(rand);
-            this.addEffect(new MobEffectInstance(effect, MobEffectInstance.INFINITE_DURATION));
+            this.addEffect(EffectCodecs.instance(effect, MobEffectInstance.INFINITE_DURATION));
         }
         return super.finalizeSpawn(level, difficulty, reason, groupData);
     }

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.server.command;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
@@ -696,7 +697,7 @@ public final class TTCommands {
 
     private static int giveEffect(CommandSourceStack source, Holder<MobEffect> effect) throws CommandSyntaxException {
         source.getPlayerOrException()
-                .addEffect(new MobEffectInstance(effect, EFFECT_DURATION_TICKS, 0, true, true, true));
+                .addEffect(EffectCodecs.instance(effect, EFFECT_DURATION_TICKS, 0, true, true, true));
         return Command.SINGLE_SUCCESS;
     }
 

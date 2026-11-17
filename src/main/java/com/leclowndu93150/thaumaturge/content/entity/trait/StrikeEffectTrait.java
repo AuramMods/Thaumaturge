@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.trait;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import net.minecraft.core.Holder;
 import net.minecraft.world.damagesource.DamageSource;
@@ -20,7 +21,7 @@ public final class StrikeEffectTrait implements MobTrait {
 
     @Override
     public float onAttack(LivingEntity mob, LivingEntity target, DamageSource source, float amount) {
-        target.addEffect(new MobEffectInstance(effect, ticks, amplifier), mob);
+        target.addEffect(EffectCodecs.instance(effect, ticks, amplifier), mob);
         return amount;
     }
 }
