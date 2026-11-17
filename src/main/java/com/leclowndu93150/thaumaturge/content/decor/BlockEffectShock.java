@@ -55,23 +55,23 @@ public final class BlockEffectShock extends Block {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
         return true;
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (level.isClientSide()) {
             return;
         }
@@ -85,7 +85,7 @@ public final class BlockEffectShock extends Block {
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         level.removeBlock(pos, false);
     }
 

@@ -75,7 +75,7 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.box(0, 0, 0, 1, 0.5, 1);
     }
@@ -135,12 +135,12 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState rotate(BlockState state, Rotation rotation) {
+    public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, Mirror mirror) {
+    public BlockState mirror(BlockState state, Mirror mirror) {
         return state.setValue(FACING, mirror.mirror(state.getValue(FACING)));
     }
 
@@ -155,7 +155,7 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
         return Shapes.box(-1, -1, -1, 2, 2, 2);
     }
 
@@ -166,7 +166,7 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         pullToCenter(entity, pos);
         if (level instanceof ServerLevel serverLevel && entity.tickCount % ITEM_INTAKE_INTERVAL == 0) {
             if (entity instanceof ItemEntity itemEntity) {
@@ -205,7 +205,7 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 }

@@ -91,7 +91,7 @@ public class BlockAlembic extends BaseEntityBlock implements LabelTarget {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -101,7 +101,7 @@ public class BlockAlembic extends BaseEntityBlock implements LabelTarget {
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction direction,
             BlockState neighborState,
@@ -186,7 +186,7 @@ public class BlockAlembic extends BaseEntityBlock implements LabelTarget {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         int mask = 0;
         for (int i = 0; i < SIDES.length; i++) {
             if (state.getValue(SIDE_PROPERTIES.get(SIDES[i]))) {
@@ -197,12 +197,12 @@ public class BlockAlembic extends BaseEntityBlock implements LabelTarget {
     }
 
     @Override
-    protected boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityAlembic alembic)) {
             return 0;
         }

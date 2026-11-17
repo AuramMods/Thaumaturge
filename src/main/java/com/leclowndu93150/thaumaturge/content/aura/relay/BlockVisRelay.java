@@ -59,13 +59,13 @@ public final class BlockVisRelay extends BaseEntityBlock {
     }
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos support = pos.relative(state.getValue(FACING).getOpposite());
         return !level.getBlockState(support).getCollisionShape(level, support).isEmpty();
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction direction,
             BlockState neighborState,
@@ -79,12 +79,12 @@ public final class BlockVisRelay extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState rotate(BlockState state, Rotation rotation) {
+    public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, Mirror mirror) {
+    public BlockState mirror(BlockState state, Mirror mirror) {
         return rotate(state, mirror.getRotation(state.getValue(FACING)));
     }
 
@@ -103,12 +103,12 @@ public final class BlockVisRelay extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES.get(state.getValue(FACING));
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 

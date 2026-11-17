@@ -21,12 +21,12 @@ public abstract class AbstractTaintBlock extends Block implements ITaintBlock {
     }
 
     @Override
-    protected boolean isRandomlyTicking(BlockState state) {
+    public boolean isRandomlyTicking(BlockState state) {
         return true;
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (!TaintOrigins.isSustained(level, pos) && random.nextInt(DIE_CHANCE) == 0) {
             decay(level, pos, state);
             TaintBiomeManager.restoreIfCleared(level, pos);

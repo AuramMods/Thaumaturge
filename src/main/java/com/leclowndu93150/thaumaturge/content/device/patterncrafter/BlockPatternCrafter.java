@@ -69,7 +69,7 @@ public final class BlockPatternCrafter extends BaseEntityBlock {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean movedByPiston) {
         boolean enabled = !level.hasNeighborSignal(pos);
         if (enabled != state.getValue(BlockStateProperties.ENABLED)) {
@@ -78,12 +78,12 @@ public final class BlockPatternCrafter extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES.get(state.getValue(FACING));
     }
 

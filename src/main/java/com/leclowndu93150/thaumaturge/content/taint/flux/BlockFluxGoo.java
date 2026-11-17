@@ -43,7 +43,7 @@ public final class BlockFluxGoo extends LiquidBlock implements PhysicalFluxBlock
     }
 
     @Override
-    protected boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+    public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
         FluidState fluidState = state.getFluidState();
         return fluidState.getAmount() <= REPLACEABLE_AMOUNT_THRESHOLD;
     }
@@ -97,7 +97,7 @@ public final class BlockFluxGoo extends LiquidBlock implements PhysicalFluxBlock
     }
 
     @Override
-    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         if (level instanceof ServerLevel serverLevel) {
             PhysicalFluxAuraFloor.observe(serverLevel, pos);
@@ -105,7 +105,7 @@ public final class BlockFluxGoo extends LiquidBlock implements PhysicalFluxBlock
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         FluxGooFluid.applyEntityInside(level, pos, entity);
     }
 

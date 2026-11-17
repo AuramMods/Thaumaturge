@@ -62,18 +62,18 @@ public final class BlockInlay extends Block implements AltarStabiliser {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos below = pos.below();
         return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP, SupportType.FULL);
     }
@@ -105,7 +105,7 @@ public final class BlockInlay extends Block implements AltarStabiliser {
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction direction,
             BlockState neighbourState,
@@ -119,7 +119,7 @@ public final class BlockInlay extends Block implements AltarStabiliser {
     }
 
     @Override
-    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!level.isClientSide() && !oldState.is(this)) {
             updateNetwork(level, pos);
         }
@@ -141,7 +141,7 @@ public final class BlockInlay extends Block implements AltarStabiliser {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean movedByPiston) {
         if (level.isClientSide()) {
             return;

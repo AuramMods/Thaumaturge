@@ -128,7 +128,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return shapes.get(state);
     }
 
@@ -148,7 +148,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
@@ -159,7 +159,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction direction,
             BlockState neighborState,
@@ -212,7 +212,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     }
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         for (Direction direction : Direction.values()) {
             if (canAttachTo(level, pos.relative(direction), direction.getOpposite())) {
                 return true;
@@ -222,12 +222,12 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     }
 
     @Override
-    protected boolean isRandomlyTicking(BlockState state) {
+    public boolean isRandomlyTicking(BlockState state) {
         return true;
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         boolean hasGrowth = state.getValue(GROWTH1)
                 || state.getValue(GROWTH2)
                 || state.getValue(GROWTH3)
@@ -269,7 +269,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (pos.equals(entity.blockPosition())) {
             FluxTaintExposure.onStep(level, entity, CONTACT_ONE_IN);
         }

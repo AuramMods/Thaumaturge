@@ -44,7 +44,7 @@ public final class BlockGreatwoodLog extends RotatedPillarBlock {
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction directionToNeighbour,
             BlockState neighbourState,
@@ -58,7 +58,7 @@ public final class BlockGreatwoodLog extends RotatedPillarBlock {
     }
 
     @Override
-    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         if (!oldState.is(this) || oldState.getValue(AXIS) != state.getValue(AXIS)) {
             refreshNearby(level, pos);
@@ -66,7 +66,7 @@ public final class BlockGreatwoodLog extends RotatedPillarBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         super.onRemove(state, level, pos, newState, movedByPiston);
         if (!newState.is(this)) {
             refreshNearby(level, pos);
@@ -74,7 +74,7 @@ public final class BlockGreatwoodLog extends RotatedPillarBlock {
     }
 
     @Override
-    protected BlockState rotate(BlockState state, Rotation rotation) {
+    public BlockState rotate(BlockState state, Rotation rotation) {
         return super.rotate(state, rotation)
                 .setValue(
                         TrunkCorner.PROPERTY,
@@ -82,7 +82,7 @@ public final class BlockGreatwoodLog extends RotatedPillarBlock {
     }
 
     @Override
-    protected BlockState mirror(BlockState state, Mirror mirror) {
+    public BlockState mirror(BlockState state, Mirror mirror) {
         return state.setValue(
                 TrunkCorner.PROPERTY, state.getValue(TrunkCorner.PROPERTY).mirror(mirror));
     }

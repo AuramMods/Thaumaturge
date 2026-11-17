@@ -34,7 +34,7 @@ public class BlockObsidianTotem extends Block {
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction directionToNeighbour,
             BlockState neighbourState,

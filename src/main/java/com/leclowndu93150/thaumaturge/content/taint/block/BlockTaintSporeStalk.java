@@ -57,18 +57,18 @@ public final class BlockTaintSporeStalk extends Block implements ITaintBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos below = pos.below();
         return level.getBlockState(below).isFaceSturdy(level, below, Direction.UP);
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction direction,
             BlockState neighborState,
@@ -79,12 +79,12 @@ public final class BlockTaintSporeStalk extends Block implements ITaintBlock {
     }
 
     @Override
-    protected boolean isRandomlyTicking(BlockState state) {
+    public boolean isRandomlyTicking(BlockState state) {
         return true;
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get()
                 || level.getDifficulty() == Difficulty.PEACEFUL
                 || TaintBlooms.isProtected(level, pos)

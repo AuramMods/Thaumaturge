@@ -111,17 +111,17 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
     @Override
-    protected boolean skipRendering(BlockState state, BlockState adjacent, Direction direction) {
+    public boolean skipRendering(BlockState state, BlockState adjacent, Direction direction) {
         return adjacent.is(this) || super.skipRendering(state, adjacent, direction);
     }
 
     @Override
-    protected boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+    public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
         return state.getValue(AMOUNT) <= REPLACEABLE_AMOUNT;
     }
 
@@ -137,7 +137,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
     }
 
     @Override
-    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
@@ -148,12 +148,12 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         PhysicalFluxAuraFloor.observe(level, pos);
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction directionToNeighbour,
             BlockState neighbourState,
@@ -165,7 +165,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
     }
 
     @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         int remaining = flowUp(level, pos, state.getValue(AMOUNT));
         if (remaining > 0 && level.getBlockState(pos).is(this)) {
             spreadSideways(level, pos, remaining, random);
@@ -272,7 +272,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (!(level instanceof ServerLevel serverLevel)
                 || !(entity instanceof LivingEntity living)
                 || resists(living)

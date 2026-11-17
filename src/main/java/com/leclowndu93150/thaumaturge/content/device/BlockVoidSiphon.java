@@ -48,7 +48,7 @@ public final class BlockVoidSiphon extends BaseEntityBlock {
             box(6.0, 12.0, 6.0, 10.0, 16.0, 10.0));
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
@@ -69,7 +69,7 @@ public final class BlockVoidSiphon extends BaseEntityBlock {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, block, fromPos, movedByPiston);
         boolean enabled = !level.hasNeighborSignal(pos);
@@ -122,7 +122,7 @@ public final class BlockVoidSiphon extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 }

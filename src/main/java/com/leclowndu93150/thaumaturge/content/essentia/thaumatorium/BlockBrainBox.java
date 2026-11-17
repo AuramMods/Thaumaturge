@@ -48,7 +48,7 @@ public final class BlockBrainBox extends Block {
             DeviceShapes.facingShapesFromDown(Shapes.or(CAGE, CORE, CONNECTOR));
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES.get(state.getValue(BlockStateProperties.FACING));
     }
 

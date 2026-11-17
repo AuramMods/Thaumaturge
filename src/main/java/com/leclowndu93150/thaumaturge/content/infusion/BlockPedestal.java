@@ -51,7 +51,7 @@ public final class BlockPedestal extends BaseEntityBlock {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean movedByPiston) {
         if (!level.isClientSide()) {
             BlockInlay.updateNetwork(level, pos);
@@ -69,7 +69,7 @@ public final class BlockPedestal extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return state.is(TTBlocks.PEDESTAL_ANCIENT.get()) || state.is(TTBlocks.PEDESTAL_ELDRITCH.get())
                 ? ANCIENT_AND_ELDRITCH_SHAPE
                 : SHAPE;
@@ -138,7 +138,7 @@ public final class BlockPedestal extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 }

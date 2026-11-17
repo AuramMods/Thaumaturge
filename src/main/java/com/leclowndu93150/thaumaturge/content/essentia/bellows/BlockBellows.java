@@ -67,7 +67,7 @@ public class BlockBellows extends BaseEntityBlock {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, block, fromPos, movedByPiston);
         boolean enabled = !level.hasNeighborSignal(pos);
@@ -77,12 +77,12 @@ public class BlockBellows extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES.get(state.getValue(FACING));
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 

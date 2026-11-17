@@ -84,7 +84,7 @@ public final class BlockSilverwoodNodeLog extends RotatedPillarBlock implements 
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         BlockNode.unindexNode(state, level, pos, newState);
         super.onRemove(state, level, pos, newState, movedByPiston);
     }

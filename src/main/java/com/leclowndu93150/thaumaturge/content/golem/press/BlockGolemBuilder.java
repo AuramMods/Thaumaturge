@@ -47,7 +47,7 @@ public final class BlockGolemBuilder extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return GolemPressShapes.at(state.getValue(FACING), BlockPos.ZERO);
     }
 

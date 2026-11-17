@@ -53,7 +53,7 @@ public class BlockSmelter extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -67,11 +67,11 @@ public class BlockSmelter extends BaseEntityBlock {
                 .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
-    protected BlockState rotate(BlockState state, Rotation rotation) {
+    public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
-    protected BlockState mirror(BlockState state, Mirror mirror) {
+    public BlockState mirror(BlockState state, Mirror mirror) {
         return rotate(state, mirror.getRotation(state.getValue(FACING)));
     }
 
@@ -93,11 +93,11 @@ public class BlockSmelter extends BaseEntityBlock {
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
-    protected boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
     }
 

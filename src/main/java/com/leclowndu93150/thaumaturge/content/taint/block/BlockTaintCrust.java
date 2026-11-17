@@ -45,7 +45,7 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (!TaintOrigins.isSustained(level, pos) && random.nextInt(OUTSIDE_BIOME_GOO_CHANCE) == 0) {
             decay(level, pos, state);
             TaintBiomeManager.restoreIfCleared(level, pos);

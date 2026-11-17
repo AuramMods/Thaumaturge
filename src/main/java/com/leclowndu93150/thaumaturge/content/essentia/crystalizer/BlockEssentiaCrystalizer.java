@@ -76,23 +76,23 @@ public final class BlockEssentiaCrystalizer extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState rotate(BlockState state, Rotation rotation) {
+    public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(
                 BlockStateProperties.FACING, rotation.rotate(state.getValue(BlockStateProperties.FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, Mirror mirror) {
+    public BlockState mirror(BlockState state, Mirror mirror) {
         return rotate(state, mirror.getRotation(state.getValue(BlockStateProperties.FACING)));
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Direction facing = state.getValue(BlockStateProperties.FACING);
         return level.getBlockEntity(pos) instanceof BlockEntityEssentiaCrystalizer crystalizer
                         && crystalizer.aspectKey() != null
@@ -101,7 +101,7 @@ public final class BlockEssentiaCrystalizer extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
         return Shapes.empty();
     }
 
@@ -111,7 +111,7 @@ public final class BlockEssentiaCrystalizer extends BaseEntityBlock {
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
         return true;
     }
 

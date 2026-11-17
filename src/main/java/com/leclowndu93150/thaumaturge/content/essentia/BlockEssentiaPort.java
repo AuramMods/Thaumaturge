@@ -83,7 +83,7 @@ public final class BlockEssentiaPort extends BaseEntityBlock implements IEssenti
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return (input ? FILLING_SHAPES : EMPTYING_SHAPES).get(state.getValue(BlockStateProperties.FACING));
     }
 
@@ -116,7 +116,7 @@ public final class BlockEssentiaPort extends BaseEntityBlock implements IEssenti
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 }

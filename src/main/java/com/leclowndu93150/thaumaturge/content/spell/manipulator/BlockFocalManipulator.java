@@ -34,12 +34,12 @@ public final class BlockFocalManipulator extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return BlockArcaneWorkbench.SHAPE;
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -77,7 +77,7 @@ public final class BlockFocalManipulator extends BaseEntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
         if (!state.is(next.getBlock()) && level.getBlockEntity(pos) instanceof BlockEntityFocalManipulator table) {
             table.dropContents();
         }

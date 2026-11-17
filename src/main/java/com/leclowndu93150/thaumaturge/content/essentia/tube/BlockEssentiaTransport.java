@@ -53,12 +53,12 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter getter, BlockPos at, CollisionContext ctx) {
+    public VoxelShape getShape(BlockState state, BlockGetter getter, BlockPos at, CollisionContext ctx) {
         return geometry.shape(state);
     }
 
     @Override
-    protected VoxelShape getCollisionShape(BlockState state, BlockGetter getter, BlockPos at, CollisionContext ctx) {
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter getter, BlockPos at, CollisionContext ctx) {
         return getShape(state, getter, at, ctx);
     }
 
@@ -109,7 +109,7 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction directionToNeighbour,
             BlockState neighbourState,

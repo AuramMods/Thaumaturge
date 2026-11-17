@@ -31,7 +31,7 @@ public final class BlockGolemFetter extends Block {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, block, fromPos, movedByPiston);
         boolean powered = level.hasNeighborSignal(pos);

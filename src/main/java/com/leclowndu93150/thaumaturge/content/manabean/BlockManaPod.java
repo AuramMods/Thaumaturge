@@ -76,12 +76,12 @@ public final class BlockManaPod extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES[state.getValue(DYNAMIC_TREE_LIFT)][state.getValue(AGE)];
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return BODIES[state.getValue(DYNAMIC_TREE_LIFT)][state.getValue(AGE)];
     }
@@ -98,7 +98,7 @@ public final class BlockManaPod extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -127,7 +127,7 @@ public final class BlockManaPod extends BaseEntityBlock {
     }
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         if (level.getBlockEntity(pos) instanceof BlockEntityManaPod pod && pod.isShowcase()) {
             return level.getBlockState(pos.above()).is(BlockTags.LOGS);
         }
@@ -135,7 +135,7 @@ public final class BlockManaPod extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction direction,
             BlockState neighborState,
@@ -149,14 +149,14 @@ public final class BlockManaPod extends BaseEntityBlock {
     }
 
     @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (!canSurvive(state, level, pos)) {
             level.destroyBlock(pos, true);
         }
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (!canSurvive(state, level, pos)) {
             level.destroyBlock(pos, true);
             return;
@@ -169,7 +169,7 @@ public final class BlockManaPod extends BaseEntityBlock {
     }
 
     @Override
-    protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+    public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
         return super.getDestroyProgress(state, player, level, pos) * (MAX_HARDNESS_STEPS - state.getValue(AGE));
     }
 

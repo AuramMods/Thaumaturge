@@ -32,7 +32,7 @@ public class BlockLiquidDeath extends LiquidBlock {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         LiquidDeathFluid.applyEntityInside(level, pos, entity);
     }
 

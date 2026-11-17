@@ -38,19 +38,19 @@ public abstract class AbstractTTPlant extends BushBlock {
     protected abstract boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos);
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Vec3 offset = state.getOffset(level, pos);
         return SHAPE.move(offset.x, offset.y, offset.z);
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction directionToNeighbour,
             BlockState neighbourState,
@@ -63,18 +63,18 @@ public abstract class AbstractTTPlant extends BushBlock {
     }
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos below = pos.below();
         return this.mayPlaceOn(level.getBlockState(below), level, below);
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
         return state.getFluidState().isEmpty();
     }
 
     @Override
-    protected boolean isPathfindable(BlockState state, PathComputationType type) {
+    public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
         return true;
     }
 

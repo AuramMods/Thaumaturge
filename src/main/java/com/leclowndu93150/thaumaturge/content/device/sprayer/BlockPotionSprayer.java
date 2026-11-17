@@ -60,7 +60,7 @@ public final class BlockPotionSprayer extends BaseEntityBlock {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean movedByPiston) {
         boolean enabled = !level.hasNeighborSignal(pos);
         if (enabled != state.getValue(BlockStateProperties.ENABLED)) {
@@ -69,7 +69,7 @@ public final class BlockPotionSprayer extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -79,7 +79,7 @@ public final class BlockPotionSprayer extends BaseEntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof BlockEntityPotionSprayer sprayer) {
             sprayer.dropPotionOnBreak(pos);
         }

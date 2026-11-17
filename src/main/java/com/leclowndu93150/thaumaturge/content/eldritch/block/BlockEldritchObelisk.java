@@ -109,7 +109,7 @@ public final class BlockEldritchObelisk extends BlockEldritchStructure implement
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return interactionShape(state.getValue(PART));
     }
 
@@ -132,7 +132,7 @@ public final class BlockEldritchObelisk extends BlockEldritchStructure implement
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return collisionShape(state.getValue(PART));
     }

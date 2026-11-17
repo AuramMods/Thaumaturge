@@ -44,7 +44,7 @@ public final class BlockItemGrate extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -54,7 +54,7 @@ public final class BlockItemGrate extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
@@ -79,7 +79,7 @@ public final class BlockItemGrate extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if (state.getValue(OPEN)
                 && context instanceof EntityCollisionContext entityContext
@@ -90,7 +90,7 @@ public final class BlockItemGrate extends BaseEntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())
                 && !level.isClientSide()
                 && level.getBlockEntity(pos) instanceof BlockEntityItemGrate grate) {
@@ -100,7 +100,7 @@ public final class BlockItemGrate extends BaseEntityBlock {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean moved) {
         boolean powered = level.hasNeighborSignal(pos);
         if (powered != state.getValue(POWERED)) {

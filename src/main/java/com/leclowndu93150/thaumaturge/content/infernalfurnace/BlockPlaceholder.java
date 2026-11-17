@@ -35,7 +35,7 @@ public class BlockPlaceholder extends Block {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if (AdvancedAlchemicalFurnaceStructure.isPart(state)) {
             VoxelShape furnace = AdvancedFurnaceShapes.find(level, pos);
             if (furnace != null) {
@@ -81,11 +81,11 @@ public class BlockPlaceholder extends Block {
         return state.getFluidState().isEmpty();
     }
 
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return visible ? RenderShape.MODEL : RenderShape.INVISIBLE;
     }
 
-    protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
         return 1.0F;
     }
 
@@ -158,17 +158,17 @@ public class BlockPlaceholder extends Block {
     }
 
     @Override
-    protected boolean skipRendering(BlockState state, BlockState neighborState, Direction direction) {
+    public boolean skipRendering(BlockState state, BlockState neighborState, Direction direction) {
         return true;
     }
 
     @Override
-    protected VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
         return Shapes.empty();
     }
 
     @Override
-    protected int getLightBlock(BlockState state, BlockGetter level, BlockPos pos) {
+    public int getLightBlock(BlockState state, BlockGetter level, BlockPos pos) {
         return 0;
     }
 }

@@ -33,12 +33,12 @@ public class BlockEldritchStructure extends Block {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
 
     @Override
-    protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+    public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
         return state.getValue(SEALED) ? 0.0F : super.getDestroyProgress(state, player, level, pos);
     }
 

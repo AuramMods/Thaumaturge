@@ -44,12 +44,12 @@ public final class BlockThaumatoriumTop extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         BlockState below = level.getBlockState(pos.below());
         Direction facing = below.hasProperty(HorizontalDirectionalBlock.FACING)
                 ? below.getValue(HorizontalDirectionalBlock.FACING)
@@ -58,7 +58,7 @@ public final class BlockThaumatoriumTop extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return getShape(state, level, pos, context);
     }

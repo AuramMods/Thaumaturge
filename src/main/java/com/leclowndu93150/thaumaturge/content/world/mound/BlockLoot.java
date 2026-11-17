@@ -45,7 +45,7 @@ public final class BlockLoot extends Block {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return crate ? CRATE_SHAPE : URN_SHAPE;
     }
 }

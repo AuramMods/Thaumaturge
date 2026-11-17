@@ -20,7 +20,7 @@ public final class BlockEldritchNothingDormant extends Block {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state,
             Level level,
             BlockPos pos,

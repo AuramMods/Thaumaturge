@@ -52,12 +52,12 @@ public final class BlockArcaneBore extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
@@ -69,7 +69,7 @@ public final class BlockArcaneBore extends BaseEntityBlock {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, block, fromPos, movedByPiston);
         boolean powered = level.hasNeighborSignal(pos);
@@ -96,7 +96,7 @@ public final class BlockArcaneBore extends BaseEntityBlock {
     }
 
     @Override
-    protected void attack(BlockState state, Level level, BlockPos pos, Player player) {
+    public void attack(BlockState state, Level level, BlockPos pos, Player player) {
         Direction face = Direction.getNearest(
                 pos.getX() + 0.5 - player.getX(), pos.getY() + 0.5 - player.getY(), pos.getZ() + 0.5 - player.getZ());
         if (face != Direction.DOWN && face != state.getValue(FACING)) {
@@ -105,7 +105,7 @@ public final class BlockArcaneBore extends BaseEntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!movedByPiston
                 && !state.is(newState.getBlock())
                 && level.getBlockEntity(pos) instanceof BlockEntityArcaneBore bore) {

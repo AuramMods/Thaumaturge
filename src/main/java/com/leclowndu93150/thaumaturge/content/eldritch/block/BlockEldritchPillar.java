@@ -18,7 +18,7 @@ public final class BlockEldritchPillar extends BlockEldritchStructure {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 }

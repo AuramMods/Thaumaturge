@@ -41,12 +41,12 @@ public final class BlockVisBattery extends Block {
     }
 
     @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         updateTick(state, level, pos, random);
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         updateTick(state, level, pos, random);
     }
 
@@ -78,7 +78,7 @@ public final class BlockVisBattery extends Block {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
         if (level instanceof ServerLevel server && server.hasNeighborSignal(pos) && state.getValue(CHARGE) > 0) {
             server.getBlockTicks().clearArea(new BoundingBox(pos));
@@ -87,12 +87,12 @@ public final class BlockVisBattery extends Block {
     }
 
     @Override
-    protected boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         return state.getValue(CHARGE);
     }
 }

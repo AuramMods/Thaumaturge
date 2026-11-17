@@ -140,7 +140,7 @@ public final class BlockCondenserLattice extends Block {
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction directionToNeighbour,
             BlockState neighbourState,
@@ -154,7 +154,7 @@ public final class BlockCondenserLattice extends Block {
     }
 
     @Override
-    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         if (!level.isClientSide() && !oldState.is(this)) {
             LatticeAnchor.schedule(level, pos, this);
@@ -162,12 +162,12 @@ public final class BlockCondenserLattice extends Block {
     }
 
     @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         LatticeAnchor.settle(level, pos);
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         super.onRemove(state, level, pos, newState, movedByPiston);
         if (!state.is(newState.getBlock()) && level instanceof ServerLevel server) {
             LatticeAnchor.released(server, pos);
@@ -175,7 +175,7 @@ public final class BlockCondenserLattice extends Block {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return shapes[maskOf(state)];
     }
 

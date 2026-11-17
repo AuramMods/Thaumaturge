@@ -53,12 +53,12 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return INPUT_COLLISION;
     }
@@ -90,7 +90,7 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (!level.isClientSide()
                 && entity instanceof ItemEntity item
                 && item.tickCount % ITEM_INTAKE_INTERVAL == 0
@@ -108,7 +108,7 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
             if (level.getBlockEntity(pos) instanceof BlockEntityAdvancedAlchemicalFurnace furnace) {
                 furnace.dropContents(pos);

@@ -103,19 +103,19 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return ORB_SHAPES
                 .get(RandomSource.create(state.getSeed(pos)).nextInt(ORB_SHAPES.size()))
                 .get(state.getValue(FACING));
     }
 
     @Override
-    protected boolean isRandomlyTicking(BlockState state) {
+    public boolean isRandomlyTicking(BlockState state) {
         return true;
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (!TaintOrigins.isSustained(level, pos) && random.nextInt(DIE_CHANCE) == 0) {
             decay(level, pos, state);
             TaintBiomeManager.restoreIfCleared(level, pos);
@@ -132,7 +132,7 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
     }
 
     @Override
-    protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState next, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState next, boolean movedByPiston) {
         super.onRemove(state, world, pos, next, movedByPiston);
         if (state.is(next.getBlock()) || !(world instanceof ServerLevel level)) return;
         RandomSource random = level.getRandom();

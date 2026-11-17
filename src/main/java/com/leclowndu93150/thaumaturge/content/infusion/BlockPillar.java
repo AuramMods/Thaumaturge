@@ -63,12 +63,12 @@ public final class BlockPillar extends HorizontalDirectionalBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES.get(state.getValue(FACING));
     }
 
     @Override
-    protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
         return 1.0F;
     }
 

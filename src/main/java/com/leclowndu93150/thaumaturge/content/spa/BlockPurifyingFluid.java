@@ -36,7 +36,7 @@ public class BlockPurifyingFluid extends LiquidBlock {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         PurifyingFluid.applyEntityInside(level, pos, entity);
     }
 

@@ -52,18 +52,18 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
     }
 
     @Override
-    protected BlockState rotate(BlockState state, Rotation rotation) {
+    public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(
                 BlockStateProperties.FACING, rotation.rotate(state.getValue(BlockStateProperties.FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, Mirror mirror) {
+    public BlockState mirror(BlockState state, Mirror mirror) {
         return rotate(state, mirror.getRotation(state.getValue(BlockStateProperties.FACING)));
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -82,12 +82,12 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
     }
 
     @Override
-    protected boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityEssentiaReservoir reservoir)) {
             return 0;
         }
@@ -98,7 +98,7 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())
                 && level instanceof ServerLevel serverLevel
                 && level.getBlockEntity(pos) instanceof BlockEntityEssentiaReservoir reservoir) {

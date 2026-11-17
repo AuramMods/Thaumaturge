@@ -62,7 +62,7 @@ public final class BlockEldritchAltar extends BlockEldritchStructure implements 
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
@@ -136,7 +136,7 @@ public final class BlockEldritchAltar extends BlockEldritchStructure implements 
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
         if (!state.is(next.getBlock()) && level.getBlockEntity(pos) instanceof BlockEntityEldritchAltar altar)
             altar.removePortal();
         super.onRemove(state, level, pos, next, moving);

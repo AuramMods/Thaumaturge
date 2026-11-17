@@ -35,17 +35,17 @@ public final class BlockTubeBuffer extends BlockEssentiaTransport {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
-    protected boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer buffer)) return 0;
         int size = buffer.heldTotal();
         if (size <= 0) return 0;

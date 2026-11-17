@@ -40,7 +40,7 @@ public final class BlockEldritchNothing extends Block implements EntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
 
@@ -50,18 +50,18 @@ public final class BlockEldritchNothing extends Block implements EntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.block();
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return COLLISION;
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state,
             Level level,
             BlockPos pos,
@@ -79,7 +79,7 @@ public final class BlockEldritchNothing extends Block implements EntityBlock {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         EldritchVoidContact.touch(level, entity);
     }
 }

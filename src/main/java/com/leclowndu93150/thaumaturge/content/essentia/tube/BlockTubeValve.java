@@ -59,7 +59,7 @@ public final class BlockTubeValve extends BlockTube {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         VoxelShape base = super.getShape(state, level, pos, context);
         if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeValve valve)) {
             return base;

@@ -79,7 +79,7 @@ public final class BlockArcaneDoor extends DoorBlock {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         if (!(level instanceof ServerLevel server) || defaultBlockState().is(block)) {
             return;

@@ -39,7 +39,7 @@ public final class BlockJarNode extends Block implements EntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return AbstractBlockJar.SHAPE;
     }
 
@@ -77,7 +77,7 @@ public final class BlockJarNode extends Block implements EntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         BlockNode.unindexNode(state, level, pos, newState);
         super.onRemove(state, level, pos, newState, movedByPiston);
     }

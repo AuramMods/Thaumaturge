@@ -77,12 +77,12 @@ public class BlockCrucible extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
@@ -131,12 +131,12 @@ public class BlockCrucible extends BaseEntityBlock {
     }
 
     @Override
-    protected boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityCrucible crucible)) return 0;
         return comparatorSignal(crucible.getAspects().totalAmount());
     }
@@ -158,7 +158,7 @@ public class BlockCrucible extends BaseEntityBlock {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (level.isClientSide()) return;
         if (!(level.getBlockEntity(pos) instanceof BlockEntityCrucible crucible)) return;
         if (!crucible.isBoiling()) return;
@@ -204,7 +204,7 @@ public class BlockCrucible extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 }

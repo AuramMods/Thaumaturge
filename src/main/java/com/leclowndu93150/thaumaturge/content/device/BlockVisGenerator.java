@@ -48,7 +48,7 @@ public final class BlockVisGenerator extends BaseEntityBlock {
             box(7.0, 15.0, 7.0, 9.0, 16.0, 9.0)));
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES.get(state.getValue(BlockStateProperties.FACING));
     }
 
@@ -70,7 +70,7 @@ public final class BlockVisGenerator extends BaseEntityBlock {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, block, fromPos, movedByPiston);
         boolean enabled = !level.hasNeighborSignal(pos);
@@ -94,7 +94,7 @@ public final class BlockVisGenerator extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 }

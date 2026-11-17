@@ -76,7 +76,7 @@ public final class BlockResearchTable extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -111,29 +111,29 @@ public final class BlockResearchTable extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState rotate(BlockState state, Rotation rotation) {
+    public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, Mirror mirror) {
+    public BlockState mirror(BlockState state, Mirror mirror) {
         return rotate(state, mirror.getRotation(state.getValue(FACING)));
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Map<Direction, VoxelShape> shapes = state.getValue(PART) == ResearchTablePart.MAIN ? MAIN_SHAPES : EXT_SHAPES;
         return shapes.get(state.getValue(FACING));
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return getShape(state, level, pos, context);
     }
 
     @Override
-    protected boolean isPathfindable(BlockState state, PathComputationType type) {
+    public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
         return false;
     }
 
@@ -147,7 +147,7 @@ public final class BlockResearchTable extends BaseEntityBlock {
     }
 
     @Override
-    protected @Nullable MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
+    public @Nullable MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
         return level.getBlockEntity(mainPos(state, pos)) instanceof BlockEntityResearchTable be ? be : null;
     }
 

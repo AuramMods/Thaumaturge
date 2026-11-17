@@ -56,12 +56,12 @@ public final class BlockDioptra extends BaseEntityBlock {
     }
 
     @Override
-    protected boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityDioptra dioptra)) {
             return 0;
         }
@@ -79,7 +79,7 @@ public final class BlockDioptra extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 }

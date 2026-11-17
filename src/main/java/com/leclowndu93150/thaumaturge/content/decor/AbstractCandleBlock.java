@@ -23,12 +23,12 @@ public abstract class AbstractCandleBlock extends Block implements AltarStabilis
     protected abstract boolean isBurning(BlockState state);
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         return canSupportCenter(level, pos.below(), Direction.UP);
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction direction,
             BlockState neighborState,

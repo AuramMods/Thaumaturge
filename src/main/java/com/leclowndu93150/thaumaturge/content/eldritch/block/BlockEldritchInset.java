@@ -43,7 +43,7 @@ public class BlockEldritchInset extends DropExperienceBlock {
     }
 
     @Override
-    protected BlockState updateShape(
+    public BlockState updateShape(
             BlockState state,
             Direction directionToNeighbour,
             BlockState neighbourState,

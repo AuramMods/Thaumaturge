@@ -31,17 +31,17 @@ public final class BlockBarrier extends Block {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    public VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if (!(context instanceof EntityCollisionContext entityContext)) {
             return Shapes.empty();
@@ -66,7 +66,7 @@ public final class BlockBarrier extends Block {
     }
 
     @Override
-    protected void neighborChanged(
+    public void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean movedByPiston) {
         BlockState below = level.getBlockState(pos.below());
         if (!below.is(TTBlocks.PAVING_STONE_BARRIER.get()) && !below.is(this)) {
@@ -75,12 +75,12 @@ public final class BlockBarrier extends Block {
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
         return true;
     }
 
     @Override
-    protected boolean skipRendering(BlockState state, BlockState adjacentState, Direction direction) {
+    public boolean skipRendering(BlockState state, BlockState adjacentState, Direction direction) {
         return true;
     }
 }

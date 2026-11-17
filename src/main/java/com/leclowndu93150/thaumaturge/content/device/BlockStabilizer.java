@@ -32,7 +32,7 @@ public final class BlockStabilizer extends BaseEntityBlock {
             box(4.0, 13.0, 4.0, 12.0, 16.0, 12.0));
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
@@ -47,12 +47,12 @@ public final class BlockStabilizer extends BaseEntityBlock {
     }
 
     @Override
-    protected boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         return level.getBlockEntity(pos) instanceof BlockEntityStabilizer stabilizer ? stabilizer.charge() : 0;
     }
 
@@ -66,7 +66,7 @@ public final class BlockStabilizer extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 }
