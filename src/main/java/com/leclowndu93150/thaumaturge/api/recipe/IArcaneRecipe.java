@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
+import com.leclowndu93150.thaumaturge.recipe.RegistryRecipe;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import net.minecraft.world.item.crafting.Recipe;
 
@@ -7,7 +8,7 @@ import net.minecraft.world.item.crafting.Recipe;
  *
  * @since 1.0.0
  */
-public interface IArcaneRecipe extends ResearchGated, Recipe<IArcaneCraftingInput> {
+public interface IArcaneRecipe extends ResearchGated, RegistryRecipe<IArcaneCraftingInput> {
     int visCost();
 
     AspectList crystalCost();

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
@@ -29,7 +30,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
-public final class InfusionRunicAugmentRecipe implements InfusionJobRecipe {
+public final class InfusionRunicAugmentRecipe extends AbstractRecipe<InfusionInput> implements InfusionJobRecipe {
     public static final int BASE_INSTABILITY = 5;
     private static final int MAX_CHARGE = 120;
 

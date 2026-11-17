@@ -17,7 +17,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
+import com.leclowndu93150.thaumaturge.recipe.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;

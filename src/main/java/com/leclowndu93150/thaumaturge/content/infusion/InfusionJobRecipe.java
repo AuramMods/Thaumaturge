@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.recipe.RegistryRecipe;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import java.util.List;
@@ -9,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import org.jspecify.annotations.Nullable;
 
-public interface InfusionJobRecipe extends IInfusionRecipe, Recipe<InfusionInput> {
+public interface InfusionJobRecipe extends IInfusionRecipe, RegistryRecipe<InfusionInput> {
 
     default @Nullable List<ItemStack> jobComponents(InfusionInput input) {
         return matchComponents(input.components());

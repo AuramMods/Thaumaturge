@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
+import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
@@ -26,7 +27,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
-public final class DustTriggerSimpleRecipe implements DustTrigger {
+public final class DustTriggerSimpleRecipe extends AbstractRecipe<DustTriggerInput> implements DustTrigger {
     public static final MapCodec<DustTriggerSimpleRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     BuiltInRegistries.BLOCK.byNameCodec().fieldOf("target").forGetter(r -> r.target),
                     ItemStack.CODEC.fieldOf("result").forGetter(r -> r.result),

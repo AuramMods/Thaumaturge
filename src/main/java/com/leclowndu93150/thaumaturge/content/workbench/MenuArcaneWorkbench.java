@@ -32,7 +32,7 @@ import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
+import com.leclowndu93150.thaumaturge.recipe.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;

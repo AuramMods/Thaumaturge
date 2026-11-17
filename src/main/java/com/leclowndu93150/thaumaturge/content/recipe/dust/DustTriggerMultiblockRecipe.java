@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
+import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
@@ -33,7 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jspecify.annotations.Nullable;
 
-public final class DustTriggerMultiblockRecipe implements DustTrigger {
+public final class DustTriggerMultiblockRecipe extends AbstractRecipe<DustTriggerInput> implements DustTrigger {
 
     public static final MapCodec<DustTriggerMultiblockRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     ResourceLocation.CODEC.fieldOf("blueprint").forGetter(r -> r.blueprintId),

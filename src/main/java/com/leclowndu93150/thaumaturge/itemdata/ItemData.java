@@ -103,6 +103,27 @@ public final class ItemData {
         return java.util.Collections.unmodifiableMap(fields);
     }
 
+    public static boolean listMatches(java.util.List<ItemStack> first, java.util.List<ItemStack> second) {
+        if (first.size() != second.size()) return false;
+        for (int i = 0; i < first.size(); i++) {
+            ItemStack a = first.get(i), b = second.get(i);
+            if (a.isEmpty() && b.isEmpty()) continue;
+            if (a.getCount() != b.getCount() || a.getItem() != b.getItem()
+                    || !comparisonFields(a).equals(comparisonFields(b)) || !a.areCapsCompatible(b)) return false;
+        }
+        return true;
+    }
+
+    /** Like the baseline helper, excludes counts while preserving equality's item/data distinctions. */
+    public static int hashStackList(java.util.List<ItemStack> stacks) {
+        int hash = 0;
+        for (ItemStack stack : stacks) {
+            int dataHash = stack.isEmpty() ? 0 : comparisonFields(stack).hashCode();
+            hash = 31 * hash + 31 * (31 + stack.getItem().hashCode()) + dataHash;
+        }
+        return hash;
+    }
+
     public static void copyExplicitData(ItemStack source, ItemStack destination) {
         if (source.getTag() == null) return;
         CompoundTag result = destination.getTag() == null ? new CompoundTag() : destination.getTag().copy();

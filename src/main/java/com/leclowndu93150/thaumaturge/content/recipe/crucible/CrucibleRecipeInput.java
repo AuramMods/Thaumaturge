@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.recipe.crucible;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeInput;
+import com.leclowndu93150.thaumaturge.recipe.RecipeInput;
 
 public record CrucibleRecipeInput(ItemStack catalyst, AspectList availableAspects) implements RecipeInput {
     @Override

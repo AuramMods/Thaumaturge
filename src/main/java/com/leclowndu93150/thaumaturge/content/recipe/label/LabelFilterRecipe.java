@@ -15,17 +15,17 @@ import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteB
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CustomRecipe;
+import com.leclowndu93150.thaumaturge.recipe.CraftingInput;
+import com.leclowndu93150.thaumaturge.recipe.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 public final class LabelFilterRecipe extends CustomRecipe {
     public static final LabelFilterRecipe INSTANCE = new LabelFilterRecipe();
-    public static final MapCodec<LabelFilterRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
+    public static final MapCodec<LabelFilterRecipe> MAP_CODEC = MapCodec.unit(LabelFilterRecipe::new);
     public static final StreamCodec<RegistryFriendlyByteBuf, LabelFilterRecipe> STREAM_CODEC =
-            StreamCodec.unit(INSTANCE);
+            StreamCodec.unitFactory(LabelFilterRecipe::new);
     public static final RecipeSerializer<LabelFilterRecipe> SERIALIZER =
             new SimpleRecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 

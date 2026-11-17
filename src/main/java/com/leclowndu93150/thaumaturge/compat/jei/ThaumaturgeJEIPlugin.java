@@ -76,6 +76,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeInput;
+import com.leclowndu93150.thaumaturge.recipe.SingleRecipeInput;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import org.jspecify.annotations.Nullable;

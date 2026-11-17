@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.api.recipe;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeInput;
+import com.leclowndu93150.thaumaturge.recipe.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 

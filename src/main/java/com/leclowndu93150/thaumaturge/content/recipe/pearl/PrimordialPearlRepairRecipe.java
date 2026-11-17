@@ -10,16 +10,16 @@ import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteB
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CustomRecipe;
+import com.leclowndu93150.thaumaturge.recipe.CraftingInput;
+import com.leclowndu93150.thaumaturge.recipe.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public final class PrimordialPearlRepairRecipe extends CustomRecipe {
     public static final PrimordialPearlRepairRecipe INSTANCE = new PrimordialPearlRepairRecipe();
-    public static final MapCodec<PrimordialPearlRepairRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
+    public static final MapCodec<PrimordialPearlRepairRecipe> MAP_CODEC = MapCodec.unit(PrimordialPearlRepairRecipe::new);
     public static final StreamCodec<RegistryFriendlyByteBuf, PrimordialPearlRepairRecipe> STREAM_CODEC =
-            StreamCodec.unit(INSTANCE);
+            StreamCodec.unitFactory(PrimordialPearlRepairRecipe::new);
     public static final RecipeSerializer<PrimordialPearlRepairRecipe> SERIALIZER =
             new SimpleRecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 

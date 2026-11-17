@@ -164,12 +164,12 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
                         && this.width == other.width
                         && this.height == other.height
                         && this.ingredientCount == other.ingredientCount
-                        && ItemStack.listMatches(this.items, other.items);
+                        && ItemData.listMatches(this.items, other.items);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.width, this.height, ItemStack.hashStackList(this.items));
+        return Objects.hash(this.width, this.height, ItemData.hashStackList(this.items));
     }
 
     @Override

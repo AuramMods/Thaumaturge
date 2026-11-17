@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -24,7 +25,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
-public final class InfusionRecipe implements InfusionJobRecipe {
+public final class InfusionRecipe extends AbstractRecipe<InfusionInput> implements InfusionJobRecipe {
     public static final MapCodec<InfusionRecipe> MAP_CODEC = RecordCodecBuilder.<InfusionRecipe>mapCodec(i -> i.group(
                             Ingredient.CODEC.fieldOf("catalyst").forGetter(r -> r.catalyst),
                             Ingredient.CODEC.listOf(1, 64).fieldOf("components").forGetter(r -> r.components),

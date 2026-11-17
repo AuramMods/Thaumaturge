@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.crucible;
 
+import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -19,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
-public class CrucibleRecipe implements Recipe<CrucibleRecipeInput>, ResearchGated {
+public class CrucibleRecipe extends AbstractRecipe<CrucibleRecipeInput> implements ResearchGated {
 
     public static final MapCodec<CrucibleRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     Ingredient.CODEC.fieldOf("catalyst").forGetter(r -> r.catalyst),

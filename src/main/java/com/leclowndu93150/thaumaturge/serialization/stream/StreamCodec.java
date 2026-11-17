@@ -30,6 +30,11 @@ public interface StreamCodec<B, V> {
         }, buffer -> constant);
     }
 
+    /** Stateless wire data with a fresh value on decode, for per-resource recipe identities. */
+    static <B, V> StreamCodec<B, V> unitFactory(java.util.function.Supplier<V> factory) {
+        return of((buffer, value) -> {}, buffer -> factory.get());
+    }
+
     default <O> StreamCodec<B, O> map(Function<? super V, ? extends O> decode,
             Function<? super O, ? extends V> encode) {
         return of((buffer, value) -> encode(buffer, encode.apply(value)),

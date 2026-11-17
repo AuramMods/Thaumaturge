@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
@@ -16,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 
-public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
+public abstract class ArcaneCraftingRecipe extends AbstractRecipe<IArcaneCraftingInput> implements IArcaneRecipe {
 
     public static Codec<AspectInstance> LIMITED_ASPECTS =
             AspectInstance.CODEC.validate(instance -> instance.amount() > 64

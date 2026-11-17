@@ -122,3 +122,11 @@ manager lifetime mixin. The five earlier persistence/item mixins compile with
 the real processor/refmap but are not applied here yet. Full gameplay subscriber
 execution, mod recipe serializers/inputs/IDs, live worlds, rendering, all other
 mixins and actual distribution installation remain pending.
+
+
+Cycle 022 expands the focused suites to 171 server / 178 client tests. The new
+input/base adapters are exercised through native shaped/shapeless matching and
+special-recipe callbacks, including expansion of trimmed remainders to the
+original crafting slot. This does not yet validate the full mod recipe classes
+or native serialization: the next port step must bind real resource IDs during
+Forge JSON/network decoding and supply the appropriate registry context.

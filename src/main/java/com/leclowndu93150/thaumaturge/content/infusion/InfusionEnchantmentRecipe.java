@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
@@ -28,7 +29,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
-public final class InfusionEnchantmentRecipe implements InfusionJobRecipe {
+public final class InfusionEnchantmentRecipe extends AbstractRecipe<InfusionInput> implements InfusionJobRecipe {
     public static final int INSTABILITY = 4;
     private static final float OTHER_ENCHANT_COST_STEP = 0.33F;
     private static final int WARP_ROLL_BOUND = 10;

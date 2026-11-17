@@ -4,7 +4,7 @@ import java.util.List;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeInput;
+import com.leclowndu93150.thaumaturge.recipe.RecipeInput;
 import org.jspecify.annotations.Nullable;
 
 /**

@@ -13,7 +13,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
+import com.leclowndu93150.thaumaturge.recipe.CraftingInput;
 
 public class InventoryArcaneWorkbench extends SimpleContainer implements IArcaneWorkbench, CraftingContainer {
     public static final int CRAFTING_SLOTS = 9;

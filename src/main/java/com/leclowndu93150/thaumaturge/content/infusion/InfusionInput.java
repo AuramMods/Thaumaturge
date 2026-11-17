@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.infusion;
 
 import java.util.List;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeInput;
+import com.leclowndu93150.thaumaturge.recipe.RecipeInput;
 
 public record InfusionInput(ItemStack catalyst, List<ItemStack> components) implements RecipeInput {
     @Override

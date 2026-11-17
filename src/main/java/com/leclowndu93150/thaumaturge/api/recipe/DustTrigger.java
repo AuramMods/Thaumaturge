@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
+import com.leclowndu93150.thaumaturge.recipe.RegistryRecipe;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -8,7 +9,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
-public interface DustTrigger extends Recipe<DustTriggerInput>, ResearchGated {
+public interface DustTrigger extends RegistryRecipe<DustTriggerInput>, ResearchGated {
 
     @Override
     default boolean isSpecial() {
