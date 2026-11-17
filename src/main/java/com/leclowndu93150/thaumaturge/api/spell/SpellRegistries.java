@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.spell;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
@@ -17,12 +18,12 @@ import net.minecraft.core.Registry;
  */
 public final class SpellRegistries {
     /** Decodes a behaviour by its {@code type} field. Usable once the registries are bound. */
-    public static final Codec<SpellBehavior> BEHAVIOR_CODEC = Codec.lazyInitialized(
+    public static final Codec<SpellBehavior> BEHAVIOR_CODEC = Codecs.lazyInitialized(
             () -> behaviors().byNameCodec().dispatch(SpellBehavior::type, SpellBehaviorType::codec));
 
     /** Decodes an affinity action by its {@code type} field. Usable once the registries are bound. */
     public static final Codec<SpellAction> ACTION_CODEC =
-            Codec.lazyInitialized(() -> actions().byNameCodec().dispatch(SpellAction::type, SpellActionType::codec));
+            Codecs.lazyInitialized(() -> actions().byNameCodec().dispatch(SpellAction::type, SpellActionType::codec));
 
     private static Registry<SpellBehaviorType<?>> behaviors;
     private static Registry<SpellActionType<?>> actions;

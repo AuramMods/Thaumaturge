@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.labyrinth;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
@@ -28,7 +29,7 @@ public interface LabyrinthEncounter {
     /**
      * Inline encounter codec, dispatching on {@code type} through the {@link LabyrinthEncounterType} registry.
      */
-    Codec<LabyrinthEncounter> DIRECT_CODEC = Codec.lazyInitialized(() -> LabyrinthHelper.encounterTypes()
+    Codec<LabyrinthEncounter> DIRECT_CODEC = Codecs.lazyInitialized(() -> LabyrinthHelper.encounterTypes()
             .byNameCodec()
             .dispatch("type", LabyrinthEncounter::type, LabyrinthEncounterType::codec));
 

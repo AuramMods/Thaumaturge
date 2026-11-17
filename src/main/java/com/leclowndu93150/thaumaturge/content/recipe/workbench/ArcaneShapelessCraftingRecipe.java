@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
@@ -36,7 +37,7 @@ public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
                             .fieldOf("crystals")
                             .forGetter(o -> o.aspects),
                     ItemStack.CODEC.fieldOf("result").forGetter((o) -> o.result),
-                    Codec.lazyInitialized(() -> Ingredient.CODEC.listOf(
+                    Codecs.lazyInitialized(() -> Codecs.list(Ingredient.CODEC,
                                     1, ArcaneShapedRecipePattern.maxHeight * ArcaneShapedRecipePattern.maxWidth))
                             .fieldOf("ingredients")
                             .forGetter((o) -> o.ingredients))

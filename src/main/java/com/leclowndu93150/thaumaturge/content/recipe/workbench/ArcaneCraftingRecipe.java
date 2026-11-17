@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -20,12 +21,11 @@ import net.minecraft.world.item.crafting.RecipeType;
 public abstract class ArcaneCraftingRecipe extends AbstractRecipe<IArcaneCraftingInput> implements IArcaneRecipe {
 
     public static Codec<AspectInstance> LIMITED_ASPECTS =
-            AspectInstance.CODEC.validate(instance -> instance.amount() > 64
+            Codecs.validate(AspectInstance.CODEC, instance -> instance.amount() > 64
                     ? DataResult.error(() ->
                             "The amount for '" + instance.aspect().getKey().location() + "' aspect must not exceed 64.")
                     : DataResult.success(instance));
-    public static Codec<AspectList> PRIMAL_ASPECTS_CODEC = LIMITED_ASPECTS
-            .listOf(0, 6)
+    public static Codec<AspectList> PRIMAL_ASPECTS_CODEC = Codecs.list(LIMITED_ASPECTS, 0, 6)
             .flatXmap(
                     entries -> {
                         AspectList result = AspectList.EMPTY;

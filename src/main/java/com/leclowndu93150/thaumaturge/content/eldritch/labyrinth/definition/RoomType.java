@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -37,7 +38,7 @@ public record RoomType(
 
     private static final Codec<Integer> FOOTPRINT = Codec.intRange(1, MAX_FOOTPRINT);
 
-    public static final Codec<RoomType> CODEC = RecordCodecBuilder.<RoomType>create(instance -> instance.group(
+    public static final Codec<RoomType> CODEC = Codecs.validate(RecordCodecBuilder.<RoomType>create(instance -> instance.group(
                             SimpleWeightedRandomList.wrappedCodec(ResourceLocation.CODEC)
                                     .fieldOf("templates")
                                     .forGetter(RoomType::templates),
@@ -63,8 +64,7 @@ public record RoomType(
                             ResourceLocation.CODEC
                                     .optionalFieldOf("variety_group")
                                     .forGetter(RoomType::varietyGroup))
-                    .apply(instance, RoomType::new))
-            .validate(RoomType::validate);
+                    .apply(instance, RoomType::new)), RoomType::validate);
 
     public static String id(Holder<RoomType> room) {
         return room.unwrapKey().map(key -> key.location().toString()).orElse("");

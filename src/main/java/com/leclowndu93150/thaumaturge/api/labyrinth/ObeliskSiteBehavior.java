@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.labyrinth;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 
 /**
@@ -14,7 +15,7 @@ public interface ObeliskSiteBehavior {
     /**
      * Dispatches on the {@code type} field through the {@link ObeliskSiteBehaviorType} registry.
      */
-    Codec<ObeliskSiteBehavior> CODEC = Codec.lazyInitialized(() -> LabyrinthHelper.siteBehaviorTypes()
+    Codec<ObeliskSiteBehavior> CODEC = Codecs.lazyInitialized(() -> LabyrinthHelper.siteBehaviorTypes()
             .byNameCodec()
             .dispatch("type", ObeliskSiteBehavior::type, ObeliskSiteBehaviorType::codec));
 

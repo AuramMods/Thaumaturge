@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -21,7 +22,7 @@ public record Aspect(
     public static final int DEFAULT_BLEND = 1;
     public static final int CONTRAST_BLEND = 771;
 
-    public static final Codec<Aspect> DIRECT_CODEC = RecordCodecBuilder.<Aspect>create(builder -> builder.group(
+    public static final Codec<Aspect> DIRECT_CODEC = Codecs.validate(RecordCodecBuilder.<Aspect>create(builder -> builder.group(
                             Codec.STRING.fieldOf("tag").forGetter(Aspect::tag),
                             Codec.INT.fieldOf("color").forGetter(Aspect::color),
                             RegistryFixedCodec.create(IAspect.REGISTRY_KEY)
@@ -31,8 +32,7 @@ public record Aspect(
                             Codec.STRING.optionalFieldOf("chat_color").forGetter(Aspect::chatColor),
                             ResourceLocation.CODEC.optionalFieldOf("texture").forGetter(Aspect::optionalTexture),
                             Codec.INT.optionalFieldOf("blend", DEFAULT_BLEND).forGetter(Aspect::blend))
-                    .apply(builder, Aspect::create))
-            .validate(Aspect::validate);
+                    .apply(builder, Aspect::create)), Aspect::validate);
 
     private Optional<ResourceLocation> optionalTexture() {
         return texture.equals(defaultTexture(tag)) ? Optional.empty() : Optional.of(texture);

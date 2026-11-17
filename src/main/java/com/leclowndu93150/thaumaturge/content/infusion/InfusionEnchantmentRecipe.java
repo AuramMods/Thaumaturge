@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
@@ -36,7 +37,7 @@ public final class InfusionEnchantmentRecipe extends AbstractRecipe<InfusionInpu
 
     public static final MapCodec<InfusionEnchantmentRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     InfusionEnchantment.CODEC.fieldOf("enchantment").forGetter(r -> r.enchantment),
-                    Ingredient.CODEC.listOf(1, 64).fieldOf("components").forGetter(r -> r.components),
+                    Codecs.list(Ingredient.CODEC, 1, 64).fieldOf("components").forGetter(r -> r.components),
                     AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
                     Ingredient.CODEC.fieldOf("display_catalyst").forGetter(r -> r.displayCatalyst),
                     ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))

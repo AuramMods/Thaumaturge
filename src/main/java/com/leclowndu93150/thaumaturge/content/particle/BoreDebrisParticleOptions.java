@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -17,7 +18,7 @@ public record BoreDebrisParticleOptions(
         implements ParticleOptions {
     public static final int NO_ENTITY = -1;
     private static final Codec<BlockState> BLOCK_STATE_CODEC =
-            Codec.withAlternative(BlockState.CODEC, BuiltInRegistries.BLOCK.byNameCodec(), Block::defaultBlockState);
+            Codecs.withAlternative(BlockState.CODEC, BuiltInRegistries.BLOCK.byNameCodec(), Block::defaultBlockState);
 
     public static final MapCodec<BoreDebrisParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     BLOCK_STATE_CODEC.fieldOf("block_state").forGetter(BoreDebrisParticleOptions::state),

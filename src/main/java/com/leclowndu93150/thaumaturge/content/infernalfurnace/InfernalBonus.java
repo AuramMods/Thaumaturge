@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -56,11 +57,11 @@ public record InfernalBonus(HolderSet<Item> items, IntProvider count, float chan
     public static final AdvancedDataMapType<Item, List<InfernalBonus>, Remover> DATA_MAP = AdvancedDataMapType.builder(
                     ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "infernal_bonus"),
                     Registries.ITEM,
-                    CODEC.listOf(1, 64))
+                    Codecs.list(CODEC, 1, 64))
             .merger((registry, fKey, fv, sKey, sv) ->
                     Stream.concat(fv.stream(), sv.stream()).toList())
             .remover(Remover.CODEC)
-            .synced(CODEC.listOf(1, 64), false)
+            .synced(Codecs.list(CODEC, 1, 64), false)
             .build();
 
     @SubscribeEvent

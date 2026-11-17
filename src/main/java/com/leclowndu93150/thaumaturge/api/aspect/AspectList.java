@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.aspect;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
@@ -49,7 +50,7 @@ public final class AspectList {
                     list -> DataResult.success(list.entries()));
 
     /** Non-Empty Codec; serializes as a non-empty JSON array of {@link AspectInstance}. */
-    public static final Codec<AspectList> NON_EMPTY_CODEC = CODEC.validate(list ->
+    public static final Codec<AspectList> NON_EMPTY_CODEC = Codecs.validate(CODEC, list ->
             list.isEmpty() ? DataResult.error(() -> "Aspect List must not be empty", EMPTY) : DataResult.success(list));
 
     /** Network codec; preserves order. */

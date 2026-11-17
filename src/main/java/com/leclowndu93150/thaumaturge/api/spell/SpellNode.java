@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.spell;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -51,7 +52,7 @@ public record SpellNode(
     public static final int MAX_SETTING_KEY = 64;
 
     /** Recursive disk codec. Rejects trees deeper than {@link #MAX_DEPTH} or wider than {@link #MAX_CHILDREN}. */
-    public static final Codec<SpellNode> CODEC = Codec.<SpellNode>recursive(
+    public static final Codec<SpellNode> CODEC = Codecs.validate(Codecs.<SpellNode>recursive(
                     "SpellNode",
                     self -> RecordCodecBuilder.create(i -> i.group(
                                     ResourceKey.codec(SpellPart.REGISTRY_KEY)
@@ -60,17 +61,15 @@ public record SpellNode(
                                     ResourceKey.codec(IAspect.REGISTRY_KEY)
                                             .optionalFieldOf("aspect")
                                             .forGetter(SpellNode::aspect),
-                                    Codec.unboundedMap(Codec.string(0, MAX_SETTING_KEY), Codec.INT)
-                                            .validate(settings -> settings.size() <= MAX_SETTINGS
+                                    Codecs.validate(Codec.unboundedMap(Codecs.string(0, MAX_SETTING_KEY), Codec.INT), settings -> settings.size() <= MAX_SETTINGS
                                                     ? DataResult.success(settings)
                                                     : DataResult.error(() -> "Too many spell settings"))
                                             .optionalFieldOf("settings", Map.of())
                                             .forGetter(SpellNode::settings),
-                                    self.sizeLimitedListOf(MAX_CHILDREN)
+                                    Codecs.sizeLimitedList(self, MAX_CHILDREN)
                                             .optionalFieldOf("children", List.of())
                                             .forGetter(SpellNode::children))
-                            .apply(i, SpellNode::new)))
-            .validate(node -> node.depth() <= MAX_DEPTH
+                            .apply(i, SpellNode::new))), node -> node.depth() <= MAX_DEPTH
                     ? DataResult.success(node)
                     : DataResult.error(() -> "Spell nested deeper than " + MAX_DEPTH));
 

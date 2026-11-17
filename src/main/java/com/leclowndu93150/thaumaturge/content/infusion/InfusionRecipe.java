@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
@@ -26,9 +27,9 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public final class InfusionRecipe extends AbstractRecipe<InfusionInput> implements InfusionJobRecipe {
-    public static final MapCodec<InfusionRecipe> MAP_CODEC = RecordCodecBuilder.<InfusionRecipe>mapCodec(i -> i.group(
+    public static final MapCodec<InfusionRecipe> MAP_CODEC = Codecs.validate(RecordCodecBuilder.<InfusionRecipe>mapCodec(i -> i.group(
                             Ingredient.CODEC.fieldOf("catalyst").forGetter(r -> r.catalyst),
-                            Ingredient.CODEC.listOf(1, 64).fieldOf("components").forGetter(r -> r.components),
+                            Codecs.list(Ingredient.CODEC, 1, 64).fieldOf("components").forGetter(r -> r.components),
                             AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
                             Codec.intRange(0, 100)
                                     .optionalFieldOf("instability", 0)
@@ -38,8 +39,7 @@ public final class InfusionRecipe extends AbstractRecipe<InfusionInput> implemen
                                     .optionalFieldOf("catalyst_patch")
                                     .forGetter(r -> r.catalystPatch),
                             ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))
-                    .apply(i, InfusionRecipe::new))
-            .validate(recipe -> recipe.result.isPresent() == recipe.catalystPatch.isPresent()
+                    .apply(i, InfusionRecipe::new)), recipe -> recipe.result.isPresent() == recipe.catalystPatch.isPresent()
                     ? DataResult.error(() -> "Infusion recipe needs exactly one of result or catalyst_patch")
                     : DataResult.success(recipe));
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.legacy;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
@@ -31,7 +32,7 @@ public final class LegacyFocusPackage {
     private static final int OPTION_BOUNCY = 1;
     private static final int OPTION_SEEK_ENEMY = 2;
 
-    private static final Codec<FocusPackage> PACKAGE_CODEC = Codec.recursive("LegacyFocusPackage", self -> {
+    private static final Codec<FocusPackage> PACKAGE_CODEC = Codecs.recursive("LegacyFocusPackage", self -> {
         Codec<FocusUnit> unit = RecordCodecBuilder.create(i -> i.group(
                         LegacyIds.IDENTIFIER_CODEC.fieldOf("key").forGetter(FocusUnit::key),
                         Codec.unboundedMap(Codec.STRING, Codec.INT)
@@ -47,7 +48,7 @@ public final class LegacyFocusPackage {
     private static final Codec<Spell> LEGACY_CODEC = PACKAGE_CODEC.flatXmap(
             LegacyFocusPackage::toSpell, spell -> DataResult.error(() -> "Legacy focus packages are read-only"));
 
-    public static final Codec<Spell> CODEC = Codec.withAlternative(Spell.CODEC, LEGACY_CODEC);
+    public static final Codec<Spell> CODEC = Codecs.withAlternative(Spell.CODEC, LEGACY_CODEC);
 
     private LegacyFocusPackage() {}
 

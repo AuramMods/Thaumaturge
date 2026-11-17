@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.SocketProfile;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.Codec;
@@ -14,7 +15,7 @@ public record BandSettings(int baseY, Optional<BlockState> fill) {
     private static final int MAX_BASE_Y = OuterLandsChunkGenerator.GEN_DEPTH - SocketProfile.HEIGHT;
     public static final BandSettings DEFAULT = new BandSettings(DEFAULT_BASE_Y, Optional.empty());
     private static final Codec<Integer> BASE_Y =
-            Codec.INT.validate(value -> value % SectionPos.SECTION_SIZE == 0 && value >= 0 && value <= MAX_BASE_Y
+            Codecs.validate(Codec.INT, value -> value % SectionPos.SECTION_SIZE == 0 && value >= 0 && value <= MAX_BASE_Y
                     ? DataResult.success(value)
                     : DataResult.error(
                             () -> "Band base_y must be a multiple of 16 from 0 to " + MAX_BASE_Y + ", got " + value));

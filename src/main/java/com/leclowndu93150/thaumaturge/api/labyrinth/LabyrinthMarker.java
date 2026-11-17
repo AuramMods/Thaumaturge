@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.labyrinth;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -19,7 +20,7 @@ public interface LabyrinthMarker {
     /**
      * Dispatches on the {@code type} field through the {@link LabyrinthMarkerType} registry.
      */
-    Codec<LabyrinthMarker> CODEC = Codec.lazyInitialized(() -> LabyrinthHelper.markerTypes()
+    Codec<LabyrinthMarker> CODEC = Codecs.lazyInitialized(() -> LabyrinthHelper.markerTypes()
             .byNameCodec()
             .dispatch("type", LabyrinthMarker::type, LabyrinthMarkerType::codec));
 

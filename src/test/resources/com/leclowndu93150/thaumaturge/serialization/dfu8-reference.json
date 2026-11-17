@@ -1,0 +1,1857 @@
+{
+  "validation": {
+    "decode:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": 0,
+        "remainder": null
+      },
+      "error": "negative"
+    },
+    "decode:0": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": 0,
+        "remainder": null
+      },
+      "error": null
+    },
+    "decode:4": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": 4,
+        "remainder": null
+      },
+      "error": null
+    },
+    "decode:\"invalid\"": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Not a number: \"invalid\""
+    },
+    "encode:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": 0,
+      "error": "negative"
+    },
+    "encode:0": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": 0,
+      "error": null
+    },
+    "encode:4": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": 4,
+      "error": null
+    }
+  },
+  "mapValidation": {
+    "decode:{}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "No key n in MapLike[{}]"
+    },
+    "decode:{\"n\":2}": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": 2,
+        "remainder": {
+          "n": 2
+        }
+      },
+      "error": null
+    },
+    "decode:{\"n\":9}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "too large"
+    },
+    "decode:{\"n\":\"bad\"}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Not a number: \"bad\""
+    },
+    "encode:2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "n": 2
+      },
+      "error": null
+    },
+    "encode:9": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "too large"
+    }
+  },
+  "lists": {
+    "0:0:false:decode:[]": {
+      "success": true,
+      "lifecycle": "Stable",
+      "value": {
+        "value": [],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 0
+    },
+    "0:0:false:decode:[1]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          1
+        ]
+      },
+      "error": "List is too long: 1, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:false:decode:[1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          1,
+          2
+        ]
+      },
+      "error": "List is too long: 2, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:false:decode:[1,2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          1,
+          2,
+          3
+        ]
+      },
+      "error": "List is too long: 3, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:false:decode:[1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:false:decode:[\"bad\",1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          "bad",
+          1,
+          2
+        ]
+      },
+      "error": "List is too long: 3, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:false:decode:[1,\"bad\",2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          1,
+          "bad",
+          2,
+          3
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:false:decode:[-1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          -1,
+          2,
+          3,
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:false:decode:[\"bad\",\"bad\"]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          "bad",
+          "bad"
+        ]
+      },
+      "error": "List is too long: 2, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:false:decode:7": {
+      "success": false,
+      "lifecycle": "Stable",
+      "value": null,
+      "error": "Not a json array: 7",
+      "elementDecodes": 0
+    },
+    "0:0:false:encode:[]": {
+      "success": true,
+      "lifecycle": "Stable",
+      "value": [],
+      "error": null,
+      "elementEncodes": 0
+    },
+    "0:0:false:encode:[1]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 1, expected range [0-0]",
+      "elementEncodes": 0
+    },
+    "0:0:false:encode:[1, 2, 3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 3, expected range [0-0]",
+      "elementEncodes": 0
+    },
+    "0:0:false:encode:[1, 2, 3, 4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 4, expected range [0-0]",
+      "elementEncodes": 0
+    },
+    "0:0:false:encode:[-1, 2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 2, expected range [0-0]",
+      "elementEncodes": 0
+    },
+    "0:0:true:decode:[]": {
+      "success": true,
+      "lifecycle": "Stable",
+      "value": {
+        "value": [],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 0
+    },
+    "0:0:true:decode:[1]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          1
+        ]
+      },
+      "error": "List is too long: 1, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:true:decode:[1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          1,
+          2
+        ]
+      },
+      "error": "List is too long: 2, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:true:decode:[1,2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          1,
+          2,
+          3
+        ]
+      },
+      "error": "List is too long: 3, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:true:decode:[1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:true:decode:[\"bad\",1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          "bad",
+          1,
+          2
+        ]
+      },
+      "error": "List is too long: 3, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:true:decode:[1,\"bad\",2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          1,
+          "bad",
+          2,
+          3
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:true:decode:[-1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          -1,
+          2,
+          3,
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:true:decode:[\"bad\",\"bad\"]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          "bad",
+          "bad"
+        ]
+      },
+      "error": "List is too long: 2, expected range [0-0]",
+      "elementDecodes": 0
+    },
+    "0:0:true:decode:7": {
+      "success": false,
+      "lifecycle": "Stable",
+      "value": null,
+      "error": "Not a json array: 7",
+      "elementDecodes": 0
+    },
+    "0:0:true:encode:[]": {
+      "success": true,
+      "lifecycle": "Stable",
+      "value": [],
+      "error": null,
+      "elementEncodes": 0
+    },
+    "0:0:true:encode:[1]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 1, expected range [0-0]",
+      "elementEncodes": 0
+    },
+    "0:0:true:encode:[1, 2, 3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 3, expected range [0-0]",
+      "elementEncodes": 0
+    },
+    "0:0:true:encode:[1, 2, 3, 4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 4, expected range [0-0]",
+      "elementEncodes": 0
+    },
+    "0:0:true:encode:[-1, 2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 2, expected range [0-0]",
+      "elementEncodes": 0
+    },
+    "0:2:false:decode:[]": {
+      "success": true,
+      "lifecycle": "Stable",
+      "value": {
+        "value": [],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 0
+    },
+    "0:2:false:decode:[1]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 1
+    },
+    "0:2:false:decode:[1,2]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 2
+    },
+    "0:2:false:decode:[1,2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": [
+          3
+        ]
+      },
+      "error": "List is too long: 3, expected range [0-2]",
+      "elementDecodes": 2
+    },
+    "0:2:false:decode:[1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": [
+          3,
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-2]",
+      "elementDecodes": 2
+    },
+    "0:2:false:decode:[\"bad\",1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": [
+          "bad"
+        ]
+      },
+      "error": "List is too long: 3, expected range [0-2]",
+      "elementDecodes": 3
+    },
+    "0:2:false:decode:[1,\"bad\",2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": [
+          "bad",
+          3
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-2]",
+      "elementDecodes": 3
+    },
+    "0:2:false:decode:[-1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          -1,
+          2
+        ],
+        "remainder": [
+          3,
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-2]",
+      "elementDecodes": 2
+    },
+    "0:2:false:decode:[\"bad\",\"bad\"]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          "bad",
+          "bad"
+        ]
+      },
+      "error": "Not a number: \"bad\"; Not a number: \"bad\"",
+      "elementDecodes": 2
+    },
+    "0:2:false:decode:7": {
+      "success": false,
+      "lifecycle": "Stable",
+      "value": null,
+      "error": "Not a json array: 7",
+      "elementDecodes": 0
+    },
+    "0:2:false:encode:[]": {
+      "success": true,
+      "lifecycle": "Stable",
+      "value": [],
+      "error": null,
+      "elementEncodes": 0
+    },
+    "0:2:false:encode:[1]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        1
+      ],
+      "error": null,
+      "elementEncodes": 1
+    },
+    "0:2:false:encode:[1, 2, 3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 3, expected range [0-2]",
+      "elementEncodes": 0
+    },
+    "0:2:false:encode:[1, 2, 3, 4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 4, expected range [0-2]",
+      "elementEncodes": 0
+    },
+    "0:2:false:encode:[-1, 2]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        -1,
+        2
+      ],
+      "error": null,
+      "elementEncodes": 2
+    },
+    "0:2:true:decode:[]": {
+      "success": true,
+      "lifecycle": "Stable",
+      "value": {
+        "value": [],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 0
+    },
+    "0:2:true:decode:[1]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 1
+    },
+    "0:2:true:decode:[1,2]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 2
+    },
+    "0:2:true:decode:[1,2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": [
+          3
+        ]
+      },
+      "error": "List is too long: 3, expected range [0-2]",
+      "elementDecodes": 2
+    },
+    "0:2:true:decode:[1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": [
+          3,
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-2]",
+      "elementDecodes": 2
+    },
+    "0:2:true:decode:[\"bad\",1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": [
+          "bad"
+        ]
+      },
+      "error": "List is too long: 3, expected range [0-2]",
+      "elementDecodes": 3
+    },
+    "0:2:true:decode:[1,\"bad\",2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": [
+          "bad",
+          3
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-2]",
+      "elementDecodes": 3
+    },
+    "0:2:true:decode:[-1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          0,
+          2
+        ],
+        "remainder": [
+          -1,
+          3,
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [0-2]",
+      "elementDecodes": 2
+    },
+    "0:2:true:decode:[\"bad\",\"bad\"]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [],
+        "remainder": [
+          "bad",
+          "bad"
+        ]
+      },
+      "error": "Not a number: \"bad\"; Not a number: \"bad\"",
+      "elementDecodes": 2
+    },
+    "0:2:true:decode:7": {
+      "success": false,
+      "lifecycle": "Stable",
+      "value": null,
+      "error": "Not a json array: 7",
+      "elementDecodes": 0
+    },
+    "0:2:true:encode:[]": {
+      "success": true,
+      "lifecycle": "Stable",
+      "value": [],
+      "error": null,
+      "elementEncodes": 0
+    },
+    "0:2:true:encode:[1]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        1
+      ],
+      "error": null,
+      "elementEncodes": 1
+    },
+    "0:2:true:encode:[1, 2, 3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 3, expected range [0-2]",
+      "elementEncodes": 0
+    },
+    "0:2:true:encode:[1, 2, 3, 4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 4, expected range [0-2]",
+      "elementEncodes": 0
+    },
+    "0:2:true:encode:[-1, 2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": [
+        0,
+        2
+      ],
+      "error": "negative",
+      "elementEncodes": 2
+    },
+    "1:3:false:decode:[]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [1-3]",
+      "elementDecodes": 0
+    },
+    "1:3:false:decode:[1]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 1
+    },
+    "1:3:false:decode:[1,2]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 2
+    },
+    "1:3:false:decode:[1,2,3]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 3
+    },
+    "1:3:false:decode:[1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": [
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [1-3]",
+      "elementDecodes": 3
+    },
+    "1:3:false:decode:[\"bad\",1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": [
+          "bad"
+        ]
+      },
+      "error": "Not a number: \"bad\"",
+      "elementDecodes": 3
+    },
+    "1:3:false:decode:[1,\"bad\",2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": [
+          "bad"
+        ]
+      },
+      "error": "List is too long: 4, expected range [1-3]",
+      "elementDecodes": 4
+    },
+    "1:3:false:decode:[-1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          -1,
+          2,
+          3
+        ],
+        "remainder": [
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [1-3]",
+      "elementDecodes": 3
+    },
+    "1:3:false:decode:[\"bad\",\"bad\"]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [1-3]",
+      "elementDecodes": 2
+    },
+    "1:3:false:decode:7": {
+      "success": false,
+      "lifecycle": "Stable",
+      "value": null,
+      "error": "Not a json array: 7",
+      "elementDecodes": 0
+    },
+    "1:3:false:encode:[]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [1-3]",
+      "elementEncodes": 0
+    },
+    "1:3:false:encode:[1]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        1
+      ],
+      "error": null,
+      "elementEncodes": 1
+    },
+    "1:3:false:encode:[1, 2, 3]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        1,
+        2,
+        3
+      ],
+      "error": null,
+      "elementEncodes": 3
+    },
+    "1:3:false:encode:[1, 2, 3, 4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 4, expected range [1-3]",
+      "elementEncodes": 0
+    },
+    "1:3:false:encode:[-1, 2]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        -1,
+        2
+      ],
+      "error": null,
+      "elementEncodes": 2
+    },
+    "1:3:true:decode:[]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [1-3]",
+      "elementDecodes": 0
+    },
+    "1:3:true:decode:[1]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 1
+    },
+    "1:3:true:decode:[1,2]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 2
+    },
+    "1:3:true:decode:[1,2,3]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 3
+    },
+    "1:3:true:decode:[1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": [
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [1-3]",
+      "elementDecodes": 3
+    },
+    "1:3:true:decode:[\"bad\",1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": [
+          "bad"
+        ]
+      },
+      "error": "Not a number: \"bad\"",
+      "elementDecodes": 3
+    },
+    "1:3:true:decode:[1,\"bad\",2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": [
+          "bad"
+        ]
+      },
+      "error": "List is too long: 4, expected range [1-3]",
+      "elementDecodes": 4
+    },
+    "1:3:true:decode:[-1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          0,
+          2,
+          3
+        ],
+        "remainder": [
+          -1,
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [1-3]",
+      "elementDecodes": 3
+    },
+    "1:3:true:decode:[\"bad\",\"bad\"]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [1-3]",
+      "elementDecodes": 2
+    },
+    "1:3:true:decode:7": {
+      "success": false,
+      "lifecycle": "Stable",
+      "value": null,
+      "error": "Not a json array: 7",
+      "elementDecodes": 0
+    },
+    "1:3:true:encode:[]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [1-3]",
+      "elementEncodes": 0
+    },
+    "1:3:true:encode:[1]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        1
+      ],
+      "error": null,
+      "elementEncodes": 1
+    },
+    "1:3:true:encode:[1, 2, 3]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        1,
+        2,
+        3
+      ],
+      "error": null,
+      "elementEncodes": 3
+    },
+    "1:3:true:encode:[1, 2, 3, 4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 4, expected range [1-3]",
+      "elementEncodes": 0
+    },
+    "1:3:true:encode:[-1, 2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": [
+        0,
+        2
+      ],
+      "error": "negative",
+      "elementEncodes": 2
+    },
+    "3:3:false:decode:[]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [3-3]",
+      "elementDecodes": 0
+    },
+    "3:3:false:decode:[1]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 1, expected range [3-3]",
+      "elementDecodes": 1
+    },
+    "3:3:false:decode:[1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 2, expected range [3-3]",
+      "elementDecodes": 2
+    },
+    "3:3:false:decode:[1,2,3]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 3
+    },
+    "3:3:false:decode:[1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": [
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [3-3]",
+      "elementDecodes": 3
+    },
+    "3:3:false:decode:[\"bad\",1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 2, expected range [3-3]",
+      "elementDecodes": 3
+    },
+    "3:3:false:decode:[1,\"bad\",2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": [
+          "bad"
+        ]
+      },
+      "error": "List is too long: 4, expected range [3-3]",
+      "elementDecodes": 4
+    },
+    "3:3:false:decode:[-1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          -1,
+          2,
+          3
+        ],
+        "remainder": [
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [3-3]",
+      "elementDecodes": 3
+    },
+    "3:3:false:decode:[\"bad\",\"bad\"]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [3-3]",
+      "elementDecodes": 2
+    },
+    "3:3:false:decode:7": {
+      "success": false,
+      "lifecycle": "Stable",
+      "value": null,
+      "error": "Not a json array: 7",
+      "elementDecodes": 0
+    },
+    "3:3:false:encode:[]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [3-3]",
+      "elementEncodes": 0
+    },
+    "3:3:false:encode:[1]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 1, expected range [3-3]",
+      "elementEncodes": 0
+    },
+    "3:3:false:encode:[1, 2, 3]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        1,
+        2,
+        3
+      ],
+      "error": null,
+      "elementEncodes": 3
+    },
+    "3:3:false:encode:[1, 2, 3, 4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 4, expected range [3-3]",
+      "elementEncodes": 0
+    },
+    "3:3:false:encode:[-1, 2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 2, expected range [3-3]",
+      "elementEncodes": 0
+    },
+    "3:3:true:decode:[]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [3-3]",
+      "elementDecodes": 0
+    },
+    "3:3:true:decode:[1]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 1, expected range [3-3]",
+      "elementDecodes": 1
+    },
+    "3:3:true:decode:[1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 2, expected range [3-3]",
+      "elementDecodes": 2
+    },
+    "3:3:true:decode:[1,2,3]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": []
+      },
+      "error": null,
+      "elementDecodes": 3
+    },
+    "3:3:true:decode:[1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": [
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [3-3]",
+      "elementDecodes": 3
+    },
+    "3:3:true:decode:[\"bad\",1,2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 2, expected range [3-3]",
+      "elementDecodes": 3
+    },
+    "3:3:true:decode:[1,\"bad\",2,3]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2,
+          3
+        ],
+        "remainder": [
+          "bad"
+        ]
+      },
+      "error": "List is too long: 4, expected range [3-3]",
+      "elementDecodes": 4
+    },
+    "3:3:true:decode:[-1,2,3,4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          0,
+          2,
+          3
+        ],
+        "remainder": [
+          -1,
+          4
+        ]
+      },
+      "error": "List is too long: 4, expected range [3-3]",
+      "elementDecodes": 3
+    },
+    "3:3:true:decode:[\"bad\",\"bad\"]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [3-3]",
+      "elementDecodes": 2
+    },
+    "3:3:true:decode:7": {
+      "success": false,
+      "lifecycle": "Stable",
+      "value": null,
+      "error": "Not a json array: 7",
+      "elementDecodes": 0
+    },
+    "3:3:true:encode:[]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 0, expected range [3-3]",
+      "elementEncodes": 0
+    },
+    "3:3:true:encode:[1]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 1, expected range [3-3]",
+      "elementEncodes": 0
+    },
+    "3:3:true:encode:[1, 2, 3]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        1,
+        2,
+        3
+      ],
+      "error": null,
+      "elementEncodes": 3
+    },
+    "3:3:true:encode:[1, 2, 3, 4]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too long: 4, expected range [3-3]",
+      "elementEncodes": 0
+    },
+    "3:3:true:encode:[-1, 2]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "List is too short: 2, expected range [3-3]",
+      "elementEncodes": 0
+    }
+  },
+  "strings": {
+    "0:1::decode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": "",
+        "remainder": null
+      },
+      "error": null
+    },
+    "0:1::encode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": "",
+      "error": null
+    },
+    "0:1:a:decode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": "a",
+        "remainder": null
+      },
+      "error": null
+    },
+    "0:1:a:encode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": "a",
+      "error": null
+    },
+    "0:1:abc:decode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"abc\" is too long: 3, expected range [0-1]"
+    },
+    "0:1:abc:encode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"abc\" is too long: 3, expected range [0-1]"
+    },
+    "0:1:abcd:decode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"abcd\" is too long: 4, expected range [0-1]"
+    },
+    "0:1:abcd:encode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"abcd\" is too long: 4, expected range [0-1]"
+    },
+    "0:1:🔮:decode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"🔮\" is too long: 2, expected range [0-1]"
+    },
+    "0:1:🔮:encode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"🔮\" is too long: 2, expected range [0-1]"
+    },
+    "1:3::decode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"\" is too short: 0, expected range [1-3]"
+    },
+    "1:3::encode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"\" is too short: 0, expected range [1-3]"
+    },
+    "1:3:a:decode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": "a",
+        "remainder": null
+      },
+      "error": null
+    },
+    "1:3:a:encode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": "a",
+      "error": null
+    },
+    "1:3:abc:decode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": "abc",
+        "remainder": null
+      },
+      "error": null
+    },
+    "1:3:abc:encode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": "abc",
+      "error": null
+    },
+    "1:3:abcd:decode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"abcd\" is too long: 4, expected range [1-3]"
+    },
+    "1:3:abcd:encode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"abcd\" is too long: 4, expected range [1-3]"
+    },
+    "1:3:🔮:decode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": "🔮",
+        "remainder": null
+      },
+      "error": null
+    },
+    "1:3:🔮:encode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": "🔮",
+      "error": null
+    },
+    "3:3::decode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"\" is too short: 0, expected range [3-3]"
+    },
+    "3:3::encode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"\" is too short: 0, expected range [3-3]"
+    },
+    "3:3:a:decode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"a\" is too short: 1, expected range [3-3]"
+    },
+    "3:3:a:encode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"a\" is too short: 1, expected range [3-3]"
+    },
+    "3:3:abc:decode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": "abc",
+        "remainder": null
+      },
+      "error": null
+    },
+    "3:3:abc:encode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": "abc",
+      "error": null
+    },
+    "3:3:abcd:decode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"abcd\" is too long: 4, expected range [3-3]"
+    },
+    "3:3:abcd:encode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"abcd\" is too long: 4, expected range [3-3]"
+    },
+    "3:3:🔮:decode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"🔮\" is too short: 2, expected range [3-3]"
+    },
+    "3:3:🔮:encode": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "String \"🔮\" is too short: 2, expected range [3-3]"
+    }
+  },
+  "alternatives": {
+    "{}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Failed to parse either. First: No key current in MapLike[{}]; Second: No key legacy in MapLike[{}]"
+    },
+    "{\"current\":2}": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": 2,
+        "remainder": {
+          "current": 2
+        }
+      },
+      "error": null
+    },
+    "{\"legacy\":3}": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": 3,
+        "remainder": {
+          "legacy": 3
+        }
+      },
+      "error": null
+    },
+    "{\"current\":2,\"legacy\":3}": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": 2,
+        "remainder": {
+          "current": 2,
+          "legacy": 3
+        }
+      },
+      "error": null
+    },
+    "{\"current\":\"bad\",\"legacy\":3}": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": 3,
+        "remainder": {
+          "current": "bad",
+          "legacy": 3
+        }
+      },
+      "error": null
+    },
+    "{\"current\":\"bad\",\"legacy\":\"bad\"}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Failed to parse either. First: Not a number: \"bad\"; Second: Not a number: \"bad\""
+    },
+    "encode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "current": 4
+      },
+      "error": null
+    },
+    "converted:3": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          3
+        ],
+        "remainder": null
+      },
+      "error": null
+    },
+    "converted:[1,2]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1,
+          2
+        ],
+        "remainder": []
+      },
+      "error": null
+    },
+    "converted:[1,\"bad\"]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": [
+          1
+        ],
+        "remainder": [
+          "bad"
+        ]
+      },
+      "error": "Not a number: \"bad\""
+    },
+    "converted:\"bad\"": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Failed to parse either. First: Not a json array: \"bad\"; Second: Not a number: \"bad\""
+    },
+    "converted:encode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        5
+      ],
+      "error": null
+    }
+  },
+  "lazy": {
+    "before": 0,
+    "decode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": 2,
+        "remainder": null
+      },
+      "error": null
+    },
+    "encode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": 3,
+      "error": null
+    },
+    "after": 1,
+    "firstFailure": "fixture",
+    "retry": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": 1,
+      "error": null
+    },
+    "attempts": 2
+  },
+  "recursive": {
+    "before": 0,
+    "{\"n\":1,\"children\":[]}": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "n": 1,
+          "children": []
+        },
+        "remainder": {
+          "n": 1,
+          "children": []
+        }
+      },
+      "error": null
+    },
+    "{\"n\":1,\"children\":[{\"n\":2,\"children\":[]}]}": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "n": 1,
+          "children": [
+            {
+              "n": 2,
+              "children": []
+            }
+          ]
+        },
+        "remainder": {
+          "n": 1,
+          "children": [
+            {
+              "n": 2,
+              "children": []
+            }
+          ]
+        }
+      },
+      "error": null
+    },
+    "{\"n\":1,\"children\":[{\"n\":2,\"children\":[]},{\"n\":3,\"children\":[]},{\"n\":4,\"children\":[]}]}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "n": 1,
+          "children": [
+            {
+              "n": 2,
+              "children": []
+            },
+            {
+              "n": 3,
+              "children": []
+            }
+          ]
+        },
+        "remainder": {
+          "n": 1,
+          "children": [
+            {
+              "n": 2,
+              "children": []
+            },
+            {
+              "n": 3,
+              "children": []
+            },
+            {
+              "n": 4,
+              "children": []
+            }
+          ]
+        }
+      },
+      "error": "List is too long: 3, expected range [0-2]"
+    },
+    "{\"n\":1,\"children\":[{\"n\":\"bad\",\"children\":[]}]}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "n": 1,
+          "children": []
+        },
+        "remainder": {
+          "n": 1,
+          "children": [
+            {
+              "n": "bad",
+              "children": []
+            }
+          ]
+        }
+      },
+      "error": "Not a number: \"bad\""
+    },
+    "encode": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "n": 1,
+        "children": [
+          {
+            "n": 2,
+            "children": []
+          }
+        ]
+      },
+      "error": null
+    },
+    "after": 1
+  }
+}

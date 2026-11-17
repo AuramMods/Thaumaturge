@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.item;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.FocusTier;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
@@ -24,11 +25,10 @@ import net.neoforged.neoforge.common.crafting.IngredientType;
 
 public record SpellPartIngredient(Set<ResourceKey<SpellPart>> parts) implements ICustomIngredient {
     public static final MapCodec<SpellPartIngredient> CODEC =
-            RecordCodecBuilder.mapCodec(i -> i.group(Codec.withAlternative(
+            RecordCodecBuilder.mapCodec(i -> i.group(Codecs.validate(Codecs.withAlternative(
                                     ResourceKey.codec(SpellPart.REGISTRY_KEY).listOf(),
                                     ResourceKey.codec(SpellPart.REGISTRY_KEY),
-                                    List::of)
-                            .validate(list -> list.isEmpty()
+                                    List::of), list -> list.isEmpty()
                                     ? DataResult.error(() -> "Spell part ingredient needs at least one part")
                                     : DataResult.success(list))
                             .fieldOf("parts")

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.research;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -23,7 +24,7 @@ import java.util.List;
  * @since 1.0.0
  */
 public record ResearchConstruct(int xSize, int ySize, int zSize, List<String> cells, AspectList cost) {
-    public static final Codec<ResearchConstruct> CODEC = RecordCodecBuilder.<ResearchConstruct>create(instance ->
+    public static final Codec<ResearchConstruct> CODEC = Codecs.validate(RecordCodecBuilder.<ResearchConstruct>create(instance ->
                     instance.group(
                                     Codec.INT.fieldOf("x_size").forGetter(ResearchConstruct::xSize),
                                     Codec.INT.fieldOf("y_size").forGetter(ResearchConstruct::ySize),
@@ -32,8 +33,7 @@ public record ResearchConstruct(int xSize, int ySize, int zSize, List<String> ce
                                     AspectList.CODEC
                                             .optionalFieldOf("cost", AspectList.EMPTY)
                                             .forGetter(ResearchConstruct::cost))
-                            .apply(instance, ResearchConstruct::new))
-            .validate(construct -> construct.cells().size() == construct.xSize() * construct.ySize() * construct.zSize()
+                            .apply(instance, ResearchConstruct::new)), construct -> construct.cells().size() == construct.xSize() * construct.ySize() * construct.zSize()
                     ? DataResult.success(construct)
                     : DataResult.error(() -> "construct cells must contain exactly x_size * y_size * z_size entries"));
 }

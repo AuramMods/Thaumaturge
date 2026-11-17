@@ -52,6 +52,7 @@ mixin {
 }
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
+sourceSets.test.java.srcDir 'porting/testing/dfu-reference/java'
 
 // Separate source sets let the window controls be tested before the mod compiles.
 // Neither the agent nor its dependencies enter the distributable mod JAR.
@@ -67,6 +68,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/serialization/ClientRegistryContext*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/TTNbt*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/BlockCodecs*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/Codecs*'
         java.include 'com/leclowndu93150/thaumaturge/registry/ForgeRegistration.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/RegistryBlockEntity.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/AbstractSyncedBlockEntity.java'
@@ -88,11 +90,16 @@ sourceSets {
     }
     portCodecTest {
         java.srcDir 'src/test/java'
+        java.srcDir 'porting/testing/dfu-reference/java'
+        resources.srcDir 'src/test/resources'
+        resources.include 'com/leclowndu93150/thaumaturge/serialization/dfu8-reference.json'
         java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
         java.include 'com/leclowndu93150/thaumaturge/serialization/RegistryContext*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/ClientRegistryContext*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/TTNbt*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/BlockCodecs*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/Codecs*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/CodecReferenceProbe.java'
         java.include 'com/leclowndu93150/thaumaturge/network/transport/**'
         java.include 'com/leclowndu93150/thaumaturge/state/**'
         java.include 'com/leclowndu93150/thaumaturge/itemdata/**'
@@ -102,6 +109,8 @@ sourceSets {
         compileClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
         runtimeClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
     }
+    // Separate JVM/classpath: DFU 8 must never enter the Forge 1.20.1 runtime.
+    portDfuReference { java.srcDir 'porting/testing/dfu-reference/java' }
     portMixins {
         java.srcDir 'src/main/java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/ItemDataDefaultsMixin.java'
@@ -159,6 +168,10 @@ dependencies {
     portCodecTestImplementation 'org.junit.jupiter:junit-jupiter'
     portCodecTestImplementation 'org.mockito:mockito-core:5.15.2'
     portCodecTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    portDfuReferenceImplementation 'com.mojang:datafixerupper:8.0.16'
+    portDfuReferenceImplementation 'com.google.code.gson:gson:2.10.1'
+    portDfuReferenceImplementation 'com.google.guava:guava:32.1.2-jre'
+    portDfuReferenceRuntimeOnly 'it.unimi.dsi:fastutil:8.5.12'
 
     // Run with -PportIntegrations to exercise optional JEI and Jade integration.
     if (providers.gradleProperty('portIntegrations').isPresent()) {
@@ -208,6 +221,13 @@ tasks.register('portCodecTest', Test) {
     // A failed vanilla bootstrap sets its global flag before throwing. Keep
     // that partial initialization from making later test classes appear valid.
     forkEvery = 1
+}
+
+tasks.register('generateDfuReference', JavaExec) {
+    dependsOn tasks.named('portDfuReferenceClasses')
+    classpath = sourceSets.portDfuReference.runtimeClasspath
+    mainClass = 'com.leclowndu93150.thaumaturge.serialization.CodecReferenceProbe'
+    args file('src/test/resources/com/leclowndu93150/thaumaturge/serialization/dfu8-reference.json').absolutePath
 }
 
 tasks.withType(Jar).configureEach { from('LICENSE', 'CREDITS.md') }

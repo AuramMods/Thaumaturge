@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.spell.part;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -37,7 +38,7 @@ public record SettingSpec(
         Optional<List<String>> labels,
         Optional<String> name) {
     /** Disk and network codec. {@code step} defaults to 1 and {@code default} to {@code min}. */
-    public static final Codec<SettingSpec> CODEC = RecordCodecBuilder.<SettingSpec>create(i -> i.group(
+    public static final Codec<SettingSpec> CODEC = Codecs.validate(RecordCodecBuilder.<SettingSpec>create(i -> i.group(
                             Codec.STRING.fieldOf("key").forGetter(SettingSpec::key),
                             Codec.INT.fieldOf("min").forGetter(SettingSpec::min),
                             Codec.INT.fieldOf("max").forGetter(SettingSpec::max),
@@ -50,8 +51,7 @@ public record SettingSpec(
                     .apply(
                             i,
                             (key, min, max, step, def, complexity, vis, labels, name) -> new SettingSpec(
-                                    key, min, max, step, def.orElse(min), complexity, vis, labels, name)))
-            .validate(SettingSpec::check);
+                                    key, min, max, step, def.orElse(min), complexity, vis, labels, name))), SettingSpec::check);
 
     /**
      * Snaps a value onto this spec's range and step grid.

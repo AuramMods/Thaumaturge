@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.model.connected;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -37,7 +38,7 @@ public record ConnectedSheetModel(
         Optional<ResourceLocation> model, Map<Direction, ConnectedTexture> faces, Optional<TagKey<Block>> group)
         implements IUnbakedGeometry<ConnectedSheetModel> {
     public static final ResourceLocation TYPE = TTIds.rl("connected");
-    public static final MapCodec<ConnectedSheetModel> CODEC = RecordCodecBuilder.<ConnectedSheetModel>mapCodec(
+    public static final MapCodec<ConnectedSheetModel> CODEC = Codecs.validate(RecordCodecBuilder.<ConnectedSheetModel>mapCodec(
                     instance -> instance.group(
                                     ResourceLocation.CODEC
                                             .optionalFieldOf("model")
@@ -48,8 +49,7 @@ public record ConnectedSheetModel(
                                     TagKey.hashedCodec(Registries.BLOCK)
                                             .optionalFieldOf("connects_with")
                                             .forGetter(ConnectedSheetModel::group))
-                            .apply(instance, ConnectedSheetModel::new))
-            .validate(ConnectedSheetModel::validate);
+                            .apply(instance, ConnectedSheetModel::new)), ConnectedSheetModel::validate);
 
     private static final Direction[] DIRECTIONS = Direction.values();
     private static final float BLOCK_PIXELS = 16.0F;

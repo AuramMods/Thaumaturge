@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
@@ -33,7 +34,7 @@ public record ResearchEntry(
         AspectList noteAspects,
         int complexity)
         implements IResearchEntry {
-    public static final Codec<ResearchEntry> DIRECT_CODEC = RecordCodecBuilder.<ResearchEntry>create(instance ->
+    public static final Codec<ResearchEntry> DIRECT_CODEC = Codecs.validate(RecordCodecBuilder.<ResearchEntry>create(instance ->
                     instance.group(
                                     RegistryFixedCodec.create(IResearchCategory.REGISTRY_KEY)
                                             .fieldOf("category")
@@ -73,8 +74,7 @@ public record ResearchEntry(
                                     Codec.intRange(1, 3)
                                             .optionalFieldOf("complexity", 1)
                                             .forGetter(ResearchEntry::complexity))
-                            .apply(instance, ResearchEntry::create))
-            .validate(ResearchEntry::validate);
+                            .apply(instance, ResearchEntry::create)), ResearchEntry::validate);
 
     public static final Codec<IResearchEntry> CODEC =
             DIRECT_CODEC.xmap(e -> (IResearchEntry) e, ResearchEntry::ofInterface);
