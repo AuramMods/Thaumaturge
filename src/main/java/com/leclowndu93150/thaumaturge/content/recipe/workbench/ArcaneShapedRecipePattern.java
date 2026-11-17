@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.IngredientCodecs;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
@@ -21,7 +22,6 @@ import java.util.function.Function;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -104,11 +104,14 @@ public final class ArcaneShapedRecipePattern {
 
     public static ArcaneShapedRecipePattern of(Map<Character, Ingredient> key, List<String> pattern) {
         Data data = new Data(key, pattern);
-        return unpack(data).getOrThrow();
+        return Codecs.getOrThrow(unpack(data));
     }
 
     private static DataResult<ArcaneShapedRecipePattern> unpack(Data data) {
         String[] shrunkPattern = shrink(data.pattern);
+        if (shrunkPattern.length == 0) {
+            return DataResult.error(() -> "Invalid pattern: at least one ingredient is required");
+        }
         int width = shrunkPattern[0].length();
         int height = shrunkPattern.length;
         List<Optional<Ingredient>> ingredients = new ArrayList<>(width * height);
@@ -279,7 +282,7 @@ public final class ArcaneShapedRecipePattern {
                 String::valueOf);
 
         public static final MapCodec<Data> MAP_CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
-                        ExtraCodecs.strictUnboundedMap(SYMBOL_CODEC, IngredientCodecs.CODEC)
+                        Codecs.strictUnboundedMap(SYMBOL_CODEC, IngredientCodecs.CODEC)
                                 .fieldOf("key")
                                 .forGetter((d) -> d.key),
                         PATTERN_CODEC.fieldOf("pattern").forGetter((d) -> d.pattern))

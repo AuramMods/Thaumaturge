@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -116,10 +117,9 @@ public final class NodeLocationIndex extends SavedData {
             CompoundTag node = new CompoundTag();
             node.put(
                     "pos",
-                    BlockPos.CODEC
-                            .encodeStart(NbtOps.INSTANCE, BlockPos.of(pos))
-                            .getOrThrow());
-            node.put("type", NodeType.CODEC.encodeStart(NbtOps.INSTANCE, type).getOrThrow());
+                    Codecs.getOrThrow(BlockPos.CODEC
+                            .encodeStart(NbtOps.INSTANCE, BlockPos.of(pos))));
+            node.put("type", Codecs.getOrThrow(NodeType.CODEC.encodeStart(NbtOps.INSTANCE, type)));
             nodeList.add(node);
         }));
         tag.put("nodes", nodeList);

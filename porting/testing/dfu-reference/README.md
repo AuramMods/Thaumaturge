@@ -28,7 +28,7 @@ The cycle-025 evidence records that metadata and the actual reference bytecode.
 Adapted production portions retain Microsoft's MIT notice in
 `src/main/resources/META-INF/licenses/thaumaturge-dfu-compat.txt`.
 
-The current fixture contains 373 observations in ten categories. It exercises
+The DFU fixture contains 376 observations in eleven categories. It exercises
 JSON ops and controlled schemas, not every mod codec or native NBT/world load.
 The optional-field comparisons include strict/lenient decoding, defaults,
 partial/error preservation, field omission and compressed JSON. A separate
@@ -38,3 +38,21 @@ unknown types, malformed fields, encoder type/codec errors and partial results.
 The truncated compressed-payload case records and compares the actual exception
 class (both libraries throw); no production exception handling is replaced.
 Several newer vanilla ingredient/item schemas still require conversion.
+
+The separate `strict-map-1.21.1-reference.json` fixture contains 13 observations
+from the actual Minecraft 1.21.1 `ExtraCodecs.StrictUnboundedMapCodec` class. The
+probe loads its pinned obfuscated class (`axw$b`) without booting Minecraft.
+It checks map errors, partial rejection, lifecycle, remainder and encoding. The
+DFU fixture also checks no-argument getOrThrow success and both error modes.
+
+To regenerate the strict-map reference, use the official 1.21.1 client artifact
+(SHA-1 `30c73b1c5da787909b2f73340419fdf13b9def88`) with a Java 21 Gradle JVM:
+
+```sh
+curl --fail --location https://piston-data.mojang.com/v1/objects/30c73b1c5da787909b2f73340419fdf13b9def88/client.jar --output /tmp/thaumaturge-reference-1.21.1.jar
+env JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home ./gradlew generateStrictMapReference -PportReferenceMinecraftJar=/tmp/thaumaturge-reference-1.21.1.jar --console=plain
+```
+
+The default reference path uses the existing cycle-011 evidence artifact.
+Only explicit regeneration needs that JAR; normal tests use the tracked fixture.
+Neither Minecraft 1.21.1 nor DFU 8 enters Forge's game/test runtime classpath.

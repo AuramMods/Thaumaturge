@@ -19,6 +19,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -339,6 +342,58 @@ public final class CodecReferenceProbe {
         return out;
     }
 
+    public JsonObject throwingResults() {
+        JsonObject out = new JsonObject();
+        for (boolean partial : List.of(false, true)) {
+            DataResult<Integer> value = partial ? DataResult.error(() -> "fixture failure", 5) : DataResult.error(() -> "fixture failure");
+            out.add("error:" + partial, invokeThrowing(value));
+        }
+        out.add("success", invokeThrowing(DataResult.success(7)));
+        return out;
+    }
+
+    private JsonElement invokeThrowing(DataResult<Integer> input) {
+        try {
+            Integer result = reference ? (Integer) DataResult.class.getMethod("getOrThrow").invoke(input)
+                    : call("getOrThrow", new Class<?>[]{DataResult.class}, input);
+            return value(result);
+        } catch (InvocationTargetException failure) {
+            JsonObject json = new JsonObject();
+            json.addProperty("thrown", failure.getCause().getClass().getName());
+            json.addProperty("message", failure.getCause().getMessage());
+            return json;
+        } catch (AssertionError failure) {
+            if (reference || !(failure.getCause() instanceof InvocationTargetException wrapped)) throw failure;
+            JsonObject json = new JsonObject();
+            json.addProperty("thrown", wrapped.getCause().getClass().getName());
+            json.addProperty("message", wrapped.getCause().getMessage());
+            return json;
+        } catch (ReflectiveOperationException failure) { throw new AssertionError(failure); }
+    }
+
+    @SuppressWarnings("unchecked")
+    public JsonObject strictMaps() {
+        JsonObject out = new JsonObject();
+        Codec<String> key = validate(Codec.STRING, text -> text.isBlank() ? DataResult.error(() -> "blank key") : DataResult.success(text));
+        Codec<Integer> value = validate(Codec.INT, n -> n < 0 ? DataResult.error(() -> "negative", 0) : DataResult.success(n));
+        Codec<Map<String, Integer>> codec;
+        try {
+            codec = reference ? (Codec<Map<String, Integer>>) Class.forName("axw$b").getConstructor(Codec.class, Codec.class)
+                    .newInstance(key, value) : call("strictUnboundedMap", new Class<?>[]{Codec.class, Codec.class}, key, value);
+        } catch (ReflectiveOperationException failure) { throw new AssertionError(failure); }
+        for (String input : List.of("{}", "{\"a\":2}", "{\"a\":2,\"b\":3}", "{\"a\":2,\"b\":-1}",
+                "{\"\":2}", "{\"\":\"bad\"}", "{\"a\":\"bad\"}", "[]", "7")) {
+            out.add("decode:" + input, result(codec.decode(JsonOps.INSTANCE, JsonParser.parseString(input))));
+        }
+        for (int n : new int[]{2, -1}) {
+            Map<String, Integer> input = new LinkedHashMap<>();
+            input.put("a", n);
+            out.add("encode:" + n, result(codec.encodeStart(JsonOps.INSTANCE, input)));
+            out.add("encodeCompressed:" + n, result(codec.encodeStart(JsonOps.COMPRESSED, input)));
+        }
+        return out;
+    }
+
     public JsonObject all() {
         JsonObject out = new JsonObject();
         out.add("validation", validations());
@@ -351,11 +406,13 @@ public final class CodecReferenceProbe {
         out.add("optional", optionalFields());
         out.add("dispatch", dispatchedSchemas(false));
         out.add("partialDispatch", dispatchedSchemas(true));
+        out.add("throwing", throwingResults());
         return out;
     }
 
     public static void main(String[] args) throws Exception {
         Files.writeString(Path.of(args[0]), new GsonBuilder().setPrettyPrinting().serializeNulls().create()
-                .toJson(new CodecReferenceProbe(true).all()) + "\n");
+                .toJson(args.length > 1 && args[1].equals("strict-map") ? new CodecReferenceProbe(true).strictMaps()
+                        : new CodecReferenceProbe(true).all()) + "\n");
     }
 }

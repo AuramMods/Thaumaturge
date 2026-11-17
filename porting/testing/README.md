@@ -197,3 +197,11 @@ exposes RegistryOps' actual lookup so construction can persist item data with
 the original lookup while changing the parent ops to NBT. No substitute registry
 provider is used. The full mod's spell-part implementation, actual mod component
 catalog, potion data backend and complete recipes/progression remain pending.
+
+Cycle 030 adds actual ArcaneShapedRecipePattern matching/serialization tests,
+including trimming, mirroring, holes, invalid/partial key data, wire layout and
+configured grid expansion. An all-space pattern crash is now a data error.
+The shared strict-map and getOrThrow bridges are compared to the actual 1.21.1
+game/DFU libraries. Final suites execute 237 server / 244 client tests. These
+pattern tests use a controlled workbench view over the real crafting input;
+crystal/vis payment, research, transactions and world crafting remain pending.

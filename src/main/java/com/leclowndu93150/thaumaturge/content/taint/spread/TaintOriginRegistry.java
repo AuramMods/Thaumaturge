@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.spread;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -50,7 +51,7 @@ public final class TaintOriginRegistry extends SavedData {
 
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.put(DATA_KEY, CODEC.encodeStart(NbtOps.INSTANCE, this).getOrThrow());
+        tag.put(DATA_KEY, Codecs.getOrThrow(CODEC.encodeStart(NbtOps.INSTANCE, this)));
         return tag;
     }
 

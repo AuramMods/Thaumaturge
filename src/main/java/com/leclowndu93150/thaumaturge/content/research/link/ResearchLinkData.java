@@ -109,7 +109,7 @@ public final class ResearchLinkData extends SavedData {
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         DataResult<Tag> encoded = CODEC.encodeStart(NbtOps.INSTANCE, this);
-        tag.put("data", encoded.getOrThrow());
+        tag.put("data", Codecs.getOrThrow(encoded));
         return tag;
     }
 

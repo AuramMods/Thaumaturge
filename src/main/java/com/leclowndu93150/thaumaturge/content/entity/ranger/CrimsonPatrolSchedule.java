@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.ranger;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
@@ -40,7 +41,7 @@ public final class CrimsonPatrolSchedule extends SavedData {
 
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.put(DATA_KEY, CODEC.encodeStart(NbtOps.INSTANCE, this).getOrThrow());
+        tag.put(DATA_KEY, Codecs.getOrThrow(CODEC.encodeStart(NbtOps.INSTANCE, this)));
         return tag;
     }
 

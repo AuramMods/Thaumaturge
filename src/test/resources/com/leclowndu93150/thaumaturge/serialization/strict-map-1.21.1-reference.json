@@ -1,0 +1,107 @@
+{
+  "decode:{}": {
+    "success": true,
+    "lifecycle": "Experimental",
+    "value": {
+      "value": {},
+      "remainder": {}
+    },
+    "error": null
+  },
+  "decode:{\"a\":2}": {
+    "success": true,
+    "lifecycle": "Experimental",
+    "value": {
+      "value": {
+        "a": 2
+      },
+      "remainder": {
+        "a": 2
+      }
+    },
+    "error": null
+  },
+  "decode:{\"a\":2,\"b\":3}": {
+    "success": true,
+    "lifecycle": "Experimental",
+    "value": {
+      "value": {
+        "a": 2,
+        "b": 3
+      },
+      "remainder": {
+        "a": 2,
+        "b": 3
+      }
+    },
+    "error": null
+  },
+  "decode:{\"a\":2,\"b\":-1}": {
+    "success": false,
+    "lifecycle": "Experimental",
+    "value": null,
+    "error": "Map entry \u0027b\u0027 : negative"
+  },
+  "decode:{\"\":2}": {
+    "success": false,
+    "lifecycle": "Experimental",
+    "value": null,
+    "error": "blank key"
+  },
+  "decode:{\"\":\"bad\"}": {
+    "success": false,
+    "lifecycle": "Experimental",
+    "value": null,
+    "error": "Not a number: \"bad\"; blank key"
+  },
+  "decode:{\"a\":\"bad\"}": {
+    "success": false,
+    "lifecycle": "Experimental",
+    "value": null,
+    "error": "Map entry \u0027a\u0027 : Not a number: \"bad\""
+  },
+  "decode:[]": {
+    "success": false,
+    "lifecycle": "Stable",
+    "value": null,
+    "error": "Not a JSON object: []"
+  },
+  "decode:7": {
+    "success": false,
+    "lifecycle": "Stable",
+    "value": null,
+    "error": "Not a JSON object: 7"
+  },
+  "encode:2": {
+    "success": true,
+    "lifecycle": "Experimental",
+    "value": {
+      "a": 2
+    },
+    "error": null
+  },
+  "encodeCompressed:2": {
+    "success": true,
+    "lifecycle": "Experimental",
+    "value": {
+      "a": 2
+    },
+    "error": null
+  },
+  "encode:-1": {
+    "success": false,
+    "lifecycle": "Experimental",
+    "value": {
+      "a": 0
+    },
+    "error": "negative"
+  },
+  "encodeCompressed:-1": {
+    "success": false,
+    "lifecycle": "Experimental",
+    "value": {
+      "a": 0
+    },
+    "error": "negative"
+  }
+}

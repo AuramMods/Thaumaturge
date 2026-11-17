@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.apothicenchanting.data;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.google.gson.JsonElement;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.compat.apothicenchanting.BlockEnchantingStats;
@@ -43,9 +44,8 @@ public final class EnchantingStatsProvider implements DataProvider {
             CompletableFuture<?>[] writes = this.entries.stream()
                     .map(entry -> DataProvider.saveStable(
                             output,
-                            BlockEnchantingStats.CODEC
-                                    .encodeStart(ops, entry.stats())
-                                    .getOrThrow(),
+                            Codecs.getOrThrow(BlockEnchantingStats.CODEC
+                                    .encodeStart(ops, entry.stats())),
                             this.path.json(TTIds.rl(entry.name()))))
                     .toArray(CompletableFuture[]::new);
             return CompletableFuture.allOf(writes);

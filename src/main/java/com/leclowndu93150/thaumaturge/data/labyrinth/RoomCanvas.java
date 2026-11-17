@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.labyrinth;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarker;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeGeometry;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.RoomSocket;
@@ -93,9 +94,8 @@ final class RoomCanvas extends AbstractTemplateCanvas implements RoomVoxels {
         LabyrinthMarker marker = markers.get(BlockPos.asLong(x, y, z));
         return marker == null
                 ? Optional.empty()
-                : Optional.of(LabyrinthMarker.CODEC
-                        .encodeStart(JsonOps.INSTANCE, marker)
-                        .getOrThrow()
+                : Optional.of(Codecs.getOrThrow(LabyrinthMarker.CODEC
+                        .encodeStart(JsonOps.INSTANCE, marker))
                         .toString());
     }
 

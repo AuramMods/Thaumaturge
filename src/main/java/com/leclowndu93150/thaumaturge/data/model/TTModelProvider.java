@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.model;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -2302,12 +2303,11 @@ public final class TTModelProvider implements DataProvider {
     }
 
     private static JsonElement wardedGlassModel() {
-        JsonObject root = ConnectedCornersModel.CODEC
+        JsonObject root = Codecs.getOrThrow(ConnectedCornersModel.CODEC
                 .codec()
                 .encodeStart(
                         JsonOps.INSTANCE,
-                        new ConnectedCornersModel(TTIds.rl("block/ward"), blockTexture("warded_glass")))
-                .getOrThrow()
+                        new ConnectedCornersModel(TTIds.rl("block/ward"), blockTexture("warded_glass"))))
                 .getAsJsonObject();
         root.addProperty("loader", ConnectedCornersModel.TYPE.toString());
         root.addProperty("parent", BLOCK_PARENT.toString());
@@ -3198,9 +3198,8 @@ public final class TTModelProvider implements DataProvider {
     private <T> void connected(Block block, ResourceLocation type, MapCodec<T> codec, T spec) {
         ResourceLocation model = ModelLocationUtils.getModelLocation(block).withSuffix("_connected");
         modelOutput.accept(model, () -> {
-            JsonObject json = codec.codec()
-                    .encodeStart(JsonOps.INSTANCE, spec)
-                    .getOrThrow()
+            JsonObject json = Codecs.getOrThrow(codec.codec()
+                    .encodeStart(JsonOps.INSTANCE, spec))
                     .getAsJsonObject();
             json.addProperty("loader", type.toString());
             json.addProperty("parent", BLOCK_PARENT.toString());

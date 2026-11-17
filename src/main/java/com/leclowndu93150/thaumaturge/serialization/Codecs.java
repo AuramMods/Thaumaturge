@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.serialization;
 
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.datafixers.util.Unit;
 import com.mojang.serialization.Codec;
@@ -10,8 +11,10 @@ import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
+import com.mojang.serialization.codecs.BaseMapCodec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -25,6 +28,43 @@ import java.util.stream.Stream;
  */
 public final class Codecs {
     private Codecs() {}
+
+    public static <A> A getOrThrow(DataResult<A> result) {
+        return result.result().orElseThrow(() -> new IllegalStateException(result.error().orElseThrow().message()));
+    }
+
+    public static <K, V> Codec<Map<K, V>> strictUnboundedMap(Codec<K> keys, Codec<V> values) {
+        return new StrictMapCodec<>(keys, values);
+    }
+
+    private record StrictMapCodec<K, V>(Codec<K> keyCodec, Codec<V> elementCodec)
+            implements Codec<Map<K, V>>, BaseMapCodec<K, V> {
+        @Override public <T> DataResult<Map<K, V>> decode(DynamicOps<T> ops, MapLike<T> input) {
+            ImmutableMap.Builder<K, V> values = ImmutableMap.builder();
+            for (Pair<T, T> entry : input.entries().toList()) {
+                DataResult<K> key = keyCodec.parse(ops, entry.getFirst());
+                DataResult<V> value = elementCodec.parse(ops, entry.getSecond());
+                DataResult<Pair<K, V>> pair = key.apply2stable(Pair::of, value);
+                if (pair.error().isPresent()) {
+                    String message = pair.error().orElseThrow().message();
+                    return DataResult.error(() -> key.result().map(k -> "Map entry '" + k + "' : " + message).orElse(message));
+                }
+                if (pair.result().isEmpty()) return DataResult.error(() -> "Empty or invalid map contents are not allowed");
+                Pair<K, V> decoded = pair.result().orElseThrow();
+                values.put(decoded.getFirst(), decoded.getSecond());
+            }
+            return DataResult.success(values.build());
+        }
+
+        @Override public <T> DataResult<Pair<Map<K, V>, T>> decode(DynamicOps<T> ops, T input) {
+            return ops.getMap(input).setLifecycle(Lifecycle.stable()).flatMap(map -> decode(ops, map))
+                    .map(value -> Pair.of(value, input));
+        }
+
+        @Override public <T> DataResult<T> encode(Map<K, V> input, DynamicOps<T> ops, T prefix) {
+            return encode(input, ops, ops.mapBuilder()).build(prefix);
+        }
+    }
 
     public static <A> Codec<A> validate(Codec<A> codec, Function<A, DataResult<A>> validator) {
         return codec.flatXmap(validator, validator);

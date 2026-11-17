@@ -3635,5 +3635,16 @@
       ],
       "error": "codec partial"
     }
+  },
+  "throwing": {
+    "error:false": {
+      "thrown": "java.lang.IllegalStateException",
+      "message": "fixture failure"
+    },
+    "error:true": {
+      "thrown": "java.lang.IllegalStateException",
+      "message": "fixture failure"
+    },
+    "success": 7
   }
 }

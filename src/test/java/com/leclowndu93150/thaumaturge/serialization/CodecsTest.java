@@ -38,6 +38,18 @@ class CodecsTest {
     @Test void optionalFieldsMatchTheActual1211Library() throws Exception { compare("optional", port.optionalFields()); }
     @Test void dispatchedSchemasMatchTheActual1211Library() throws Exception { compare("dispatch", port.dispatchedSchemas(false)); }
     @Test void partialDispatchMatchesTheActual1211Library() throws Exception { compare("partialDispatch", port.dispatchedSchemas(true)); }
+    @Test void throwingResultsMatchTheActual1211Library() throws Exception { compare("throwing", port.throwingResults()); }
+
+    @Test
+    void strictMapResultsMatchTheActual1211Game() throws Exception {
+        try (var stream = getClass().getResourceAsStream("strict-map-1.21.1-reference.json")) {
+            assertNotNull(stream);
+            var expected = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
+            var actual = port.strictMaps();
+            assertEquals(expected.keySet(), actual.keySet());
+            for (String key : expected.keySet()) assertEquals(expected.get(key), actual.get(key), key);
+        }
+    }
 
     @Test
     void concurrentFirstUseBuildsALazyCodecOnce() throws Exception {
