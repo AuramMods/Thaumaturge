@@ -159,7 +159,7 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
         outputStacks = new ArrayList<>(
                 TTNbt.read(input, "Items", ItemStack.CODEC.listOf(), registries).orElse(List.of()));
         if (input.contains(INBOX_KEY)) {
-            inbox.deserializeNBT(registries, input.getCompound(INBOX_KEY));
+            inbox.deserializeNBT(input.getCompound(INBOX_KEY));
         }
     }
 
@@ -169,7 +169,7 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
         List<ItemStack> filtered =
                 outputStacks.stream().filter(stack -> !stack.isEmpty()).toList();
         TTNbt.store(output, "Items", ItemStack.CODEC.listOf(), registries, filtered);
-        output.put(INBOX_KEY, inbox.serializeNBT(registries));
+        output.put(INBOX_KEY, inbox.serializeNBT());
     }
 
     private boolean acceptsInboxItems() {

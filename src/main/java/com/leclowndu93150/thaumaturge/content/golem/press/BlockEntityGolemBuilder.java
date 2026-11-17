@@ -335,7 +335,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
         out.putInt(KEY_MAX_COST, totalCost);
         out.putInt(KEY_COST, cost);
         if (pending != null) TTNbt.store(out, KEY_GOLEM, GolemProperties.CODEC, registries, pending);
-        out.put("inventory", outputHandler.serializeNBT(registries));
+        out.put("inventory", outputHandler.serializeNBT());
     }
 
     @Override
@@ -344,7 +344,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
         totalCost = in.getInt(KEY_MAX_COST);
         cost = in.getInt(KEY_COST);
         pending = TTNbt.read(in, KEY_GOLEM, GolemProperties.CODEC, registries).orElse(null);
-        outputHandler.deserializeNBT(registries, in.getCompound("inventory"));
+        outputHandler.deserializeNBT(in.getCompound("inventory"));
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchCrab;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
@@ -21,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.ForgeEventFactory;
 
-public final class BlockEntityEldritchCrabSpawner extends BlockEntity {
+public final class BlockEntityEldritchCrabSpawner extends RegistryBlockEntity {
     private static final int VENT_EVENT = 1;
     private static final int CRAB_SCAN_RANGE = 16;
     private static final int VENT_COLOR = 0x9988AA;

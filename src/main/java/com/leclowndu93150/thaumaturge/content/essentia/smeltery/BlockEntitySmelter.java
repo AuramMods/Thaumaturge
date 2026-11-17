@@ -352,13 +352,13 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
         output.putInt(SMELT_TIME_KEY, cookTarget);
         output.putInt(CURRENT_BURN_TIME_KEY, fuelCapacity);
         output.putBoolean(SPEED_BOOST_KEY, speedBoost);
-        output.put("inventory", items.serializeNBT(registries));
+        output.put("inventory", items.serializeNBT());
     }
 
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        items.deserializeNBT(registries, input.getCompound("inventory"));
+        items.deserializeNBT(input.getCompound("inventory"));
         loadFurnaceState(input);
         essentiaStock =
                 TTNbt.read(input, ASPECTS_KEY, AspectList.CODEC, registries).orElse(AspectList.EMPTY);

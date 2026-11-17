@@ -63,7 +63,12 @@ sourceSets {
     portCodec {
         java.srcDir 'src/main/java'
         java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/RegistryContext*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/ClientRegistryContext*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/TTNbt*'
         java.include 'com/leclowndu93150/thaumaturge/registry/ForgeRegistration.java'
+        java.include 'com/leclowndu93150/thaumaturge/content/blockentity/RegistryBlockEntity.java'
+        java.include 'com/leclowndu93150/thaumaturge/content/blockentity/AbstractSyncedBlockEntity.java'
         java.include 'com/leclowndu93150/thaumaturge/api/items/ItemMatch.java'
         java.include 'com/leclowndu93150/thaumaturge/api/research/ResearchRequirement.java'
         java.include 'com/leclowndu93150/thaumaturge/network/transport/**'
@@ -74,11 +79,23 @@ sourceSets {
     portCodecTest {
         java.srcDir 'src/test/java'
         java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/RegistryContext*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/ClientRegistryContext*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/TTNbt*'
         java.include 'com/leclowndu93150/thaumaturge/network/transport/**'
         java.include 'com/leclowndu93150/thaumaturge/state/**'
         java.include 'com/leclowndu93150/thaumaturge/itemdata/**'
         compileClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
         runtimeClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
+    }
+    portMixins {
+        java.srcDir 'src/main/java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/ItemDataDefaultsMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/BlockItemDataMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/level/block/entity/BlockEntityItemDataMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/level/chunk/LevelChunkRegistryContextMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/level/chunk/storage/ChunkSerializerRegistryContextMixin.java'
+        compileClasspath += sourceSets.portCodec.output + sourceSets.main.compileClasspath
     }
 }
 
@@ -105,6 +122,7 @@ dependencies {
     compileOnly(fg.deobf("dev.ftb.mods:ftb-library-forge:${ftb_library_version}")) { transitive = false }
     compileOnly 'org.jspecify:jspecify:1.0.0'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    portMixinsAnnotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -142,11 +160,27 @@ processResources {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.compilerArgs.addAll(['-Xmaxerrs', providers.gradleProperty('portMaxErrors').getOrElse('2000')])
+    if (providers.gradleProperty('portCommandLineCompiler').isPresent()) {
+        // External javac reports its exit status without serializing thousands
+        // of Compiler API diagnostics back through the Gradle client.
+        options.fork = true
+        options.forkOptions.executable = javaCompiler.get().executablePath.asFile.absolutePath
+        options.forkOptions.memoryMaximumSize = '4G'
+        options.compilerArgs.add('-XDdev')
+    }
 }
 
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
     systemProperty 'thaumaturge.testResourceRoot', file('src/main/resources').absolutePath
+}
+
+tasks.named('compilePortMixinsJava', JavaCompile) {
+    dependsOn 'createMcpToSrg'
+    options.compilerArgs.addAll([
+            "-AreobfTsrgFile=${layout.buildDirectory.file('createMcpToSrg/output.tsrg').get().asFile}",
+            "-AoutRefMapFile=${layout.buildDirectory.file('port-mixins.refmap.json').get().asFile}",
+            '-AmappingTypes=tsrg', '-AdefaultObfuscationEnv=searge'])
 }
 
 tasks.register('portCodecTest', Test) {

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -30,7 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity {
+public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEntity {
     public static final int MAX_ESSENTIA = 500;
     public static final int MAX_POWER = 500;
     public static final int HOT_HEAT = 100;

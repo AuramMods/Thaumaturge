@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
@@ -14,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class BlockEntityEtherealBloom extends BlockEntity {
+public final class BlockEntityEtherealBloom extends RegistryBlockEntity {
     private static final int WORK_INTERVAL = 20;
     private static final int SAMPLES_PER_WORK = 4;
     private static final int VERTICAL_SAMPLE_RANGE = 4;

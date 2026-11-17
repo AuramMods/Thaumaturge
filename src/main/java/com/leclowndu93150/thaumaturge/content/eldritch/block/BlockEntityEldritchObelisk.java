@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.List;
@@ -12,7 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-public final class BlockEntityEldritchObelisk extends BlockEntity {
+public final class BlockEntityEldritchObelisk extends RegistryBlockEntity {
     private static final int PULSE_INTERVAL = 20;
     private static final double BUFF_RANGE = 6.0;
     private static final int BUFF_DURATION = 40;

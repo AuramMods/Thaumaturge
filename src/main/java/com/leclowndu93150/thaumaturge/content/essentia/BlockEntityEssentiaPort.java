@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
@@ -17,7 +19,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityEssentiaPort extends BlockEntity implements IEssentiaConduit {
+public final class BlockEntityEssentiaPort extends RegistryBlockEntity implements IEssentiaConduit {
     private static final int SOURCE_RANGE = 16;
     private static final int WORK_INTERVAL = 5;
     private static final int INTAKE_SUCTION = 128;

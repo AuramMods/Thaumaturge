@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
@@ -14,7 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public final class BlockEntityEldritchTrap extends BlockEntity {
+public final class BlockEntityEldritchTrap extends RegistryBlockEntity {
     private static final double TRIGGER_RANGE = 3.0;
     private static final int COOLDOWN_BASE = 10;
     private static final int COOLDOWN_SPREAD = 25;

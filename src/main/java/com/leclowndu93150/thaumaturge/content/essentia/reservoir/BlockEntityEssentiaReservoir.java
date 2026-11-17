@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.reservoir;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -31,7 +33,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityEssentiaReservoir extends BlockEntity implements IEssentiaConduit {
+public final class BlockEntityEssentiaReservoir extends RegistryBlockEntity implements IEssentiaConduit {
     public static final int CAPACITY = 256;
 
     private static final String ESSENTIA_KEY = "Essentia";

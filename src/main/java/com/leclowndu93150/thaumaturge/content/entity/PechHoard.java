@@ -68,7 +68,7 @@ final class PechHoard {
             contents.set(index, loot.get(index));
         }
         CompoundTag inventory = new CompoundTag();
-        ContainerHelper.saveAllItems(inventory, contents, registries);
+        ContainerHelper.saveAllItems(inventory, contents);
         output.put(HOARD_KEY, inventory.getList(LEGACY_HOARD_KEY, Tag.TAG_COMPOUND));
     }
 
@@ -76,9 +76,9 @@ final class PechHoard {
         NonNullList<ItemStack> loot = empty();
         CompoundTag inventory = new CompoundTag();
         inventory.put(LEGACY_HOARD_KEY, input.getList(HOARD_KEY, Tag.TAG_COMPOUND));
-        ContainerHelper.loadAllItems(inventory, loot, registries);
+        ContainerHelper.loadAllItems(inventory, loot);
         if (filledSlots(loot) == 0 && input.contains(LEGACY_HOARD_KEY)) {
-            ContainerHelper.loadAllItems(input, loot, registries);
+            ContainerHelper.loadAllItems(input, loot);
         }
         return loot;
     }

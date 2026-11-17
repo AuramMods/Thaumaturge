@@ -54,7 +54,7 @@ public record AspectIndexFingerprint(String digest, Map<String, String> sections
             Collections.sort(parts);
             base.add(BuiltInRegistries.ITEM.getKey(item) + ":" + String.join(",", parts));
         }
-        RegistryOps<JsonElement> ops = server.registryAccess().createSerializationContext(JsonOps.INSTANCE);
+        RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, server.registryAccess());
         int unencodable = 0;
         String firstUnencodable = null;
         RuntimeException firstFailure = null;

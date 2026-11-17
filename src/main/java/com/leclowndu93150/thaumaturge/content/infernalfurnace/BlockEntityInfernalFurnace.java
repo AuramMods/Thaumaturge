@@ -101,7 +101,7 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
         super.loadAdditional(input, registries);
         furnaceCookTime = input.getShort("CookTime");
         speedyTime = input.getShort("SpeedyTime");
-        inventory.deserializeNBT(registries, input.getCompound("inventory"));
+        inventory.deserializeNBT(input.getCompound("inventory"));
     }
 
     @Override
@@ -109,7 +109,7 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
         super.saveAdditional(output, registries);
         output.putShort("CookTime", (short) furnaceCookTime);
         output.putShort("SpeedyTime", (short) speedyTime);
-        output.put("inventory", inventory.serializeNBT(registries));
+        output.put("inventory", inventory.serializeNBT());
     }
 
     private void tick() {

@@ -1,4 +1,4 @@
-package com.leclowndu93150.thaumaturge.itemdata;
+package com.leclowndu93150.thaumaturge.serialization;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderLookup;
@@ -6,9 +6,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-final class ClientItemDataContext {
-    private ClientItemDataContext() {}
-
+final class ClientRegistryContext {
+    private ClientRegistryContext() {}
     static HolderLookup.Provider registries() {
         Minecraft client = Minecraft.getInstance();
         if (client == null) return null;

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -18,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 
-public final class BlockEntityArcaneEar extends BlockEntity {
+public final class BlockEntityArcaneEar extends RegistryBlockEntity {
     private static final int NOTE_COUNT = 25;
     private static final int PULSE_TICKS = 10;
     private static final NoteBlockInstrument[] INSTRUMENTS = NoteBlockInstrument.values();

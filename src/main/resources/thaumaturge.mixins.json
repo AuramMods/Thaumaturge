@@ -21,7 +21,9 @@
     "world.level.block.piston.PistonBaseBlockMixin",
     "world.item.ItemDataDefaultsMixin",
     "world.item.BlockItemDataMixin",
-    "world.level.block.entity.BlockEntityItemDataMixin"
+    "world.level.block.entity.BlockEntityItemDataMixin",
+    "world.level.chunk.LevelChunkRegistryContextMixin",
+    "world.level.chunk.storage.ChunkSerializerRegistryContextMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",

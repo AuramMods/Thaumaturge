@@ -346,7 +346,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        output.put(CATALYST_KEY, catalyst.serializeNBT(registries));
+        output.put(CATALYST_KEY, catalyst.serializeNBT());
         TTNbt.store(output, QUEUE_KEY, LegacyIds.IDENTIFIER_CODEC.listOf(), registries, queue.ids());
         output.putInt(MAX_RECIPES_KEY, queue.capacity());
         AspectList stored = requirements.received();
@@ -358,7 +358,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        if (input.contains(CATALYST_KEY)) catalyst.deserializeNBT(registries, input.getCompound(CATALYST_KEY));
+        if (input.contains(CATALYST_KEY)) catalyst.deserializeNBT(input.getCompound(CATALYST_KEY));
         List<ResourceLocation> savedIds = TTNbt.read(input, QUEUE_KEY, LegacyIds.IDENTIFIER_CODEC.listOf(), registries)
                 .orElse(List.of());
         queue.restore(

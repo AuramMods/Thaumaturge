@@ -305,7 +305,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        output.put("inventory", drawer.serializeNBT(registries));
+        output.put("inventory", drawer.serializeNBT());
         TTNbt.store(output, "Draft", Spell.CODEC, registries, draft);
         output.putString("Name", name);
         output.putFloat("Vis", vis);
@@ -316,7 +316,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        drawer.deserializeNBT(registries, input.getCompound("inventory"));
+        drawer.deserializeNBT(input.getCompound("inventory"));
         draft = TTNbt.read(input, "Draft", Spell.CODEC, registries).orElse(Spell.empty());
         name = (input.contains("Name") ? input.getString("Name") : "");
         vis = (input.contains("Vis") ? input.getFloat("Vis") : 0.0F);

@@ -141,7 +141,7 @@ public final class BlockEntityDeconstructionTable extends AbstractSyncedBlockEnt
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        inventory.deserializeNBT(registries, input.getCompound("inventory"));
+        inventory.deserializeNBT(input.getCompound("inventory"));
         resultAspect = TTNbt.read(input, "result_aspect", LegacyIds.IDENTIFIER_CODEC, registries)
                 .orElse(null);
         breakTime = input.contains("break_time") ? input.getInt("break_time") : BREAK_TIME_TICKS;
@@ -150,7 +150,7 @@ public final class BlockEntityDeconstructionTable extends AbstractSyncedBlockEnt
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        output.put("inventory", inventory.serializeNBT(registries));
+        output.put("inventory", inventory.serializeNBT());
         if (resultAspect != null) {
             TTNbt.store(output, "result_aspect", ResourceLocation.CODEC, registries, resultAspect);
         }

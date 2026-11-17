@@ -35,7 +35,7 @@ public final class RoomCompiler {
         byte[] kinds = new byte[size.getX() * size.getY() * size.getZ()];
         List<CompiledRoom.Marker> markers = new ArrayList<>();
         List<BlockPos> barriers = new ArrayList<>();
-        RegistryOps<JsonElement> ops = registries.createSerializationContext(JsonOps.INSTANCE);
+        RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registries);
         for (TemplateBlocks.Entry entry : TemplateBlocks.read(template, blockLookup)) {
             BlockPos pos = entry.pos();
             BlockState state = entry.state();

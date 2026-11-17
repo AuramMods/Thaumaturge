@@ -39,7 +39,7 @@ public final class EnchantingStatsProvider implements DataProvider {
         return this.registries.thenCompose(lookup -> {
             this.blocks = lookup.lookupOrThrow(Registries.BLOCK);
             this.build();
-            RegistryOps<JsonElement> ops = lookup.createSerializationContext(JsonOps.INSTANCE);
+            RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, lookup);
             CompletableFuture<?>[] writes = this.entries.stream()
                     .map(entry -> DataProvider.saveStable(
                             output,

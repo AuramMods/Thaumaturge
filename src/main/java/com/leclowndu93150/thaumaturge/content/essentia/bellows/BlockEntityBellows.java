@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.bellows;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.content.essentia.IBellowsPower;
 import com.leclowndu93150.thaumaturge.mixin.world.level.block.entity.AbstractFurnaceBlockEntityAccessor;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -13,7 +15,7 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class BlockEntityBellows extends BlockEntity implements IBellowsPower {
+public final class BlockEntityBellows extends RegistryBlockEntity implements IBellowsPower {
     private static final float PUFF_VOLUME = 0.02F;
     private static final float PUFF_BASE_PITCH = 0.5F;
     private static final float PUFF_PITCH_SPREAD = 0.08F;

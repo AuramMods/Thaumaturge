@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -13,7 +15,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 
-public final class BlockEntityVisGenerator extends BlockEntity implements IEnergyStorage {
+public final class BlockEntityVisGenerator extends RegistryBlockEntity implements IEnergyStorage {
     private static final int CAPACITY = 1000;
     private static final int MAX_PUSH = 20;
     private static final float VIS_PER_CHARGE = 1.0F;

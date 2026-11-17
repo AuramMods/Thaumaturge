@@ -145,7 +145,7 @@ public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
         super.loadAdditional(input, registries);
         progress = input.getInt("progress");
         if (input.contains("Output")) {
-            output.deserializeNBT(registries, input.getCompound("Output"));
+            output.deserializeNBT(input.getCompound("Output"));
         }
     }
 
@@ -153,6 +153,6 @@ public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
     protected void saveAdditional(CompoundTag output_, HolderLookup.Provider registries) {
         super.saveAdditional(output_, registries);
         output_.putInt("progress", progress);
-        output_.put("Output", output.serializeNBT(registries));
+        output_.put("Output", output.serializeNBT());
     }
 }

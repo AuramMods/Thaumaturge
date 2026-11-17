@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
@@ -24,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityNodeTransducer extends BlockEntity {
+public final class BlockEntityNodeTransducer extends RegistryBlockEntity {
     public static final int CHARGE_TARGET = 1000;
     public static final int REVERT_THRESHOLD = 50;
 

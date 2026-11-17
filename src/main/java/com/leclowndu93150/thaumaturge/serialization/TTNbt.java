@@ -1,6 +1,9 @@
 package com.leclowndu93150.thaumaturge.serialization;
 
-import com.leclowndu93150.thaumaturge.Thaumaturge;
+import net.minecraft.resources.RegistryOps;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import java.util.Optional;
@@ -11,11 +14,12 @@ import net.minecraft.nbt.Tag;
 import org.jspecify.annotations.Nullable;
 
 public final class TTNbt {
+    private static final Logger LOGGER = LoggerFactory.getLogger("thaumaturge");
 
     private TTNbt() {}
 
     public static <T> Optional<T> read(CompoundTag tag, String key, Codec<T> codec, HolderLookup.Provider registries) {
-        return read(tag, key, codec, registries.createSerializationContext(NbtOps.INSTANCE));
+        return read(tag, key, codec, RegistryOps.create(NbtOps.INSTANCE, registries));
     }
 
     public static <T> Optional<T> read(CompoundTag tag, String key, Codec<T> codec) {
@@ -28,12 +32,12 @@ public final class TTNbt {
             return Optional.empty();
         }
         return codec.parse(ops, value)
-                .resultOrPartial(error -> Thaumaturge.LOGGER.error("Failed to decode '{}': {}", key, error));
+                .resultOrPartial(error -> LOGGER.error("Failed to decode '{}': {}", key, error));
     }
 
     public static <T> void store(
             CompoundTag tag, String key, Codec<T> codec, HolderLookup.Provider registries, T value) {
-        store(tag, key, codec, registries.createSerializationContext(NbtOps.INSTANCE), value);
+        store(tag, key, codec, RegistryOps.create(NbtOps.INSTANCE, registries), value);
     }
 
     public static <T> void store(CompoundTag tag, String key, Codec<T> codec, T value) {
@@ -42,7 +46,7 @@ public final class TTNbt {
 
     private static <T> void store(CompoundTag tag, String key, Codec<T> codec, DynamicOps<Tag> ops, T value) {
         codec.encodeStart(ops, value)
-                .resultOrPartial(error -> Thaumaturge.LOGGER.error("Failed to encode '{}': {}", key, error))
+                .resultOrPartial(error -> LOGGER.error("Failed to encode '{}': {}", key, error))
                 .ifPresent(encoded -> tag.put(key, encoded));
     }
 

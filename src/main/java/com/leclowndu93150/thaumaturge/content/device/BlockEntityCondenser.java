@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -35,7 +37,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityCondenser extends BlockEntity implements IEssentiaConduit {
+public final class BlockEntityCondenser extends RegistryBlockEntity implements IEssentiaConduit {
     private static final int CAPACITY = 100;
     private static final int INTAKE_INTERVAL = 5;
     private static final int RECHECK_INTERVAL = 100;

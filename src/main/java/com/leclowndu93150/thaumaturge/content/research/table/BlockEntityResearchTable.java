@@ -386,7 +386,7 @@ public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity im
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        inventory.deserializeNBT(registries, input.getCompound("inventory"));
+        inventory.deserializeNBT(input.getCompound("inventory"));
         bonusAspects =
                 TTNbt.read(input, "bonus_aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
     }
@@ -394,7 +394,7 @@ public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity im
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        output.put("inventory", inventory.serializeNBT(registries));
+        output.put("inventory", inventory.serializeNBT());
         TTNbt.store(output, "bonus_aspects", AspectList.CODEC, registries, bonusAspects);
     }
 

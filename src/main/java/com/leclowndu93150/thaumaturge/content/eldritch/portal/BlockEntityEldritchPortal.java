@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.portal;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
@@ -14,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityEldritchPortal extends BlockEntity {
+public final class BlockEntityEldritchPortal extends RegistryBlockEntity {
     private static final int OPEN_TICKS = 30;
     private static final int SOUND_INTERVAL = 250;
     private static final String LINK = "link";

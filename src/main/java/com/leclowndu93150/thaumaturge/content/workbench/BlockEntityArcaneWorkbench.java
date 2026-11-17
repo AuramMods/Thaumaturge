@@ -47,7 +47,7 @@ public class BlockEntityArcaneWorkbench extends AbstractSyncedBlockEntity implem
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        ContainerHelper.saveAllItems(output, inventory.getItems(), registries);
+        ContainerHelper.saveAllItems(output, inventory.getItems());
     }
 
     @Override
@@ -56,7 +56,7 @@ public class BlockEntityArcaneWorkbench extends AbstractSyncedBlockEntity implem
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             inventory.getItems().set(slot, ItemStack.EMPTY);
         }
-        ContainerHelper.loadAllItems(input, inventory.getItems(), registries);
+        ContainerHelper.loadAllItems(input, inventory.getItems());
         inventory.setChanged();
     }
 

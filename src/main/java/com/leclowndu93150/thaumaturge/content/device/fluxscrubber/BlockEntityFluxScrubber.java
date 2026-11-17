@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.fluxscrubber;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -31,7 +33,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityFluxScrubber extends BlockEntity implements IEssentiaConduit {
+public final class BlockEntityFluxScrubber extends RegistryBlockEntity implements IEssentiaConduit {
     public static final int WORK_POWER = 5;
 
     private static final int NONE = 0;

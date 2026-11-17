@@ -82,11 +82,11 @@ public abstract class AbstractBlockJar extends BaseEntityBlock
             BlockHitResult hit) {
         boolean holdingBrace = stack.is(TTItems.JAR_BRACE.get());
         if (!holdingBrace) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        return switch (interact(level, pos, player, hit, stack)) {
-            case SUCCESS -> ItemInteractionResult.SUCCESS;
-            case CONSUME -> ItemInteractionResult.CONSUME;
-            default -> ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        };
+        switch (interact(level, pos, player, hit, stack)) {
+            case SUCCESS: return ItemInteractionResult.SUCCESS;
+            case CONSUME: return ItemInteractionResult.CONSUME;
+            default: return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
     }
 
     @Override

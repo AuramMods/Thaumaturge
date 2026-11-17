@@ -162,7 +162,7 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
         super.saveAdditional(output, registries);
         output.putBoolean("Mix", mix);
         output.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
-        output.put("Items", items.serializeNBT(registries));
+        output.put("Items", items.serializeNBT());
     }
 
     @Override
@@ -173,7 +173,7 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
             tank.readFromNBT(registries, input.getCompound("Tank"));
         }
         if (input.contains("Items")) {
-            items.deserializeNBT(registries, input.getCompound("Items"));
+            items.deserializeNBT(input.getCompound("Items"));
         }
     }
 

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntake;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntakeHost;
@@ -19,7 +21,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityLampFertility extends BlockEntity implements EssentiaIntakeHost {
+public final class BlockEntityLampFertility extends RegistryBlockEntity implements EssentiaIntakeHost {
     private static final int INTAKE_SUCTION = 128;
     private static final int SUCTION_PER_CHARGE = 10;
     private static final int INTAKE_INTERVAL = 5;

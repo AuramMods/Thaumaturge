@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.misc.nitor;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -7,7 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class BlockEntityNitor extends BlockEntity {
+public final class BlockEntityNitor extends RegistryBlockEntity {
     private int count = 0;
 
     public BlockEntityNitor(BlockPos pos, BlockState state) {

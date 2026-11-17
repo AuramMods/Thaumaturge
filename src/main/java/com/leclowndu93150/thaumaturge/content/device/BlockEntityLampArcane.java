@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -20,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public final class BlockEntityLampArcane extends BlockEntity {
+public final class BlockEntityLampArcane extends RegistryBlockEntity {
     private static final int PLACE_INTERVAL = 5;
     private static final int OFFSET_SPAN = 16;
     private static final int LIGHT_RADIUS = 15;

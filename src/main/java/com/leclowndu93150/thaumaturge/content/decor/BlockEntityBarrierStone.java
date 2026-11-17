@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
@@ -12,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public final class BlockEntityBarrierStone extends BlockEntity {
+public final class BlockEntityBarrierStone extends RegistryBlockEntity {
     private static final int REPEL_PERIOD = 5;
     private static final int RAISE_PERIOD = 100;
     private static final int WALL_HEIGHT = 2;

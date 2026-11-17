@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.crystalizer;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
@@ -37,7 +39,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityEssentiaCrystalizer extends BlockEntity implements IEssentiaConduit {
+public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity implements IEssentiaConduit {
     public static final int TARGET_PROGRESS = 200;
 
     private static final String ASPECT_KEY = "Aspect";

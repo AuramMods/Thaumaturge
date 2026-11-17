@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -11,7 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityThaumatoriumTop extends BlockEntity implements SinkOnlyEssentiaFace {
+public final class BlockEntityThaumatoriumTop extends RegistryBlockEntity implements SinkOnlyEssentiaFace {
     public BlockEntityThaumatoriumTop(BlockPos pos, BlockState state) {
         super(TTBlockEntities.THAUMATORIUM_TOP.get(), pos, state);
     }

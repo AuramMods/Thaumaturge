@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
+
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
@@ -12,7 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.ItemStackHandler;
 
-public final class BlockEntityItemGrate extends BlockEntity {
+public final class BlockEntityItemGrate extends RegistryBlockEntity {
     private final ItemStackHandler inventory = new ItemStackHandler(1) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
@@ -66,14 +68,14 @@ public final class BlockEntityItemGrate extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        output.put("Inventory", inventory.serializeNBT(registries));
+        output.put("Inventory", inventory.serializeNBT());
     }
 
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         if (input.contains("Inventory")) {
-            inventory.deserializeNBT(registries, input.getCompound("Inventory"));
+            inventory.deserializeNBT(input.getCompound("Inventory"));
         }
     }
 }
