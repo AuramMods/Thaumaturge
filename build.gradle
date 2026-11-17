@@ -259,3 +259,5 @@ tasks.matching { it.name == 'runClient' }.configureEach {
     dependsOn prepareClientProfile, backgroundAgentJar
 }
 tasks.matching { it.name in ['runServer', 'runGameTestServer'] }.configureEach { dependsOn prepareTestServers }
+
+apply from: 'porting/testing/forge-tests.gradle'
