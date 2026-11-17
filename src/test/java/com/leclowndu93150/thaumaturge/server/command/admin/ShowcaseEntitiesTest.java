@@ -27,7 +27,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.MobDespawnEvent;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import com.leclowndu93150.thaumaturge.event.tick.EntityTickEvent;
 import org.junit.jupiter.api.Test;
 
 class ShowcaseEntitiesTest {

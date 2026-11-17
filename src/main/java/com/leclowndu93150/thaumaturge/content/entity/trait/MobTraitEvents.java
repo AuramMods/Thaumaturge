@@ -9,7 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import com.leclowndu93150.thaumaturge.event.tick.EntityTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class MobTraitEvents {

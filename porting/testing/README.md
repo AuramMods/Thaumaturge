@@ -79,6 +79,39 @@ userdev launch settings to `build/port-testing/server-launch.json` for diagnosis
 Cycle 013 executes all 97 selected tests with zero failures or skips, including
 the five registry/context tests that fail before assertions in plain
 `portCodecTest`. The normal full source set, full test suite, mod construction,
-production mixin injection, networking, worlds, and packaged JAR are **not**
-validated by this focused entry point. Neither test archive is a distributable
-mod, and normal build/run tasks still include the whole mod.
+networking, worlds, and packaged JAR are **not** validated by this focused entry
+point. Neither test archive is a distributable mod, and normal build/run tasks
+still include the whole mod.
+
+Cycle 020 adds actual entity-tick Mixin injection and runtime fixtures. The
+server suite executes 147 tests. It invokes the transformed native
+`ServerLevel.tickNonPassenger` method with isolated entity fixtures and the real
+Forge event bus, checking cancellation, passenger traversal, ordering,
+exceptions and Forge's canUpdate guard.
+
+The client distribution can be tested without starting Minecraft's graphical
+entry point:
+
+```sh
+env JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home ./gradlew runForgePortClientTests --console=plain
+```
+
+This executes the shared suite plus the same runtime cases against transformed
+`ClientLevel.tickNonPassenger`: 154 tests in cycle 020. Client-only fixtures are
+selected by this task; the server task selects common/server fixtures. Both
+distribution launches use the native userdev configurations, resolve their
+argument tokens and apply the required focused Mixin config with a generated
+refmap. The launch target names include server/client for Mixin side detection.
+
+The client test profile is `run/port-client-tests`, with results under
+`build/test-results/forgePortClientTest`. Every launch writes muted sound,
+narrator off, fullscreen off, accessibility onboarding off and disabled early
+window control, and attaches the background agent. The test entry point does
+not create a game window, initialize game audio or start a world server. A
+read-only focus monitor recorded no app changes over 517 samples during a
+successful cycle 020 client-distribution run.
+
+The focused config currently applies only the two entity-tick mixins. The five
+earlier persistence/item mixins compile with the real processor/refmap but are
+not applied here yet. Full gameplay subscriber execution, live worlds,
+rendering, all other mixins and actual distribution installation remain pending.

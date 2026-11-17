@@ -9,7 +9,7 @@ import net.minecraftforge.fml.loading.targets.ForgeServerUserdevLaunchHandler;
 
 /** Native Forge transformations and server distribution, with a JUnit entry point. */
 public final class ForgePortTestLaunchHandler extends ForgeServerUserdevLaunchHandler {
-    @Override public String name() { return "thaumaturgeporttests"; }
+    @Override public String name() { return "thaumaturgeporttestserver"; }
 
     @Override
     protected void processStreams(String[] classpath, VersionInfo version, Stream.Builder<Path> minecraft,

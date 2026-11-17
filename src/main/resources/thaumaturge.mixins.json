@@ -23,7 +23,8 @@
     "world.item.BlockItemDataMixin",
     "world.level.block.entity.BlockEntityItemDataMixin",
     "world.level.chunk.LevelChunkRegistryContextMixin",
-    "world.level.chunk.storage.ChunkSerializerRegistryContextMixin"
+    "world.level.chunk.storage.ChunkSerializerRegistryContextMixin",
+    "server.level.ServerLevelEntityTickMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",
@@ -43,7 +44,8 @@
     "client.player.AbstractClientPlayerMixin",
     "jei.gui.ingredients.IngredientFilterAccessor",
     "jei.gui.ingredients.IngredientFilterApiAccessor",
-    "jei.gui.search.ElementSearchAccessor"
+    "jei.gui.search.ElementSearchAccessor",
+    "client.multiplayer.ClientLevelEntityTickMixin"
   ],
   "injectors": {
     "defaultRequire": 1

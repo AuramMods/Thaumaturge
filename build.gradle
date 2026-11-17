@@ -79,6 +79,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/compat/Java17*'
         java.include 'com/leclowndu93150/thaumaturge/TTIds.java'
         java.include 'com/leclowndu93150/thaumaturge/client/aura/ClientAuraCache.java'
+        java.include 'com/leclowndu93150/thaumaturge/event/tick/**'
         compileClasspath += sourceSets.main.compileClasspath
     }
     portCodecTest {
@@ -104,6 +105,8 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/level/block/entity/BlockEntityItemDataMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/level/chunk/LevelChunkRegistryContextMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/level/chunk/storage/ChunkSerializerRegistryContextMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/server/level/ServerLevelEntityTickMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/client/multiplayer/ClientLevelEntityTickMixin.java'
         compileClasspath += sourceSets.portCodec.output + sourceSets.main.compileClasspath
     }
 }

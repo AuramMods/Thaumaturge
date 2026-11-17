@@ -11,6 +11,14 @@ sourceSets {
         compileClasspath += sourceSets.portCodecTest.compileClasspath
         runtimeClasspath += sourceSets.portCodecTest.runtimeClasspath
     }
+    portRuntimeTest {
+        java.srcDir 'porting/testing/forge-runtime-tests/java'
+        compileClasspath += sourceSets.portCodecTest.compileClasspath
+    }
+    portClientTest {
+        java.srcDir 'porting/testing/forge-client-tests/java'
+        compileClasspath += sourceSets.portCodecTest.compileClasspath + sourceSets.portRuntimeTest.output
+    }
 }
 
 dependencies {
@@ -21,9 +29,12 @@ dependencies {
 }
 
 def launcherJar = tasks.register('portLauncherJar', Zip) {
+    dependsOn 'compilePortMixinsJava'
     archiveFileName = 'thaumaturge-port-launcher.jar'
     destinationDirectory = layout.buildDirectory.dir('port-testing')
     from sourceSets.portLauncher.output
+    from 'porting/testing/forge-mixins'
+    from layout.buildDirectory.file('port-mixins.refmap.json')
 }
 
 def runtimeJar = tasks.register('portTestRuntimeJar', Zip) {
@@ -32,55 +43,72 @@ def runtimeJar = tasks.register('portTestRuntimeJar', Zip) {
     from sourceSets.portRuntime.output
     from sourceSets.portCodec.output
     from sourceSets.portCodecTest.output
+    from sourceSets.portRuntimeTest.output
+    from sourceSets.portClientTest.output
+    from sourceSets.portMixins.output
 }
 
-tasks.register('runForgePortTests', JavaExec) {
-    dependsOn 'prepareRunServer', launcherJar, runtimeJar
-    mainClass = 'cpw.mods.bootstraplauncher.BootstrapLauncher'
-    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(17) }
-    workingDir file('run/port-tests')
-    doFirst {
-        workingDir.mkdirs()
-        new File(workingDir, 'eula.txt').text = 'eula=true\n'
-        def server = tasks.named('runServer').get()
-        def config = minecraft.runs.server
-        def tokens = new LinkedHashMap(config.tokens)
-        config.lazyTokens.each { key, supplier -> tokens[key] = supplier.get() }
-        def cp = new LinkedHashSet(server.minecraftArtifacts.files + server.runtimeClasspathArtifacts.files
-                + configurations.portCodecTestRuntimeClasspath.files + configurations.portRuntimeRuntimeClasspath.files)
-        cp.removeAll(sourceSets.main.output.files)
-        def launcher = launcherJar.get().archiveFile.get().asFile
-        def runtime = runtimeJar.get().archiveFile.get().asFile
-        cp.add(launcher)
-        setClasspath(project.files(cp))
-        def vm = config.jvmArgs.collect { config.replace(tokens, it) }
-        setJvmArgs(vm)
-        config.properties.each { key, value ->
-            if (key != 'legacyClassPath.file') systemProperty key, config.replace(tokens, value)
+['server', 'client'].each { side ->
+    tasks.register(side == 'server' ? 'runForgePortTests' : 'runForgePortClientTests', JavaExec) {
+        dependsOn side == 'server' ? 'prepareRunServer' : 'prepareRunClient'
+        dependsOn launcherJar, runtimeJar
+        if (side == 'client') dependsOn 'backgroundAgentJar'
+        mainClass = 'cpw.mods.bootstraplauncher.BootstrapLauncher'
+        javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(17) }
+        workingDir file(side == 'server' ? 'run/port-tests' : 'run/port-client-tests')
+        doFirst {
+            workingDir.mkdirs()
+            new File(workingDir, 'eula.txt').text = 'eula=true\n'
+            def nativeRun = tasks.named(side == 'server' ? 'runServer' : 'runClient').get()
+            def config = minecraft.runs[side]
+            def tokens = new LinkedHashMap(config.tokens)
+            config.lazyTokens.each { key, supplier -> tokens[key] = supplier.get() }
+            def cp = new LinkedHashSet(nativeRun.minecraftArtifacts.files + nativeRun.runtimeClasspathArtifacts.files
+                    + configurations.portCodecTestRuntimeClasspath.files + configurations.portRuntimeRuntimeClasspath.files)
+            cp.removeAll(sourceSets.main.output.files)
+            def launcher = launcherJar.get().archiveFile.get().asFile
+            def runtime = runtimeJar.get().archiveFile.get().asFile
+            cp.add(launcher)
+            setClasspath(project.files(cp))
+            def vm = config.jvmArgs.collect { config.replace(tokens, it) }
+            if (side == 'client') {
+                new File(workingDir, 'options.txt').text = 'soundCategory_master:0.0\nnarrator:0\nfullscreen:false\nonboardAccessibility:false\npauseOnLostFocus:false\n'
+                def fml = new File(workingDir, 'config/fml.toml')
+                fml.parentFile.mkdirs()
+                fml.text = 'earlyWindowControl = false\n'
+                vm.add("-javaagent:${tasks.named('backgroundAgentJar').get().archiveFile.get().asFile.absolutePath}")
+            }
+            setJvmArgs(vm)
+            config.properties.each { key, value ->
+                if (key != 'legacyClassPath.file') systemProperty key, config.replace(tokens, value)
+            }
+            systemProperty 'legacyClassPath', cp*.absolutePath.join(File.pathSeparator)
+            systemProperty 'java.awt.headless', 'true'
+            systemProperty 'apple.awt.UIElement', 'true'
+            systemProperty 'thaumaturge.portTestPaths', runtime.absolutePath
+            systemProperty 'thaumaturge.portResults', layout.buildDirectory.dir(side == 'server' ? 'test-results/forgePortTest' : 'test-results/forgePortClientTest').get().asFile.absolutePath
+            systemProperty 'thaumaturge.testResourceRoot', file('src/main/resources').absolutePath
+            def testDirs = sourceSets.portCodecTest.output.classesDirs + sourceSets.portRuntimeTest.output.classesDirs
+            if (side == 'client') testDirs += sourceSets.portClientTest.output.classesDirs
+            def tests = testDirs.asFileTree.matching {
+                include '**/*Test.class'
+                exclude '**/*$*'
+            }.files.collect { f ->
+                def root = testDirs.files.find { f.toPath().startsWith(it.toPath()) }
+                root.toPath().relativize(f.toPath()).toString().replace(File.separator, '.').replaceAll(/\.class$/, '')
+            }.sort()
+            def testList = layout.buildDirectory.file("port-testing/${side}-test-classes.txt").get().asFile
+            testList.text = tests.join('\n') + '\n'
+            systemProperty 'thaumaturge.portTestClasses', testList.absolutePath
+            environment.remove('MOD_CLASSES')
+            environment 'MCP_MAPPINGS', config.replace(tokens, config.environment['MCP_MAPPINGS'])
+            def launch = new ArrayList(config.args.collect { config.replace(tokens, it) })
+            launch[launch.indexOf('--launchTarget') + 1] = "thaumaturgeporttest${side}"
+            int mixin = launch.indexOf('--mixin.config')
+            if (mixin >= 0) { launch.remove(mixin + 1); launch.remove(mixin) }
+            launch.addAll(['--mixin.config', 'thaumaturge.port-tests.mixins.json'])
+            setArgs(launch)
         }
-        systemProperty 'legacyClassPath', cp*.absolutePath.join(File.pathSeparator)
-        systemProperty 'java.awt.headless', 'true'
-        systemProperty 'apple.awt.UIElement', 'true'
-        systemProperty 'thaumaturge.portTestPaths', runtime.absolutePath
-        systemProperty 'thaumaturge.portResults', layout.buildDirectory.dir('test-results/forgePortTest').get().asFile.absolutePath
-        systemProperty 'thaumaturge.testResourceRoot', file('src/main/resources').absolutePath
-        def tests = sourceSets.portCodecTest.output.classesDirs.asFileTree.matching {
-            include '**/*Test.class'
-            exclude '**/*$*'
-        }.files.collect { f ->
-            def root = sourceSets.portCodecTest.output.classesDirs.files.find { f.toPath().startsWith(it.toPath()) }
-            root.toPath().relativize(f.toPath()).toString().replace(File.separator, '.').replaceAll(/\.class$/, '')
-        }.sort()
-        def testList = layout.buildDirectory.file('port-testing/test-classes.txt').get().asFile
-        testList.text = tests.join('\n') + '\n'
-        systemProperty 'thaumaturge.portTestClasses', testList.absolutePath
-        environment.remove('MOD_CLASSES')
-        environment 'MCP_MAPPINGS', config.replace(tokens, config.environment['MCP_MAPPINGS'])
-        def launch = new ArrayList(config.args)
-        launch[launch.indexOf('--launchTarget') + 1] = 'thaumaturgeporttests'
-        int mixin = launch.indexOf('--mixin.config')
-        if (mixin >= 0) { launch.remove(mixin + 1); launch.remove(mixin) }
-        setArgs(launch)
     }
 }
 
