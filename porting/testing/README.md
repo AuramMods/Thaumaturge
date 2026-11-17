@@ -177,3 +177,12 @@ The runner invokes Forge's actual BLOCKS registry bake after vanilla bootstrap
 to populate native block-state IDs/caches; no synthetic state-ID table is used.
 Final counts are 205 server / 212 client tests. These remain codec tests without
 full mod construction, blueprint world transactions or a live game world.
+
+Cycle 028 adds the ingredient codec entry point backed by actual Forge parsers,
+registered serializers and CompoundIngredient. Eight native cases cover item,
+tag and empty schemas, alternatives and error partials/remainders, malformed
+input, native NBT, encoder prefixes, and real non-simple Forge predicates through
+JSON and the native ingredient wire codec. Final counts are 213 server / 220
+client tests. Component-sensitive and spell-part ingredient serializers remain
+pending; the full mod's recipe bodies and progression are not established by
+these fixtures.

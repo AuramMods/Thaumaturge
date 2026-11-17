@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.serialization.IngredientCodecs;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
@@ -278,7 +279,7 @@ public final class ArcaneShapedRecipePattern {
                 String::valueOf);
 
         public static final MapCodec<Data> MAP_CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
-                        ExtraCodecs.strictUnboundedMap(SYMBOL_CODEC, Ingredient.CODEC)
+                        ExtraCodecs.strictUnboundedMap(SYMBOL_CODEC, IngredientCodecs.CODEC)
                                 .fieldOf("key")
                                 .forGetter((d) -> d.key),
                         PATTERN_CODEC.fieldOf("pattern").forGetter((d) -> d.pattern))

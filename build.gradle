@@ -69,6 +69,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/serialization/TTNbt*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/BlockCodecs*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/Codecs*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/IngredientCodecs*'
         java.include 'com/leclowndu93150/thaumaturge/registry/ForgeRegistration.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/RegistryBlockEntity.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/AbstractSyncedBlockEntity.java'
