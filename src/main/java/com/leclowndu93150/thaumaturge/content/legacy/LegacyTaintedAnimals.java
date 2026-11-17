@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.legacy;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
@@ -65,7 +67,7 @@ public final class LegacyTaintedAnimals {
         // A fresh identity lets both entities coexist during that attempt.
         replacement.setUUID(UUID.randomUUID());
         if (mapping.spiderling()) {
-            replacement.setData(TTAttachments.LEGACY_TAINT_SPIDERLING, true);
+            AttachmentData.set(replacement, TTAttachments.LEGACY_TAINT_SPIDERLING, true);
         }
         if (!level.addFreshEntity(replacement)) {
             Thaumaturge.LOGGER.error(

@@ -5,13 +5,13 @@ import java.util.Set;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.attachment.AttachmentType;
+import com.leclowndu93150.thaumaturge.state.AttachmentKey;
 
 /**
  * Per-player record of completed research, in-progress stages, per-entry flags, and accumulated
  * category knowledge.
  *
- * <p>The instance lives on the player as a NeoForge {@link AttachmentType data attachment}
+ * <p>The instance lives on the player as a Forge capability as an {@link AttachmentKey attachment value}
  * and is the authoritative source for research progression. The server owns the value; clients
  * receive a copy on login, on dimension change, and whenever the server publishes a change.
  *

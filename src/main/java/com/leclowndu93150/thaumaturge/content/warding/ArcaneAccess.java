@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -86,6 +88,6 @@ public final class ArcaneAccess {
     }
 
     private static ArcaneLockChunkData locks(ServerLevel level, BlockPos pos) {
-        return level.getChunkAt(pos).getData(TTAttachments.ARCANE_LOCKS.get());
+        return AttachmentData.get(level.getChunkAt(pos), TTAttachments.ARCANE_LOCKS);
     }
 }

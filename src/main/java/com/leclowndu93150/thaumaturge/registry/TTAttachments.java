@@ -1,6 +1,9 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+import com.leclowndu93150.thaumaturge.state.AttachmentRegistry;
+import com.leclowndu93150.thaumaturge.state.AttachmentKey;
 import com.leclowndu93150.thaumaturge.content.aura.AuraData;
 import com.leclowndu93150.thaumaturge.content.aura.pressure.FluxPressureState;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues;
@@ -34,222 +37,197 @@ import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.attachment.AttachmentType;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public final class TTAttachments {
-    public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS =
-            DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, TTIds.MODID);
+    public static final AttachmentRegistry ATTACHMENTS = new AttachmentRegistry(TTIds.MODID);
 
-    public static final RegistryObject<AttachmentType<PlayerKnowledge>> KNOWLEDGE = register(
+    public static final AttachmentKey<PlayerKnowledge> KNOWLEDGE = register(
             "knowledge",
-            () -> AttachmentType.builder(PlayerKnowledge::new)
+            () -> AttachmentKey.builder(PlayerKnowledge::new)
                     .serialize(PlayerKnowledge.CODEC.codec())
-                    .sync((holder, player) -> holder == player, PlayerKnowledge.STREAM_CODEC)
-                    .copyOnDeath()
-                    .build());
+                    .syncToOwner(PlayerKnowledge.STREAM_CODEC)
+                    .copyOnDeath());
 
-    public static final RegistryObject<AttachmentType<AuraData>> AURA = register(
+    public static final AttachmentKey<AuraData> AURA = register(
             "aura",
-            () -> AttachmentType.builder(AuraData::new)
-                    .serialize(AuraData.CODEC.codec())
-                    .build());
+            () -> AttachmentKey.builder(AuraData::new)
+                    .serialize(AuraData.CODEC.codec()));
 
-    public static final RegistryObject<AttachmentType<AspectPoolData>> ASPECT_POOL = register(
+    public static final AttachmentKey<AspectPoolData> ASPECT_POOL = register(
             "aspect_pool",
-            () -> AttachmentType.builder(AspectPoolData::new)
+            () -> AttachmentKey.builder(AspectPoolData::new)
                     .serialize(AspectPoolData.CODEC.codec())
-                    .sync((holder, player) -> holder == player, AspectPoolData.STREAM_CODEC)
-                    .copyOnDeath()
-                    .build());
+                    .syncToOwner(AspectPoolData.STREAM_CODEC)
+                    .copyOnDeath());
 
-    public static final RegistryObject<AttachmentType<WarpData>> WARP = register(
+    public static final AttachmentKey<WarpData> WARP = register(
             "warp",
-            () -> AttachmentType.builder(WarpData::new)
+            () -> AttachmentKey.builder(WarpData::new)
                     .serialize(WarpData.CODEC.codec())
-                    .sync((holder, to) -> holder == to, WarpData.STREAM_CODEC)
-                    .copyOnDeath()
-                    .build());
+                    .syncToOwner(WarpData.STREAM_CODEC)
+                    .copyOnDeath());
 
-    public static final RegistryObject<AttachmentType<DustTriggerSwapQueue>> DUST_TRIGGER_QUEUE =
+    public static final AttachmentKey<DustTriggerSwapQueue> DUST_TRIGGER_QUEUE =
             register(
                     "dust_trigger_queue",
-                    () -> AttachmentType.builder(DustTriggerSwapQueue::new)
-                            .serialize(DustTriggerSwapQueue.CODEC.codec())
-                            .build());
+                    () -> AttachmentKey.builder(DustTriggerSwapQueue::new)
+                            .serialize(DustTriggerSwapQueue.CODEC.codec()));
 
-    public static final RegistryObject<AttachmentType<MazeStamp>> LABYRINTH_STAMP = register(
+    public static final AttachmentKey<MazeStamp> LABYRINTH_STAMP = register(
             "labyrinth_stamp",
-            () -> AttachmentType.builder(() -> MazeStamp.NONE)
-                    .serialize(MazeStamp.CODEC.codec(), MazeStamp::present)
-                    .build());
+            () -> AttachmentKey.builder(() -> MazeStamp.NONE)
+                    .serialize(MazeStamp.CODEC.codec(), MazeStamp::present));
 
-    public static final RegistryObject<AttachmentType<BlockPos>> OBELISK_SITE_MEMBER = register(
+    public static final AttachmentKey<BlockPos> OBELISK_SITE_MEMBER = register(
             "obelisk_site_member",
-            () -> AttachmentType.builder(() -> BlockPos.ZERO)
-                    .serialize(BlockPos.CODEC.fieldOf("altar").codec())
-                    .build());
+            () -> AttachmentKey.builder(() -> BlockPos.ZERO)
+                    .serialize(BlockPos.CODEC.fieldOf("altar").codec()));
 
-    public static final RegistryObject<AttachmentType<LabyrinthBinding>> LABYRINTH_BINDING =
+    public static final AttachmentKey<LabyrinthBinding> LABYRINTH_BINDING =
             register(
                     "labyrinth_binding",
-                    () -> AttachmentType.builder(() -> LabyrinthBinding.NONE)
-                            .serialize(LabyrinthBinding.CODEC.codec(), LabyrinthBinding::bound)
-                            .build());
+                    () -> AttachmentKey.builder(() -> LabyrinthBinding.NONE)
+                            .serialize(LabyrinthBinding.CODEC.codec(), LabyrinthBinding::bound));
 
-    public static final RegistryObject<AttachmentType<TransitState>> LABYRINTH_TRANSIT = register(
-            "labyrinth_transit", () -> AttachmentType.builder(TransitState::new).build());
+    public static final AttachmentKey<TransitState> LABYRINTH_TRANSIT = register(
+            "labyrinth_transit", () -> AttachmentKey.builder(TransitState::new));
 
-    public static final RegistryObject<AttachmentType<Integer>> GRAPPLE_ID =
-            register("grapple_id", () -> AttachmentType.builder(() -> -1).build());
+    public static final AttachmentKey<Integer> GRAPPLE_ID =
+            register("grapple_id", () -> AttachmentKey.builder(() -> -1));
 
-    public static final RegistryObject<AttachmentType<DestructiveSwingMemory>> DESTRUCTIVE_SWING =
+    public static final AttachmentKey<DestructiveSwingMemory> DESTRUCTIVE_SWING =
             register(
                     "destructive_swing",
-                    () -> AttachmentType.builder(DestructiveSwingMemory::new).build());
+                    () -> AttachmentKey.builder(DestructiveSwingMemory::new));
 
-    public static final RegistryObject<AttachmentType<Boolean>> DONATOR_CAPE = register(
+    public static final AttachmentKey<Boolean> DONATOR_CAPE = register(
             "donator_cape",
-            () -> AttachmentType.builder(() -> false)
+            () -> AttachmentKey.builder(() -> false)
                     .serialize(Codec.BOOL)
                     .sync(ByteBufCodecs.BOOL)
-                    .copyOnDeath()
-                    .build());
+                    .copyOnDeath());
 
-    public static final RegistryObject<AttachmentType<Boolean>> DONATOR_WELCOMED = register(
+    public static final AttachmentKey<Boolean> DONATOR_WELCOMED = register(
             "donator_welcomed",
-            () -> AttachmentType.builder(() -> false)
+            () -> AttachmentKey.builder(() -> false)
                     .serialize(Codec.BOOL)
-                    .copyOnDeath()
-                    .build());
+                    .copyOnDeath());
 
-    public static final RegistryObject<AttachmentType<Long>> CASTER_COOLDOWN =
-            register("caster_cooldown", () -> AttachmentType.builder(() -> 0L).build());
+    public static final AttachmentKey<Long> CASTER_COOLDOWN =
+            register("caster_cooldown", () -> AttachmentKey.builder(() -> 0L));
 
-    public static final RegistryObject<AttachmentType<Long>> CLOUD_JUMP_TIME =
-            register("cloud_jump_time", () -> AttachmentType.builder(() -> 0L).build());
+    public static final AttachmentKey<Long> CLOUD_JUMP_TIME =
+            register("cloud_jump_time", () -> AttachmentKey.builder(() -> 0L));
 
-    public static final RegistryObject<AttachmentType<RunicShieldState>> RUNIC_SHIELD = register(
-            "runic_shield", () -> AttachmentType.builder(RunicShieldState::new).build());
+    public static final AttachmentKey<RunicShieldState> RUNIC_SHIELD = register(
+            "runic_shield", () -> AttachmentKey.builder(RunicShieldState::new));
 
-    public static final RegistryObject<AttachmentType<CastBudgets>> SPELL_BUDGETS = register(
-            "spell_budgets", () -> AttachmentType.builder(CastBudgets::new).build());
+    public static final AttachmentKey<CastBudgets> SPELL_BUDGETS = register(
+            "spell_budgets", () -> AttachmentKey.builder(CastBudgets::new));
 
-    public static final RegistryObject<AttachmentType<DelayedSpells>> DELAYED_SPELLS = register(
-            "delayed_spells", () -> AttachmentType.builder(DelayedSpells::new).build());
+    public static final AttachmentKey<DelayedSpells> DELAYED_SPELLS = register(
+            "delayed_spells", () -> AttachmentKey.builder(DelayedSpells::new));
 
-    public static final RegistryObject<AttachmentType<BlockWorkQueues>> BLOCK_WORK_QUEUES = register(
+    public static final AttachmentKey<BlockWorkQueues> BLOCK_WORK_QUEUES = register(
             "block_work_queues",
-            () -> AttachmentType.builder(BlockWorkQueues::new).build());
+            () -> AttachmentKey.builder(BlockWorkQueues::new));
 
-    public static final RegistryObject<AttachmentType<SealsChunkData>> SEALS = register(
+    public static final AttachmentKey<SealsChunkData> SEALS = register(
             "seals",
-            () -> AttachmentType.builder(SealsChunkData::new)
-                    .serialize(SealsChunkData.CODEC.codec())
-                    .build());
+            () -> AttachmentKey.builder(SealsChunkData::new)
+                    .serialize(SealsChunkData.CODEC.codec()));
 
-    public static final RegistryObject<AttachmentType<SealWorldIndex>> SEAL_INDEX = register(
-            "seal_index", () -> AttachmentType.builder(SealWorldIndex::new).build());
+    public static final AttachmentKey<SealWorldIndex> SEAL_INDEX = register(
+            "seal_index", () -> AttachmentKey.builder(SealWorldIndex::new));
 
-    public static final RegistryObject<AttachmentType<WardChunkData>> WARDS = register(
+    public static final AttachmentKey<WardChunkData> WARDS = register(
             "wards",
-            () -> AttachmentType.builder(WardChunkData::new)
-                    .serialize(WardChunkData.CODEC.codec())
-                    .build());
+            () -> AttachmentKey.builder(WardChunkData::new)
+                    .serialize(WardChunkData.CODEC.codec()));
 
-    public static final RegistryObject<AttachmentType<ArcaneLockChunkData>> ARCANE_LOCKS = register(
+    public static final AttachmentKey<ArcaneLockChunkData> ARCANE_LOCKS = register(
             "arcane_locks",
-            () -> AttachmentType.builder(ArcaneLockChunkData::new)
-                    .serialize(ArcaneLockChunkData.CODEC.codec())
-                    .build());
+            () -> AttachmentKey.builder(ArcaneLockChunkData::new)
+                    .serialize(ArcaneLockChunkData.CODEC.codec()));
 
-    public static final RegistryObject<AttachmentType<TaskBoard>> GOLEM_TASKS =
-            register("golem_tasks", () -> AttachmentType.builder(TaskBoard::new).build());
+    public static final AttachmentKey<TaskBoard> GOLEM_TASKS =
+            register("golem_tasks", () -> AttachmentKey.builder(TaskBoard::new));
 
-    public static final RegistryObject<AttachmentType<Set<BlockPos>>> EAR_INDEX = register(
+    public static final AttachmentKey<Set<BlockPos>> EAR_INDEX = register(
             "ear_index",
-            () -> AttachmentType.<Set<BlockPos>>builder(() -> ConcurrentHashMap.newKeySet())
-                    .build());
+            () -> AttachmentKey.<Set<BlockPos>>builder(() -> ConcurrentHashMap.newKeySet()));
 
-    public static final RegistryObject<AttachmentType<MobTraitState>> MOB_TRAITS = register(
+    public static final AttachmentKey<MobTraitState> MOB_TRAITS = register(
             "mob_traits",
-            () -> AttachmentType.builder(() -> MobTraitState.EMPTY)
+            () -> AttachmentKey.builder(() -> MobTraitState.EMPTY)
                     .serialize(MobTraitState.CODEC.codec(), state -> !state.isEmpty())
                     .sync(MobTraitState.STREAM_CODEC)
-                    .copyOnDeath()
-                    .build());
+                    .copyOnDeath());
 
-    public static final RegistryObject<AttachmentType<MobTraitRuntime>> MOB_TRAIT_RUNTIME = register(
+    public static final AttachmentKey<MobTraitRuntime> MOB_TRAIT_RUNTIME = register(
             "mob_trait_runtime",
-            () -> AttachmentType.builder(MobTraitRuntime::new).build());
+            () -> AttachmentKey.builder(MobTraitRuntime::new));
 
-    public static final RegistryObject<AttachmentType<Boolean>> CHAMPION_ROLLED = register(
+    public static final AttachmentKey<Boolean> CHAMPION_ROLLED = register(
             "champion_rolled",
-            () -> AttachmentType.builder(() -> false)
+            () -> AttachmentKey.builder(() -> false)
                     .serialize(Codec.BOOL)
-                    .copyOnDeath()
-                    .build());
+                    .copyOnDeath());
 
-    public static final RegistryObject<AttachmentType<ChannelSummaryCache>> CHANNEL_SUMMARY =
+    public static final AttachmentKey<ChannelSummaryCache> CHANNEL_SUMMARY =
             register(
                     "channel_summary",
-                    () -> AttachmentType.builder(ChannelSummaryCache::new).build());
+                    () -> AttachmentKey.builder(ChannelSummaryCache::new));
 
-    public static final RegistryObject<AttachmentType<Long>> WAYFINDING_PULSE =
-            register("wayfinding_pulse", () -> AttachmentType.builder(() -> 0L).build());
+    public static final AttachmentKey<Long> WAYFINDING_PULSE =
+            register("wayfinding_pulse", () -> AttachmentKey.builder(() -> 0L));
 
-    public static final RegistryObject<AttachmentType<FluxPressureState>> FLUX_PRESSURE = register(
+    public static final AttachmentKey<FluxPressureState> FLUX_PRESSURE = register(
             "flux_pressure",
-            () -> AttachmentType.builder(FluxPressureState::new).build());
+            () -> AttachmentKey.builder(FluxPressureState::new));
 
-    public static final RegistryObject<AttachmentType<Boolean>> HOVERING = register(
+    public static final AttachmentKey<Boolean> HOVERING = register(
             "hovering",
-            () -> AttachmentType.builder(() -> false)
+            () -> AttachmentKey.builder(() -> false)
                     .serialize(Codec.BOOL, hovering -> hovering)
-                    .sync(ByteBufCodecs.BOOL)
-                    .build());
-    public static final RegistryObject<AttachmentType<Integer>> HOVER_CHARGE = register(
+                    .sync(ByteBufCodecs.BOOL));
+    public static final AttachmentKey<Integer> HOVER_CHARGE = register(
             "hover_charge",
-            () -> AttachmentType.builder(() -> 0)
-                    .serialize(Codec.INT, charge -> charge > 0)
-                    .build());
+            () -> AttachmentKey.builder(() -> 0)
+                    .serialize(Codec.INT, charge -> charge > 0));
 
-    public static final RegistryObject<AttachmentType<TaintPressure>> TAINT_PRESSURE = register(
+    public static final AttachmentKey<TaintPressure> TAINT_PRESSURE = register(
             "taint_pressure",
-            () -> AttachmentType.builder(TaintPressure::new)
-                    .serialize(TaintPressure.CODEC.codec())
-                    .build());
-    public static final RegistryObject<AttachmentType<TaintColumns>> TAINT_COLUMNS = register(
+            () -> AttachmentKey.builder(TaintPressure::new)
+                    .serialize(TaintPressure.CODEC.codec()));
+    public static final AttachmentKey<TaintColumns> TAINT_COLUMNS = register(
             "taint_columns",
-            () -> AttachmentType.builder(TaintColumns::new)
-                    .serialize(TaintColumns.CODEC.codec())
-                    .build());
-    public static final RegistryObject<AttachmentType<TaintBloomIndex>> TAINT_BLOOMS = register(
-            "taint_blooms", () -> AttachmentType.builder(TaintBloomIndex::new).build());
-    public static final RegistryObject<AttachmentType<PhysicalFluxSamples>> PHYSICAL_FLUX_SAMPLES =
+            () -> AttachmentKey.builder(TaintColumns::new)
+                    .serialize(TaintColumns.CODEC.codec()));
+    public static final AttachmentKey<TaintBloomIndex> TAINT_BLOOMS = register(
+            "taint_blooms", () -> AttachmentKey.builder(TaintBloomIndex::new));
+    public static final AttachmentKey<PhysicalFluxSamples> PHYSICAL_FLUX_SAMPLES =
             register(
                     "physical_flux_samples",
-                    () -> AttachmentType.builder(PhysicalFluxSamples::new).build());
-    public static final RegistryObject<AttachmentType<Boolean>> TAINT_LEGACY_IMPORTED = register(
+                    () -> AttachmentKey.builder(PhysicalFluxSamples::new));
+    public static final AttachmentKey<Boolean> TAINT_LEGACY_IMPORTED = register(
             "taint_legacy_imported",
-            () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
-    public static final RegistryObject<AttachmentType<Boolean>> LEGACY_TAINT_SPIDERLING = register(
+            () -> AttachmentKey.builder(() -> false).serialize(Codec.BOOL));
+    public static final AttachmentKey<Boolean> LEGACY_TAINT_SPIDERLING = register(
             "legacy_taint_spiderling",
-            () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
+            () -> AttachmentKey.builder(() -> false).serialize(Codec.BOOL));
 
     private TTAttachments() {}
 
-    private static <T> RegistryObject<AttachmentType<T>> register(
-            String name, Supplier<AttachmentType<T>> supplier) {
-        return ATTACHMENTS.register(name, supplier);
+    private static <T> AttachmentKey<T> register(
+            String name, Supplier<AttachmentKey.Builder<T>> supplier) {
+        return ATTACHMENTS.register(name, supplier.get());
     }
 
     public static void register(IEventBus modBus) {
-        ATTACHMENTS.register(modBus);
+        AttachmentData.register(modBus, ATTACHMENTS);
     }
 
-    public static final RegistryObject<AttachmentType<Long>> SLOT_SCAN_TIME =
-            register("slot_scan_time", () -> AttachmentType.builder(() -> 0L).build());
+    public static final AttachmentKey<Long> SLOT_SCAN_TIME =
+            register("slot_scan_time", () -> AttachmentKey.builder(() -> 0L));
 }

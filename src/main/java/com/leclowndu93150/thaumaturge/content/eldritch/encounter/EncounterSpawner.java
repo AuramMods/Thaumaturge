@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.encounter;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterRole;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterScaling;
@@ -41,7 +43,7 @@ final class EncounterSpawner {
             return Optional.empty();
         }
         Mob mob = prepared.get();
-        mob.setData(
+        AttachmentData.set(mob,
                 TTAttachments.LABYRINTH_BINDING,
                 LabyrinthBinding.of(record.plan().id(), role));
         scale(mob, scaling, participants, true);

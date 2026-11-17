@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment.bauble;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
@@ -44,7 +46,7 @@ public final class BaubleEvents {
             return;
         }
         boolean pending = hasPendingCloudJump(player);
-        player.setData(TTAttachments.CLOUD_JUMP_TIME, 0L);
+        AttachmentData.set(player, TTAttachments.CLOUD_JUMP_TIME, 0L);
         if (!pending) {
             return;
         }
@@ -52,7 +54,7 @@ public final class BaubleEvents {
     }
 
     public static boolean hasPendingCloudJump(Player player) {
-        long lastJump = player.getData(TTAttachments.CLOUD_JUMP_TIME);
+        long lastJump = AttachmentData.get(player, TTAttachments.CLOUD_JUMP_TIME);
         return lastJump != 0L && player.level().getGameTime() - lastJump <= CLOUD_JUMP_GRACE_WINDOW_TICKS;
     }
 

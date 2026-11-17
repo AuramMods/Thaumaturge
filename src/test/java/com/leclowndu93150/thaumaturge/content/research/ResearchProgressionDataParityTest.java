@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -127,7 +129,7 @@ final class ResearchProgressionDataParityTest {
         Level level = mock(Level.class);
         when(player.getUUID()).thenReturn(new UUID(1L, 2L));
         when(player.registryAccess()).thenReturn(registries);
-        when(player.getData(TTAttachments.KNOWLEDGE)).thenReturn(knowledge);
+        when(AttachmentData.get(player, TTAttachments.KNOWLEDGE)).thenReturn(knowledge);
         when(player.getInventory()).thenReturn(inventory);
         when(inventory.getContainerSize()).thenReturn(1);
         when(inventory.getItem(0)).thenReturn(ItemStack.EMPTY);

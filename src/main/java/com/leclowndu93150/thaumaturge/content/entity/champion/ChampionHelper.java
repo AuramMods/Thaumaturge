@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.champion;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -24,11 +26,11 @@ public final class ChampionHelper {
     }
 
     public static boolean rolled(LivingEntity mob) {
-        return Boolean.TRUE.equals(mob.getExistingDataOrNull(TTAttachments.CHAMPION_ROLLED));
+        return Boolean.TRUE.equals(AttachmentData.getExistingDataOrNull(mob, TTAttachments.CHAMPION_ROLLED));
     }
 
     public static void markRolled(LivingEntity mob) {
-        mob.setData(TTAttachments.CHAMPION_ROLLED, true);
+        AttachmentData.set(mob, TTAttachments.CHAMPION_ROLLED, true);
     }
 
     public static void makeChampion(Mob mob, boolean persist) {

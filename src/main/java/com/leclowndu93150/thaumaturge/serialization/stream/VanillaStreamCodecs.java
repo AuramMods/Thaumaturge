@@ -26,8 +26,13 @@ public final class VanillaStreamCodecs {
             buffer -> new FriendlyByteBuf(buffer).readBlockPos());
     public static final StreamCodec<ByteBuf, Direction> DIRECTION = ByteBufCodecs.idMapper(
             id -> id >= 0 && id < Direction.values().length ? Direction.values()[id] : null, Direction::ordinal);
-    public static final StreamCodec<ByteBuf, GlobalPos> GLOBAL_POS = StreamCodec.composite(
-            resourceKey(Registries.DIMENSION), GlobalPos::dimension, BLOCK_POS, GlobalPos::pos, GlobalPos::of);
+    public static final StreamCodec<ByteBuf, GlobalPos> GLOBAL_POS = StreamCodec.of((buffer, value) -> {
+        RESOURCE_LOCATION.encode(buffer, value.dimension().location());
+        BLOCK_POS.encode(buffer, value.pos());
+    }, buffer -> {
+        var dimension = ResourceKey.create(Registries.DIMENSION, RESOURCE_LOCATION.decode(buffer));
+        return GlobalPos.of(dimension, BLOCK_POS.decode(buffer));
+    });
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemStack> ITEM_STACK = StreamCodec.of(
             (buffer, value) -> buffer.writeItem(value), FriendlyByteBuf::readItem);
     public static final StreamCodec<RegistryFriendlyByteBuf, Ingredient> INGREDIENT = StreamCodec.of(

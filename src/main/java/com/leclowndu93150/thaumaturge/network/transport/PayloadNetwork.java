@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -85,6 +86,13 @@ public final class PayloadNetwork {
     public static void sendToAllPlayers(ModPayload... payloads) {
         for (ModPayload payload : payloads) {
             CHANNEL.send(PacketDistributor.ALL.noArg(), new Clientbound(payload));
+        }
+    }
+
+    public static void sendToPlayersTrackingEntityAndSelf(Entity entity, ModPayload... payloads) {
+        var target = PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity);
+        for (ModPayload payload : payloads) {
+            CHANNEL.send(target, new Clientbound(payload));
         }
     }
 

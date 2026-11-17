@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment.runic;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -54,6 +56,6 @@ public final class RunicShieldingEvents {
     }
 
     private static boolean hasActiveShield(ServerPlayer player) {
-        return player.getAbsorptionAmount() > 0.0F && player.getData(TTAttachments.RUNIC_SHIELD.get()).maxCharge > 0;
+        return player.getAbsorptionAmount() > 0.0F && AttachmentData.get(player, TTAttachments.RUNIC_SHIELD).maxCharge > 0;
     }
 }

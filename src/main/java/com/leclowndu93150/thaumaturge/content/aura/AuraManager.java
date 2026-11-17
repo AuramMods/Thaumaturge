@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.api.transaction.RootCommitJournal;
@@ -135,7 +137,7 @@ public final class AuraManager {
         if (chunk == null) {
             return null;
         }
-        AuraData found = chunk.getData(TTAttachments.AURA.get());
+        AuraData found = AttachmentData.get(chunk, TTAttachments.AURA);
         found.setChunkPos(pos);
         return found;
     }

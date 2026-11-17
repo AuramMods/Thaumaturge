@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.donator;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import net.minecraft.ChatFormatting;
@@ -25,10 +27,10 @@ public final class DonatorPerks {
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)
                 || !Donators.is(player)
-                || player.getData(TTAttachments.DONATOR_WELCOMED)) {
+                || AttachmentData.get(player, TTAttachments.DONATOR_WELCOMED)) {
             return;
         }
-        player.setData(TTAttachments.DONATOR_WELCOMED, true);
+        AttachmentData.set(player, TTAttachments.DONATOR_WELCOMED, true);
         player.sendSystemMessage(Component.translatable(TITLE)
                 .withStyle(style -> style.withColor(TITLE_COLOR).withBold(true)));
         player.sendSystemMessage(
@@ -40,8 +42,8 @@ public final class DonatorPerks {
     }
 
     public static void setCapeVisible(ServerPlayer player, boolean visible) {
-        if (Donators.is(player) && player.getData(TTAttachments.DONATOR_CAPE) != visible) {
-            player.setData(TTAttachments.DONATOR_CAPE, visible);
+        if (Donators.is(player) && AttachmentData.get(player, TTAttachments.DONATOR_CAPE) != visible) {
+            AttachmentData.set(player, TTAttachments.DONATOR_CAPE, visible);
         }
     }
 }

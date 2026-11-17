@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -214,7 +216,7 @@ public final class InfusionEnchantmentEvents {
         }
 
         ServerLevel level = (ServerLevel) event.getLevel();
-        DestructiveSwingMemory swingMemory = player.getExistingDataOrNull(TTAttachments.DESTRUCTIVE_SWING.get());
+        DestructiveSwingMemory swingMemory = AttachmentData.getExistingDataOrNull(player, TTAttachments.DESTRUCTIVE_SWING);
         Direction face = swingMemory == null ? null : swingMemory.takeFace(level.dimension(), event.getPos());
         if (face == null) {
             face = Direction.getNearest(
@@ -235,10 +237,10 @@ public final class InfusionEnchantmentEvents {
                 || event.getFace() == null
                 || !InfusionEnchantmentHelper.has(held, InfusionEnchantment.DESTRUCTIVE)
                 || !held.isCorrectToolForDrops(event.getLevel().getBlockState(event.getPos()))) {
-            player.getData(TTAttachments.DESTRUCTIVE_SWING).forget();
+            AttachmentData.get(player, TTAttachments.DESTRUCTIVE_SWING).forget();
             return;
         }
-        player.getData(TTAttachments.DESTRUCTIVE_SWING)
+        AttachmentData.get(player, TTAttachments.DESTRUCTIVE_SWING)
                 .remember(event.getLevel().dimension(), event.getPos(), event.getFace());
     }
 
@@ -252,7 +254,7 @@ public final class InfusionEnchantmentEvents {
             addRareNugget(event, level, state);
             return;
         }
-        DestructiveSwingMemory swingMemory = player.getExistingDataOrNull(TTAttachments.DESTRUCTIVE_SWING.get());
+        DestructiveSwingMemory swingMemory = AttachmentData.getExistingDataOrNull(player, TTAttachments.DESTRUCTIVE_SWING);
         Direction swungFace = swingMemory == null ? null : swingMemory.takeFace(level.dimension(), pos);
         ItemStack held = player.getMainHandItem();
 

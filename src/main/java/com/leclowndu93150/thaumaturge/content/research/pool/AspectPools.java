@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.pool;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -37,7 +39,7 @@ public final class AspectPools {
     private AspectPools() {}
 
     public static AspectPoolData data(Player player) {
-        return player.getData(TTAttachments.ASPECT_POOL);
+        return AttachmentData.get(player, TTAttachments.ASPECT_POOL);
     }
 
     public static void sync(ServerPlayer player) {
@@ -46,7 +48,7 @@ public final class AspectPools {
 
     public static void flush(ServerPlayer player) {
         if (data(player).takeSyncPending()) {
-            player.syncData(TTAttachments.ASPECT_POOL);
+            AttachmentData.sync(player, TTAttachments.ASPECT_POOL);
             PayloadNetwork.sendToPlayer(player, ClientboundUpdateJEIAspectListPayload.INSTANCE);
         }
     }

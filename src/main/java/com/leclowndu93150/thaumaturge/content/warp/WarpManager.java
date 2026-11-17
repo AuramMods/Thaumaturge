@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
@@ -28,7 +30,7 @@ public final class WarpManager {
     private WarpManager() {}
 
     public static WarpData data(Player player) {
-        return player.getData(TTAttachments.WARP);
+        return AttachmentData.get(player, TTAttachments.WARP);
     }
 
     public static void addWarp(ServerPlayer player, int amount, WarpType type) {
@@ -47,7 +49,7 @@ public final class WarpManager {
         } else {
             notifyLoss(player, type);
         }
-        player.syncData(TTAttachments.WARP);
+        AttachmentData.sync(player, TTAttachments.WARP);
     }
 
     private static final ResourceLocation WARP_RESEARCH = TTIds.rl("warp");

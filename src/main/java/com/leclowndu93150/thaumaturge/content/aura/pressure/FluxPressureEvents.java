@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
@@ -28,7 +30,7 @@ public final class FluxPressureEvents {
 
     public static void queue(ServerLevel level, ChunkPos chunkPos) {
         if (isEnabled()) {
-            level.getData(TTAttachments.FLUX_PRESSURE)
+            AttachmentData.get(level, TTAttachments.FLUX_PRESSURE)
                     .queue(new BlockPos(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ()));
         }
     }
@@ -37,7 +39,7 @@ public final class FluxPressureEvents {
         if (!isEnabled()) {
             return false;
         }
-        FluxPressureState state = level.getData(TTAttachments.FLUX_PRESSURE);
+        FluxPressureState state = AttachmentData.get(level, TTAttachments.FLUX_PRESSURE);
         if (!event.allowedNearTaint()
                 && (TaintOrigins.claimingOrigin(level, origin) != null
                         || state.hasRainNear(origin, STACK_SUPPRESSION_RANGE_SQ))) {
@@ -56,7 +58,7 @@ public final class FluxPressureEvents {
         if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
-        FluxPressureState state = level.getExistingDataOrNull(TTAttachments.FLUX_PRESSURE.get());
+        FluxPressureState state = AttachmentData.getExistingDataOrNull(level, TTAttachments.FLUX_PRESSURE);
         if (state == null) {
             return;
         }

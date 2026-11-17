@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment.hover;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
@@ -32,7 +34,7 @@ public final class HoverManager {
     private HoverManager() {}
 
     public static boolean isHovering(Player player) {
-        return player.getData(TTAttachments.HOVERING);
+        return AttachmentData.get(player, TTAttachments.HOVERING);
     }
 
     public static ItemStack wornHoverGear(Player player) {
@@ -91,7 +93,7 @@ public final class HoverManager {
     }
 
     public static void setHovering(ServerPlayer player, boolean hovering) {
-        player.setData(TTAttachments.HOVERING, hovering);
+        AttachmentData.set(player, TTAttachments.HOVERING, hovering);
         if (hovering) {
             keepAloft(player);
         } else {
@@ -100,11 +102,11 @@ public final class HoverManager {
     }
 
     private static void burnFuel(ServerPlayer player, ItemStack stack, IHoverGear gear) {
-        ChargeTick tick = advanceCharge(player.getData(TTAttachments.HOVER_CHARGE));
+        ChargeTick tick = advanceCharge(AttachmentData.get(player, TTAttachments.HOVER_CHARGE));
         if (tick.consumeFuel()) {
             gear.consumeHoverFuel(stack);
         }
-        player.setData(TTAttachments.HOVER_CHARGE, tick.elapsedTicks());
+        AttachmentData.set(player, TTAttachments.HOVER_CHARGE, tick.elapsedTicks());
     }
 
     static ChargeTick advanceCharge(int elapsedTicks) {

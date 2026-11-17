@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.FocusCaster;
 import com.leclowndu93150.thaumaturge.api.items.AreaPreviewer;
@@ -294,20 +296,20 @@ public final class CasterManager {
     }
 
     public static boolean isOnCooldown(LivingEntity entity) {
-        return entity.getData(TTAttachments.CASTER_COOLDOWN) > entity.level().getGameTime();
+        return AttachmentData.get(entity, TTAttachments.CASTER_COOLDOWN) > entity.level().getGameTime();
     }
 
     public static float getCooldown(LivingEntity entity) {
         long remaining =
-                entity.getData(TTAttachments.CASTER_COOLDOWN) - entity.level().getGameTime();
+                AttachmentData.get(entity, TTAttachments.CASTER_COOLDOWN) - entity.level().getGameTime();
         return remaining > 0 ? (float) remaining / TICKS_PER_SECOND : 0.0F;
     }
 
     public static void setCooldown(LivingEntity entity, int ticks) {
         if (ticks == 0) {
-            entity.setData(TTAttachments.CASTER_COOLDOWN, 0L);
+            AttachmentData.set(entity, TTAttachments.CASTER_COOLDOWN, 0L);
         } else {
-            entity.setData(TTAttachments.CASTER_COOLDOWN, entity.level().getGameTime() + ticks);
+            AttachmentData.set(entity, TTAttachments.CASTER_COOLDOWN, entity.level().getGameTime() + ticks);
         }
     }
 }

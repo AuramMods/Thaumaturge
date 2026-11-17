@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.engine;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.spell.cast.TouchBudget;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -18,7 +20,7 @@ public final class CastBudgets {
     private final Map<UUID, Tally> tallies = new HashMap<>();
 
     static TouchBudget of(ServerLevel level, UUID castId) {
-        return level.getData(TTAttachments.SPELL_BUDGETS).budget(level, castId);
+        return AttachmentData.get(level, TTAttachments.SPELL_BUDGETS).budget(level, castId);
     }
 
     private TouchBudget budget(ServerLevel level, UUID castId) {

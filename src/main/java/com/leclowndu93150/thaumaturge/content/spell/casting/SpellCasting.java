@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.casting;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
 import com.leclowndu93150.thaumaturge.api.spell.FocusTier;
@@ -74,7 +76,7 @@ public final class SpellCasting {
             return;
         }
         FocusTier tier = Spells.tierOf(focus).orElse(null);
-        SpellSummary summary = player.getData(TTAttachments.CHANNEL_SUMMARY)
+        SpellSummary summary = AttachmentData.get(player, TTAttachments.CHANNEL_SUMMARY)
                 .summaryFor(spell, tier, () -> Spells.analyze(spell, tier, level.registryAccess(), player));
         if (usedTicks % summary.pulseInterval() != 0) {
             return;

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -23,7 +25,7 @@ public final class ArcaneEarEvents {
             return;
         }
         BlockPos source = event.getPos();
-        List<BlockPos> ears = List.copyOf(level.getData(TTAttachments.EAR_INDEX.get()));
+        List<BlockPos> ears = List.copyOf(AttachmentData.get(level, TTAttachments.EAR_INDEX));
         for (BlockPos earPos : ears) {
             if (LevelSpaces.distanceSqr(level, Vec3.atCenterOf(earPos), Vec3.atCenterOf(source)) > MAX_RANGE_SQ) {
                 continue;

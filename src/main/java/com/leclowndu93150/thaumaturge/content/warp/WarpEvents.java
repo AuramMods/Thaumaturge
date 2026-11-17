@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
@@ -174,7 +176,7 @@ public final class WarpEvents {
                 checkWarpMilestones(player, nw + pw);
             }
         }
-        player.syncData(TTAttachments.WARP);
+        AttachmentData.sync(player, TTAttachments.WARP);
     }
 
     private static void dispatchEvent(ServerPlayer player, int eff, Roll roll) {

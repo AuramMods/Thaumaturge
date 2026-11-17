@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.network;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
@@ -34,10 +36,10 @@ public record ServerboundScanSlotPayload(int slot) implements ModPayload {
             AbstractContainerMenu menu = player.containerMenu;
             long now = player.level().getGameTime();
             if (!(menu.getCarried().getItem() instanceof ThaumometerItem)
-                    || now - player.getData(TTAttachments.SLOT_SCAN_TIME) < CHANNEL_TICKS - LATENCY_ALLOWANCE_TICKS) {
+                    || now - AttachmentData.get(player, TTAttachments.SLOT_SCAN_TIME) < CHANNEL_TICKS - LATENCY_ALLOWANCE_TICKS) {
                 return;
             }
-            player.setData(TTAttachments.SLOT_SCAN_TIME, now);
+            AttachmentData.set(player, TTAttachments.SLOT_SCAN_TIME, now);
             if (payload.slot() == SELF) {
                 ScanningManager.scan(player, ScanTarget.entity(player));
                 return;

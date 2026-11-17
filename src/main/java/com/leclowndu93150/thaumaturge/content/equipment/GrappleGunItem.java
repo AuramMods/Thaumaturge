@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.items.ChargeDisplay;
 import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
@@ -42,7 +44,7 @@ public final class GrappleGunItem extends Item {
         if (level.isClientSide() || !Boolean.TRUE.equals(stack.get(TTDataComponents.GRAPPLE_LOADED))) {
             return;
         }
-        int tracked = entity.getData(TTAttachments.GRAPPLE_ID.get());
+        int tracked = AttachmentData.get(entity, TTAttachments.GRAPPLE_ID);
         if (tracked < 0 || !(level.getEntity(tracked) instanceof EntityGrapple grapple) || !grapple.isAlive()) {
             stack.remove(TTDataComponents.GRAPPLE_LOADED);
         }

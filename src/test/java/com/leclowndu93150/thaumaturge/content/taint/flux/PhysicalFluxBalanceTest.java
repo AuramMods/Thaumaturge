@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -86,7 +88,7 @@ class PhysicalFluxBalanceTest {
     private static PhysicalFluxSamples sample(LevelChunk chunk, BlockPos pos) {
         PhysicalFluxSamples samples = new PhysicalFluxSamples();
         samples.add(pos);
-        when(chunk.getExistingDataOrNull(TTAttachments.PHYSICAL_FLUX_SAMPLES.get()))
+        when(AttachmentData.getExistingDataOrNull(chunk, TTAttachments.PHYSICAL_FLUX_SAMPLES))
                 .thenReturn(samples);
         return samples;
     }

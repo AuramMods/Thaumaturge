@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,13 +30,13 @@ public final class TaintBiomeState extends SavedData {
     }
 
     public void copyTo(LevelChunk chunk) {
-        if (chunk.hasData(TTAttachments.TAINT_COLUMNS.get())) return;
+        if (AttachmentData.has(chunk, TTAttachments.TAINT_COLUMNS)) return;
         int baseX = QuartPos.fromSection(chunk.getPos().x);
         int baseZ = QuartPos.fromSection(chunk.getPos().z);
         for (int x = 0; x < 4; x++) {
             for (int z = 0; z < 4; z++) {
                 if (dynamicColumns.contains(ChunkPos.asLong(baseX + x, baseZ + z))) {
-                    chunk.getData(TTAttachments.TAINT_COLUMNS.get()).setChanged(x, z, true);
+                    AttachmentData.get(chunk, TTAttachments.TAINT_COLUMNS).setChanged(x, z, true);
                 }
             }
         }

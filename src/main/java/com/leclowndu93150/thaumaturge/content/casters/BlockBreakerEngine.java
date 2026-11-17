@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues.BreakerTask;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues.SwapperTask;
@@ -53,7 +55,7 @@ public final class BlockBreakerEngine {
         if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
-        BlockWorkQueues queues = level.getData(TTAttachments.BLOCK_WORK_QUEUES);
+        BlockWorkQueues queues = AttachmentData.get(level, TTAttachments.BLOCK_WORK_QUEUES);
         tickSwappers(level, queues);
         tickBreakers(level, queues);
     }

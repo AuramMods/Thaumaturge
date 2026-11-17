@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
@@ -132,7 +134,7 @@ public final class TaintCreatureEvents {
 
     @SubscribeEvent
     public static void onExperienceDrop(LivingExperienceDropEvent event) {
-        if (event.getEntity().getData(TTAttachments.LEGACY_TAINT_SPIDERLING)) {
+        if (AttachmentData.get(event.getEntity(), TTAttachments.LEGACY_TAINT_SPIDERLING)) {
             event.setDroppedExperience(BROOD_EXPERIENCE);
             return;
         }

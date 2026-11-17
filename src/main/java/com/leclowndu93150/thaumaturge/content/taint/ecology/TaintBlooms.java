@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -11,22 +13,22 @@ public final class TaintBlooms {
     private TaintBlooms() {}
 
     public static void register(ServerLevel level, BlockPos pos) {
-        level.getData(TTAttachments.TAINT_BLOOMS).add(pos);
+        AttachmentData.get(level, TTAttachments.TAINT_BLOOMS).add(pos);
     }
 
     public static void unregister(ServerLevel level, BlockPos pos) {
-        TaintBloomIndex index = level.getExistingDataOrNull(TTAttachments.TAINT_BLOOMS.get());
+        TaintBloomIndex index = AttachmentData.getExistingDataOrNull(level, TTAttachments.TAINT_BLOOMS);
         if (index == null) {
             return;
         }
         index.remove(pos);
         if (index.isEmpty()) {
-            level.removeData(TTAttachments.TAINT_BLOOMS.get());
+            AttachmentData.remove(level, TTAttachments.TAINT_BLOOMS);
         }
     }
 
     public static boolean isProtected(ServerLevel level, BlockPos pos) {
-        TaintBloomIndex index = level.getExistingDataOrNull(TTAttachments.TAINT_BLOOMS.get());
+        TaintBloomIndex index = AttachmentData.getExistingDataOrNull(level, TTAttachments.TAINT_BLOOMS);
         return index != null && index.covers(level, pos, PROTECTION_RADIUS_SQ);
     }
 }

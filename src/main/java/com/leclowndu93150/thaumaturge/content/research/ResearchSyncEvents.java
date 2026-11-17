@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -17,8 +19,8 @@ public final class ResearchSyncEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        if (player.getData(TTAttachments.KNOWLEDGE).takeSyncPending()) {
-            player.syncData(TTAttachments.KNOWLEDGE);
+        if (AttachmentData.get(player, TTAttachments.KNOWLEDGE).takeSyncPending()) {
+            AttachmentData.sync(player, TTAttachments.KNOWLEDGE);
         }
         AspectPools.flush(player);
     }

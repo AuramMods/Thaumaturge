@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
@@ -32,7 +34,7 @@ public final class SealHandler {
     private SealHandler() {}
 
     private static SealWorldIndex index(ServerLevel level) {
-        return level.getData(TTAttachments.SEAL_INDEX);
+        return AttachmentData.get(level, TTAttachments.SEAL_INDEX);
     }
 
     public static @Nullable SealEntity getSealEntity(Level level, @Nullable SealPos pos) {
@@ -59,7 +61,7 @@ public final class SealHandler {
     }
 
     public static List<SealEntity> getSealsInChunk(LevelChunk chunk) {
-        return chunk.getData(TTAttachments.SEALS).seals();
+        return AttachmentData.get(chunk, TTAttachments.SEALS).seals();
     }
 
     public static boolean place(ServerLevel level, SealPos pos, ResourceLocation typeId, SealType type, Player player) {
@@ -74,7 +76,7 @@ public final class SealHandler {
         }
         index.seals().put(seal.pos(), seal);
         LevelChunk chunk = level.getChunkAt(seal.pos().pos());
-        SealsChunkData data = chunk.getData(TTAttachments.SEALS);
+        SealsChunkData data = AttachmentData.get(chunk, TTAttachments.SEALS);
         if (!data.seals().contains(seal)) {
             data.seals().add(seal);
         }
@@ -91,7 +93,7 @@ public final class SealHandler {
         seal.behavior().onRemoved(level, seal);
         if (LoadedChunks.contains(level, pos.pos())) {
             LevelChunk chunk = level.getChunkAt(pos.pos());
-            chunk.getData(TTAttachments.SEALS).seals().remove(seal);
+            AttachmentData.get(chunk, TTAttachments.SEALS).seals().remove(seal);
             chunk.setUnsaved(true);
         }
         if (!quiet) {
@@ -118,14 +120,14 @@ public final class SealHandler {
 
     public static void loadChunkSeals(ServerLevel level, LevelChunk chunk) {
         SealWorldIndex index = index(level);
-        for (SealEntity seal : chunk.getData(TTAttachments.SEALS).seals()) {
+        for (SealEntity seal : AttachmentData.get(chunk, TTAttachments.SEALS).seals()) {
             index.seals().put(seal.pos(), seal);
         }
     }
 
     public static void unloadChunkSeals(ServerLevel level, LevelChunk chunk) {
         SealWorldIndex index = index(level);
-        for (SealEntity seal : chunk.getData(TTAttachments.SEALS).seals()) {
+        for (SealEntity seal : AttachmentData.get(chunk, TTAttachments.SEALS).seals()) {
             index.seals().remove(seal.pos(), seal);
         }
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.tasks;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.SupplyOrder;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
@@ -31,7 +33,7 @@ public final class TaskBoard {
     private int lastId;
 
     public static TaskBoard of(Level level) {
-        return level.getData(TTAttachments.GOLEM_TASKS);
+        return AttachmentData.get(level, TTAttachments.GOLEM_TASKS);
     }
 
     public List<SupplyOrder> supplyOrders() {

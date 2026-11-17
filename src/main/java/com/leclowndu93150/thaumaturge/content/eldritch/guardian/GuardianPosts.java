@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.guardian;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterRole;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MarkerTriggerContext;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
@@ -113,7 +115,7 @@ public final class GuardianPosts {
             return Optional.empty();
         }
         Mob mob = prepared.get();
-        mob.setData(
+        AttachmentData.set(mob,
                 TTAttachments.LABYRINTH_BINDING,
                 LabyrinthBinding.of(record.plan().id(), EncounterRole.MINION));
         double override = ThaumaturgeServerConfig.LABYRINTH.championChanceOverride.get();

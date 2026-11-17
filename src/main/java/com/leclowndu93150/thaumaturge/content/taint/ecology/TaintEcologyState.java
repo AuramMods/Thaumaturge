@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,8 +36,8 @@ public final class TaintEcologyState extends SavedData {
 
     public void copyTo(LevelChunk chunk) {
         Entry entry = entries.get(chunk.getPos().toLong());
-        if (entry != null && !chunk.hasData(TTAttachments.TAINT_PRESSURE.get())) {
-            TaintPressure pressure = chunk.getData(TTAttachments.TAINT_PRESSURE.get());
+        if (entry != null && !AttachmentData.has(chunk, TTAttachments.TAINT_PRESSURE)) {
+            TaintPressure pressure = AttachmentData.get(chunk, TTAttachments.TAINT_PRESSURE);
             pressure.set(entry.saturation, entry.lastUpdateTick);
             pressure.markActiveSeed(entry.lastActiveSeedTick);
         }

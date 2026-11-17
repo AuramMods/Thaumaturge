@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.trait;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitGoals;
@@ -30,7 +32,7 @@ public final class MobTraitEngine {
     private MobTraitEngine() {}
 
     public static List<Holder<MobTrait>> traits(LivingEntity mob) {
-        MobTraitState state = mob.getExistingDataOrNull(TTAttachments.MOB_TRAITS);
+        MobTraitState state = AttachmentData.getExistingDataOrNull(mob, TTAttachments.MOB_TRAITS);
         return state == null ? List.of() : state.traits();
     }
 
@@ -38,11 +40,11 @@ public final class MobTraitEngine {
         if (mob.level().isClientSide()) {
             return false;
         }
-        MobTraitState state = mob.getData(TTAttachments.MOB_TRAITS);
+        MobTraitState state = AttachmentData.get(mob, TTAttachments.MOB_TRAITS);
         if (state.contains(trait)) {
             return false;
         }
-        mob.setData(TTAttachments.MOB_TRAITS, state.with(trait));
+        AttachmentData.set(mob, TTAttachments.MOB_TRAITS, state.with(trait));
         refresh(mob);
         trait.value().onAdded(mob);
         return true;
@@ -52,11 +54,11 @@ public final class MobTraitEngine {
         if (mob.level().isClientSide()) {
             return false;
         }
-        MobTraitState state = mob.getExistingDataOrNull(TTAttachments.MOB_TRAITS);
+        MobTraitState state = AttachmentData.getExistingDataOrNull(mob, TTAttachments.MOB_TRAITS);
         if (state == null || !state.contains(trait)) {
             return false;
         }
-        mob.setData(TTAttachments.MOB_TRAITS, state.without(trait));
+        AttachmentData.set(mob, TTAttachments.MOB_TRAITS, state.without(trait));
         refresh(mob);
         trait.value().onRemoved(mob);
         return true;
@@ -70,7 +72,7 @@ public final class MobTraitEngine {
     }
 
     public static boolean suppressesNativeAi(LivingEntity mob) {
-        MobTraitRuntime runtime = mob.getExistingDataOrNull(TTAttachments.MOB_TRAIT_RUNTIME);
+        MobTraitRuntime runtime = AttachmentData.getExistingDataOrNull(mob, TTAttachments.MOB_TRAIT_RUNTIME);
         return runtime != null && runtime.nativeAiSuppressed();
     }
 
@@ -112,7 +114,7 @@ public final class MobTraitEngine {
         MobAccessor accessor = (MobAccessor) mob;
         GoalSelector goals = accessor.thaumaturge$getGoalSelector();
         GoalSelector targets = accessor.thaumaturge$getTargetSelector();
-        MobTraitRuntime runtime = mob.getData(TTAttachments.MOB_TRAIT_RUNTIME);
+        MobTraitRuntime runtime = AttachmentData.get(mob, TTAttachments.MOB_TRAIT_RUNTIME);
         for (TraitGoal injected : runtime.injected()) {
             (injected.target() ? targets : goals).removeGoal(injected.goal());
         }

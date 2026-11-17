@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.aura.pressure.FluxPressureEvents;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraFloor;
@@ -78,7 +80,7 @@ public final class AuraTickHandler {
 
     private static void balanceChunk(
             ServerLevel level, LevelChunk chunk, ChunkPos pos, MoonProfile profile, RandomSource random) {
-        AuraData data = chunk.getData(TTAttachments.AURA.get());
+        AuraData data = AttachmentData.get(chunk, TTAttachments.AURA);
         AuraGenHandler.initializeIfNeeded(level, chunk, data);
         PhysicalFluxOutbreaks.tryOutbreak(level, chunk, random);
         data.setChunkPos(pos);

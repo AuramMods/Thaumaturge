@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
@@ -35,7 +37,7 @@ public final class PhysicalFluxOutbreaks {
         if (!isEnabled()) {
             return false;
         }
-        PhysicalFluxSamples samples = chunk.getExistingDataOrNull(TTAttachments.PHYSICAL_FLUX_SAMPLES.get());
+        PhysicalFluxSamples samples = AttachmentData.getExistingDataOrNull(chunk, TTAttachments.PHYSICAL_FLUX_SAMPLES);
         if (samples == null) {
             return false;
         }

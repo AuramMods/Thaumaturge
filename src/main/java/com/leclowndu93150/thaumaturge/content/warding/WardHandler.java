@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardChunkPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardUpdatePayload;
@@ -71,7 +73,7 @@ public final class WardHandler {
             return false;
         }
         LevelChunk chunk = level.getChunkAt(pos);
-        chunk.getData(TTAttachments.WARDS.get()).put(pos, owner);
+        AttachmentData.get(chunk, TTAttachments.WARDS).put(pos, owner);
         chunk.setUnsaved(true);
         PayloadNetwork.sendToPlayersTrackingChunk(
                 level, chunk.getPos(), new ClientboundWardUpdatePayload(pos, Optional.of(owner)));
@@ -104,17 +106,17 @@ public final class WardHandler {
         PayloadNetwork.sendToPlayersTrackingChunk(
                 fromLevel, source.getPos(), new ClientboundWardUpdatePayload(from, Optional.empty()));
         LevelChunk target = toLevel.getChunkAt(to);
-        target.getData(TTAttachments.WARDS.get()).restore(to, ward);
+        AttachmentData.get(target, TTAttachments.WARDS).restore(to, ward);
         target.setUnsaved(true);
         PayloadNetwork.sendToPlayersTrackingChunk(
                 toLevel, target.getPos(), new ClientboundWardUpdatePayload(to, Optional.of(ward.owner())));
     }
 
     public static void syncChunk(ServerPlayer player, LevelChunk chunk) {
-        if (!chunk.hasData(TTAttachments.WARDS.get())) {
+        if (!AttachmentData.has(chunk, TTAttachments.WARDS)) {
             return;
         }
-        WardChunkData data = chunk.getData(TTAttachments.WARDS.get());
+        WardChunkData data = AttachmentData.get(chunk, TTAttachments.WARDS);
         if (data.isEmpty()) {
             return;
         }
@@ -122,10 +124,10 @@ public final class WardHandler {
     }
 
     public static void prune(LevelChunk chunk) {
-        if (!chunk.hasData(TTAttachments.WARDS.get())) {
+        if (!AttachmentData.has(chunk, TTAttachments.WARDS)) {
             return;
         }
-        WardChunkData data = chunk.getData(TTAttachments.WARDS.get());
+        WardChunkData data = AttachmentData.get(chunk, TTAttachments.WARDS);
         Map<BlockPos, UUID> owners = data.owners();
         if (owners.keySet().removeIf(pos -> !canWard(chunk, pos))) {
             chunk.setUnsaved(true);
@@ -137,7 +139,7 @@ public final class WardHandler {
             return null;
         }
         LevelChunk chunk = level.getChunkAt(pos);
-        return chunk.hasData(TTAttachments.WARDS.get()) ? chunk.getData(TTAttachments.WARDS.get()) : null;
+        return AttachmentData.has(chunk, TTAttachments.WARDS) ? AttachmentData.get(chunk, TTAttachments.WARDS) : null;
     }
 
     public static @Nullable BlockPos partner(BlockState state, BlockPos pos) {

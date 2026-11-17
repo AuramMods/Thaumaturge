@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.wayfinding;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
@@ -44,7 +46,7 @@ public final class WayfindingDirector {
         long now = level.getGameTime();
         int cooldown = ThaumaturgeServerConfig.LABYRINTH.glyphPulseCooldownTicks.get();
         for (ServerPlayer player : level.players()) {
-            if (player.isSpectator() || now - player.getData(TTAttachments.WAYFINDING_PULSE) < cooldown) {
+            if (player.isSpectator() || now - AttachmentData.get(player, TTAttachments.WAYFINDING_PULSE) < cooldown) {
                 continue;
             }
             Optional<MazeRecord> record = LabyrinthService.find(level, player.blockPosition());
@@ -56,7 +58,7 @@ public final class WayfindingDirector {
             }
             nearestGlyph(record.get(), player).ifPresent(glyph -> {
                 if (pulse(player, record.get(), glyph)) {
-                    player.setData(TTAttachments.WAYFINDING_PULSE, now);
+                    AttachmentData.set(player, TTAttachments.WAYFINDING_PULSE, now);
                 }
             });
         }

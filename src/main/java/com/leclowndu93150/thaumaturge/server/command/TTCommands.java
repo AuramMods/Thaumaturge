@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.server.command;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -588,7 +590,7 @@ public final class TTCommands {
     private static int warpClear(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         WarpHelper.getWarp(player).clear();
-        player.syncData(TTAttachments.WARP);
+        AttachmentData.sync(player, TTAttachments.WARP);
         success(source, "warp.cleared");
         return Command.SINGLE_SUCCESS;
     }

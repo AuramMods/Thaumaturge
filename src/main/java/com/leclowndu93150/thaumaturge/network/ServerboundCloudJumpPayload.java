@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.network;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.BaubleEvents;
@@ -29,7 +31,7 @@ public record ServerboundCloudJumpPayload() implements ModPayload {
                 return;
             }
             player.resetFallDistance();
-            player.setData(TTAttachments.CLOUD_JUMP_TIME, player.level().getGameTime());
+            AttachmentData.set(player, TTAttachments.CLOUD_JUMP_TIME, player.level().getGameTime());
         });
     }
 

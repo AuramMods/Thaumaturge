@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment.runic;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
@@ -40,7 +42,7 @@ public final class RunicShielding {
     }
 
     public static void tick(ServerPlayer player) {
-        RunicShieldState state = player.getData(TTAttachments.RUNIC_SHIELD.get());
+        RunicShieldState state = AttachmentData.get(player, TTAttachments.RUNIC_SHIELD);
         if (player.tickCount % RESCAN_INTERVAL_TICKS == 0) {
             ShieldRescan.run(player, state);
         }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.portal;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthLandmarks;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
@@ -34,7 +36,7 @@ public final class LabyrinthTransit {
     private LabyrinthTransit() {}
 
     public static boolean touch(ServerLevel level, ServerPlayer player, Optional<PortalLink> link) {
-        TransitState state = player.getData(TTAttachments.LABYRINTH_TRANSIT);
+        TransitState state = AttachmentData.get(player, TTAttachments.LABYRINTH_TRANSIT);
         long now = level.getGameTime();
         if (now < state.cooldownUntil()) {
             return false;
@@ -80,7 +82,7 @@ public final class LabyrinthTransit {
 
     public static int transitionTime(ServerLevel level, ServerPlayer player) {
         Optional<TransitState.Pending> pending =
-                player.getData(TTAttachments.LABYRINTH_TRANSIT).pending();
+                AttachmentData.get(player, TTAttachments.LABYRINTH_TRANSIT).pending();
         if (pending.isEmpty()) {
             return Integer.MAX_VALUE;
         }
@@ -95,7 +97,7 @@ public final class LabyrinthTransit {
 
     public static Optional<DimensionTransition> destination(ServerLevel level, ServerPlayer player) {
         Optional<TransitState.Pending> pending =
-                player.getData(TTAttachments.LABYRINTH_TRANSIT).pending();
+                AttachmentData.get(player, TTAttachments.LABYRINTH_TRANSIT).pending();
         if (pending.isEmpty()) {
             return Optional.empty();
         }
@@ -123,12 +125,12 @@ public final class LabyrinthTransit {
     }
 
     public static void abandon(ServerPlayer player) {
-        release(player.level().getServer(), player.getData(TTAttachments.LABYRINTH_TRANSIT));
+        release(player.level().getServer(), AttachmentData.get(player, TTAttachments.LABYRINTH_TRANSIT));
     }
 
     private static void finish(Entity entity) {
         if (entity instanceof ServerPlayer player) {
-            TransitState state = player.getData(TTAttachments.LABYRINTH_TRANSIT);
+            TransitState state = AttachmentData.get(player, TTAttachments.LABYRINTH_TRANSIT);
             release(player.level().getServer(), state);
             state.setCooldownUntil(
                     player.level().getGameTime() + ThaumaturgeServerConfig.LABYRINTH.cooldownTicks.get());

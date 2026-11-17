@@ -65,12 +65,14 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
         java.include 'com/leclowndu93150/thaumaturge/registry/ForgeRegistration.java'
         java.include 'com/leclowndu93150/thaumaturge/network/transport/**'
+        java.include 'com/leclowndu93150/thaumaturge/state/**'
         compileClasspath += sourceSets.main.compileClasspath
     }
     portCodecTest {
         java.srcDir 'src/test/java'
         java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
         java.include 'com/leclowndu93150/thaumaturge/network/transport/**'
+        java.include 'com/leclowndu93150/thaumaturge/state/**'
         compileClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
         runtimeClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
     }
@@ -114,6 +116,7 @@ dependencies {
 
     portCodecTestImplementation platform('org.junit:junit-bom:5.11.4')
     portCodecTestImplementation 'org.junit.jupiter:junit-jupiter'
+    portCodecTestImplementation 'org.mockito:mockito-core:5.15.2'
     portCodecTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // Run with -PportIntegrations to exercise optional JEI and Jade integration.

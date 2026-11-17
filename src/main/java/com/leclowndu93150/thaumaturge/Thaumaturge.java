@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayHelper;
@@ -124,7 +126,7 @@ public final class Thaumaturge {
         context.registerConfig(ModConfig.Type.CLIENT, ThaumaturgeClientConfig.SPEC);
         context.registerConfig(ModConfig.Type.SERVER, ThaumaturgeServerConfig.SPEC);
 
-        PlayerResearchAccess.bind(player -> player.getData(TTAttachments.KNOWLEDGE));
+        PlayerResearchAccess.bind(player -> AttachmentData.get(player, TTAttachments.KNOWLEDGE));
         AspectIndexAccess.bind(AspectIndexHolder::get);
         WandAccess.bind(new WandAccessBindings());
         EssentiaCrystalAccess.bind(TTItems.ESSENTIA_CRYSTAL, TTDataComponents.CRYSTAL_ASPECT);

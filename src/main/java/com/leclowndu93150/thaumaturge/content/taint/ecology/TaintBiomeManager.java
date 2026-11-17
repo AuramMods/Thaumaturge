@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
@@ -48,7 +50,7 @@ public final class TaintBiomeManager {
 
     public static boolean isChangedColumn(ServerLevel level, BlockPos pos) {
         LevelChunk chunk = loadedChunk(level, pos);
-        TaintColumns columns = chunk == null ? null : chunk.getExistingDataOrNull(TTAttachments.TAINT_COLUMNS.get());
+        TaintColumns columns = chunk == null ? null : AttachmentData.getExistingDataOrNull(chunk, TTAttachments.TAINT_COLUMNS);
         return columns != null && columns.isChanged(QuartPos.fromBlock(pos.getX()), QuartPos.fromBlock(pos.getZ()));
     }
 
@@ -233,14 +235,14 @@ public final class TaintBiomeManager {
 
     private static void setChanged(LevelChunk chunk, int quartX, int quartZ, boolean changed) {
         TaintColumns columns = changed
-                ? chunk.getData(TTAttachments.TAINT_COLUMNS.get())
-                : chunk.getExistingDataOrNull(TTAttachments.TAINT_COLUMNS.get());
+                ? AttachmentData.get(chunk, TTAttachments.TAINT_COLUMNS)
+                : AttachmentData.getExistingDataOrNull(chunk, TTAttachments.TAINT_COLUMNS);
         if (columns == null) {
             return;
         }
         columns.setChanged(quartX, quartZ, changed);
         if (columns.isEmpty()) {
-            chunk.removeData(TTAttachments.TAINT_COLUMNS.get());
+            AttachmentData.remove(chunk, TTAttachments.TAINT_COLUMNS);
         }
         chunk.setUnsaved(true);
     }

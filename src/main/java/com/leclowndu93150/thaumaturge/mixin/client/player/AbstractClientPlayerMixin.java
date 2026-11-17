@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.mixin.client.player;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.donator.Donators;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -20,7 +22,7 @@ public abstract class AbstractClientPlayerMixin {
     @Inject(method = "getSkin", at = @At("RETURN"), cancellable = true)
     private void thaumaturge$donatorCape(CallbackInfoReturnable<PlayerSkin> callback) {
         AbstractClientPlayer player = (AbstractClientPlayer) (Object) this;
-        if (Donators.is(player) && player.getData(TTAttachments.DONATOR_CAPE)) {
+        if (Donators.is(player) && AttachmentData.get(player, TTAttachments.DONATOR_CAPE)) {
             PlayerSkin skin = callback.getReturnValue();
             callback.setReturnValue(new PlayerSkin(
                     skin.texture(),

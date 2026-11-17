@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MarkerPhase;
@@ -44,19 +46,19 @@ public final class RoomStamper {
         if (placed.isPresent()) {
             place(level, chunkPos, plan, runtime, placed.get());
         }
-        chunk.setData(TTAttachments.LABYRINTH_STAMP, MazeStamp.of(plan));
+        AttachmentData.set(chunk, TTAttachments.LABYRINTH_STAMP, MazeStamp.of(plan));
     }
 
     public static boolean isStamped(ChunkAccess chunk, MazePlan plan) {
-        return chunk.getData(TTAttachments.LABYRINTH_STAMP).matches(plan);
+        return AttachmentData.get(chunk, TTAttachments.LABYRINTH_STAMP).matches(plan);
     }
 
     public static boolean isStale(ChunkAccess chunk, MazePlan plan) {
-        return chunk.getData(TTAttachments.LABYRINTH_STAMP).staleFor(plan);
+        return AttachmentData.get(chunk, TTAttachments.LABYRINTH_STAMP).staleFor(plan);
     }
 
     public static void unstamp(ChunkAccess chunk) {
-        chunk.setData(TTAttachments.LABYRINTH_STAMP, MazeStamp.NONE);
+        AttachmentData.set(chunk, TTAttachments.LABYRINTH_STAMP, MazeStamp.NONE);
     }
 
     public static boolean ensureStamped(

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -80,8 +82,8 @@ class AuraCompatibilityTest {
     private LevelChunk attach(ChunkPos pos, AuraData data) {
         LevelChunk chunk = mock(LevelChunk.class);
         when(chunk.getPos()).thenReturn(pos);
-        when(chunk.getData(TTAttachments.AURA.get())).thenReturn(data);
-        when(chunk.getExistingDataOrNull(TTAttachments.AURA.get())).thenReturn(data);
+        when(AttachmentData.get(chunk, TTAttachments.AURA)).thenReturn(data);
+        when(AttachmentData.getExistingDataOrNull(chunk, TTAttachments.AURA)).thenReturn(data);
         chunks.put(pos, chunk);
         return chunk;
     }

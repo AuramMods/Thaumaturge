@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.encounter;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterSettings;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthEncounter;
@@ -210,7 +212,7 @@ public final class EncounterPhases {
     static void shareBar(ServerLevel level, EncounterState state) {
         for (LivingEntity living : EncounterMonitor.living(level, state, true)) {
             LabyrinthBinding.on(living)
-                    .ifPresent(binding -> living.setData(TTAttachments.LABYRINTH_BINDING, binding.withSharedBar()));
+                    .ifPresent(binding -> AttachmentData.set(living, TTAttachments.LABYRINTH_BINDING, binding.withSharedBar()));
         }
     }
 

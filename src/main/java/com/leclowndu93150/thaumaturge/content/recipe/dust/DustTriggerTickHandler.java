@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
@@ -29,10 +31,10 @@ public final class DustTriggerTickHandler {
         if (!(event.getLevel() instanceof ServerLevel level) || !(event.getChunk() instanceof LevelChunk chunk)) {
             return;
         }
-        if (!chunk.hasData(TTAttachments.DUST_TRIGGER_QUEUE.get())) {
+        if (!AttachmentData.has(chunk, TTAttachments.DUST_TRIGGER_QUEUE)) {
             return;
         }
-        DustTriggerSwapQueue queue = chunk.getData(TTAttachments.DUST_TRIGGER_QUEUE.get());
+        DustTriggerSwapQueue queue = AttachmentData.get(chunk, TTAttachments.DUST_TRIGGER_QUEUE);
         if (queue.isEmpty()) {
             return;
         }
@@ -60,7 +62,7 @@ public final class DustTriggerTickHandler {
                 continue;
             }
             LevelChunk chunk = level.getChunk(cp.x, cp.z);
-            DustTriggerSwapQueue queue = chunk.getData(TTAttachments.DUST_TRIGGER_QUEUE.get());
+            DustTriggerSwapQueue queue = AttachmentData.get(chunk, TTAttachments.DUST_TRIGGER_QUEUE);
             if (queue.isEmpty()) {
                 DustTriggerSwapQueue.markChunkClear(level, cp);
                 continue;

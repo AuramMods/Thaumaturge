@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -315,7 +317,7 @@ public final class ResearchManager {
     }
 
     private static PlayerKnowledge record(ServerPlayer player) {
-        return player.getData(TTAttachments.KNOWLEDGE);
+        return AttachmentData.get(player, TTAttachments.KNOWLEDGE);
     }
 
     private static @Nullable IResearchEntry entryOf(ServerPlayer player, ResourceLocation id) {

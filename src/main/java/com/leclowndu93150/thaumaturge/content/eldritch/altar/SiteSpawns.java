@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.altar;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.content.eldritch.EldritchSpawns;
 import com.leclowndu93150.thaumaturge.content.eldritch.portal.SafeSpot;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -41,7 +43,7 @@ final class SiteSpawns {
                 return Optional.empty();
             }
             Mob mob = prepared.get();
-            mob.setData(TTAttachments.OBELISK_SITE_MEMBER, altar.immutable());
+            AttachmentData.set(mob, TTAttachments.OBELISK_SITE_MEMBER, altar.immutable());
             return level.addFreshEntity(mob) ? Optional.of(mob) : Optional.empty();
         }
         return Optional.empty();
@@ -52,7 +54,7 @@ final class SiteSpawns {
                 Mob.class,
                 new AABB(altar).inflate(radius),
                 mob -> mob.isAlive()
-                        && mob.hasData(TTAttachments.OBELISK_SITE_MEMBER)
-                        && mob.getData(TTAttachments.OBELISK_SITE_MEMBER).equals(altar));
+                        && AttachmentData.has(mob, TTAttachments.OBELISK_SITE_MEMBER)
+                        && AttachmentData.get(mob, TTAttachments.OBELISK_SITE_MEMBER).equals(altar));
     }
 }

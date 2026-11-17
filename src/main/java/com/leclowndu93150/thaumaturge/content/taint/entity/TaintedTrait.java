@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -72,7 +74,7 @@ public final class TaintedTrait implements MobTrait {
 
     @Override
     public void modifiers(LivingEntity mob, MobTraitModifiers modifiers) {
-        if (mob.getData(TTAttachments.LEGACY_TAINT_SPIDERLING)) {
+        if (AttachmentData.get(mob, TTAttachments.LEGACY_TAINT_SPIDERLING)) {
             legacySpiderlingModifiers(modifiers);
             return;
         }

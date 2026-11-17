@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.inOrder;
@@ -33,7 +35,7 @@ class WarpCheckParityTest {
             WarpEvents.checkWarpEvent(fixture.player());
 
             verifyNoInteractions(fixture.random());
-            verify(fixture.player()).syncData(TTAttachments.WARP);
+            AttachmentData.sync(verify(fixture.player()), TTAttachments.WARP);
         }
     }
 
@@ -52,7 +54,7 @@ class WarpCheckParityTest {
             order.verify(fixture.random()).nextDouble();
             order.verify(fixture.random()).nextInt(7);
             order.verify(fixture.data()).setCounter(-4);
-            order.verify(fixture.player()).syncData(TTAttachments.WARP);
+            AttachmentData.sync(order.verify(fixture.player()), TTAttachments.WARP);
             warpManager.verify(() -> WarpManager.sendActionBar(fixture.player(), "warp.thaumaturge.text.11"));
         }
     }
@@ -68,7 +70,7 @@ class WarpCheckParityTest {
             verify(fixture.random()).nextDouble();
             verify(fixture.random(), never()).nextInt(anyInt());
             verify(fixture.data(), never()).setCounter(anyInt());
-            verify(fixture.player()).syncData(TTAttachments.WARP);
+            AttachmentData.sync(verify(fixture.player()), TTAttachments.WARP);
         }
     }
 
@@ -89,7 +91,7 @@ class WarpCheckParityTest {
             order.verify(fixture.random()).nextDouble();
             order.verify(fixture.random()).nextInt(100);
             order.verify(fixture.data()).setCounter(expectedCounter);
-            order.verify(fixture.player()).syncData(TTAttachments.WARP);
+            AttachmentData.sync(order.verify(fixture.player()), TTAttachments.WARP);
         }
     }
 
@@ -109,7 +111,7 @@ class WarpCheckParityTest {
             order.verify(fixture.random()).nextDouble();
             order.verify(fixture.random()).nextInt(100);
             order.verify(fixture.data()).setCounter(-4);
-            order.verify(fixture.player()).syncData(TTAttachments.WARP);
+            AttachmentData.sync(order.verify(fixture.player()), TTAttachments.WARP);
             guardianSpawner.verify(() -> GuardianSpawner.spawn(fixture.player(), 6));
         }
     }

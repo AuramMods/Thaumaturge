@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.engine;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellContinuation;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
@@ -21,7 +23,7 @@ public final class DelayedSpells {
     private final List<Pending> pending = new ArrayList<>();
 
     static boolean schedule(ServerLevel level, int ticks, SpellContinuation continuation, List<SpellTarget> targets) {
-        DelayedSpells queue = level.getData(TTAttachments.DELAYED_SPELLS);
+        DelayedSpells queue = AttachmentData.get(level, TTAttachments.DELAYED_SPELLS);
         if (queue.pending.size() >= ThaumaturgeServerConfig.SPELL_MAX_DELAYED_PER_LEVEL.get()) {
             return false;
         }
@@ -31,10 +33,10 @@ public final class DelayedSpells {
 
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || !level.hasData(TTAttachments.DELAYED_SPELLS)) {
+        if (!(event.getLevel() instanceof ServerLevel level) || !AttachmentData.has(level, TTAttachments.DELAYED_SPELLS)) {
             return;
         }
-        DelayedSpells queue = level.getData(TTAttachments.DELAYED_SPELLS);
+        DelayedSpells queue = AttachmentData.get(level, TTAttachments.DELAYED_SPELLS);
         if (queue.pending.isEmpty()) {
             return;
         }

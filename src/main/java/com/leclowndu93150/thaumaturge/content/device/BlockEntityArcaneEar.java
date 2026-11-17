@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -41,14 +43,14 @@ public final class BlockEntityArcaneEar extends BlockEntity {
     public void onLoad() {
         super.onLoad();
         if (level != null && !level.isClientSide()) {
-            level.getData(TTAttachments.EAR_INDEX.get()).add(getBlockPos().immutable());
+            AttachmentData.get(level, TTAttachments.EAR_INDEX).add(getBlockPos().immutable());
         }
     }
 
     @Override
     public void setRemoved() {
         if (level != null && !level.isClientSide()) {
-            level.getData(TTAttachments.EAR_INDEX.get()).remove(getBlockPos());
+            AttachmentData.get(level, TTAttachments.EAR_INDEX).remove(getBlockPos());
         }
         super.setRemoved();
     }

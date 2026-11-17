@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
+
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -23,7 +25,7 @@ public final class TaintEcology {
 
     public static float getSaturation(ServerLevel level, BlockPos pos) {
         LevelChunk chunk = loadedChunk(level, pos);
-        TaintPressure pressure = chunk == null ? null : chunk.getExistingDataOrNull(TTAttachments.TAINT_PRESSURE.get());
+        TaintPressure pressure = chunk == null ? null : AttachmentData.getExistingDataOrNull(chunk, TTAttachments.TAINT_PRESSURE);
         if (pressure == null) {
             return 0.0F;
         }
@@ -68,20 +70,20 @@ public final class TaintEcology {
             return 0.0F;
         }
         long now = level.getGameTime();
-        TaintPressure existing = chunk.getExistingDataOrNull(TTAttachments.TAINT_PRESSURE.get());
+        TaintPressure existing = AttachmentData.getExistingDataOrNull(chunk, TTAttachments.TAINT_PRESSURE);
         float current = existing == null ? 0.0F : existing.saturationAt(now, decayRate(level, pos));
         return store(chunk, now, Mth.clamp(current + delta, 0.0F, 1.0F), activeSeed);
     }
 
     private static float store(LevelChunk chunk, long gameTime, float saturation, boolean activeSeed) {
         if (saturation < MINIMUM_SATURATION) {
-            if (chunk.getExistingDataOrNull(TTAttachments.TAINT_PRESSURE.get()) != null) {
-                chunk.removeData(TTAttachments.TAINT_PRESSURE.get());
+            if (AttachmentData.getExistingDataOrNull(chunk, TTAttachments.TAINT_PRESSURE) != null) {
+                AttachmentData.remove(chunk, TTAttachments.TAINT_PRESSURE);
                 chunk.setUnsaved(true);
             }
             return 0.0F;
         }
-        TaintPressure pressure = chunk.getData(TTAttachments.TAINT_PRESSURE.get());
+        TaintPressure pressure = AttachmentData.get(chunk, TTAttachments.TAINT_PRESSURE);
         pressure.set(saturation, gameTime);
         if (activeSeed) {
             pressure.markActiveSeed(gameTime);
