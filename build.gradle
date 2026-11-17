@@ -1,0 +1,148 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '6.0.54'
+    id 'org.spongepowered.mixin' version '0.7.38'
+}
+
+version = "${mod_version}-mc${minecraft_version}-forge"
+group = mod_group_id
+base.archivesName = mod_id
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    withSourcesJar()
+    withJavadocJar()
+}
+
+minecraft {
+    mappings channel: 'official', version: minecraft_version
+    copyIdeResources = true
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'info'
+            property 'forge.enabledGameTestNamespaces', mod_id
+            mods {
+                "${mod_id}" { source sourceSets.main }
+            }
+        }
+        client {
+            workingDirectory project.file('run/client')
+            property 'fml.earlyprogresswindow', 'false'
+            property 'thaumaturge.backgroundTest', 'true'
+        }
+        server {
+            workingDirectory project.file('run/server')
+            args '--nogui'
+        }
+        gameTestServer {
+            workingDirectory project.file('run-gametest')
+        }
+        data {
+            workingDirectory project.file('run/data')
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources'), '--existing', file('src/main/resources')
+        }
+    }
+}
+
+mixin {
+    add sourceSets.main, 'thaumaturge.refmap.json'
+    config 'thaumaturge.mixins.json'
+}
+
+sourceSets.main.resources.srcDir 'src/generated/resources'
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.blamejared.com/'; content { includeGroup 'mezz.jei'; includeGroup 'net.mezzdev.config' } }
+    maven { url = 'https://maven.architectury.dev/'; content { includeGroup 'dev.architectury' } }
+    maven { url = 'https://maven.theillusivec4.top/'; content { includeGroup 'top.theillusivec4.curios' } }
+    maven { url = 'https://maven.ftb.dev/releases'; content { includeGroup 'dev.ftb.mods' } }
+    maven { url = 'https://api.modrinth.com/maven'; content { includeGroup 'maven.modrinth' } }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    implementation fg.deobf("maven.modrinth:lithostitched:${lithostitched_version}")
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}+${minecraft_version}")
+
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+    compileOnly fg.deobf("maven.modrinth:jade:${jade_version}")
+    compileOnly fg.deobf("maven.modrinth:distanthorizons:${distant_horizons_version}")
+    compileOnly fg.deobf("maven.modrinth:vdjF5PL5:${dynamic_trees_version}")
+    compileOnly fg.deobf("maven.modrinth:oculus:${oculus_version}")
+    compileOnly(fg.deobf("dev.ftb.mods:ftb-library-forge:${ftb_library_version}")) { transitive = false }
+    compileOnly 'org.jspecify:jspecify:1.0.0'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core:5.15.2'
+    testImplementation fg.deobf("maven.modrinth:jade:${jade_version}")
+    testImplementation fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Run with -PportIntegrations to exercise optional JEI and Jade integration.
+    if (providers.gradleProperty('portIntegrations').isPresent()) {
+        runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+        runtimeOnly fg.deobf("maven.modrinth:jade:${jade_version}")
+    }
+}
+
+processResources {
+    def values = [mod_id: mod_id, mod_name: mod_name, mod_version: mod_version,
+                  mod_authors: mod_authors, mod_description: mod_description, mod_license: mod_license,
+                  minecraft_version_range: minecraft_version_range,
+                  forge_version_range: forge_version_range, loader_version_range: loader_version_range]
+    inputs.properties values
+    filesMatching('META-INF/mods.toml') { expand values }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs.addAll(['-Xmaxerrs', '2000'])
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    systemProperty 'thaumaturge.testResourceRoot', file('src/main/resources').absolutePath
+}
+
+tasks.withType(Jar).configureEach { from('LICENSE', 'CREDITS.md') }
+jar {
+    manifest.attributes('MixinConfigs': 'thaumaturge.mixins.json',
+                        'Implementation-Version': project.version,
+                        'Implementation-Title': mod_name)
+    exclude 'com/leclowndu93150/thaumaturge/debug/**'
+    finalizedBy 'reobfJar'
+}
+
+// Test settings are local to dedicated profiles. Background window control is
+// implemented separately before the first graphical run; these settings mute it.
+def prepareClientProfile = tasks.register('prepareClientProfile') {
+    doLast {
+        def profile = file('run/client')
+        profile.mkdirs()
+        def options = new File(profile, 'options.txt')
+        def settings = options.exists() ? options.readLines('UTF-8') : []
+        def overrides = [soundCategory_master: '0.0', narrator: '0', fullscreen: 'false',
+                         onboardAccessibility: 'false', pauseOnLostFocus: 'false']
+        settings.removeAll { line -> overrides.containsKey(line.split(':', 2)[0]) }
+        settings.addAll(overrides.collect { key, value -> "${key}:${value}" })
+        options.setText(settings.join('\n') + '\n', 'UTF-8')
+    }
+}
+def prepareTestServers = tasks.register('prepareTestServers') {
+    doLast {
+        ['run/server', 'run-gametest'].each { path ->
+            def directory = file(path)
+            directory.mkdirs()
+            new File(directory, 'eula.txt').setText('eula=true\n', 'UTF-8')
+        }
+    }
+}
+tasks.matching { it.name == 'runClient' }.configureEach { dependsOn prepareClientProfile }
+tasks.matching { it.name in ['runServer', 'runGameTestServer'] }.configureEach { dependsOn prepareTestServers }

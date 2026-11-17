@@ -3,7 +3,7 @@
   "minVersion": "0.8",
   "package": "com.leclowndu93150.thaumaturge.mixin",
   "plugin": "com.leclowndu93150.thaumaturge.TTMixinPlugin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
     "sable.api.SubLevelAssemblyHelperMixin",
     "server.network.ServerGamePacketListenerImplAccessor",
@@ -45,5 +45,6 @@
   },
   "overwrites": {
     "requireAnnotations": true
-  }
+  },
+  "refmap": "thaumaturge.refmap.json"
 }

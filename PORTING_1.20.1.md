@@ -4,7 +4,7 @@
 
 Port the complete Thaumaturge feature set at the pinned 1.21.1 baseline to Minecraft **1.20.1 on Forge**, preserving gameplay, progression, content, visuals, persistence, and multiplayer behavior. Compilation or reaching the title screen does not constitute completion.
 
-**Status: investigation and planning complete; implementation has not started.** No build, tests, server, or game client was run during planning. This file and `PORT_GOAL_1.20.1.md` are the planning deliverables. Implementation starts when the user submits the goal prompt in goal mode.
+**Status: implementation in progress.** The Forge build resolves target dependencies and reaches Java 17 source compilation. Compilation currently fails on Java 21 syntax; no game/server has been launched. All runtime acceptance remains pending.
 
 ## Baseline
 
@@ -87,7 +87,7 @@ Expand these rows into concrete cases as implementation proceeds. Every row need
 
 | Feature family | Required observable coverage | Status |
 | --- | --- | --- |
-| Build, loader, resources | Clean checkout can resolve dependencies, generate resources, run tests, build a distributable, and load the declared Forge metadata/mixins | Pending |
+| Build, loader, resources | Clean checkout can resolve dependencies, generate resources, run tests, build a distributable, and load the declared Forge metadata/mixins | In progress — Forge configuration/dependencies and resource processing work; source compilation fails |
 | Registrations and content | Inventory every baseline item/block/entity/menu/recipe/custom registry; reconcile target IDs and assets; no silently dropped content | Pending |
 | Research and progression | Survival entry into the mod, Thaumonomicon, scanning, aspect discovery/pools, research table/notes, unlocks, prerequisites, and late-game progression | Pending |
 | Aura, nodes, vis | World/chunk aura, node types, interaction/jarring, recharge, transducers, relays, and chunk unload/reload | Pending |
@@ -126,6 +126,18 @@ Deliver the tested distributable JAR and checksum, exact Minecraft/Forge/Java/de
 
 | Cycle | Change | Validation / result | Commit |
 | --- | --- | --- | --- |
-| 000 — planning | Inspected branches, baseline architecture, test inventory, target Forge docs, and dependency metadata; created `1.20.1` and the port documents | Static inspection only; no implementation, build, tests, or game launch | The commit introducing this tracker; locate with `git log --diff-filter=A --format=%h -- PORTING_1.20.1.md` |
+| 000 — planning | Inspected branches, baseline architecture, test inventory, target Forge docs, and dependency metadata; created `1.20.1` and the port documents | Static inspection only; no implementation, build, tests, or game launch | `f5b15d267` |
+| 001 — Forge platform | Replaced Prism/NeoForge DSL with ForgeGradle 6.0.54, MixinGradle 0.7.38, Gradle 8.14.3, Forge 47.4.29, official 1.20.1 mappings, Java 17 toolchain; converted metadata/pack/mixin level; target dependency pins, isolated profiles/EULA tasks, and build CI | Resource processing and profile setup pass; actual Java 17 compilation reaches 62 syntax errors in 10 files. Logs under `build/port-evidence/cycle-001/`. No runtime launch | Containing commit |
 
 For each following cycle, record the subsystem, changes, exact commands and outcomes (including failures), evidence paths, remaining issues, next action, and commit reference. A cycle may refer to its containing commit until the next cycle fills in its hash. Keep this document current so work resumes without rediscovering prior results.
+
+## Cycle 001 evidence and next work
+
+- Build invocation on this host: `env JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home ./gradlew compileJava processResources --console=plain`. Gradle runs on Java 21; Foojay provisioned Java 17 for compilation. The old daemon criteria forced Java 25 and failed with class version 69; removed those criteria. CI selects Java 17.
+- `compile-resolved.log`: configuration, target artifacts, MCP/SRG setup and compiler launch succeed; 62 Java 21 syntax diagnostics in 10 files prevent type checking. This is an incomplete port, not a passing build.
+- `./gradlew processResources prepareClientProfile prepareTestServers --console=plain`: passes (same Java environment). Parsed the expanded TOML with Python `tomllib`; Forge mandatory dependency and mod identity are correct. Pack format is 15. Profile options contain zero master volume, narrator off, fullscreen off, accessibility onboarding off, and ticking while unfocused. EULA accepted only in task-owned server directories.
+- Current dependency pins: Curios 5.14.1, JEI 15.74.0.234, FTB Library 2001.2.13, and the Modrinth version IDs in `gradle.properties` for Lithostitched/Jade/DH/Dynamic Trees/Oculus. These resolve, but API/runtime compatibility is still unproven. Architectury and Mezz config publisher repositories are included for transitive dependencies.
+- No optional-integration source is excluded. Sable project metadata currently declares only 1.21.1 Fabric/NeoForge; source investigation and scope decision remain outstanding. Its source remains present and will produce errors until an appropriate solution is chosen.
+- The prior formatter plugin was removed with the Prism build; preserving its Palantir 2.96 formatter on Java 17 requires separate investigation. Existing tests remain configured with JUnit/Mockito; NeoForge test bootstrap still needs replacement before test execution can be claimed. Dynamic Trees development tree-pack layout still needs porting.
+- Background focus control is not yet implemented or verified. Do not launch a graphical client until that mechanism is ready.
+- Next: convert Java 21 syntax to Java 17, compile again to inventory API errors, then port foundational storage/network/registry APIs.
