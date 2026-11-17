@@ -70,6 +70,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/serialization/BlockCodecs*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/Codecs*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/IngredientCodecs*'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/RegistryOpsLookup*'
         java.include 'com/leclowndu93150/thaumaturge/registry/ForgeRegistration.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/RegistryBlockEntity.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/AbstractSyncedBlockEntity.java'
@@ -126,6 +127,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/crafting/RecipeManagerMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/server/ReloadableServerResourcesMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/network/PacketDecoderRegistryContextMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/resources/RegistryOpsAccessor.java'
         compileClasspath += sourceSets.portCodec.output + sourceSets.main.compileClasspath
     }
 }

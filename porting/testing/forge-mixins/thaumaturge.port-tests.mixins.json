@@ -8,7 +8,8 @@
     "server.level.ServerLevelEntityTickMixin",
     "world.item.crafting.RecipeManagerMixin",
     "server.ReloadableServerResourcesMixin",
-    "network.PacketDecoderRegistryContextMixin"
+    "network.PacketDecoderRegistryContextMixin",
+    "resources.RegistryOpsAccessor"
   ],
   "client": [
     "client.multiplayer.ClientLevelEntityTickMixin"

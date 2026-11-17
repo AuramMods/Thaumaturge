@@ -85,7 +85,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.conditions.NotCondition;
 import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
-import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
+import com.leclowndu93150.thaumaturge.recipe.ingredient.ComponentIngredient;
 import net.minecraftforge.registries.RegistryObject;
 
 public final class TTRecipeProvider extends RecipeProvider {
@@ -1464,7 +1464,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                         aspects,
                         RecipeCategory.MISC,
                         new ItemStack(TTItems.BOTTLE_TAINT.get()),
-                        DataComponentIngredient.of(
+                        ComponentIngredient.of(
                                 false,
                                 TTDataComponents.ASPECTS.get(),
                                 AspectList.of(new AspectInstance(
@@ -1604,7 +1604,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                         aspects,
                         RecipeCategory.MISC,
                         new ItemStack(TTItems.FOCUS_1.get()),
-                        DataComponentIngredient.of(
+                        ComponentIngredient.of(
                                 false,
                                 TTDataComponents.CRYSTAL_ASPECT.get(),
                                 new AspectInstance(aspects.getOrThrow(TTAspects.ORDO), 1),
@@ -2956,7 +2956,7 @@ public final class TTRecipeProvider extends RecipeProvider {
 
     private Ingredient crystal(ResourceKey<IAspect> aspect) {
         HolderLookup<IAspect> aspects = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
-        return DataComponentIngredient.of(
+        return ComponentIngredient.of(
                 false,
                 TTDataComponents.CRYSTAL_ASPECT.get(),
                 new AspectInstance(aspects.getOrThrow(aspect), 1),
@@ -3715,7 +3715,7 @@ public final class TTRecipeProvider extends RecipeProvider {
     }
 
     private Ingredient potion(Holder<Potion> potion) {
-        return DataComponentIngredient.of(
+        return ComponentIngredient.of(
                 false, DataComponents.POTION_CONTENTS, new PotionContents(potion), Items.POTION);
     }
 

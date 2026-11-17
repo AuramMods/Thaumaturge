@@ -6,24 +6,26 @@ import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
 import com.leclowndu93150.thaumaturge.api.spell.Spells;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
-import com.leclowndu93150.thaumaturge.registry.TTIngredientTypes;
+import com.leclowndu93150.thaumaturge.recipe.ingredient.CodecIngredientSerializer;
+import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.neoforged.neoforge.common.crafting.ICustomIngredient;
-import net.neoforged.neoforge.common.crafting.IngredientType;
+import net.minecraftforge.common.crafting.AbstractIngredient;
+import net.minecraftforge.common.crafting.IIngredientSerializer;
 
-public record SpellPartIngredient(Set<ResourceKey<SpellPart>> parts) implements ICustomIngredient {
+public final class SpellPartIngredient extends AbstractIngredient {
+    private final Set<ResourceKey<SpellPart>> parts;
     public static final MapCodec<SpellPartIngredient> CODEC =
             RecordCodecBuilder.mapCodec(i -> i.group(Codecs.validate(Codecs.withAlternative(
                                     ResourceKey.codec(SpellPart.REGISTRY_KEY).listOf(),
@@ -35,12 +37,16 @@ public record SpellPartIngredient(Set<ResourceKey<SpellPart>> parts) implements 
                             .forGetter(ingredient -> List.copyOf(ingredient.parts())))
                     .apply(i, list -> new SpellPartIngredient(Set.copyOf(list))));
 
-    public SpellPartIngredient {
-        parts = Set.copyOf(parts);
+    public static final CodecIngredientSerializer<SpellPartIngredient> SERIALIZER = new CodecIngredientSerializer<>(CODEC);
+
+    public SpellPartIngredient(Set<ResourceKey<SpellPart>> parts) {
+        this.parts = Set.copyOf(parts);
     }
 
+    public Set<ResourceKey<SpellPart>> parts() { return parts; }
+
     public static Ingredient of(List<ResourceKey<SpellPart>> parts) {
-        return new SpellPartIngredient(Set.copyOf(parts)).toVanilla();
+        return new SpellPartIngredient(Set.copyOf(parts));
     }
 
     @Override
@@ -55,11 +61,12 @@ public record SpellPartIngredient(Set<ResourceKey<SpellPart>> parts) implements 
     }
 
     @Override
-    public Stream<ItemStack> getItems() {
+    public ItemStack[] getItems() {
         return BuiltInRegistries.ITEM
                 .holders()
                 .filter(holder -> holder.getData(FocusTier.DATA_MAP) != null)
-                .map(holder -> new ItemStack(holder.value()));
+                .map(holder -> new ItemStack(holder.value()))
+                .toArray(ItemStack[]::new);
     }
 
     @Override
@@ -68,9 +75,15 @@ public record SpellPartIngredient(Set<ResourceKey<SpellPart>> parts) implements 
     }
 
     @Override
-    public IngredientType<?> getType() {
-        return TTIngredientTypes.SPELL_PART.get();
+    public IIngredientSerializer<? extends Ingredient> getSerializer() {
+        return SERIALIZER;
     }
+
+    @Override public boolean isEmpty() { return false; }
+    @Override public JsonElement toJson() { return SERIALIZER.toJson(this); }
+    @Override public boolean equals(Object other) { return other instanceof SpellPartIngredient ingredient && parts.equals(ingredient.parts); }
+    @Override public int hashCode() { return parts.hashCode(); }
+    @Override public String toString() { return "SpellPartIngredient[parts=" + parts + ']'; }
 
     public List<ItemStack> displayStacks() {
         List<ResourceKey<SpellPart>> ordered = new ArrayList<>(parts);
@@ -81,7 +94,7 @@ public record SpellPartIngredient(Set<ResourceKey<SpellPart>> parts) implements 
             chain = chain == null ? node : node.then(chain);
         }
         Spell sample = Spell.empty().withRoot(SpellNode.of(Spell.ORIGIN).then(chain));
-        return getItems()
+        return Arrays.stream(getItems())
                 .map(stack -> {
                     Spells.setSpell(stack, sample);
                     return stack;

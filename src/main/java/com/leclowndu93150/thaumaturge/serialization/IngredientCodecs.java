@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.serialization;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.leclowndu93150.thaumaturge.recipe.ingredient.CodecIngredientSerializer;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -9,6 +9,8 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
+import java.util.ArrayList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 
@@ -21,6 +23,12 @@ public final class IngredientCodecs {
             JsonElement json = ops.convertTo(JsonOps.INSTANCE, input);
             if (!json.isJsonObject()) return DataResult.error(() -> "Expected an ingredient object: " + json);
             try {
+                var type = json.getAsJsonObject().get("type");
+                if (type != null && type.isJsonPrimitive() && type.getAsJsonPrimitive().isString()) {
+                    ResourceLocation id = ResourceLocation.tryParse(type.getAsString());
+                    var owned = id == null ? null : CodecIngredientSerializer.registered(id);
+                    if (owned != null) return owned.decode(ops, input).map(value -> Pair.of(value, input));
+                }
                 return DataResult.success(Pair.of(Ingredient.fromJson(json, false), input));
             } catch (RuntimeException failure) {
                 return DataResult.error(() -> "Invalid ingredient: " + failure.getMessage());
@@ -55,11 +63,19 @@ public final class IngredientCodecs {
 
     private static <T> DataResult<T> write(Ingredient input, DynamicOps<T> ops, T prefix) {
         try {
+            if (input.getSerializer() instanceof CodecIngredientSerializer<?> owned) {
+                return owned.encodeTagged(input, ops, prefix);
+            }
+            if (input instanceof CompoundIngredient compound) {
+                List<Ingredient> values = new ArrayList<>();
+                for (Ingredient child : compound.getChildren()) flattenIngredients(child, values);
+                return ALTERNATIVES.encode(values, ops, prefix);
+            }
             JsonElement json = input.toJson();
             if (json.isJsonArray()) {
-                JsonArray alternatives = new JsonArray();
-                flattenAlternatives(json, alternatives);
-                json = alternatives;
+                List<Ingredient> values = new ArrayList<>();
+                flattenIngredients(input, values);
+                return ALTERNATIVES.encode(values, ops, prefix);
             }
             return Codec.PASSTHROUGH.encode(new Dynamic<>(JsonOps.INSTANCE, json), ops, prefix);
         } catch (RuntimeException failure) {
@@ -67,9 +83,11 @@ public final class IngredientCodecs {
         }
     }
 
-    private static void flattenAlternatives(JsonElement value, JsonArray output) {
-        if (value.isJsonArray()) {
-            for (JsonElement child : value.getAsJsonArray()) flattenAlternatives(child, output);
+    private static void flattenIngredients(Ingredient value, List<Ingredient> output) {
+        if (value instanceof CompoundIngredient compound) {
+            for (Ingredient child : compound.getChildren()) flattenIngredients(child, output);
+        } else if (value.isVanilla() && value.toJson().isJsonArray()) {
+            for (JsonElement child : value.toJson().getAsJsonArray()) output.add(Ingredient.fromJson(child, false));
         } else output.add(value);
     }
 }

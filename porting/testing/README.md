@@ -119,7 +119,8 @@ event, so native JSON parsing works without full mod construction.
 
 The focused config currently applies the two entity-tick mixins, recipe
 manager lifetime/context mixin, server-resource lookup constructor hook and
-connection-owned packet-decoder registry hook. The five earlier persistence/item mixins compile with
+connection-owned packet-decoder registry hook and native RegistryOps lookup
+accessor. The five earlier persistence/item mixins compile with
 the real processor/refmap but are not applied here yet. Full gameplay subscriber
 execution, mod recipe serializers/inputs/IDs, live worlds, rendering, all other
 mixins and actual distribution installation remain pending.
@@ -186,3 +187,13 @@ JSON and the native ingredient wire codec. Final counts are 213 server / 220
 client tests. Component-sensitive and spell-part ingredient serializers remain
 pending; the full mod's recipe bodies and progression are not established by
 these fixtures.
+
+Cycle 029 adds the native codec ingredient serializer/registration backend and
+component-sensitive ingredient. Fifteen new cases bring the suites to 228
+server / 235 client tests. They exercise actual serializer events and native
+shapeless matching, strict/subset data, item tags, JSON/NBT/wire booleans and
+holders, registry ownership and exception cleanup. The sixth focused mixin
+exposes RegistryOps' actual lookup so construction can persist item data with
+the original lookup while changing the parent ops to NBT. No substitute registry
+provider is used. The full mod's spell-part implementation, actual mod component
+catalog, potion data backend and complete recipes/progression remain pending.
