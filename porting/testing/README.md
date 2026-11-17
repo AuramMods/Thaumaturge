@@ -214,3 +214,10 @@ applied through Forge's real transformation pipeline. The focused totals are
 multiplayer connection. `generateEffectDetailsReference` runs the actual pinned
 1.21.1 private Details codec in the isolated Java 21 reference JVM; normal tests
 compare its ten tracked observations using only the target Forge/DFU runtime.
+
+
+Cycle 032 adds twelve native potion-data cases and one component-ingredient case,
+including actual PotionUtils interoperability, native ItemStack NBT save/load,
+copy/removal/default semantics, component patches, colors and recipe matching.
+The focused totals are 259 server / 267 client. Native parser fixtures supply
+real registry ownership; no actual world potion consumption is claimed.

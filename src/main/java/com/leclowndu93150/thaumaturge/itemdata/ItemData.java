@@ -96,6 +96,7 @@ public final class ItemData {
     public static java.util.Map<String, Tag> comparisonFields(ItemStack stack) {
         var fields = new java.util.LinkedHashMap<>(ItemNbt.fields(stack.getTag(), ItemDataDefaults.get(stack.getItem())));
         if (stack.getMaxDamage() > 0) fields.putIfAbsent("nbt:Damage", net.minecraft.nbt.IntTag.valueOf(stack.getDamageValue()));
+        PotionData.canonicalFields(stack, fields);
         if (stack.is(net.minecraft.world.item.Items.ENCHANTED_BOOK)
                 && fields.get("nbt:StoredEnchantments") instanceof net.minecraft.nbt.ListTag list && list.isEmpty()) {
             fields.remove("nbt:StoredEnchantments");
@@ -128,6 +129,7 @@ public final class ItemData {
         if (source.getTag() == null) return;
         CompoundTag result = destination.getTag() == null ? new CompoundTag() : destination.getTag().copy();
         ItemNbt.copyExplicit(source.getTag(), result);
+        PotionData.copyExplicit(source.getTag(), result);
         destination.setTag(result.isEmpty() ? null : result);
     }
 }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
@@ -7,7 +9,6 @@ import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -15,7 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
+import com.leclowndu93150.thaumaturge.itemdata.PotionData;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -93,7 +94,7 @@ public final class BlockEverfullUrn extends BaseEntityBlock implements BlockInte
         }
         if (stack.is(Items.GLASS_BOTTLE) && urn.waterAmount() >= BOTTLE_COST) {
             ItemStack bottle = new ItemStack(Items.POTION);
-            bottle.set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.WATER));
+            ItemData.set(bottle, VanillaItemData.POTION_CONTENTS, new PotionData(Potions.WATER));
             stack.consume(1, player);
             if (!player.getInventory().add(bottle)) {
                 player.drop(bottle, false);

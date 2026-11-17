@@ -25,7 +25,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
+import com.leclowndu93150.thaumaturge.itemdata.PotionData;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -120,9 +120,9 @@ public final class PechTradeBootstrap {
         return new PechTrade(tier, stack);
     }
 
-    private static PechTrade potion(int tier, Holder<Potion> potion) {
+    private static PechTrade potion(int tier, Potion potion) {
         ItemStack stack = new ItemStack(Items.POTION);
-        stack.set(DataComponents.POTION_CONTENTS, new PotionContents(potion));
+        ItemData.set(stack, VanillaItemData.POTION_CONTENTS, new PotionData(potion));
         return new PechTrade(tier, stack);
     }
 

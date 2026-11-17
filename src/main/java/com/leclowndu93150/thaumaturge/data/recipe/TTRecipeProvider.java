@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.recipe;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -71,7 +72,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
+import com.leclowndu93150.thaumaturge.itemdata.PotionData;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.armortrim.TrimPattern;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -3714,9 +3715,9 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .save(output, TTIds.MODID + ":infusion/fortress_helm_mask_" + mask);
     }
 
-    private Ingredient potion(Holder<Potion> potion) {
+    private Ingredient potion(Potion potion) {
         return ComponentIngredient.of(
-                false, DataComponents.POTION_CONTENTS, new PotionContents(potion), Items.POTION);
+                false, VanillaItemData.POTION_CONTENTS, new PotionData(potion), Items.POTION);
     }
 
     private void buildDustTriggerRecipes() {

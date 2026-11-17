@@ -28,9 +28,16 @@ public final class VanillaItemData {
             });
     public static final ItemDataKey<EnchantmentData> ENCHANTMENTS = enchantments("enchantments", "Enchantments", 1, false);
     public static final ItemDataKey<EnchantmentData> STORED_ENCHANTMENTS = enchantments("stored_enchantments", "StoredEnchantments", 32, true);
+    public static final ItemDataKey<PotionData> POTION_CONTENTS = ItemDataKey.nativeKey(id("potion_contents"),
+            PotionData.CODEC, new ItemDataKey.NativeAccess<>() {
+                public PotionData get(ItemStack stack) { return PotionData.readItem(stack); }
+                public void set(ItemStack stack, PotionData value) { PotionData.writeItem(stack, value); }
+                public void remove(ItemStack stack) { PotionData.removeItem(stack); }
+            });
     private static final Map<ResourceLocation, ItemDataKey<?>> KEYS = Map.of(
             DAMAGE.id(), DAMAGE, CUSTOM_NAME.id(), CUSTOM_NAME,
-            ENCHANTMENTS.id(), ENCHANTMENTS, STORED_ENCHANTMENTS.id(), STORED_ENCHANTMENTS);
+            ENCHANTMENTS.id(), ENCHANTMENTS, STORED_ENCHANTMENTS.id(), STORED_ENCHANTMENTS,
+            POTION_CONTENTS.id(), POTION_CONTENTS);
 
     private VanillaItemData() {}
     private static ResourceLocation id(String path) { return ResourceLocation.withDefaultNamespace(path); }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.sprayer;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -17,13 +19,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
+import com.leclowndu93150.thaumaturge.itemdata.PotionData;
 
 final class PotionAspects {
     private static final int REDUCTION_PERCENT = 66;
@@ -36,7 +37,7 @@ final class PotionAspects {
     private PotionAspects() {}
 
     static AspectList of(ServerLevel level, ItemStack stack) {
-        Optional<Holder<Potion>> potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
+        Optional<Holder<Potion>> potion = ItemData.getOrDefault(stack, VanillaItemData.POTION_CONTENTS, PotionData.EMPTY)
                 .potion();
         List<ItemStack> reagents = potion.isPresent() ? reagentsAlongRoute(level, potion.get()) : List.of();
         if (reagents.isEmpty()) {

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
@@ -10,7 +12,6 @@ import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import java.util.List;
 import java.util.Optional;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -21,7 +22,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
+import com.leclowndu93150.thaumaturge.itemdata.PotionData;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -71,7 +72,7 @@ final class PechAttacks {
     private static ItemStack poisonedArrowStack() {
         ItemStack stack = new ItemStack(Items.TIPPED_ARROW);
         List<MobEffectInstance> effects = List.of(EffectCodecs.instance(MobEffects.POISON, POISON_TICKS));
-        stack.set(DataComponents.POTION_CONTENTS, new PotionContents(Optional.empty(), Optional.empty(), effects));
+        ItemData.set(stack, VanillaItemData.POTION_CONTENTS, new PotionData(Optional.empty(), Optional.empty(), effects));
         return stack;
     }
 

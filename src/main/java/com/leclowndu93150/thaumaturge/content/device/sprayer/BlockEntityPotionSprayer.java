@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.sprayer;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -18,7 +20,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -30,7 +31,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.alchemy.PotionContents;
+import com.leclowndu93150.thaumaturge.itemdata.PotionData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -119,8 +120,8 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
         return color;
     }
 
-    private PotionContents contents() {
-        return potion.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+    private PotionData contents() {
+        return ItemData.getOrDefault(potion, VanillaItemData.POTION_CONTENTS, PotionData.EMPTY);
     }
 
     private Direction front() {
@@ -236,7 +237,7 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
         setChangedAndSync();
         Vec3 center = LevelSpaces.toWorld(serverLevel, Vec3.atCenterOf(worldPosition.relative(facing, SPRAY_DISTANCE)));
         AABB area = AABB.ofSize(center, SPRAY_BOX_SIZE, SPRAY_BOX_SIZE, SPRAY_BOX_SIZE);
-        PotionContents effects = contents();
+        PotionData effects = contents();
         for (LivingEntity target :
                 serverLevel.getEntitiesOfClass(LivingEntity.class, area, LivingEntity::isAffectedByPotions)) {
             effects.forEachEffect(effect -> affect(serverLevel, target, effect));

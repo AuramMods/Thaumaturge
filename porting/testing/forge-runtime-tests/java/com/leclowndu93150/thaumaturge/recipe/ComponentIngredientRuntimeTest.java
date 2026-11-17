@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataContext;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataRegistry;
+import com.leclowndu93150.thaumaturge.itemdata.PotionData;
 import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.recipe.ingredient.CodecIngredientSerializer;
 import com.leclowndu93150.thaumaturge.recipe.ingredient.ComponentIngredient;
@@ -39,6 +40,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
@@ -52,6 +55,23 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class ComponentIngredientRuntimeTest {
+    @Test
+    void nativePotionIngredientsMatchTheBaselineComponentAndRoundTripTheirActualJson() {
+        var expected = new PotionData(Potions.WATER);
+        var ingredient = ComponentIngredient.of(false, VanillaItemData.POTION_CONTENTS, expected, Items.POTION);
+        var stack = PotionUtils.setPotion(new ItemStack(Items.POTION, 3), Potions.WATER);
+        assertTrue(ingredient.test(stack));
+        stack.getOrCreateTag().putString("unrelated", "data");
+        assertTrue(ingredient.test(stack));
+        assertFalse(ComponentIngredient.of(true, VanillaItemData.POTION_CONTENTS, expected, Items.POTION).test(stack));
+        assertTrue(RegistryContext.withRegistries(builtins, () -> Ingredient.fromJson(ingredient.toJson()).test(stack)));
+        var decoded = IngredientCodecs.CODEC.parse(RegistryOps.create(JsonOps.INSTANCE, builtins), ingredient.toJson()).result().orElseThrow();
+        assertTrue(decoded.test(stack));
+        assertFalse(decoded.test(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.POISON)));
+        stack.getOrCreateTag().putInt("CustomPotionColor", 0x123456);
+        assertFalse(decoded.test(stack));
+    }
+
     private static final ResourceLocation COMPONENTS = new ResourceLocation("neoforge", "components");
     private static final ResourceKey<Registry<String>> VALUES = ResourceKey.createRegistryKey(new ResourceLocation("port_fixture", "values"));
     private static final ResourceKey<String> VALUE = ResourceKey.create(VALUES, new ResourceLocation("port_fixture", "value"));
