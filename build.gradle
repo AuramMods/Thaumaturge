@@ -64,6 +64,8 @@ sourceSets {
         java.srcDir 'src/main/java'
         java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
         java.include 'com/leclowndu93150/thaumaturge/registry/ForgeRegistration.java'
+        java.include 'com/leclowndu93150/thaumaturge/api/items/ItemMatch.java'
+        java.include 'com/leclowndu93150/thaumaturge/api/research/ResearchRequirement.java'
         java.include 'com/leclowndu93150/thaumaturge/network/transport/**'
         java.include 'com/leclowndu93150/thaumaturge/state/**'
         java.include 'com/leclowndu93150/thaumaturge/itemdata/**'

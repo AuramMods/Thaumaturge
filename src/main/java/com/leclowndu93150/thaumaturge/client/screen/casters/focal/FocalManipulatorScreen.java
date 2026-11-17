@@ -225,7 +225,7 @@ public final class FocalManipulatorScreen extends AbstractContainerScreen<MenuFo
     protected void containerTick() {
         super.containerTick();
         ItemStack focus = menu.getSlot(BlockEntityFocalManipulator.SLOT_FOCUS).getItem();
-        if (!ItemStack.isSameItemSameComponents(focus, lastFocus)) {
+        if (!ItemStack.isSameItemSameTags(focus, lastFocus)) {
             lastFocus = focus.copy();
             lastSent = null;
             refresh();

@@ -1,5 +1,9 @@
 package com.leclowndu93150.thaumaturge.api.golems;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -22,7 +26,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -144,7 +147,7 @@ class GolemDispatchPortTest {
 
     private static ItemStack namedStone(int count, String name) {
         ItemStack stack = new ItemStack(Items.STONE, count);
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
+        ItemData.set(stack, VanillaItemData.CUSTOM_NAME, Component.literal(name));
         return stack;
     }
 

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -21,8 +23,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponents;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -34,8 +35,7 @@ class ThaumonomiconBrowserSearchComponentsTest {
     @Test
     void searchMatchesCustomNameOnCraftRequirementStack() throws ReflectiveOperationException {
         Component customName = Component.literal("Custom research relic");
-        DataComponentPatch components = DataComponentPatch.builder()
-                .set(DataComponents.CUSTOM_NAME, customName)
+        ItemDataPatch components = ItemDataPatch.builder().set(VanillaItemData.CUSTOM_NAME, customName)
                 .build();
         ResearchRequirement requirement = requirement(components);
 
@@ -44,12 +44,12 @@ class ThaumonomiconBrowserSearchComponentsTest {
 
     @Test
     void searchStillFindsCraftRequirementByItsDefaultItemName() throws ReflectiveOperationException {
-        ResearchRequirement requirement = requirement(DataComponentPatch.EMPTY);
+        ResearchRequirement requirement = requirement(ItemDataPatch.EMPTY);
 
         assertEquals(List.of("Stone"), recipeSearchResults("stone", requirement));
     }
 
-    private static ResearchRequirement requirement(DataComponentPatch components) {
+    private static ResearchRequirement requirement(ItemDataPatch components) {
         return new ResearchRequirement(
                 HolderSet.direct(BuiltInRegistries.ITEM.wrapAsHolder(Items.STONE)), components, 1);
     }

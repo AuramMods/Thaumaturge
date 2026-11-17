@@ -257,7 +257,7 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
                         continue;
                     }
                     for (ItemStack representation : part.source().getRepresentations()) {
-                        if (ItemStack.isSameItemSameComponents(stack, representation)) {
+                        if (ItemStack.isSameItemSameTags(stack, representation)) {
                             return true;
                         }
                     }

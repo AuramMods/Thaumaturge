@@ -436,7 +436,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
             return false;
         }
         ItemStack current = pedestalItem(level, centralPedestal());
-        return !current.isEmpty() && ItemStack.isSameItemSameComponents(current, job.catalyst());
+        return !current.isEmpty() && ItemStack.isSameItemSameTags(current, job.catalyst());
     }
 
     private void drainEssentiaCycle(ServerLevel level, int countDelay) {
@@ -462,7 +462,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
                     continue;
                 }
                 ItemStack stack = pedestal.getItem();
-                if (stack.isEmpty() || !ItemStack.isSameItemSameComponents(stack, ingredients.get(a))) {
+                if (stack.isEmpty() || !ItemStack.isSameItemSameTags(stack, ingredients.get(a))) {
                     continue;
                 }
                 if (itemPullCountdown == 0) {

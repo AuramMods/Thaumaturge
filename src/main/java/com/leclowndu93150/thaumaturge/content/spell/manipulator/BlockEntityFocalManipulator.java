@@ -1,5 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.spell.manipulator;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
@@ -26,7 +30,6 @@ import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -217,9 +220,9 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
         if (FocusItems.isFocus(focus)) {
             Spells.setSpell(focus, draft);
             if (name.isBlank()) {
-                focus.remove(DataComponents.CUSTOM_NAME);
+                ItemData.remove(focus, VanillaItemData.CUSTOM_NAME);
             } else {
-                focus.set(DataComponents.CUSTOM_NAME, Component.literal(name));
+                ItemData.set(focus, VanillaItemData.CUSTOM_NAME, Component.literal(name));
             }
             drawer.place(focus);
             server.playSound(null, worldPosition, TTSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -263,7 +266,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
         Spell spell = Spells.spellOf(focus);
         if (spell != null) {
             draft = spell;
-            name = focus.has(DataComponents.CUSTOM_NAME) ? focus.getHoverName().getString() : "";
+            name = ItemData.has(focus, VanillaItemData.CUSTOM_NAME) ? focus.getHoverName().getString() : "";
         }
     }
 
@@ -272,7 +275,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
         Inventory inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize() && remaining > 0; slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (ItemStack.isSameItemSameComponents(stack, wanted)) {
+            if (ItemStack.isSameItemSameTags(stack, wanted)) {
                 int taken = Math.min(remaining, stack.getCount());
                 stack.shrink(taken);
                 remaining -= taken;
@@ -342,7 +345,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
             ItemStack previousContents = previous;
             previous = getStackInSlot(SLOT_FOCUS).copy();
             if (level != null && !level.isClientSide()) {
-                if (inscribing() && !ItemStack.isSameItemSameComponents(previousContents, focusStack())) {
+                if (inscribing() && !ItemStack.isSameItemSameTags(previousContents, focusStack())) {
                     vis = 0.0F;
                     visTotal = 0.0F;
                     crystals = AspectList.EMPTY;

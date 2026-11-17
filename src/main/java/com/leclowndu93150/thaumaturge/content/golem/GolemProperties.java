@@ -164,7 +164,7 @@ public final class GolemProperties implements IGolemProperties {
 
     private static void merge(List<ItemStack> bill, ItemStack item, int times) {
         for (ItemStack line : bill) {
-            if (ItemStack.isSameItemSameComponents(line, item)) {
+            if (ItemStack.isSameItemSameTags(line, item)) {
                 line.grow(item.getCount() * times);
                 return;
             }

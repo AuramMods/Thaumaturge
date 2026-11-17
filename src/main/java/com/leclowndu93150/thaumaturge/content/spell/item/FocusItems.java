@@ -1,5 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.spell.item;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.spell.FocusTier;
@@ -12,7 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -54,7 +57,7 @@ public final class FocusItems {
         if (spell == null) {
             return null;
         }
-        String label = focus.has(DataComponents.CUSTOM_NAME)
+        String label = ItemData.has(focus, VanillaItemData.CUSTOM_NAME)
                 ? focus.getHoverName().getString()
                 : focus.getItem().getDescriptionId();
         return label + stableHash(spell);

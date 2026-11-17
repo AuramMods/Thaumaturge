@@ -136,7 +136,7 @@ class ItemDataValuesTest {
         assertSame(lazy.get(), registry.get(lazy.get().id()));
         assertEquals(1, calls.get());
         assertThrows(IllegalArgumentException.class, () -> registry.registerComponentType("charge", b -> b));
-        assertThrows(NullPointerException.class, () -> registry.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("addon", "missing")));
+        assertThrows(IllegalArgumentException.class, () -> registry.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("addon", "missing")));
         assertThrows(NullPointerException.class, () -> registry.registerComponentType("no_codec", b -> b).get());
     }
 

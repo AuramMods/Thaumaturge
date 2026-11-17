@@ -229,12 +229,12 @@ public final class GolemLogisticsScreen extends AbstractTTContainerScreen<MenuGo
             selectedStack = ItemStack.EMPTY;
             return;
         }
-        if (ItemStack.isSameItemSameComponents(current, selectedStack)) {
+        if (ItemStack.isSameItemSameTags(current, selectedStack)) {
             return;
         }
         selectedSlot = -1;
         for (Slot slot : menu.slots) {
-            if (ItemStack.isSameItemSameComponents(selectedStack, slot.getItem())) {
+            if (ItemStack.isSameItemSameTags(selectedStack, slot.getItem())) {
                 selectedSlot = slot.index;
                 return;
             }

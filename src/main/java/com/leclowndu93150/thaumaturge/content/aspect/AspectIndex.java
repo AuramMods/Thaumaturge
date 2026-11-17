@@ -14,7 +14,7 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.core.component.DataComponentPredicate;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
@@ -26,14 +26,14 @@ import net.minecraft.world.item.ItemStack;
 public final class AspectIndex implements IAspectIndex {
     public static final AspectIndex EMPTY = new AspectIndex(Map.of());
 
-    public record Variant(DataComponentPredicate matcher, AspectList aspects) {
+    public record Variant(ItemDataPredicate matcher, AspectList aspects) {
         public static final Codec<Variant> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                        DataComponentPredicate.CODEC.fieldOf("components").forGetter(Variant::matcher),
+                        ItemDataPredicate.CODEC.fieldOf("components").forGetter(Variant::matcher),
                         AspectList.CODEC.fieldOf("aspects").forGetter(Variant::aspects))
                 .apply(builder, Variant::new));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, Variant> STREAM_CODEC = StreamCodec.composite(
-                DataComponentPredicate.STREAM_CODEC,
+                ItemDataPredicate.STREAM_CODEC,
                 Variant::matcher,
                 AspectList.STREAM_CODEC,
                 Variant::aspects,

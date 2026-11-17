@@ -1,5 +1,9 @@
 package com.leclowndu93150.thaumaturge.api.items;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -7,7 +11,6 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -60,7 +63,7 @@ class ItemMatchCompatibilityTest {
     void componentSubsetIsDirectionalAndAnyComponentsCanIgnoreExtras() {
         ItemStack plain = new ItemStack(Items.IRON_SWORD);
         ItemStack named = plain.copy();
-        named.set(DataComponents.CUSTOM_NAME, Component.literal("named"));
+        ItemData.set(named, VanillaItemData.CUSTOM_NAME, Component.literal("named"));
 
         ItemMatch subset = ItemMatch.EXACT.withComponentSubset(true);
         assertTrue(subset.test(plain, named));
@@ -130,7 +133,7 @@ class ItemMatchCompatibilityTest {
 
     private static ItemStack namedIron() {
         ItemStack stack = plainIron();
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal("named"));
+        ItemData.set(stack, VanillaItemData.CUSTOM_NAME, Component.literal("named"));
         return stack;
     }
 }

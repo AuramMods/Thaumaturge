@@ -1,10 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.golem.logistics;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +29,7 @@ class MenuGolemLogisticsSortTest {
 
     private static ItemStack named(Item item, String name) {
         ItemStack stack = new ItemStack(item);
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
+        ItemData.set(stack, VanillaItemData.CUSTOM_NAME, Component.literal(name));
         return stack;
     }
 }

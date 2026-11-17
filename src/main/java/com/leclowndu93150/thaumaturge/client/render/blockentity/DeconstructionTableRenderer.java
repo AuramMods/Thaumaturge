@@ -146,7 +146,7 @@ public final class DeconstructionTableRenderer implements BlockEntityRenderer<Bl
     }
 
     private float inputCenterLift(ItemStack input) {
-        if (cachedLiftItem.isEmpty() || !ItemStack.isSameItemSameComponents(cachedLiftItem, input)) {
+        if (cachedLiftItem.isEmpty() || !ItemStack.isSameItemSameTags(cachedLiftItem, input)) {
             cachedLiftItem = input.copy();
             cachedInputLift = LegacyItemLift.centerLift(input, ItemDisplayContext.GROUND);
         }

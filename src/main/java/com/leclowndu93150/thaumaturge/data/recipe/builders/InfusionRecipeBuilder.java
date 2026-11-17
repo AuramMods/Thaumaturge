@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.component.DataComponentPatch;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -27,7 +27,7 @@ public class InfusionRecipeBuilder extends SimpleRecipeBuilder {
     private AspectList aspects = AspectList.EMPTY;
     private int instability;
     private @Nullable ResearchGate gate;
-    private @Nullable DataComponentPatch catalystPatch;
+    private @Nullable ItemDataPatch catalystPatch;
 
     public InfusionRecipeBuilder(
             HolderGetter<IAspect> aspectsGetter, RecipeCategory category, ItemStack result, Ingredient catalyst) {
@@ -52,7 +52,7 @@ public class InfusionRecipeBuilder extends SimpleRecipeBuilder {
         return this;
     }
 
-    public InfusionRecipeBuilder catalystPatch(DataComponentPatch catalystPatch) {
+    public InfusionRecipeBuilder catalystPatch(ItemDataPatch catalystPatch) {
         this.catalystPatch = catalystPatch;
         return this;
     }

@@ -271,7 +271,7 @@ public final class MenuSealBase extends AbstractTTMenu {
                         filter.setLimit(index, 0);
                     }
                 }
-            } else if (slot.hasItem() && ItemStack.isSameItemSameComponents(carried, slot.getItem())) {
+            } else if (slot.hasItem() && ItemStack.isSameItemSameTags(carried, slot.getItem())) {
                 filter.setLimit(index, filter.limit(index) - carried.getCount());
                 if (filter.limit(index) < 0) {
                     slot.set(ItemStack.EMPTY);
@@ -289,7 +289,7 @@ public final class MenuSealBase extends AbstractTTMenu {
             } else {
                 int count = carried.getCount();
                 carried.setCount(1);
-                if (slot.hasItem() && ItemStack.isSameItemSameComponents(carried, slot.getItem())) {
+                if (slot.hasItem() && ItemStack.isSameItemSameTags(carried, slot.getItem())) {
                     filter.setLimit(index, filter.limit(index) + count);
                 } else {
                     filter.setLimit(index, 0);

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.worldgen.pech;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -27,7 +29,7 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
+import com.leclowndu93150.thaumaturge.itemdata.EnchantmentData;
 import net.minecraft.world.level.ItemLike;
 
 public final class PechTradeBootstrap {
@@ -126,10 +128,10 @@ public final class PechTradeBootstrap {
 
     private static PechTrade book(
             HolderGetter<Enchantment> enchantments, int tier, ResourceKey<Enchantment> enchantment) {
-        ItemEnchantments.Mutable stored = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        EnchantmentData.Mutable stored = new EnchantmentData.Mutable(EnchantmentData.EMPTY);
         stored.set(enchantments.getOrThrow(enchantment), 1);
         ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
-        stack.set(DataComponents.STORED_ENCHANTMENTS, stored.toImmutable());
+        ItemData.set(stack, VanillaItemData.STORED_ENCHANTMENTS, stored.toImmutable());
         return new PechTrade(tier, stack);
     }
 }

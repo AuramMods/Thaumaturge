@@ -1,5 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -34,8 +38,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponents;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -198,8 +201,7 @@ class StageIngredientHoverTest {
         Component variant = Component.literal("Required variant");
         ResearchRequirement requirement = new ResearchRequirement(
                 HolderSet.direct(BuiltInRegistries.ITEM.wrapAsHolder(Items.STONE)),
-                DataComponentPatch.builder()
-                        .set(DataComponents.CUSTOM_NAME, variant)
+                ItemDataPatch.builder().set(VanillaItemData.CUSTOM_NAME, variant)
                         .build(),
                 5);
         Method render = EntryDetailScreen.class.getDeclaredMethod(
@@ -233,7 +235,7 @@ class StageIngredientHoverTest {
 
         ItemStack hit = screen.itemUnderMouse(110, 125).stack();
         assertEquals(5, hit.getCount());
-        assertEquals(variant, hit.get(DataComponents.CUSTOM_NAME));
+        assertEquals(variant, ItemData.get(hit, VanillaItemData.CUSTOM_NAME));
         assertTrue(requirement.matches(hit));
     }
 }

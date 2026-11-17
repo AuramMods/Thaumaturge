@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.core.component.DataComponentPredicate;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 
@@ -48,7 +48,7 @@ public final class WandAspectVariants {
 
     private static AspectIndex.Variant variant(WandCap cap, WandRod rod, boolean sceptre, AspectList aspects) {
         return new AspectIndex.Variant(
-                DataComponentPredicate.builder()
+                ItemDataPredicate.builder()
                         .expect(TTDataComponents.WAND_PARTS.get(), new WandParts(cap, rod, sceptre))
                         .build(),
                 aspects);

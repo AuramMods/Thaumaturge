@@ -4,7 +4,6 @@ import com.google.common.base.Suppliers;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +24,9 @@ public final class ItemDataRegistry {
     }
 
     public ItemDataKey<?> get(ResourceLocation id) {
-        return Objects.requireNonNull(keys.get(id), () -> "Unknown item data key " + id).get();
+        Supplier<? extends ItemDataKey<?>> key = keys.get(id);
+        if (key == null) throw new IllegalArgumentException("Unknown item data key " + id);
+        return key.get();
     }
 
     public Collection<ResourceLocation> ids() { return java.util.List.copyOf(keys.keySet()); }

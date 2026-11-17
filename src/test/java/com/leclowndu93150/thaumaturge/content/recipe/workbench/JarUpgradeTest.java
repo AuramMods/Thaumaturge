@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +16,6 @@ import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -31,7 +32,7 @@ class JarUpgradeTest {
         EssentiaList contents = new EssentiaList(AspectList.EMPTY.add(Holder.direct(mock(IAspect.class)), 48));
         ItemData.set(jar, TTDataComponents.ESSENTIA_CONTENTS, contents);
         ItemData.set(jar, TTDataComponents.ASPECT_FILTER, key);
-        jar.set(DataComponents.CUSTOM_NAME, Component.literal("Air supply"));
+        ItemData.set(jar, VanillaItemData.CUSTOM_NAME, Component.literal("Air supply"));
         IArcaneCraftingInput input = mock(IArcaneCraftingInput.class);
         when(input.size()).thenReturn(2);
         when(input.getItem(0)).thenReturn(ItemStack.EMPTY);
@@ -46,7 +47,7 @@ class JarUpgradeTest {
         assertEquals(1, result.getCount());
         assertEquals(contents, ItemData.get(result, TTDataComponents.ESSENTIA_CONTENTS));
         assertEquals(key, ItemData.get(result, TTDataComponents.ASPECT_FILTER));
-        assertEquals(jar.get(DataComponents.CUSTOM_NAME), result.get(DataComponents.CUSTOM_NAME));
+        assertEquals(ItemData.get(jar, VanillaItemData.CUSTOM_NAME), ItemData.get(result, VanillaItemData.CUSTOM_NAME));
         assertEquals(3, jar.getCount());
         assertNull(ItemData.get(template, TTDataComponents.ESSENTIA_CONTENTS));
     }

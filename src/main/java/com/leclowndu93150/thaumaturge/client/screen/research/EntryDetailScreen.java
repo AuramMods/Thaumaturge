@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -2120,7 +2122,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
         if (size == 0) return ItemStack.EMPTY;
         int index = (int) ((slotIndex + System.currentTimeMillis() / 1000L) % size);
         if (index < 0) index += size;
-        return new ItemStack(req.items().get(index), Math.max(1, req.amount()), req.components());
+        return ItemData.create(req.items().get(index), Math.max(1, req.amount()), req.components());
     }
 
     /** Returns the topmost item target for recipe-viewer integrations. */

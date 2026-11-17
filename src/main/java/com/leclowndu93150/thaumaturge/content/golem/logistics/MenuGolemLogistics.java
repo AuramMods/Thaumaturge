@@ -108,7 +108,7 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
 
     private int availableCount(ItemStack requested) {
         for (ItemStack stack : items) {
-            if (ItemStack.isSameItemSameComponents(stack, requested)) {
+            if (ItemStack.isSameItemSameTags(stack, requested)) {
                 return stack.getCount();
             }
         }

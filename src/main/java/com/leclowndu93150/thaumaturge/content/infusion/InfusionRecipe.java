@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentPatch;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
@@ -33,7 +33,7 @@ public final class InfusionRecipe implements InfusionJobRecipe {
                                     .optionalFieldOf("instability", 0)
                                     .forGetter(r -> r.instability),
                             ItemStack.CODEC.optionalFieldOf("result").forGetter(r -> r.result),
-                            DataComponentPatch.CODEC
+                            ItemDataPatch.CODEC
                                     .optionalFieldOf("catalyst_patch")
                                     .forGetter(r -> r.catalystPatch),
                             ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))
@@ -46,8 +46,8 @@ public final class InfusionRecipe implements InfusionJobRecipe {
             VanillaStreamCodecs.INGREDIENT.apply(ByteBufCodecs.list());
     private static final StreamCodec<RegistryFriendlyByteBuf, Optional<ItemStack>> RESULT_STREAM_CODEC =
             ByteBufCodecs.optional(VanillaStreamCodecs.ITEM_STACK);
-    private static final StreamCodec<RegistryFriendlyByteBuf, Optional<DataComponentPatch>> PATCH_STREAM_CODEC =
-            ByteBufCodecs.optional(DataComponentPatch.STREAM_CODEC);
+    private static final StreamCodec<RegistryFriendlyByteBuf, Optional<ItemDataPatch>> PATCH_STREAM_CODEC =
+            ByteBufCodecs.optional(ItemDataPatch.STREAM_CODEC);
     private static final StreamCodec<RegistryFriendlyByteBuf, Optional<ResearchGate>> RESEARCH_STREAM_CODEC =
             ByteBufCodecs.optional(ResearchGate.STREAM_CODEC);
 
@@ -78,7 +78,7 @@ public final class InfusionRecipe implements InfusionJobRecipe {
     private final AspectList aspects;
     private final int instability;
     private final Optional<ItemStack> result;
-    private final Optional<DataComponentPatch> catalystPatch;
+    private final Optional<ItemDataPatch> catalystPatch;
     private final Optional<ResearchGate> research;
 
     public InfusionRecipe(
@@ -97,7 +97,7 @@ public final class InfusionRecipe implements InfusionJobRecipe {
             AspectList aspects,
             int instability,
             Optional<ItemStack> result,
-            Optional<DataComponentPatch> catalystPatch,
+            Optional<ItemDataPatch> catalystPatch,
             Optional<ResearchGate> research) {
         this.catalyst = catalyst;
         this.components = List.copyOf(components);
@@ -145,7 +145,7 @@ public final class InfusionRecipe implements InfusionJobRecipe {
                 .findFirst()
                 .map(ItemStack::copy)
                 .orElse(ItemStack.EMPTY);
-        catalystPatch.ifPresent(display::applyComponents);
+        catalystPatch.ifPresent(patch -> patch.apply(display));
         return display;
     }
 
@@ -160,7 +160,7 @@ public final class InfusionRecipe implements InfusionJobRecipe {
             return result.get().copy();
         }
         ItemStack out = input.catalyst().copyWithCount(1);
-        catalystPatch.ifPresent(out::applyComponents);
+        catalystPatch.ifPresent(patch -> patch.apply(out));
         return out;
     }
 

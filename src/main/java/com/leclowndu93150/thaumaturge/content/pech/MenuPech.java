@@ -112,7 +112,7 @@ public final class MenuPech extends AbstractContainerMenu {
                 table.setItem(index, stack);
                 return true;
             }
-            if (ItemStack.isSameItemSameComponents(shelved, stack)
+            if (ItemStack.isSameItemSameTags(shelved, stack)
                     && shelved.getCount() + stack.getCount() <= shelved.getMaxStackSize()) {
                 shelved.grow(stack.getCount());
                 return true;

@@ -141,7 +141,7 @@ public final class ItemRequirementWidget {
         int index = (int) Math.floorMod((long) slotIndex + wall, (long) size);
         Holder<Item> holder = requirement.items().get(index);
         ItemStack stack = new ItemStack(holder);
-        stack.applyComponents(requirement.components());
+        requirement.components().apply(stack);
         return stack;
     }
 }

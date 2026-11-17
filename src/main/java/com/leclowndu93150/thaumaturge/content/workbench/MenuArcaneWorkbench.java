@@ -318,7 +318,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
                 && containerInput == ClickType.PICKUP
                 && !getCarried().isEmpty()) {
             ItemStack output = resultContainer.getItem(0);
-            if (!ItemStack.isSameItemSameComponents(output, getCarried())
+            if (!ItemStack.isSameItemSameTags(output, getCarried())
                     || output.getCount() + getCarried().getCount()
                             > getCarried().getMaxStackSize()) return;
         }
@@ -421,7 +421,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
             ItemStack existing = slot.getItem();
             if (slot.mayPlace(displayed)
                     && (existing.isEmpty()
-                            || ItemStack.isSameItemSameComponents(existing, displayed)
+                            || ItemStack.isSameItemSameTags(existing, displayed)
                                     && existing.getCount() < slot.getMaxStackSize(displayed))) {
                 hasRoom = true;
                 break;

@@ -53,11 +53,11 @@ public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
 
     protected static ItemStack assembleResult(ItemStack result, IArcaneCraftingInput input) {
         ItemStack assembled = result.copy();
-        if (assembled.is(TTItems.JAR_VOID)) {
+        if (assembled.is(TTItems.JAR_VOID.get())) {
             for (int slot = 0; slot < input.size(); slot++) {
                 ItemStack ingredient = input.getItem(slot);
-                if (ingredient.is(TTItems.JAR_NORMAL)) {
-                    assembled.applyComponents(ingredient.getComponentsPatch());
+                if (ingredient.is(TTItems.JAR_NORMAL.get())) {
+                    com.leclowndu93150.thaumaturge.itemdata.ItemData.copyExplicitData(ingredient, assembled);
                     break;
                 }
             }

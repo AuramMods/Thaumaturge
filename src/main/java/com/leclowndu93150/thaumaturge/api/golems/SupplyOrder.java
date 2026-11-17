@@ -129,7 +129,7 @@ public class SupplyOrder {
                         && batch == order.batch
                         && wanted.getCount() == order.wanted.getCount()
                         && destination.sameAs(order.destination)
-                        && ItemStack.isSameItemSameComponents(wanted, order.wanted);
+                        && ItemStack.isSameItemSameTags(wanted, order.wanted);
     }
 
     @Override

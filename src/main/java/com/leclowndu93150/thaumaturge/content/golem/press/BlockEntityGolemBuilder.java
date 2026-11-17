@@ -257,7 +257,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
     private boolean outputAccepts(ItemStack placer) {
         ItemStack held = outputHandler.getStackInSlot(SLOT_OUTPUT);
         return held.isEmpty()
-                || ItemStack.isSameItemSameComponents(held, placer) && held.getCount() < placer.getMaxStackSize();
+                || ItemStack.isSameItemSameTags(held, placer) && held.getCount() < placer.getMaxStackSize();
     }
 
     public boolean[] stockedComponents(GolemProperties props) {

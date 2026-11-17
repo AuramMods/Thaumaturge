@@ -1,9 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.items;
 
-import java.util.Objects;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.component.TypedDataComponent;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.ItemNbt;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 
@@ -55,26 +53,9 @@ public record ItemMatch(
         if (anyComponents) {
             return true;
         }
-        if (componentSubset) {
-            return contained(reference.getComponents(), candidate.getComponents());
-        }
-        if (!anyDamage) {
-            return ItemStack.isSameItemSameComponents(reference, candidate);
-        }
-        return contained(reference.getComponents(), candidate.getComponents())
-                && contained(candidate.getComponents(), reference.getComponents());
-    }
-
-    private boolean contained(DataComponentMap subset, DataComponentMap superset) {
-        for (TypedDataComponent<?> component : subset) {
-            if (anyDamage && component.type() == DataComponents.DAMAGE) {
-                continue;
-            }
-            if (!Objects.equals(component.value(), superset.get(component.type()))) {
-                return false;
-            }
-        }
-        return true;
+        return reference.areCapsCompatible(candidate)
+                && ItemNbt.matches(ItemData.comparisonFields(reference), ItemData.comparisonFields(candidate),
+                        anyDamage, componentSubset);
     }
 
     private static String namespace(ItemStack stack) {

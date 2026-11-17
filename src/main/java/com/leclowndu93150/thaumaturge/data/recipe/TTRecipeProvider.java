@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.recipe;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -42,7 +44,7 @@ import java.util.function.UnaryOperator;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentPatch;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -1088,10 +1090,10 @@ public final class TTRecipeProvider extends RecipeProvider {
     }
 
     private static ItemStack enchantedTool(Item item, Map<InfusionEnchantment, Integer> enchantments) {
-        DataComponentPatch patch = DataComponentPatch.builder()
+        ItemDataPatch patch = ItemDataPatch.builder()
                 .set(TTDataComponents.INFUSION_ENCHANTMENTS.get(), new InfusionEnchantments(enchantments))
                 .build();
-        return new ItemStack(BuiltInRegistries.ITEM.wrapAsHolder(item), 1, patch);
+        return ItemData.create(BuiltInRegistries.ITEM.wrapAsHolder(item), 1, patch);
     }
 
     private void buildRunicAugmentRecipe() {
@@ -1829,10 +1831,10 @@ public final class TTRecipeProvider extends RecipeProvider {
             new CrucibleRecipeBuilder(
                             aspects,
                             RecipeCategory.MISC,
-                            new ItemStack(
-                                    TTItems.ESSENTIA_CRYSTAL,
+                            ItemData.create(
+                                    TTItems.ESSENTIA_CRYSTAL.get(),
                                     1,
-                                    DataComponentPatch.builder()
+                                    ItemDataPatch.builder()
                                             .set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1))
                                             .build()),
                             Ingredient.of(TTItemTags.NUGGETS_QUARTZ))
@@ -2977,10 +2979,10 @@ public final class TTRecipeProvider extends RecipeProvider {
     private static final int PRIMAL_CHARM_VIS = 150;
 
     private ItemStack wandResult(WandCap cap, WandRod rod, boolean sceptre) {
-        DataComponentPatch patch = DataComponentPatch.builder()
+        ItemDataPatch patch = ItemDataPatch.builder()
                 .set(TTDataComponents.WAND_PARTS.get(), new WandParts(cap, rod, sceptre))
                 .build();
-        return new ItemStack(TTItems.WAND, 1, patch);
+        return ItemData.create(TTItems.WAND.get(), 1, patch);
     }
 
     private void buildWandRecipes() {
@@ -3429,7 +3431,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                         RecipeCategory.MISC,
                         new ItemStack(TTItems.VERDANT_CHARM.get()),
                         Ingredient.of(TTItems.VERDANT_CHARM.get()))
-                .catalystPatch(DataComponentPatch.builder()
+                .catalystPatch(ItemDataPatch.builder()
                         .set(TTDataComponents.VERDANT_TYPE.get(), VerdantCharmItem.TYPE_LIFE)
                         .build())
                 .component(Ingredient.of(Items.GOLDEN_APPLE))
@@ -3447,7 +3449,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                         RecipeCategory.MISC,
                         new ItemStack(TTItems.VERDANT_CHARM.get()),
                         Ingredient.of(TTItems.VERDANT_CHARM.get()))
-                .catalystPatch(DataComponentPatch.builder()
+                .catalystPatch(ItemDataPatch.builder()
                         .set(TTDataComponents.VERDANT_TYPE.get(), VerdantCharmItem.TYPE_SUSTAIN)
                         .build())
                 .component(Ingredient.of(TTItems.TRIPLE_MEAT_TREAT.get()))
@@ -3577,7 +3579,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                         RecipeCategory.COMBAT,
                         new ItemStack(TTItems.FORTRESS_HELM.get()),
                         Ingredient.of(TTItems.FORTRESS_HELM.get()))
-                .catalystPatch(DataComponentPatch.builder()
+                .catalystPatch(ItemDataPatch.builder()
                         .set(TTDataComponents.GOGGLES_UPGRADE.get(), Unit.INSTANCE)
                         .build())
                 .component(Ingredient.of(Tags.Items.SLIME_BALLS))
@@ -3694,7 +3696,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                         RecipeCategory.COMBAT,
                         new ItemStack(TTItems.FORTRESS_HELM.get()),
                         Ingredient.of(TTItems.FORTRESS_HELM.get()))
-                .catalystPatch(DataComponentPatch.builder()
+                .catalystPatch(ItemDataPatch.builder()
                         .set(TTDataComponents.FORTRESS_MASK.get(), mask)
                         .build())
                 .component(dye)

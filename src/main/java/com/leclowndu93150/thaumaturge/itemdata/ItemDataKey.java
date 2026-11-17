@@ -7,22 +7,38 @@ import com.mojang.serialization.DynamicOps;
 import java.util.Objects;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 /** A typed, namespaced field in an item's ordinary 1.20.1 NBT. */
 public final class ItemDataKey<T> {
     private final ResourceLocation id;
     private final Codec<T> codec;
     private final StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec;
+    private final NativeAccess<T> nativeAccess;
 
     ItemDataKey(ResourceLocation id, Builder<T> builder) {
         this.id = id;
         this.codec = Objects.requireNonNull(builder.codec, "Item data needs a persistent codec: " + id);
         this.streamCodec = builder.streamCodec;
+        this.nativeAccess = builder.nativeAccess;
     }
 
     public ResourceLocation id() { return id; }
     public Codec<T> codec() { return codec; }
     public StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec() { return streamCodec; }
+    NativeAccess<T> nativeAccess() { return nativeAccess; }
+
+    static <T> ItemDataKey<T> nativeKey(ResourceLocation id, Codec<T> codec, NativeAccess<T> access) {
+        Builder<T> builder = ItemDataKey.<T>builder().persistent(codec);
+        builder.nativeAccess = Objects.requireNonNull(access);
+        return new ItemDataKey<>(id, builder);
+    }
+
+    interface NativeAccess<T> {
+        T get(ItemStack stack);
+        void set(ItemStack stack, T value);
+        void remove(ItemStack stack);
+    }
 
     public Tag encode(DynamicOps<Tag> ops, T value) {
         return codec.encodeStart(ops, Objects.requireNonNull(value, "Item data value"))
@@ -39,6 +55,7 @@ public final class ItemDataKey<T> {
     public static final class Builder<T> {
         private Codec<T> codec;
         private StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec;
+        private NativeAccess<T> nativeAccess;
 
         public Builder<T> persistent(Codec<T> codec) {
             this.codec = Objects.requireNonNull(codec);

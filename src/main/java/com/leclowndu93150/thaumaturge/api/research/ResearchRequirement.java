@@ -6,16 +6,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Map;
 import java.util.Optional;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
-import net.minecraft.core.component.DataComponentPatch;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
+import com.leclowndu93150.thaumaturge.itemdata.EnchantmentData;
 
 /**
  * A single obtain or craft requirement on a {@link IResearchStage}.
@@ -35,14 +33,14 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
  * @param amount the minimum aggregate count, must be positive
  * @since 1.0.0
  */
-public record ResearchRequirement(HolderSet<Item> items, DataComponentPatch components, int amount) {
+public record ResearchRequirement(HolderSet<Item> items, ItemDataPatch components, int amount) {
     /** Codec for datapack serialization. */
     public static final Codec<ResearchRequirement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     RegistryCodecs.homogeneousList(Registries.ITEM)
                             .fieldOf("items")
                             .forGetter(ResearchRequirement::items),
-                    DataComponentPatch.CODEC
-                            .optionalFieldOf("components", DataComponentPatch.EMPTY)
+                    ItemDataPatch.CODEC
+                            .optionalFieldOf("components", ItemDataPatch.EMPTY)
                             .forGetter(ResearchRequirement::components),
                     Codec.INT.fieldOf("amount").forGetter(ResearchRequirement::amount))
             .apply(instance, ResearchRequirement::new));
@@ -54,7 +52,7 @@ public record ResearchRequirement(HolderSet<Item> items, DataComponentPatch comp
      * @return {@code true} when the stack's item and components both satisfy the requirement
      */
     public boolean matches(ItemStack stack) {
-        return stack.is(items) && matchesComponents(stack);
+        return items.contains(stack.getItemHolder()) && matchesComponents(stack);
     }
 
     private boolean matchesComponents(ItemStack stack) {
@@ -69,7 +67,7 @@ public record ResearchRequirement(HolderSet<Item> items, DataComponentPatch comp
             }
             Object value = required.get();
             Object present = ItemData.get(stack, type);
-            if (value instanceof ItemEnchantments enchantments) {
+            if (value instanceof EnchantmentData enchantments) {
                 if (!hasAtLeast(enchantments, present)) {
                     return false;
                 }
@@ -82,14 +80,9 @@ public record ResearchRequirement(HolderSet<Item> items, DataComponentPatch comp
         return true;
     }
 
-    private static boolean hasAtLeast(ItemEnchantments required, Object present) {
-        ItemEnchantments held =
-                present instanceof ItemEnchantments enchantments ? enchantments : ItemEnchantments.EMPTY;
-        for (Holder<Enchantment> enchantment : required.keySet()) {
-            if (held.getLevel(enchantment) < required.getLevel(enchantment)) {
-                return false;
-            }
-        }
-        return true;
+    private static boolean hasAtLeast(EnchantmentData required, Object present) {
+        EnchantmentData held =
+                present instanceof EnchantmentData enchantments ? enchantments : EnchantmentData.EMPTY;
+        return held.containsAtLeast(required);
     }
 }

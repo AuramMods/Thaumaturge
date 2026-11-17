@@ -103,7 +103,7 @@ public final class WorkbenchCraftingStore implements IArcaneCraftingStore {
         if (left.isEmpty()) {
             return remainder;
         }
-        if (ItemStack.isSameItemSameComponents(left, remainder)) {
+        if (ItemStack.isSameItemSameTags(left, remainder)) {
             remainder.grow(left.getCount());
             return remainder;
         }

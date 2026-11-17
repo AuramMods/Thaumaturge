@@ -1,12 +1,15 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import java.util.List;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +23,7 @@ class RecipeDisplayWidgetTest {
     void infusionHitKeepsSlotBoundsAndItemComponentsAsMouseMoves() {
         InfusionRecipe recipe = mock(InfusionRecipe.class);
         ItemStack result = new ItemStack(Items.STONE);
-        result.set(DataComponents.CUSTOM_NAME, Component.literal("Recipe variant"));
+        ItemData.set(result, VanillaItemData.CUSTOM_NAME, Component.literal("Recipe variant"));
         when(recipe.resultItem()).thenReturn(result);
         when(recipe.catalyst()).thenReturn(Ingredient.EMPTY);
         when(recipe.components()).thenReturn(List.of());

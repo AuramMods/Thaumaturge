@@ -301,7 +301,7 @@ class AdvancedFurnaceCutoffTest {
             assertEquals(1, drops.constructed().size());
             ItemEntity drop = drops.constructed().getFirst();
             assertNotSame(original, drop.getItem());
-            assertTrue(ItemStack.isSameItemSameComponents(original, drop.getItem()));
+            assertTrue(ItemStack.isSameItemSameTags(original, drop.getItem()));
             verify(level).addFreshEntity(drop);
             aura.verify(() -> AuraHelper.polluteAura(level, BlockPos.ZERO, 9, true), times(1));
             structure.verify(() -> AdvancedAlchemicalFurnaceStructure.restore(level, BlockPos.ZERO), times(1));

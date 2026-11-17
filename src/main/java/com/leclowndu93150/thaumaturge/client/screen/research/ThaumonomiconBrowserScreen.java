@@ -476,7 +476,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
                     Optional<Holder<Item>> first = req.items().stream().findFirst();
                     if (first.isEmpty()) continue;
                     ItemStack stack = new ItemStack(first.get());
-                    stack.applyComponents(req.components());
+                    req.components().apply(stack);
                     if (stack.isEmpty()) continue;
                     String dn = stack.getHoverName().getString();
                     if (dn.toLowerCase(Locale.ROOT).contains(needle)) {

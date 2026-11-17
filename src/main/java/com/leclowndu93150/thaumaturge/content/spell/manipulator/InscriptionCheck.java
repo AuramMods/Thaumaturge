@@ -44,7 +44,7 @@ public record InscriptionCheck(
         Inventory inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize() && found < wanted.getCount(); slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (ItemStack.isSameItemSameComponents(stack, wanted)) {
+            if (ItemStack.isSameItemSameTags(stack, wanted)) {
                 found += stack.getCount();
             }
         }

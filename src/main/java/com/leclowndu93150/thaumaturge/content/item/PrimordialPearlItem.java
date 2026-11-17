@@ -1,7 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.registry.TTItems;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,17 +21,17 @@ public final class PrimordialPearlItem extends Item {
 
     @Override
     public boolean hasCraftingRemainingItem(ItemStack stack) {
-        return stack.getOrDefault(DataComponents.DAMAGE, 0) + 1 < MAX_DAMAGE;
+        return ItemData.getOrDefault(stack, VanillaItemData.DAMAGE, 0) + 1 < MAX_DAMAGE;
     }
 
     @Override
     public ItemStack getCraftingRemainingItem(ItemStack stack) {
-        int nextDamage = stack.getOrDefault(DataComponents.DAMAGE, 0) + 1;
+        int nextDamage = ItemData.getOrDefault(stack, VanillaItemData.DAMAGE, 0) + 1;
         if (nextDamage >= MAX_DAMAGE) {
             return ItemStack.EMPTY;
         }
         ItemStack remainder = new ItemStack(TTItems.PRIMORDIAL_PEARL.get());
-        remainder.set(DataComponents.DAMAGE, nextDamage);
+        ItemData.set(remainder, VanillaItemData.DAMAGE, nextDamage);
         return remainder;
     }
 

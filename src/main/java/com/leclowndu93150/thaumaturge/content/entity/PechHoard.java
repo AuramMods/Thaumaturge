@@ -31,7 +31,7 @@ final class PechHoard {
     static boolean canStore(List<ItemStack> loot, ItemStack stack) {
         for (ItemStack slot : loot) {
             if (slot.isEmpty()
-                    || ItemStack.isSameItemSameComponents(slot, stack)
+                    || ItemStack.isSameItemSameTags(slot, stack)
                             && slot.getCount() + stack.getCount() <= slot.getMaxStackSize()) {
                 return true;
             }
@@ -42,7 +42,7 @@ final class PechHoard {
     static ItemStack store(List<ItemStack> loot, ItemStack stack) {
         ItemStack rest = stack.copy();
         for (ItemStack slot : loot) {
-            if (!slot.isEmpty() && ItemStack.isSameItemSameComponents(slot, rest)) {
+            if (!slot.isEmpty() && ItemStack.isSameItemSameTags(slot, rest)) {
                 int moved = Math.min(rest.getCount(), slot.getMaxStackSize() - slot.getCount());
                 if (moved > 0) {
                     slot.grow(moved);

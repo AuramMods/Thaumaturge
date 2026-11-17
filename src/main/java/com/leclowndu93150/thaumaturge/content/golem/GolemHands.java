@@ -31,7 +31,7 @@ public final class GolemHands implements IGolemHands {
                 golem.setItemSlot(hand, stack);
                 return ItemStack.EMPTY;
             }
-            if (ItemStack.isSameItemSameComponents(held, stack) && held.getCount() < held.getMaxStackSize()) {
+            if (ItemStack.isSameItemSameTags(held, stack) && held.getCount() < held.getMaxStackSize()) {
                 int moved = Math.min(stack.getCount(), held.getMaxStackSize() - held.getCount());
                 held.grow(moved);
                 stack.shrink(moved);
@@ -65,7 +65,7 @@ public final class GolemHands implements IGolemHands {
             golem.setItemSlot(hand, ItemStack.EMPTY);
             return held.copy();
         }
-        if (!ItemStack.isSameItemSameComponents(held, wanted)) {
+        if (!ItemStack.isSameItemSameTags(held, wanted)) {
             return ItemStack.EMPTY;
         }
         ItemStack taken = held.copyWithCount(Math.min(wanted.getCount(), held.getCount()));
@@ -92,7 +92,7 @@ public final class GolemHands implements IGolemHands {
             ItemStack held = golem.getItemBySlot(hand);
             if (held.isEmpty()) {
                 room += stack.getMaxStackSize();
-            } else if (ItemStack.isSameItemSameComponents(held, stack)) {
+            } else if (ItemStack.isSameItemSameTags(held, stack)) {
                 room += held.getMaxStackSize() - held.getCount();
             }
         }
@@ -104,7 +104,7 @@ public final class GolemHands implements IGolemHands {
         return !stack.isEmpty()
                 && hands().stream()
                         .map(golem::getItemBySlot)
-                        .anyMatch(held -> !held.isEmpty() && ItemStack.isSameItemSameComponents(held, stack));
+                        .anyMatch(held -> !held.isEmpty() && ItemStack.isSameItemSameTags(held, stack));
     }
 
     @Override
