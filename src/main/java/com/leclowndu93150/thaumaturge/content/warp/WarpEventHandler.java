@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.warp.ItemWarp;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
@@ -21,7 +22,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class WarpEventHandler {
@@ -54,8 +55,9 @@ public final class WarpEventHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) {
+    public static void onPlayerTick(PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.player instanceof ServerPlayer player)) {
             return;
         }
         if (!ThaumaturgeCommonConfig.WUSS_MODE.get()

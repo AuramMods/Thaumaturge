@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.taint;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
@@ -11,7 +12,7 @@ import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
@@ -26,7 +27,8 @@ public final class TaintEnvironmentClientEvents {
     private TaintEnvironmentClientEvents() {}
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
+    public static void onClientTick(ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
         TaintEnvironmentClientState.tick();
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level == null || minecraft.player == null || minecraft.isPaused()) {

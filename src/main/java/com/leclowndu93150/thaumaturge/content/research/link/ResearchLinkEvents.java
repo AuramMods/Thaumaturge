@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.link;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
@@ -20,7 +21,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class ResearchLinkEvents {
@@ -29,7 +30,8 @@ public final class ResearchLinkEvents {
     private ResearchLinkEvents() {}
 
     @SubscribeEvent
-    public static void onServerTick(ServerTickEvent.Post event) {
+    public static void onServerTick(ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
         MinecraftServer server = event.getServer();
         ResearchLinkData data = ResearchLinkData.get(server);
         if (!data.pendingPlayers().isEmpty()) {

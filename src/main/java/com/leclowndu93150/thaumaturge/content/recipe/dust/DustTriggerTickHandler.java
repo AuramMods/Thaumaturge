@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -20,7 +21,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.level.ChunkEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class DustTriggerTickHandler {
@@ -45,7 +46,8 @@ public final class DustTriggerTickHandler {
     }
 
     @SubscribeEvent
-    public static void onServerTick(ServerTickEvent.Post event) {
+    public static void onServerTick(ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
         MinecraftServer server = event.getServer();
         for (ServerLevel level : server.getAllLevels()) {
             tickLevel(level);

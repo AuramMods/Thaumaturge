@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
@@ -13,7 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.ChunkWatchEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID)
@@ -58,8 +59,9 @@ public final class GolemWorldEvents {
     }
 
     @SubscribeEvent
-    public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel serverLevel)) {
+    public static void onLevelTick(LevelTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.level instanceof ServerLevel serverLevel)) {
             return;
         }
         if (serverLevel.getGameTime() % TASK_CLEAR_INTERVAL_TICKS == 0) {

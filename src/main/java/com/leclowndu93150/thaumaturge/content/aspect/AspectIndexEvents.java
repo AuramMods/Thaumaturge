@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.network.ClientboundAspectIndexPayload;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -11,7 +12,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent;
 
@@ -42,7 +43,8 @@ public final class AspectIndexEvents {
     }
 
     @SubscribeEvent
-    public static void onServerTick(ServerTickEvent.Pre event) {
+    public static void onServerTick(ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.START) return;
         MinecraftServer server = runningServer;
         if (!buildRequested || !datamapsReady || server != event.getServer()) {
             return;

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.lighting;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.misc.nitor.BlockNitor;
 import java.util.HashMap;
@@ -18,7 +19,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
@@ -34,7 +35,8 @@ public final class NitorDynamicLights {
     }
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Pre event) {
+    public static void onClientTick(ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.START) return;
         Minecraft minecraft = Minecraft.getInstance();
         ClientLevel level = minecraft.level;
         if (level == null) {

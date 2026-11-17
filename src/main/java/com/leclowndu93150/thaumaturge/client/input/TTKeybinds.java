@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.input;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.screen.research.ThaumonomiconBrowserScreen;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -8,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import org.lwjgl.glfw.GLFW;
 
@@ -45,7 +46,8 @@ public final class TTKeybinds {
     }
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
+    public static void onClientTick(ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
         if (Minecraft.getInstance().screen != null) return;
         while (OPEN_THAUMONOMICON.consumeClick()) {
             Minecraft.getInstance().setScreen(ThaumonomiconBrowserScreen.reopen());

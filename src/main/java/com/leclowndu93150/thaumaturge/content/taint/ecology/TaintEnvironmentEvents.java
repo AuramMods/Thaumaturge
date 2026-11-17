@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID)
@@ -48,8 +49,9 @@ public final class TaintEnvironmentEvents {
     private TaintEnvironmentEvents() {}
 
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % SYNC_INTERVAL != 0) {
+    public static void onPlayerTick(PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.player instanceof ServerPlayer player) || player.tickCount % SYNC_INTERVAL != 0) {
             return;
         }
         ServerLevel level = player.serverLevel();

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.toast;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.api.capability.ResearchFlag;
@@ -15,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
@@ -26,7 +27,8 @@ public final class ResearchToastEvents {
     private ResearchToastEvents() {}
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
+    public static void onClientTick(ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null || ++tickCounter < CHECK_INTERVAL_TICKS) {
             return;

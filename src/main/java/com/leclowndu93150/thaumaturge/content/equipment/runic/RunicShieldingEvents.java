@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment.runic;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -11,7 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class RunicShieldingEvents {
@@ -23,8 +24,9 @@ public final class RunicShieldingEvents {
     private static final float PITCH_SPREAD = 0.1F;
 
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        Player entity = event.getEntity();
+    public static void onPlayerTick(PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        Player entity = event.player;
         if (!entity.isSpectator()) {
             tickShield(entity);
         }

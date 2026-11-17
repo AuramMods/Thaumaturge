@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.warp;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
@@ -8,7 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.ViewportEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = TTIds.MODID)
 public final class WarpFogEvents {
@@ -21,8 +22,9 @@ public final class WarpFogEvents {
     private WarpFogEvents() {}
 
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Pre event) {
-        if (event.getEntity() instanceof LocalPlayer) {
+    public static void onPlayerTick(PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.START) return;
+        if (event.player instanceof LocalPlayer) {
             WarpFogState.tick();
         }
     }

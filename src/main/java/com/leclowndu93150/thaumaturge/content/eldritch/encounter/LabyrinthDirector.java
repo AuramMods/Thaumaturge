@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.encounter;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
@@ -15,7 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class LabyrinthDirector {
@@ -25,8 +26,9 @@ public final class LabyrinthDirector {
     private LabyrinthDirector() {}
 
     @SubscribeEvent
-    public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || level.dimension() != OuterLands.DIMENSION) {
+    public static void onLevelTick(LevelTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.level instanceof ServerLevel level) || level.dimension() != OuterLands.DIMENSION) {
             return;
         }
         Optional<LabyrinthRuntime> runtime = LabyrinthService.runtime(level);

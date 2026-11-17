@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
@@ -38,7 +39,7 @@ import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TTIds.MODID)
@@ -204,8 +205,9 @@ public final class ResearchProgressionEvents {
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+    public static void onPlayerTick(PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.player instanceof ServerPlayer player)) return;
         if (player.tickCount == 0) return;
         PlayerKnowledge knowledge = (PlayerKnowledge) PlayerResearchAccess.of(player);
         boolean auromancyInProgress = knowledge.knows(UNLOCK_AUROMANCY)

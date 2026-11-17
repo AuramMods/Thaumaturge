@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
@@ -11,7 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class MazeRegeneration {
@@ -20,8 +21,9 @@ public final class MazeRegeneration {
     private MazeRegeneration() {}
 
     @SubscribeEvent
-    public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level)
+    public static void onLevelTick(LevelTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.level instanceof ServerLevel level)
                 || level.dimension() != OuterLands.DIMENSION
                 || level.getGameTime() % CHECK_INTERVAL != 0) {
             return;

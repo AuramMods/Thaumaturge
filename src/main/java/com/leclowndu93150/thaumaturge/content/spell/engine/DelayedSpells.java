@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.engine;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -16,7 +17,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class DelayedSpells {
@@ -32,8 +33,9 @@ public final class DelayedSpells {
     }
 
     @SubscribeEvent
-    public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || !AttachmentData.has(level, TTAttachments.DELAYED_SPELLS)) {
+    public static void onLevelTick(LevelTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.level instanceof ServerLevel level) || !AttachmentData.has(level, TTAttachments.DELAYED_SPELLS)) {
             return;
         }
         DelayedSpells queue = AttachmentData.get(level, TTAttachments.DELAYED_SPELLS);

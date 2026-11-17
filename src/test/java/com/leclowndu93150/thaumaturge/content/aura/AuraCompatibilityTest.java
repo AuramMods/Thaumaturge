@@ -39,7 +39,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
+import net.minecraftforge.fml.LogicalSide;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,7 +95,7 @@ class AuraCompatibilityTest {
                 MockedStatic<PhysicalFluxAuraFloor> floor = mockStatic(PhysicalFluxAuraFloor.class)) {
             floor.when(() -> PhysicalFluxAuraFloor.replenish(any(), any(), anyFloat(), anyFloat()))
                     .thenReturn(convertedFlux);
-            AuraTickHandler.onLevelTick(new LevelTickEvent.Post(() -> true, level));
+            AuraTickHandler.onLevelTick(new LevelTickEvent(LogicalSide.SERVER, TickEvent.Phase.END, level, () -> true));
         }
     }
 
@@ -444,7 +446,7 @@ class AuraCompatibilityTest {
     @Test
     void clientLevelTicksAndEmptyServerSessionsDoNoAuraWork() {
         Level client = mock(Level.class);
-        AuraTickHandler.onLevelTick(new LevelTickEvent.Post(() -> true, client));
+        AuraTickHandler.onLevelTick(new LevelTickEvent(LogicalSide.CLIENT, TickEvent.Phase.END, client, () -> true));
         tick(0);
         verifyNoInteractions(client, chunkSource, random);
     }
@@ -513,7 +515,7 @@ class AuraCompatibilityTest {
         AuraManager.onChunkLoaded(level, pos);
         try (MockedStatic<PhysicalFluxOutbreaks> outbreaks = mockStatic(PhysicalFluxOutbreaks.class);
                 MockedStatic<PhysicalFluxAuraFloor> floor = mockStatic(PhysicalFluxAuraFloor.class)) {
-            AuraTickHandler.onLevelTick(new LevelTickEvent.Post(() -> true, level));
+            AuraTickHandler.onLevelTick(new LevelTickEvent(LogicalSide.SERVER, TickEvent.Phase.END, level, () -> true));
             outbreaks.verify(() -> PhysicalFluxOutbreaks.tryOutbreak(level, chunk, random));
             floor.verifyNoInteractions();
             assertEquals(0.0F, data.getVis());

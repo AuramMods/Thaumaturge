@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.debug.client;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanRaycastHelper;
 import net.minecraft.client.DeltaTracker;
@@ -14,7 +15,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
@@ -44,7 +45,8 @@ public final class RaycastDebugOverlay implements LayeredDraw.Layer {
     }
 
     @SubscribeEvent
-    public static void clientTick(ClientTickEvent.Post event) {
+    public static void clientTick(ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (!enabled || player == null || mc.level == null) {

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.effect.manager;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
@@ -10,7 +11,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class FXManagerRegistry {
@@ -23,8 +24,9 @@ public final class FXManagerRegistry {
     private FXManagerRegistry() {}
 
     @SubscribeEvent
-    public static void onTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ClientLevel cl)) return;
+    public static void onTick(LevelTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.level instanceof ClientLevel cl)) return;
         for (AbstractFXManager<?> m : MANAGERS) m.tickAll(cl);
     }
 

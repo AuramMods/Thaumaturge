@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -14,7 +15,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class FluxPressureEvents {
@@ -54,8 +55,9 @@ public final class FluxPressureEvents {
     }
 
     @SubscribeEvent
-    public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level)) {
+    public static void onLevelTick(LevelTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.level instanceof ServerLevel level)) {
             return;
         }
         FluxPressureState state = AttachmentData.getExistingDataOrNull(level, TTAttachments.FLUX_PRESSURE);

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
@@ -7,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class RiftTriggerHandler {
@@ -16,8 +17,9 @@ public final class RiftTriggerHandler {
     private RiftTriggerHandler() {}
 
     @SubscribeEvent
-    public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || level.getGameTime() % POLL_INTERVAL_TICKS != 0) {
+    public static void onLevelTick(LevelTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.level instanceof ServerLevel level) || level.getGameTime() % POLL_INTERVAL_TICKS != 0) {
             return;
         }
         BlockPos trigger = AuraManager.pollRiftTrigger(level);

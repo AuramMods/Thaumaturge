@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.equipment;
 
+import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
 import com.leclowndu93150.thaumaturge.client.input.TTKeybinds;
@@ -22,8 +23,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
@@ -47,7 +48,8 @@ public final class HoverClientHandler {
     private HoverClientHandler() {}
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
+    public static void onClientTick(ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
         ClientLevel level = minecraft.level;
@@ -78,8 +80,9 @@ public final class HoverClientHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Pre event) {
-        if (!(event.getEntity() instanceof LocalPlayer player)
+    public static void onPlayerTick(PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.START) return;
+        if (!(event.player instanceof LocalPlayer player)
                 || player.isCreative()
                 || player.isSpectator()
                 || !HoverManager.isHovering(player)) {

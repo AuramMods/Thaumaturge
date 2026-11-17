@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.effect;
 
+import net.minecraftforge.event.TickEvent;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.BlockPos;
@@ -9,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
 
 @EventBusSubscriber
 public final class EssentiaSourceEffectTracker {
@@ -50,8 +51,9 @@ public final class EssentiaSourceEffectTracker {
     }
 
     @SubscribeEvent
-    public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel server)) {
+    public static void onLevelTick(LevelTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (!(event.level instanceof ServerLevel server)) {
             return;
         }
         ConcurrentHashMap<String, PendingPulse> map = PENDING.get(server.dimension());
