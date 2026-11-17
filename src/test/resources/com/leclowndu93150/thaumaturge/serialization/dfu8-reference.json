@@ -2987,5 +2987,653 @@
       },
       "error": null
     }
+  },
+  "dispatch": {
+    "decode:{}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Input does not contain a key [format]: MapLike[{}]"
+    },
+    "decode:{\"format\":\"a\",\"first\":2}": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "a",
+          "n": 2
+        },
+        "remainder": {
+          "format": "a",
+          "first": 2
+        }
+      },
+      "error": null
+    },
+    "decode:{\"format\":\"b\",\"second\":3}": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "b",
+          "n": 3
+        },
+        "remainder": {
+          "format": "b",
+          "second": 3
+        }
+      },
+      "error": null
+    },
+    "decode:{\"format\":\"b\",\"second\":-2}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "b",
+          "n": 0
+        },
+        "remainder": {
+          "format": "b",
+          "second": -2
+        }
+      },
+      "error": "negative"
+    },
+    "decode:{\"format\":\"a\",\"first\":\"bad\"}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Not a number: \"bad\""
+    },
+    "decode:{\"format\":\"unknown\",\"first\":2}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type unknown"
+    },
+    "decode:{\"format\":\"partialcodec\",\"first\":2}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type partialcodec"
+    },
+    "decode:{\"format\":3}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Not a string: 3"
+    },
+    "decode:{\"format\":\"a\"}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "No key first in MapLike[{\"format\":\"a\"}]"
+    },
+    "compressed:[\"a\",[2]]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "a",
+          "n": 2
+        },
+        "remainder": [
+          "a",
+          [
+            2
+          ]
+        ]
+      },
+      "error": null
+    },
+    "compressed:[\"b\",[-2]]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "b",
+          "n": 0
+        },
+        "remainder": [
+          "b",
+          [
+            -2
+          ]
+        ]
+      },
+      "error": "negative"
+    },
+    "compressed:[\"a\"]": {
+      "thrown": "java.lang.IndexOutOfBoundsException"
+    },
+    "compressed:[\"unknown\",[2]]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type unknown"
+    },
+    "compressed:[\"partialcodec\",[2]]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type partialcodec"
+    },
+    "encode:a:2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "first": 2,
+        "format": "a"
+      },
+      "error": null
+    },
+    "encodeCompressed:a:2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        "a",
+        [
+          2
+        ]
+      ],
+      "error": null
+    },
+    "encode:a:-2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "first": -2,
+        "format": "a"
+      },
+      "error": null
+    },
+    "encodeCompressed:a:-2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        "a",
+        [
+          -2
+        ]
+      ],
+      "error": null
+    },
+    "encode:b:2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "second": 2,
+        "format": "b"
+      },
+      "error": null
+    },
+    "encodeCompressed:b:2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        "b",
+        [
+          2
+        ]
+      ],
+      "error": null
+    },
+    "encode:b:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "second": 0,
+        "format": "b"
+      },
+      "error": "negative"
+    },
+    "encodeCompressed:b:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": [
+        "b",
+        [
+          0
+        ]
+      ],
+      "error": "negative"
+    },
+    "encode:unknown:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type unknown"
+    },
+    "encodeCompressed:unknown:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type unknown"
+    },
+    "encode:unknown:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type unknown; negative"
+    },
+    "encodeCompressed:unknown:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "negative; Unknown type unknown"
+    },
+    "encode:badtype:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type badtype"
+    },
+    "encodeCompressed:badtype:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type badtype"
+    },
+    "encode:badtype:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type badtype; negative"
+    },
+    "encodeCompressed:badtype:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "negative; Unknown type badtype"
+    },
+    "encode:partialtype:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type partialtype"
+    },
+    "encodeCompressed:partialtype:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type partialtype"
+    },
+    "encode:partialtype:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type partialtype; negative"
+    },
+    "encodeCompressed:partialtype:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "negative; Unknown type partialtype"
+    },
+    "encode:partialcodec:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type partialcodec"
+    },
+    "encodeCompressed:partialcodec:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type partialcodec"
+    },
+    "encode:partialcodec:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown type partialcodec; negative"
+    },
+    "encodeCompressed:partialcodec:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "negative; Unknown type partialcodec"
+    }
+  },
+  "partialDispatch": {
+    "decode:{}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Input does not contain a key [format]: MapLike[{}]"
+    },
+    "decode:{\"format\":\"a\",\"first\":2}": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "a",
+          "n": 2
+        },
+        "remainder": {
+          "format": "a",
+          "first": 2
+        }
+      },
+      "error": null
+    },
+    "decode:{\"format\":\"b\",\"second\":3}": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "b",
+          "n": 3
+        },
+        "remainder": {
+          "format": "b",
+          "second": 3
+        }
+      },
+      "error": null
+    },
+    "decode:{\"format\":\"b\",\"second\":-2}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "b",
+          "n": 0
+        },
+        "remainder": {
+          "format": "b",
+          "second": -2
+        }
+      },
+      "error": "negative"
+    },
+    "decode:{\"format\":\"a\",\"first\":\"bad\"}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Not a number: \"bad\""
+    },
+    "decode:{\"format\":\"unknown\",\"first\":2}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown format unknown"
+    },
+    "decode:{\"format\":\"partialcodec\",\"first\":2}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "a",
+          "n": 2
+        },
+        "remainder": {
+          "format": "partialcodec",
+          "first": 2
+        }
+      },
+      "error": "codec partial"
+    },
+    "decode:{\"format\":3}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Not a string: 3"
+    },
+    "decode:{\"format\":\"a\"}": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "No key first in MapLike[{\"format\":\"a\"}]"
+    },
+    "compressed:[\"a\",[2]]": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "a",
+          "n": 2
+        },
+        "remainder": [
+          "a",
+          [
+            2
+          ]
+        ]
+      },
+      "error": null
+    },
+    "compressed:[\"b\",[-2]]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "b",
+          "n": 0
+        },
+        "remainder": [
+          "b",
+          [
+            -2
+          ]
+        ]
+      },
+      "error": "negative"
+    },
+    "compressed:[\"a\"]": {
+      "thrown": "java.lang.IndexOutOfBoundsException"
+    },
+    "compressed:[\"unknown\",[2]]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown format unknown"
+    },
+    "compressed:[\"partialcodec\",[2]]": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "value": {
+          "kind": "a",
+          "n": 2
+        },
+        "remainder": [
+          "partialcodec",
+          [
+            2
+          ]
+        ]
+      },
+      "error": "codec partial"
+    },
+    "encode:a:2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "first": 2,
+        "format": "a"
+      },
+      "error": null
+    },
+    "encodeCompressed:a:2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        "a",
+        [
+          2
+        ]
+      ],
+      "error": null
+    },
+    "encode:a:-2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "first": -2,
+        "format": "a"
+      },
+      "error": null
+    },
+    "encodeCompressed:a:-2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        "a",
+        [
+          -2
+        ]
+      ],
+      "error": null
+    },
+    "encode:b:2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": {
+        "second": 2,
+        "format": "b"
+      },
+      "error": null
+    },
+    "encodeCompressed:b:2": {
+      "success": true,
+      "lifecycle": "Experimental",
+      "value": [
+        "b",
+        [
+          2
+        ]
+      ],
+      "error": null
+    },
+    "encode:b:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {
+        "second": 0,
+        "format": "b"
+      },
+      "error": "negative"
+    },
+    "encodeCompressed:b:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": [
+        "b",
+        [
+          0
+        ]
+      ],
+      "error": "negative"
+    },
+    "encode:unknown:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown format unknown"
+    },
+    "encodeCompressed:unknown:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown format unknown"
+    },
+    "encode:unknown:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown format unknown"
+    },
+    "encodeCompressed:unknown:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "Unknown format unknown"
+    },
+    "encode:badtype:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "bad type"
+    },
+    "encodeCompressed:badtype:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "bad type"
+    },
+    "encode:badtype:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "bad type"
+    },
+    "encodeCompressed:badtype:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": null,
+      "error": "bad type"
+    },
+    "encode:partialtype:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {},
+      "error": "type partial"
+    },
+    "encodeCompressed:partialtype:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": [
+        null,
+        null
+      ],
+      "error": "type partial"
+    },
+    "encode:partialtype:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {},
+      "error": "type partial"
+    },
+    "encodeCompressed:partialtype:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": [
+        null,
+        null
+      ],
+      "error": "type partial"
+    },
+    "encode:partialcodec:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {},
+      "error": "codec partial"
+    },
+    "encodeCompressed:partialcodec:2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": [
+        null,
+        null
+      ],
+      "error": "codec partial"
+    },
+    "encode:partialcodec:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": {},
+      "error": "codec partial"
+    },
+    "encodeCompressed:partialcodec:-2": {
+      "success": false,
+      "lifecycle": "Experimental",
+      "value": [
+        null,
+        null
+      ],
+      "error": "codec partial"
+    }
   }
 }

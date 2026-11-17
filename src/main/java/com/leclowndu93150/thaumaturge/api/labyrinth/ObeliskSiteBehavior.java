@@ -15,9 +15,8 @@ public interface ObeliskSiteBehavior {
     /**
      * Dispatches on the {@code type} field through the {@link ObeliskSiteBehaviorType} registry.
      */
-    Codec<ObeliskSiteBehavior> CODEC = Codecs.lazyInitialized(() -> LabyrinthHelper.siteBehaviorTypes()
-            .byNameCodec()
-            .dispatch("type", ObeliskSiteBehavior::type, ObeliskSiteBehaviorType::codec));
+    Codec<ObeliskSiteBehavior> CODEC = Codecs.lazyInitialized(() -> Codecs.dispatch(LabyrinthHelper.siteBehaviorTypes()
+            .byNameCodec(), "type", ObeliskSiteBehavior::type, ObeliskSiteBehaviorType::codec));
 
     /**
      * @return the registered type of this behavior

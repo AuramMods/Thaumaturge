@@ -20,9 +20,8 @@ public interface LabyrinthMarker {
     /**
      * Dispatches on the {@code type} field through the {@link LabyrinthMarkerType} registry.
      */
-    Codec<LabyrinthMarker> CODEC = Codecs.lazyInitialized(() -> LabyrinthHelper.markerTypes()
-            .byNameCodec()
-            .dispatch("type", LabyrinthMarker::type, LabyrinthMarkerType::codec));
+    Codec<LabyrinthMarker> CODEC = Codecs.lazyInitialized(() -> Codecs.dispatch(LabyrinthHelper.markerTypes()
+            .byNameCodec(), "type", LabyrinthMarker::type, LabyrinthMarkerType::codec));
 
     /**
      * @return the registered type of this marker

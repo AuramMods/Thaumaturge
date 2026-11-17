@@ -29,7 +29,7 @@ import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class SealEntity implements ISealEntity {
-    public static final Codec<SealEntity> CODEC = LegacyIds.IDENTIFIER_CODEC.partialDispatch(
+    public static final Codec<SealEntity> CODEC = Codecs.partialDispatch(LegacyIds.IDENTIFIER_CODEC,
             "type", seal -> DataResult.success(seal.typeId), SealEntity::formatFor);
 
     private static final BlockPos UNIT_AREA = new BlockPos(1, 1, 1);

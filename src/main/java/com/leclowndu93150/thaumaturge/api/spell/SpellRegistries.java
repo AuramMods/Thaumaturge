@@ -19,11 +19,11 @@ import net.minecraft.core.Registry;
 public final class SpellRegistries {
     /** Decodes a behaviour by its {@code type} field. Usable once the registries are bound. */
     public static final Codec<SpellBehavior> BEHAVIOR_CODEC = Codecs.lazyInitialized(
-            () -> behaviors().byNameCodec().dispatch(SpellBehavior::type, SpellBehaviorType::codec));
+            () -> Codecs.dispatch(behaviors().byNameCodec(), SpellBehavior::type, SpellBehaviorType::codec));
 
     /** Decodes an affinity action by its {@code type} field. Usable once the registries are bound. */
     public static final Codec<SpellAction> ACTION_CODEC =
-            Codecs.lazyInitialized(() -> actions().byNameCodec().dispatch(SpellAction::type, SpellActionType::codec));
+            Codecs.lazyInitialized(() -> Codecs.dispatch(actions().byNameCodec(), SpellAction::type, SpellActionType::codec));
 
     private static Registry<SpellBehaviorType<?>> behaviors;
     private static Registry<SpellActionType<?>> actions;

@@ -24,6 +24,9 @@ public final class ForgePortTestRunner {
         Thread.currentThread().setContextClassLoader(ForgePortTestRunner.class.getClassLoader());
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
+        // Forge's registry bake normally assigns block-state wire IDs and
+        // initializes the native state caches before worlds/networking start.
+        ((net.minecraftforge.registries.ForgeRegistry<?>) net.minecraftforge.registries.ForgeRegistries.BLOCKS).bake();
         // ForgeMod normally registers this during the recipe-serializer event.
         // This focused launch performs no mod construction or registry events.
         CraftingHelper.register(ResourceLocation.withDefaultNamespace("item"), VanillaIngredientSerializer.INSTANCE);

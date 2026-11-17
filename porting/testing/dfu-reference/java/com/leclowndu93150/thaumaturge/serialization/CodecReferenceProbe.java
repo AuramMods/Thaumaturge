@@ -78,6 +78,12 @@ public final class CodecReferenceProbe {
     private JsonElement value(Object object) {
         if (object == null) return JsonNull.INSTANCE;
         if (object instanceof JsonElement json) return json;
+        if (object instanceof Choice choice) {
+            JsonObject json = new JsonObject();
+            json.addProperty("kind", choice.kind());
+            json.addProperty("n", choice.n());
+            return json;
+        }
         if (object instanceof Optional<?> optional) {
             JsonObject json = new JsonObject();
             json.addProperty("present", optional.isPresent());
@@ -272,6 +278,67 @@ public final class CodecReferenceProbe {
         return out;
     }
 
+    private record Choice(String kind, int n) {}
+
+    private <A> Codec<A> dispatch(Codec<String> keys, String name, Function<A, String> type,
+                                 Function<String, MapCodec<? extends A>> formats) {
+        if (!reference) return call("dispatch", new Class<?>[]{Codec.class, String.class, Function.class, Function.class},
+                keys, name, type, formats);
+        try { return (Codec<A>) Codec.class.getMethod("dispatch", String.class, Function.class, Function.class)
+                .invoke(keys, name, type, formats); }
+        catch (ReflectiveOperationException e) { throw new AssertionError(e); }
+    }
+
+    private <A> Codec<A> partialDispatch(Codec<String> keys, String name, Function<A, DataResult<String>> type,
+                                        Function<String, DataResult<? extends MapCodec<? extends A>>> formats) {
+        if (!reference) return call("partialDispatch", new Class<?>[]{Codec.class, String.class, Function.class, Function.class},
+                keys, name, type, formats);
+        try { return (Codec<A>) Codec.class.getMethod("partialDispatch", String.class, Function.class, Function.class)
+                .invoke(keys, name, type, formats); }
+        catch (ReflectiveOperationException e) { throw new AssertionError(e); }
+    }
+
+    public JsonObject dispatchedSchemas(boolean partial) {
+        JsonObject out = new JsonObject();
+        MapCodec<Choice> a = Codec.INT.fieldOf("first").xmap(n -> new Choice("a", n), Choice::n);
+        MapCodec<Choice> b = validate(Codec.INT, n -> n >= 0 ? DataResult.success(n)
+                : DataResult.error(() -> "negative", 0)).fieldOf("second").xmap(n -> new Choice("b", n), Choice::n);
+        Codec<String> keys = validate(Codec.STRING, key -> key.equals("a") || key.equals("b")
+                ? DataResult.success(key) : DataResult.error(() -> "Unknown type " + key));
+        Codec<Choice> codec = partial ? partialDispatch(Codec.STRING, "format",
+                choice -> choice.kind().equals("partialtype") ? DataResult.error(() -> "type partial", "a")
+                        : choice.kind().equals("badtype") ? DataResult.error(() -> "bad type") : DataResult.success(choice.kind()),
+                key -> switch (key) {
+                    case "a" -> DataResult.success(a);
+                    case "b" -> DataResult.success(b);
+                    case "partialcodec" -> DataResult.error(() -> "codec partial", a);
+                    default -> DataResult.error(() -> "Unknown format " + key);
+                }) : dispatch(keys, "format", Choice::kind, key -> key.equals("a") ? a : b);
+        for (String input : List.of("{}", "{\"format\":\"a\",\"first\":2}", "{\"format\":\"b\",\"second\":3}",
+                "{\"format\":\"b\",\"second\":-2}", "{\"format\":\"a\",\"first\":\"bad\"}",
+                "{\"format\":\"unknown\",\"first\":2}", "{\"format\":\"partialcodec\",\"first\":2}",
+                "{\"format\":3}", "{\"format\":\"a\"}")) {
+            out.add("decode:" + input, result(codec.decode(JsonOps.INSTANCE, JsonParser.parseString(input))));
+        }
+        for (String input : List.of("[\"a\",[2]]", "[\"b\",[-2]]", "[\"a\"]", "[\"unknown\",[2]]",
+                "[\"partialcodec\",[2]]")) {
+            try { out.add("compressed:" + input, result(codec.decode(JsonOps.COMPRESSED, JsonParser.parseString(input)))); }
+            catch (RuntimeException failure) {
+                JsonObject thrown = new JsonObject();
+                thrown.addProperty("thrown", failure.getClass().getName());
+                out.add("compressed:" + input, thrown);
+            }
+        }
+        for (String kind : List.of("a", "b", "unknown", "badtype", "partialtype", "partialcodec")) {
+            for (int n : new int[]{2, -2}) {
+                Choice choice = new Choice(kind, n);
+                out.add("encode:" + kind + ":" + n, result(codec.encodeStart(JsonOps.INSTANCE, choice)));
+                out.add("encodeCompressed:" + kind + ":" + n, result(codec.encodeStart(JsonOps.COMPRESSED, choice)));
+            }
+        }
+        return out;
+    }
+
     public JsonObject all() {
         JsonObject out = new JsonObject();
         out.add("validation", validations());
@@ -282,6 +349,8 @@ public final class CodecReferenceProbe {
         out.add("lazy", lazyCodecs());
         out.add("recursive", recursiveCodecs());
         out.add("optional", optionalFields());
+        out.add("dispatch", dispatchedSchemas(false));
+        out.add("partialDispatch", dispatchedSchemas(true));
         return out;
     }
 

@@ -167,3 +167,13 @@ with a production item-data JSON/native-NBT regression, the final native suites
 execute 199 server / 206 client tests. Defaults still apply to absent fields;
 malformed strict fields retain the baseline errors/partials instead of becoming
 successful defaults. Complete mod data and world persistence remain pending.
+
+Cycle 027 adapts the nine MapCodec dispatch/partial-dispatch consumers and adds
+76 real-library reference observations. The focused runtime now includes the
+actual BlueprintSource/BlueprintTarget classes and four cases for their flat
+and compressed JSON, strict flags/defaults and all eight variant wire codecs.
+StackTarget's JSON item schema remains pending the item-stack codec conversion.
+The runner invokes Forge's actual BLOCKS registry bake after vanilla bootstrap
+to populate native block-state IDs/caches; no synthetic state-ID table is used.
+Final counts are 205 server / 212 client tests. These remain codec tests without
+full mod construction, blueprint world transactions or a live game world.

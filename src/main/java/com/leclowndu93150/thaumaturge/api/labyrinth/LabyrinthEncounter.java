@@ -29,9 +29,8 @@ public interface LabyrinthEncounter {
     /**
      * Inline encounter codec, dispatching on {@code type} through the {@link LabyrinthEncounterType} registry.
      */
-    Codec<LabyrinthEncounter> DIRECT_CODEC = Codecs.lazyInitialized(() -> LabyrinthHelper.encounterTypes()
-            .byNameCodec()
-            .dispatch("type", LabyrinthEncounter::type, LabyrinthEncounterType::codec));
+    Codec<LabyrinthEncounter> DIRECT_CODEC = Codecs.lazyInitialized(() -> Codecs.dispatch(LabyrinthHelper.encounterTypes()
+            .byNameCodec(), "type", LabyrinthEncounter::type, LabyrinthEncounterType::codec));
 
     /**
      * Reference codec: accepts an encounter id or an inline encounter.

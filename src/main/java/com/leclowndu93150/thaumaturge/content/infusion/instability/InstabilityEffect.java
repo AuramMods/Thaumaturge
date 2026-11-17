@@ -5,9 +5,8 @@ import com.leclowndu93150.thaumaturge.registry.TTInstabilityEffects;
 import com.mojang.serialization.Codec;
 
 public interface InstabilityEffect {
-    Codec<InstabilityEffect> CODEC = Codecs.lazyInitialized(() -> TTInstabilityEffects.registry()
-            .byNameCodec()
-            .dispatch("type", InstabilityEffect::type, InstabilityEffectType::codec));
+    Codec<InstabilityEffect> CODEC = Codecs.lazyInitialized(() -> Codecs.dispatch(TTInstabilityEffects.registry()
+            .byNameCodec(), "type", InstabilityEffect::type, InstabilityEffectType::codec));
 
     InstabilityEffectType<?> type();
 

@@ -28,10 +28,13 @@ The cycle-025 evidence records that metadata and the actual reference bytecode.
 Adapted production portions retain Microsoft's MIT notice in
 `src/main/resources/META-INF/licenses/thaumaturge-dfu-compat.txt`.
 
-The current fixture contains 297 observations in eight categories. It exercises
+The current fixture contains 373 observations in ten categories. It exercises
 JSON ops and controlled schemas, not every mod codec or native NBT/world load.
 The optional-field comparisons include strict/lenient decoding, defaults,
 partial/error preservation, field omission and compressed JSON. A separate
 production item-data test covers malformed and valid native NBT fields.
-Map dispatch APIs and several newer vanilla ingredient/item schemas still
-require conversion elsewhere in the port.
+Dispatch/partial-dispatch comparisons also cover flat and compressed schemas,
+unknown types, malformed fields, encoder type/codec errors and partial results.
+The truncated compressed-payload case records and compares the actual exception
+class (both libraries throw); no production exception handling is replaced.
+Several newer vanilla ingredient/item schemas still require conversion.

@@ -36,6 +36,8 @@ class CodecsTest {
     @Test void lazyConstructionMatchesTheActual1211Library() throws Exception { compare("lazy", port.lazyCodecs()); }
     @Test void recursiveSchemasMatchTheActual1211Library() throws Exception { compare("recursive", port.recursiveCodecs()); }
     @Test void optionalFieldsMatchTheActual1211Library() throws Exception { compare("optional", port.optionalFields()); }
+    @Test void dispatchedSchemasMatchTheActual1211Library() throws Exception { compare("dispatch", port.dispatchedSchemas(false)); }
+    @Test void partialDispatchMatchesTheActual1211Library() throws Exception { compare("partialDispatch", port.dispatchedSchemas(true)); }
 
     @Test
     void concurrentFirstUseBuildsALazyCodecOnce() throws Exception {

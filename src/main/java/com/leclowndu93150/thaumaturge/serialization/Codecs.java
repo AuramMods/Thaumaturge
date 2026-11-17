@@ -86,6 +86,22 @@ public final class Codecs {
                 value -> Objects.equals(value, fallback) ? Optional.empty() : Optional.of(value));
     }
 
+    public static <K, V> Codec<V> dispatch(Codec<K> keys, Function<? super V, ? extends K> type,
+                                          Function<? super K, ? extends MapCodec<? extends V>> formats) {
+        return dispatch(keys, "type", type, formats);
+    }
+
+    public static <K, V> Codec<V> dispatch(Codec<K> keys, String name, Function<? super V, ? extends K> type,
+                                          Function<? super K, ? extends MapCodec<? extends V>> formats) {
+        return keys.dispatch(name, type, key -> formats.apply(key).codec());
+    }
+
+    public static <K, V> Codec<V> partialDispatch(Codec<K> keys, String name,
+            Function<? super V, ? extends DataResult<? extends K>> type,
+            Function<? super K, ? extends DataResult<? extends MapCodec<? extends V>>> formats) {
+        return keys.partialDispatch(name, type, key -> formats.apply(key).map(MapCodec::codec));
+    }
+
     private static final class OptionalField<A> extends MapCodec<Optional<A>> {
         private final String name;
         private final Codec<A> element;

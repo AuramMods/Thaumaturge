@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public sealed interface BlueprintTarget {
-    Codec<BlueprintTarget> CODEC = Kind.CODEC.dispatch("type", BlueprintTarget::kind, k -> k.codec);
+    Codec<BlueprintTarget> CODEC = Codecs.dispatch(Kind.CODEC, "type", BlueprintTarget::kind, k -> k.codec);
 
     StreamCodec<RegistryFriendlyByteBuf, BlueprintTarget> STREAM_CODEC = new StreamCodec<>() {
         @Override

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.google.common.collect.ImmutableList;
@@ -25,7 +26,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public sealed interface BlueprintSource {
-    Codec<BlueprintSource> CODEC = Kind.CODEC.dispatch("type", BlueprintSource::kind, k -> k.codec);
+    Codec<BlueprintSource> CODEC = Codecs.dispatch(Kind.CODEC, "type", BlueprintSource::kind, k -> k.codec);
 
     StreamCodec<RegistryFriendlyByteBuf, BlueprintSource> STREAM_CODEC = new StreamCodec<>() {
         @Override
