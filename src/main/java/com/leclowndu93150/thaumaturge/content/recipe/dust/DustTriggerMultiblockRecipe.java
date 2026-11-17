@@ -1,8 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
-import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
-import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
-
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintPart;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintTarget;
@@ -10,7 +7,13 @@ import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerInput;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerPlacement;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
+import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
+import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -19,9 +22,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
-import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
-import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -52,17 +52,8 @@ public final class DustTriggerMultiblockRecipe extends AbstractRecipe<DustTrigge
                     r -> r.research,
                     DustTriggerMultiblockRecipe::new);
 
-    public static final RecipeSerializer<DustTriggerMultiblockRecipe> SERIALIZER = new RecipeSerializer<>() {
-        @Override
-        public MapCodec<DustTriggerMultiblockRecipe> codec() {
-            return MAP_CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, DustTriggerMultiblockRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
-    };
+    public static final RecipeSerializer<DustTriggerMultiblockRecipe> SERIALIZER =
+            new SimpleRecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
     private final ResourceLocation blueprintId;
     private final ItemStack result;

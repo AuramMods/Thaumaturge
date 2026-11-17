@@ -6,7 +6,8 @@
   "refmap": "port-mixins.refmap.json",
   "mixins": [
     "server.level.ServerLevelEntityTickMixin",
-    "world.item.crafting.RecipeManagerMixin"
+    "world.item.crafting.RecipeManagerMixin",
+    "server.ReloadableServerResourcesMixin"
   ],
   "client": [
     "client.multiplayer.ClientLevelEntityTickMixin"

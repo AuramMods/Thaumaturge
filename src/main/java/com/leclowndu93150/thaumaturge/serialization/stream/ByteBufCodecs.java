@@ -194,8 +194,8 @@ public final class ByteBufCodecs {
 
     public static <V> StreamCodec<RegistryFriendlyByteBuf, V> fromCodecWithRegistries(Codec<V> codec) {
         return StreamCodec.of(
-                (buffer, value) -> encodeNbt(buffer, RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), codec, value),
-                buffer -> decodeNbt(buffer, RegistryOps.create(NbtOps.INSTANCE, buffer.registryAccess()), codec));
+                (buffer, value) -> encodeNbt(buffer, RegistryOps.create(NbtOps.INSTANCE, buffer.registryLookup()), codec, value),
+                buffer -> decodeNbt(buffer, RegistryOps.create(NbtOps.INSTANCE, buffer.registryLookup()), codec));
     }
 
     private static <V> void encodeNbt(ByteBuf buffer, DynamicOps<Tag> ops, Codec<V> codec, V value) {

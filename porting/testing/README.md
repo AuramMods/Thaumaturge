@@ -117,8 +117,8 @@ serializer network round trips. The runner registers Forge's actual vanilla
 ingredient serializer, normally registered by ForgeMod's recipe-serializer
 event, so native JSON parsing works without full mod construction.
 
-The focused config currently applies the two entity-tick mixins and the recipe
-manager lifetime mixin. The five earlier persistence/item mixins compile with
+The focused config currently applies the two entity-tick mixins, recipe
+manager lifetime/context mixin and server-resource lookup constructor hook. The five earlier persistence/item mixins compile with
 the real processor/refmap but are not applied here yet. Full gameplay subscriber
 execution, mod recipe serializers/inputs/IDs, live worlds, rendering, all other
 mixins and actual distribution installation remain pending.
@@ -130,3 +130,12 @@ special-recipe callbacks, including expansion of trimmed remainders to the
 original crafting slot. This does not yet validate the full mod recipe classes
 or native serialization: the next port step must bind real resource IDs during
 Forge JSON/network decoding and supply the appropriate registry context.
+
+
+Cycle 023 implements the native serializer callbacks and expands the suites to
+181 server / 188 client tests. Real fixture types/serializers are registered via
+ForgeRegistries. Tests invoke the real server-resource constructor and recipe
+JSON apply path, and exercise native-buffer serialization, source-lookup
+retention, ID binding, lookup-only providers, malformed data and concurrency.
+The callback tests do not establish login packet ordering, a live connection,
+all full-mod recipe data, or a complete Forge/mod load.

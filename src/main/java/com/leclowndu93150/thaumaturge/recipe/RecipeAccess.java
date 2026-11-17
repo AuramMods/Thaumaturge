@@ -1,10 +1,14 @@
 package com.leclowndu93150.thaumaturge.recipe;
 
+import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -22,6 +26,7 @@ public final class RecipeAccess {
 
     private final RecipeManager manager;
     private final Map<Recipe<?>, RecipeHolder<?>> holders = new IdentityHashMap<>();
+    private volatile HolderLookup.Provider registries;
 
     public RecipeAccess(RecipeManager manager) {
         this.manager = manager;
@@ -33,6 +38,15 @@ public final class RecipeAccess {
 
     public synchronized void invalidate() {
         holders.clear();
+    }
+
+    public void attachRegistries(HolderLookup.Provider registries) {
+        this.registries = Objects.requireNonNull(registries);
+    }
+
+    public <V> V withRegistries(Supplier<V> action) {
+        HolderLookup.Provider lookup = registries;
+        return lookup == null ? action.get() : RegistryContext.withRegistries(lookup, action);
     }
 
     @SuppressWarnings("unchecked")

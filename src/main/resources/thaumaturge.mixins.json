@@ -25,7 +25,8 @@
     "world.level.chunk.LevelChunkRegistryContextMixin",
     "world.level.chunk.storage.ChunkSerializerRegistryContextMixin",
     "server.level.ServerLevelEntityTickMixin",
-    "world.item.crafting.RecipeManagerMixin"
+    "world.item.crafting.RecipeManagerMixin",
+    "server.ReloadableServerResourcesMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",
