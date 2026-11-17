@@ -19,7 +19,7 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.neoforged.neoforge.common.Tags;
+import net.minecraftforge.common.Tags;
 
 final class SplitConservation {
     private static final int SETTLE_PASSES = 8;

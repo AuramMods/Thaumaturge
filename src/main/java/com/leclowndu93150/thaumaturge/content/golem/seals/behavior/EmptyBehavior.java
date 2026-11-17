@@ -13,7 +13,7 @@ import com.leclowndu93150.thaumaturge.api.items.StackFilter;
 import java.util.List;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public final class EmptyBehavior implements ISealBehavior {
     public static final SealSetting CYCLE =

@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 public final class ThaumatoriumScreen extends AbstractTTContainerScreen<MenuThaumatorium> {
     private static final ResourceLocation TEXTURE = TTIds.rl("textures/gui/gui_thaumatorium.png");

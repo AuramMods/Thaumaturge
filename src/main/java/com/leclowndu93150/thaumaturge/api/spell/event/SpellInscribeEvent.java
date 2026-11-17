@@ -5,8 +5,8 @@ import com.leclowndu93150.thaumaturge.api.spell.SpellSummary;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * Fired on the game bus when a player asks a focal manipulator to inscribe a spell, after the
@@ -16,7 +16,8 @@ import net.neoforged.bus.api.ICancellableEvent;
  *
  * @since 1.0.0
  */
-public final class SpellInscribeEvent extends Event implements ICancellableEvent {
+@Cancelable
+public final class SpellInscribeEvent extends Event {
     private final Player player;
     private final BlockPos pos;
     private final ItemStack focus;

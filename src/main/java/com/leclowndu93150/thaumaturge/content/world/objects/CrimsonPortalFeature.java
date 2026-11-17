@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 
 public final class CrimsonPortalFeature extends Feature<NoneFeatureConfiguration> {
     private static final int CLEARANCE = 3;
@@ -42,7 +42,7 @@ public final class CrimsonPortalFeature extends Feature<NoneFeatureConfiguration
         }
         portal.setPersistenceRequired();
         portal.moveTo(spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5, 0.0F, 0.0F);
-        EventHooks.finalizeMobSpawn(portal, level, level.getCurrentDifficultyAt(spawn), MobSpawnType.STRUCTURE, null);
+        ForgeEventFactory.finalizeMobSpawn(portal, level, level.getCurrentDifficultyAt(spawn), MobSpawnType.STRUCTURE, null);
         level.addFreshEntityWithPassengers(portal);
         return true;
     }

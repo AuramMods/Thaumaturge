@@ -27,7 +27,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.common.MinecraftForge;
 import org.jspecify.annotations.Nullable;
 
 public final class WorkbenchPayment {
@@ -127,7 +127,7 @@ public final class WorkbenchPayment {
         ArcaneCraftCost initial = new ArcaneCraftCost(
                 plan.fullWand(), plan.wandCentivis(), plan.crystalsToConsume(), plan.auraVis(), affordable);
         ArcaneCraftCostEvent event = new ArcaneCraftCostEvent(recipe, inventory, player, initial);
-        NeoForge.EVENT_BUS.post(event);
+        MinecraftForge.EVENT_BUS.post(event);
         ArcaneCraftCost result = event.getCost();
         if (result == initial) {
             return plan;

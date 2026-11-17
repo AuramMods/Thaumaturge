@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.taint;
 
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 
 public final class PurifyingClientExtensions implements IClientFluidTypeExtensions {
     private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");

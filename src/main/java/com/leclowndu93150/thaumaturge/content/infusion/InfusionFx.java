@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundInfusionSourcePayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 public final class InfusionFx {
     private static final double ITEM_STREAM_RANGE = 32.0;

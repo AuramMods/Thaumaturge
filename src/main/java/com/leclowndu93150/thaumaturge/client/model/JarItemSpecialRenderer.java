@@ -13,7 +13,7 @@ import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.minecraftforge.client.model.data.ModelData;
 
 public final class JarItemSpecialRenderer extends BlockEntityWithoutLevelRenderer {
 

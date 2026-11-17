@@ -19,9 +19,9 @@ import com.leclowndu93150.thaumaturge.content.world.tree.OptionalDynamicTreeFeat
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTFeatures {
     public static final DeferredRegister<Feature<?>> FEATURES =

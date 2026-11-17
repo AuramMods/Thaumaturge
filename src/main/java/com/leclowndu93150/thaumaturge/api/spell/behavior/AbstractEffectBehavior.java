@@ -11,7 +11,7 @@ import java.util.Set;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.common.MinecraftForge;
 
 /**
  * Base for effect behaviours. Runs {@link #apply} once per target the touch budget admits and no
@@ -30,7 +30,7 @@ public abstract class AbstractEffectBehavior implements SpellBehavior {
             if (!admit(ctx, target)) {
                 continue;
             }
-            SpellEffectEvent event = NeoForge.EVENT_BUS.post(new SpellEffectEvent(ctx, target, ctx.power()));
+            SpellEffectEvent event = MinecraftForge.EVENT_BUS.post(new SpellEffectEvent(ctx, target, ctx.power()));
             if (!event.isCanceled()) {
                 apply(ctx, target, event.power(), index++);
             }

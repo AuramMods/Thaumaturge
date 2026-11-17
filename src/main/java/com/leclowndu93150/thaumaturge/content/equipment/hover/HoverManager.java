@@ -16,8 +16,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.common.NeoForgeMod;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.common.ForgeMod;
 
 public final class HoverManager {
     public static final int FUEL_INTERVAL_TICKS = 360;
@@ -115,7 +115,7 @@ public final class HoverManager {
     record ChargeTick(int elapsedTicks, boolean consumeFuel) {}
 
     private static void keepAloft(ServerPlayer player) {
-        AttributeInstance flight = player.getAttribute(NeoForgeMod.CREATIVE_FLIGHT);
+        AttributeInstance flight = player.getAttribute(ForgeMod.CREATIVE_FLIGHT);
         if (flight != null && !flight.hasModifier(FLIGHT_MODIFIER_ID)) {
             flight.addTransientModifier(new AttributeModifier(
                     FLIGHT_MODIFIER_ID, FLIGHT_MODIFIER_VALUE, AttributeModifier.Operation.ADD_VALUE));
@@ -128,7 +128,7 @@ public final class HoverManager {
     }
 
     private static void land(ServerPlayer player) {
-        AttributeInstance flight = player.getAttribute(NeoForgeMod.CREATIVE_FLIGHT);
+        AttributeInstance flight = player.getAttribute(ForgeMod.CREATIVE_FLIGHT);
         if (flight != null) {
             flight.removeModifier(FLIGHT_MODIFIER_ID);
         }

@@ -10,7 +10,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.function.Supplier;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.common.MinecraftForge;
 
 public final class ScriptedNode implements SpellBehavior {
     private final String key;
@@ -40,7 +40,7 @@ public final class ScriptedNode implements SpellBehavior {
 
     @Override
     public void execute(CastContext ctx, List<SpellTarget> incoming) {
-        ScriptedSpellEvent event = NeoForge.EVENT_BUS.post(new ScriptedSpellEvent(key, ctx, incoming, ctx.power()));
+        ScriptedSpellEvent event = MinecraftForge.EVENT_BUS.post(new ScriptedSpellEvent(key, ctx, incoming, ctx.power()));
         if (!event.stopped()) {
             ctx.proceed(event.targets(), event.state());
         }

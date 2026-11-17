@@ -15,9 +15,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 
-public abstract class PurifyingFluid extends BaseFlowingFluid {
+public abstract class PurifyingFluid extends ForgeFlowingFluid {
     private static final float MAX_AMOUNT = 8.0F;
     private static final int WARD_BUDGET_TICKS = 200000;
     private static final int WARD_MAX_TICKS = 32000;

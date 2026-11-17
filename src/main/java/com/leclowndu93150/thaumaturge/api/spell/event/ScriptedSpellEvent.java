@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.spell.cast.SpellState;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import java.util.ArrayList;
 import java.util.List;
-import net.neoforged.bus.api.Event;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Fired on the game bus when a node with a scripted behaviour runs. The behaviour itself does

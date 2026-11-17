@@ -19,7 +19,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
-import net.neoforged.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 public final class AspectIndexFile {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();

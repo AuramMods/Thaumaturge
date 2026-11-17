@@ -129,7 +129,9 @@ Deliver the tested distributable JAR and checksum, exact Minecraft/Forge/Java/de
 | 000 — planning | Inspected branches, baseline architecture, test inventory, target Forge docs, and dependency metadata; created `1.20.1` and the port documents | Static inspection only; no implementation, build, tests, or game launch | `f5b15d267` |
 | 001 — Forge platform | Replaced Prism/NeoForge DSL with ForgeGradle 6.0.54, MixinGradle 0.7.38, Gradle 8.14.3, Forge 47.4.29, official 1.20.1 mappings, Java 17 toolchain; converted metadata/pack/mixin level; target dependency pins, isolated profiles/EULA tasks, and build CI | Resource processing and profile setup pass; actual Java 17 compilation reaches 62 syntax errors in 10 files. Logs under `build/port-evidence/cycle-001/`. No runtime launch | `c7688493e` |
 
-| 002 — Java 17 language | Converted record deconstruction and pattern switches in scanning, essentia tubes, aspect inputs, thaumometer client rendering and debug overlay to Java 17 constructs | `./gradlew compileJava --console=plain` reaches type checking; no prior syntax errors, but the 2,000-error cap is reached on unresolved NeoForge/modern APIs. Log: `build/port-evidence/cycle-002/compile.log`. No behavior tests can run yet | Containing commit |
+| 002 — Java 17 language | Converted record deconstruction and pattern switches in scanning, essentia tubes, aspect inputs, thaumometer client rendering and debug overlay to Java 17 constructs | `./gradlew compileJava --console=plain` reaches type checking; no prior syntax errors, but the 2,000-error cap is reached on unresolved NeoForge/modern APIs. Log: `build/port-evidence/cycle-002/compile.log`. No behavior tests can run yet | `eafcff3bc` |
+
+| 003 — Forge imports and subscriptions | Converted 134 loader/event/API import paths across production/tests; Forge no-argument entry point/config registration, cancelable events, explicit mod-bus routing in 58 classes, and split lifecycle/gameplay listeners | Main compilation parses converted files but still reaches 2,000 errors in at least 418 files on modern storage, networking, registry, event, rendering and integration APIs. Logs: `build/port-evidence/cycle-003/`. No runtime validation | Containing commit |
 
 For each following cycle, record the subsystem, changes, exact commands and outcomes (including failures), evidence paths, remaining issues, next action, and commit reference. A cycle may refer to its containing commit until the next cycle fills in its hash. Keep this document current so work resumes without rediscovering prior results.
 
@@ -149,3 +151,11 @@ For each following cycle, record the subsystem, changes, exact commands and outc
 - Replaced record deconstruction with type patterns and record accessors, and type switches with ordered `instanceof` branches. Preserved null handling for neighbouring tube entities and the object-form input's null rejection.
 - Java 17 compiler now parses all main source files and reports unresolved loader/API types. It reaches the configured 2,000 diagnostic limit, so this count is a lower bound, not a full defect inventory. Existing behavior tests remain unexecuted because main compilation fails.
 - Next: convert shared Forge loader/event imports and explicit mod-bus subscriptions, registration wrappers, and foundational APIs; then recapture compiler diagnostics.
+
+## Cycle 003 evidence and next work
+
+- Mapped imports against class names in the resolved Forge 47.4.29 and loader/eventbus/merger API artifacts. Converted common Forge classes (including renamed hooks/config/fluid classes) without adding fake API stubs or excluding source. Import changes do not prove method-level API compatibility.
+- Forge uses explicit mod and gameplay buses. Added MOD routing for lifecycle/registration-only subscribers; kept gameplay events on FORGE. Mixed subscriptions in keybindings, research scan bootstrap, and attributes are registered separately. Further event API adaptation remains required.
+- Replaced NeoForge cancellation marker interfaces with Forge `@Cancelable`, including inherited research-event cancellation. Changed mod construction and config registration to the Forge loading context.
+- `compile-dist.log` records the latest real compile failure: diagnostic cap remains at 2,000, chiefly missing component/codec/payload APIs. All runtime behavior and test execution remain unverified.
+- Next: implement the isolated non-focusing client-test mechanism, and continue foundational API conversion.

@@ -1,27 +1,27 @@
 package com.leclowndu93150.thaumaturge.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public final class ThaumaturgeClientConfig {
     public static final String DONATOR_CAPE_KEY = "donator_cape";
 
-    public static final ModConfigSpec SPEC;
+    public static final ForgeConfigSpec SPEC;
 
-    private static final ModConfigSpec.BooleanValue SHOW_ASPECTS_BY_DEFAULT;
-    private static final ModConfigSpec.BooleanValue LARGE_TAG_TEXT;
-    private static final ModConfigSpec.BooleanValue DIAL_BOTTOM;
-    private static final ModConfigSpec.BooleanValue ELDRITCH_GUARDIAN_FOG;
-    private static final ModConfigSpec.BooleanValue WARP_MIST_FOG;
-    private static final ModConfigSpec.BooleanValue TAINT_ENVIRONMENT_FOG;
-    private static final ModConfigSpec.BooleanValue TAINTED_LANDS_WATER_FOG;
-    private static final ModConfigSpec.BooleanValue FLUX_GOO_FOG;
-    private static final ModConfigSpec.BooleanValue OUTER_LANDS_FOG;
-    // private static final ModConfigSpec.BooleanValue HIDE_RECIPES_IF_MISSING_RESEARCH;
+    private static final ForgeConfigSpec.BooleanValue SHOW_ASPECTS_BY_DEFAULT;
+    private static final ForgeConfigSpec.BooleanValue LARGE_TAG_TEXT;
+    private static final ForgeConfigSpec.BooleanValue DIAL_BOTTOM;
+    private static final ForgeConfigSpec.BooleanValue ELDRITCH_GUARDIAN_FOG;
+    private static final ForgeConfigSpec.BooleanValue WARP_MIST_FOG;
+    private static final ForgeConfigSpec.BooleanValue TAINT_ENVIRONMENT_FOG;
+    private static final ForgeConfigSpec.BooleanValue TAINTED_LANDS_WATER_FOG;
+    private static final ForgeConfigSpec.BooleanValue FLUX_GOO_FOG;
+    private static final ForgeConfigSpec.BooleanValue OUTER_LANDS_FOG;
+    // private static final ForgeConfigSpec.BooleanValue HIDE_RECIPES_IF_MISSING_RESEARCH;
 
-    private static final ModConfigSpec.BooleanValue DONATOR_CAPE;
+    private static final ForgeConfigSpec.BooleanValue DONATOR_CAPE;
 
     static {
-        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
         SHOW_ASPECTS_BY_DEFAULT = builder.comment(
                         "When true, item aspects render on tooltips by default and Shift hides them. When false, Shift reveals them.")

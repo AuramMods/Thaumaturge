@@ -6,10 +6,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
-import net.neoforged.neoforge.registries.RegisterEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.registries.RegisterEvent;
 
 public final class LegacyRegistryAliases {
     private static final List<RenamedEntry> RENAMES =
@@ -19,7 +19,7 @@ public final class LegacyRegistryAliases {
 
     public static void register(IEventBus modBus) {
         modBus.addListener(RegisterEvent.class, LegacyRegistryAliases::onRegister);
-        NeoForge.EVENT_BUS.addListener(ServerAboutToStartEvent.class, LegacyRegistryAliases::onServerAboutToStart);
+        MinecraftForge.EVENT_BUS.addListener(ServerAboutToStartEvent.class, LegacyRegistryAliases::onServerAboutToStart);
     }
 
     private static void onRegister(RegisterEvent event) {

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 final class ConfigLangEn {
     private static final String PREFIX = TTIds.MODID + ".configuration.";
@@ -212,5 +212,5 @@ final class ConfigLangEn {
         }
     }
 
-    private record ConfigFile(ModConfigSpec spec, String type, String name) {}
+    private record ConfigFile(ForgeConfigSpec spec, String type, String name) {}
 }

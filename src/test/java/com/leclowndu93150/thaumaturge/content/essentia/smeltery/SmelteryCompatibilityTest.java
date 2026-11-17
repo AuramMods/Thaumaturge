@@ -28,7 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -195,8 +195,8 @@ class SmelteryCompatibilityTest {
         smelter.itemSlots().setStackInSlot(1, new ItemStack(Items.LAVA_BUCKET));
         // unit tests don't load the furnace fuel data map; provide the fuel hook's result here.
         try (var index = mockStatic(AspectIndexAccess.class);
-                var fuel = mockStatic(EventHooks.class)) {
-            fuel.when(() -> EventHooks.getItemBurnTime(any(ItemStack.class), anyInt(), eq(RecipeType.SMELTING)))
+                var fuel = mockStatic(ForgeEventFactory.class)) {
+            fuel.when(() -> ForgeEventFactory.getItemBurnTime(any(ItemStack.class), anyInt(), eq(RecipeType.SMELTING)))
                     .thenReturn(20000);
             index.when(() -> AspectIndexAccess.of(any(ItemStack.class))).thenReturn(AspectList.EMPTY.add(order, 2));
             BlockEntitySmelter.staticTick(level, BlockPos.ZERO, smelter.getBlockState(), smelter);

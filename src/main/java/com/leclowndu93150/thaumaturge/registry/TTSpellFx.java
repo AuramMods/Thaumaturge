@@ -4,9 +4,9 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.spell.fx.SpellFxStyle;
 import com.leclowndu93150.thaumaturge.content.spell.fx.SpellFxStyles;
 import net.minecraft.core.Registry;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTSpellFx {
     public static final DeferredRegister<SpellFxStyle> STYLES =

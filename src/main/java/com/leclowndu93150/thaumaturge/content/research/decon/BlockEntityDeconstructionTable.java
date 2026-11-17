@@ -29,7 +29,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityDeconstructionTable extends AbstractSyncedBlockEntity implements MenuProvider {

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.Event;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Fired on the NeoForge game event bus after the workbench planner computes an

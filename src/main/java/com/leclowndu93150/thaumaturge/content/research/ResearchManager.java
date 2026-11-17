@@ -40,8 +40,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
 public final class ResearchManager {
@@ -331,7 +331,7 @@ public final class ResearchManager {
     }
 
     private static boolean vetoed(ResearchEvent event) {
-        return NeoForge.EVENT_BUS.post(event).isCanceled();
+        return MinecraftForge.EVENT_BUS.post(event).isCanceled();
     }
 
     private static boolean hasRequirements(IResearchStage stage) {

@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.compat.dynamictrees.DynamicTreesPlacement;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 
 public final class OptionalDynamicTreeFeature extends Feature<TreeConfiguration> {
     public OptionalDynamicTreeFeature() {

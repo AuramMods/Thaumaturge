@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.client.taint;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 
 public final class LiquidDeathClientExtensions implements IClientFluidTypeExtensions {
     private static final ResourceLocation TEXTURE = TTIds.rl("block/animatedglow");

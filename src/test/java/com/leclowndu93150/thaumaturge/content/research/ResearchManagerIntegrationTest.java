@@ -25,7 +25,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.common.MinecraftForge;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -132,7 +132,7 @@ final class ResearchManagerIntegrationTest {
                 event.setCanceled(true);
             }
         };
-        NeoForge.EVENT_BUS.addListener(ResearchEvent.Completed.class, veto);
+        MinecraftForge.EVENT_BUS.addListener(ResearchEvent.Completed.class, veto);
         try {
             assertFalse(ResearchManager.complete(player, CHILD));
             assertTrue(knowledge.knows(CHILD));
@@ -141,7 +141,7 @@ final class ResearchManagerIntegrationTest {
             assertFalse(ResearchManager.complete(player, CHILD));
             assertFalse(knowledge.takeSyncPending());
         } finally {
-            NeoForge.EVENT_BUS.unregister(veto);
+            MinecraftForge.EVENT_BUS.unregister(veto);
         }
     }
 

@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.data.sound;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.data.PackOutput;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.SoundDefinitionsProvider;
 
 public final class TTSoundDefinitionsProvider extends SoundDefinitionsProvider {
     public TTSoundDefinitionsProvider(PackOutput output, ExistingFileHelper existingFileHelper) {

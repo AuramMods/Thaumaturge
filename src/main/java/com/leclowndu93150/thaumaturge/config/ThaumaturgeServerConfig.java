@@ -1,22 +1,22 @@
 package com.leclowndu93150.thaumaturge.config;
 
 import com.leclowndu93150.thaumaturge.config.labyrinth.LabyrinthConfig;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public final class ThaumaturgeServerConfig {
-    public static final ModConfigSpec SPEC;
+    public static final ForgeConfigSpec SPEC;
 
-    public static final ModConfigSpec.BooleanValue INFERNAL_FURNACE_TURN_TO_BLAZE;
-    public static final ModConfigSpec.BooleanValue CULTIST_FIREBALLS_IGNITE_BLOCKS;
-    public static final ModConfigSpec.BooleanValue APRIL_FOOLS;
-    public static final ModConfigSpec.IntValue SPELL_MAX_ENTITIES_PER_TICK;
-    public static final ModConfigSpec.IntValue SPELL_MAX_BLOCKS_PER_TICK;
-    public static final ModConfigSpec.IntValue SPELL_MAX_NODES_PER_RUN;
-    public static final ModConfigSpec.IntValue SPELL_MAX_DELAYED_PER_LEVEL;
+    public static final ForgeConfigSpec.BooleanValue INFERNAL_FURNACE_TURN_TO_BLAZE;
+    public static final ForgeConfigSpec.BooleanValue CULTIST_FIREBALLS_IGNITE_BLOCKS;
+    public static final ForgeConfigSpec.BooleanValue APRIL_FOOLS;
+    public static final ForgeConfigSpec.IntValue SPELL_MAX_ENTITIES_PER_TICK;
+    public static final ForgeConfigSpec.IntValue SPELL_MAX_BLOCKS_PER_TICK;
+    public static final ForgeConfigSpec.IntValue SPELL_MAX_NODES_PER_RUN;
+    public static final ForgeConfigSpec.IntValue SPELL_MAX_DELAYED_PER_LEVEL;
     public static final LabyrinthConfig LABYRINTH;
 
     static {
-        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         builder.push("infernal_furnace");
         INFERNAL_FURNACE_TURN_TO_BLAZE = builder.comment(
                         "Setting this to true will make the lava of the infernal furnace turn into a blaze when it is broken.")

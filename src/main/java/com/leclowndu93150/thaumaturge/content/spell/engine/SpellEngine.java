@@ -26,7 +26,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.common.MinecraftForge;
 
 public final class SpellEngine {
     private static final int MAX_CAST_SOUNDS = 3;
@@ -37,7 +37,7 @@ public final class SpellEngine {
 
     public static SpellCastEvent.Pre firePre(
             LivingEntity caster, ItemStack focus, Spell spell, float power, float vis) {
-        return NeoForge.EVENT_BUS.post(new SpellCastEvent.Pre(caster, focus, spell, power, vis));
+        return MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Pre(caster, focus, spell, power, vis));
     }
 
     public static void execute(
@@ -49,7 +49,7 @@ public final class SpellEngine {
         playCastSounds(level, caster, spell);
         runNode(run, spell.root(), origin, SpellState.DEFAULT.with(SpellStats.POWER, power));
         run.finish();
-        NeoForge.EVENT_BUS.post(new SpellCastEvent.Post(caster, focus, spell));
+        MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(caster, focus, spell));
     }
 
     public static void resume(ServerLevel level, SpellContinuation continuation, List<SpellTarget> targets) {
@@ -86,7 +86,7 @@ public final class SpellEngine {
                 state.multiply(SpellStats.POWER, part.power()),
                 aspect,
                 Spells.color(level.registryAccess(), node));
-        SpellNodeEvent event = NeoForge.EVENT_BUS.post(new SpellNodeEvent(ctx, inWorld(level, targets)));
+        SpellNodeEvent event = MinecraftForge.EVENT_BUS.post(new SpellNodeEvent(ctx, inWorld(level, targets)));
         if (event.isCanceled()) {
             return;
         }

@@ -44,8 +44,8 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity implements MenuProvider {
@@ -124,7 +124,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
             return false;
         }
         boolean creative = player.getAbilities().instabuild;
-        if (NeoForge.EVENT_BUS
+        if (MinecraftForge.EVENT_BUS
                 .post(new SpellInscribeEvent(player, worldPosition, focus, draft, summary))
                 .isCanceled()) {
             return false;

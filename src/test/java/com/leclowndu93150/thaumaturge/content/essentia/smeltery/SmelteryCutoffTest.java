@@ -44,7 +44,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -277,10 +277,10 @@ class SmelteryCutoffTest {
         machine.vis = 5;
         machine.itemSlots().setStackInSlot(BlockEntitySmelter.FUEL_SLOT, new ItemStack(TTItems.ALUMENTUM.get()));
         try (var index = mockStatic(AspectIndexAccess.class);
-                var fuel = mockStatic(EventHooks.class);
+                var fuel = mockStatic(ForgeEventFactory.class);
                 var columns = mockStatic(BlockEntityAlembic.class)) {
             index.when(() -> AspectIndexAccess.of(any(ItemStack.class))).thenReturn(AspectList.EMPTY.add(order, 100));
-            fuel.when(() -> EventHooks.getItemBurnTime(any(ItemStack.class), anyInt(), eq(RecipeType.SMELTING)))
+            fuel.when(() -> ForgeEventFactory.getItemBurnTime(any(ItemStack.class), anyInt(), eq(RecipeType.SMELTING)))
                     .thenReturn(200);
             columns.when(() -> BlockEntityAlembic.feedColumn(level, BlockPos.ZERO, order))
                     .thenReturn(true);
@@ -501,12 +501,12 @@ class SmelteryCutoffTest {
         when(player.canInteractWithBlock(BlockPos.ZERO, 4.0)).thenReturn(false);
         assertFalse(menu.stillValid(player));
         try (var index = mockStatic(AspectIndexAccess.class);
-                var fuel = mockStatic(EventHooks.class)) {
+                var fuel = mockStatic(ForgeEventFactory.class)) {
             index.when(() -> AspectIndexAccess.of(any(ItemStack.class)))
                     .thenAnswer(call -> ((ItemStack) call.getArgument(0)).is(Items.DIRT)
                             ? AspectList.EMPTY.add(order, 1)
                             : AspectList.EMPTY);
-            fuel.when(() -> EventHooks.getItemBurnTime(any(ItemStack.class), anyInt(), eq(RecipeType.SMELTING)))
+            fuel.when(() -> ForgeEventFactory.getItemBurnTime(any(ItemStack.class), anyInt(), eq(RecipeType.SMELTING)))
                     .thenAnswer(call -> ((ItemStack) call.getArgument(0)).is(Items.COAL) ? 200 : 0);
             assertTrue(menu.getSlot(0).mayPlace(new ItemStack(Items.DIRT)));
             assertFalse(menu.getSlot(0).mayPlace(new ItemStack(Items.COAL)));

@@ -13,7 +13,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 public final class TTDamageTypeTagsProvider extends DamageTypeTagsProvider {
     public static final TagKey<DamageType> IS_MAGIC =

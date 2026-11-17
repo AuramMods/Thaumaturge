@@ -17,11 +17,11 @@ import com.leclowndu93150.thaumaturge.content.infusion.instability.InstabilityOu
 import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable;
 import com.leclowndu93150.thaumaturge.content.research.ResearchCategory;
 import com.leclowndu93150.thaumaturge.content.research.ResearchEntry;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.registries.DataPackRegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.registries.DataPackRegistryEvent;
 
-@EventBusSubscriber(modid = TTIds.MODID)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID)
 public final class TTDatapackRegistries {
     private TTDatapackRegistries() {}
 

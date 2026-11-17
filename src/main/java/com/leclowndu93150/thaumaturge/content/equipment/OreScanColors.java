@@ -5,7 +5,7 @@ import java.util.List;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.Tags;
+import net.minecraftforge.common.Tags;
 
 public final class OreScanColors {
     public static final int DEFAULT = 0xC4C4C4;

@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 import org.jspecify.annotations.Nullable;
 
 public final class TaintBiomeFeature extends Feature<TaintBiomeConfig> {
@@ -134,7 +134,7 @@ public final class TaintBiomeFeature extends Feature<TaintBiomeConfig> {
         }
         level.setBlock(pos, BlockTaintFibre.stateForWorld(level, pos), PLACE_FLAGS);
         taintacle.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, random.nextFloat() * FULL_TURN, 0.0F);
-        EventHooks.finalizeMobSpawn(
+        ForgeEventFactory.finalizeMobSpawn(
                 taintacle, level, level.getCurrentDifficultyAt(pos), MobSpawnType.CHUNK_GENERATION, null);
         taintacle.setPersistenceRequired();
         level.addFreshEntityWithPassengers(taintacle);

@@ -7,7 +7,7 @@ import com.leclowndu93150.thaumaturge.network.ClientboundAspectGainPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundUpdateJEIAspectListPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public final class AspectGainClientHandler {

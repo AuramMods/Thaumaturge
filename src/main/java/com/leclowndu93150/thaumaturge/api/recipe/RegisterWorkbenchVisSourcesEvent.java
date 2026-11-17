@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.api.recipe;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.neoforged.bus.api.Event;
-import net.neoforged.fml.event.IModBusEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.IModBusEvent;
 
 /**
  * Fired on the mod event bus so addons can register {@link IWorkbenchVisSource}s that help pay for

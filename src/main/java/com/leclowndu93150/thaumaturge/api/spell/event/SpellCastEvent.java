@@ -4,8 +4,8 @@ import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * Fired on the game bus around a cast started by a caster item or a mob. Server side only.
@@ -71,7 +71,8 @@ public abstract sealed class SpellCastEvent extends Event permits SpellCastEvent
      *
      * @since 1.0.0
      */
-    public static final class Pre extends SpellCastEvent implements ICancellableEvent {
+    @Cancelable
+    public static final class Pre extends SpellCastEvent {
         private float power;
         private float visCost;
 

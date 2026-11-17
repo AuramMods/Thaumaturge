@@ -43,7 +43,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.common.MinecraftForge;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
@@ -504,7 +504,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
         ServerPlayer crafter = job.player()
                 .map(uuid -> level.getServer().getPlayerList().getPlayer(uuid))
                 .orElse(null);
-        InfusionCraftedEvent event = NeoForge.EVENT_BUS.post(new InfusionCraftedEvent(
+        InfusionCraftedEvent event = MinecraftForge.EVENT_BUS.post(new InfusionCraftedEvent(
                 level, worldPosition, crafter, catalyst.copy(), preserveCatalystDamage(job.result(), catalyst)));
         ItemStack result = event.getResult();
         pedestal.setItem(result);

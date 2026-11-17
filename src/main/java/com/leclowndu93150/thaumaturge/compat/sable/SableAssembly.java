@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.common.MinecraftForge;
 
 public final class SableAssembly {
     private SableAssembly() {}
@@ -17,7 +17,7 @@ public final class SableAssembly {
             moves.put(pos.immutable(), transform.apply(pos).immutable());
         }
         if (!moves.isEmpty()) {
-            NeoForge.EVENT_BUS.post(new BlocksMovedEvent(level, transform.getLevel(), moves, transform.getRotation()));
+            MinecraftForge.EVENT_BUS.post(new BlocksMovedEvent(level, transform.getLevel(), moves, transform.getRotation()));
         }
     }
 }

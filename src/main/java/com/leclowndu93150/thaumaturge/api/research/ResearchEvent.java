@@ -4,8 +4,8 @@ import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * Base class for research-related events fired on the {@link net.neoforged.neoforge.common.NeoForge#EVENT_BUS NeoForge event bus}.
@@ -15,7 +15,8 @@ import net.neoforged.bus.api.ICancellableEvent;
  *
  * @since 1.0.0
  */
-public abstract class ResearchEvent extends Event implements ICancellableEvent {
+@Cancelable
+public abstract class ResearchEvent extends Event {
     private final Player player;
 
     protected ResearchEvent(Player player) {

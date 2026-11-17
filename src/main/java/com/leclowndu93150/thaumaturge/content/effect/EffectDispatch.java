@@ -7,7 +7,7 @@ import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayl
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 public final class EffectDispatch {
     private static final double DEFAULT_RADIUS = 64.0;

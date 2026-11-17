@@ -6,8 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.bus.api.ICancellableEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.event.level.BlockEvent;
 
 /**
  * Fired on the NeoForge game event bus when an item thrown into a crucible is processed. Both subtypes run on the logical server only, once per item in the thrown stack.
@@ -108,7 +108,8 @@ public abstract class CrucibleEvent extends BlockEvent {
      *
      * @since 1.1.0
      */
-    public static final class Dissolve extends CrucibleEvent implements ICancellableEvent {
+    @Cancelable
+    public static final class Dissolve extends CrucibleEvent {
         private final ItemStack stack;
         private AspectList aspects;
 

@@ -6,9 +6,9 @@ import com.leclowndu93150.thaumaturge.content.eldritch.site.behavior.CultRitualB
 import com.leclowndu93150.thaumaturge.content.eldritch.site.behavior.DormantBehavior;
 import com.leclowndu93150.thaumaturge.content.eldritch.site.behavior.GuardianWatchBehavior;
 import net.minecraft.core.Registry;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTObeliskSiteBehaviors {
     public static final DeferredRegister<ObeliskSiteBehaviorType<?>> BEHAVIORS =

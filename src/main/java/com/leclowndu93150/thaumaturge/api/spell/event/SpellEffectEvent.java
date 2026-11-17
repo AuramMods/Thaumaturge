@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.api.spell.event;
 
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * Fired on the game bus before an effect node acts on one target, after the touch budget admitted
@@ -11,7 +11,8 @@ import net.neoforged.bus.api.ICancellableEvent;
  *
  * @since 1.0.0
  */
-public final class SpellEffectEvent extends Event implements ICancellableEvent {
+@Cancelable
+public final class SpellEffectEvent extends Event {
     private final CastContext context;
     private final SpellTarget target;
     private float power;

@@ -15,13 +15,13 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class CloudRingClientHandler {
@@ -82,7 +82,7 @@ public final class CloudRingClientHandler {
         }
         player.setDeltaMovement(launched);
         player.resetFallDistance();
-        CommonHooks.onLivingJump(player);
+        ForgeHooks.onLivingJump(player);
         PacketDistributor.sendToServer(new ServerboundCloudJumpPayload());
         Level level = player.level();
         RandomSource random = player.getRandom();

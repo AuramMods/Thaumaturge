@@ -5,11 +5,11 @@ import com.leclowndu93150.thaumaturge.client.screen.research.ThaumonomiconBrowse
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
@@ -27,12 +27,21 @@ public final class TTKeybinds {
 
     private TTKeybinds() {}
 
-    @SubscribeEvent
     public static void onRegisterMappings(RegisterKeyMappingsEvent event) {
         event.register(OPEN_THAUMONOMICON);
         event.register(CHANGE_FOCUS);
         event.register(TOGGLE_HOVER);
         event.register(MISC_TOGGLE);
+    }
+
+    @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+    public static final class Registration {
+        private Registration() {}
+
+        @SubscribeEvent
+        public static void register(RegisterKeyMappingsEvent event) {
+            onRegisterMappings(event);
+        }
     }
 
     @SubscribeEvent

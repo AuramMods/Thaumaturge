@@ -8,9 +8,9 @@ import com.leclowndu93150.thaumaturge.content.infusion.instability.InstabilityEf
 import com.leclowndu93150.thaumaturge.content.infusion.instability.WarpEffect;
 import com.leclowndu93150.thaumaturge.content.infusion.instability.ZapEffect;
 import net.minecraft.core.Registry;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTInstabilityEffects {
     public static final DeferredRegister<InstabilityEffectType<?>> EFFECTS =

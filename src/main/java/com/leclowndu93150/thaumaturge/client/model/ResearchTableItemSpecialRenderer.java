@@ -13,7 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.minecraftforge.client.model.data.ModelData;
 
 public final class ResearchTableItemSpecialRenderer extends BlockEntityWithoutLevelRenderer {
     private static final Direction ITEM_FACING = Direction.NORTH;

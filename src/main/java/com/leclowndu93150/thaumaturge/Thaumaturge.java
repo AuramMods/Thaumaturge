@@ -58,12 +58,12 @@ import com.leclowndu93150.thaumaturge.registry.TTSpellActions;
 import com.leclowndu93150.thaumaturge.registry.TTSpellBehaviors;
 import com.leclowndu93150.thaumaturge.registry.TTSpellFx;
 import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.common.MinecraftForge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,9 +71,12 @@ import org.slf4j.LoggerFactory;
 public final class Thaumaturge {
     public static final Logger LOGGER = LoggerFactory.getLogger(TTIds.MODID);
 
-    public Thaumaturge(IEventBus modBus, ModContainer container) {
-        NeoForge.EVENT_BUS.addListener(BathSaltsEvents::onItemExpire);
-        NeoForge.EVENT_BUS.addListener(BathSaltsEvents::onEntityTick);
+    public Thaumaturge() {
+        IEventBus modBus = net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus();
+        var context = net.minecraftforge.fml.ModLoadingContext.get();
+        modBus.addListener(com.leclowndu93150.thaumaturge.content.research.scan.ScanBootstrap::onCommonSetup);
+        MinecraftForge.EVENT_BUS.addListener(BathSaltsEvents::onItemExpire);
+        MinecraftForge.EVENT_BUS.addListener(BathSaltsEvents::onEntityTick);
         TTFluidTypes.register(modBus);
         TTFluids.register(modBus);
         TTBlocks.register(modBus);
@@ -117,9 +120,9 @@ public final class Thaumaturge {
 
         LegacyRegistryAliases.register(modBus);
 
-        container.registerConfig(ModConfig.Type.COMMON, ThaumaturgeCommonConfig.SPEC);
-        container.registerConfig(ModConfig.Type.CLIENT, ThaumaturgeClientConfig.SPEC);
-        container.registerConfig(ModConfig.Type.SERVER, ThaumaturgeServerConfig.SPEC);
+        context.registerConfig(ModConfig.Type.COMMON, ThaumaturgeCommonConfig.SPEC);
+        context.registerConfig(ModConfig.Type.CLIENT, ThaumaturgeClientConfig.SPEC);
+        context.registerConfig(ModConfig.Type.SERVER, ThaumaturgeServerConfig.SPEC);
 
         PlayerResearchAccess.bind(player -> player.getData(TTAttachments.KNOWLEDGE));
         AspectIndexAccess.bind(AspectIndexHolder::get);

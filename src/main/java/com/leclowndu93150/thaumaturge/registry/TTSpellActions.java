@@ -22,9 +22,9 @@ import com.leclowndu93150.thaumaturge.content.spell.action.TeleportAction;
 import com.leclowndu93150.thaumaturge.content.spell.action.WindBurstAction;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTSpellActions {
     public static final DeferredRegister<SpellActionType<?>> ACTIONS =

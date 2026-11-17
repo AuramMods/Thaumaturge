@@ -22,12 +22,12 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import org.jspecify.annotations.Nullable;
 
@@ -111,7 +111,7 @@ public final class BlockBreakerEngine {
             return;
         }
         BlockState state = level.getBlockState(pos);
-        BlockEvent.BreakEvent event = CommonHooks.fireBlockBreak(
+        BlockEvent.BreakEvent event = ForgeHooks.fireBlockBreak(
                 level, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos, state);
         if (event.isCanceled()) {
             return;
@@ -206,7 +206,7 @@ public final class BlockBreakerEngine {
         if (task.target() != null && current.is(task.target().getBlock())) {
             return false;
         }
-        if (EventHooks.onBlockPlace(player, BlockSnapshot.create(level.dimension(), level, task.pos()), Direction.UP)) {
+        if (ForgeEventFactory.onBlockPlace(player, BlockSnapshot.create(level.dimension(), level, task.pos()), Direction.UP)) {
             return false;
         }
         return task.allowSwap().test(new BlockWorkQueues.SwapContext(level, player, task.pos()));

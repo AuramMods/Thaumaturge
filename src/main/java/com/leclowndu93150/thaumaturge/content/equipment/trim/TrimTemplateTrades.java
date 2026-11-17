@@ -3,10 +3,10 @@ package com.leclowndu93150.thaumaturge.content.equipment.trim;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.BasicItemListing;
-import net.neoforged.neoforge.event.village.WandererTradesEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.common.BasicItemListing;
+import net.minecraftforge.event.village.WandererTradesEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class TrimTemplateTrades {

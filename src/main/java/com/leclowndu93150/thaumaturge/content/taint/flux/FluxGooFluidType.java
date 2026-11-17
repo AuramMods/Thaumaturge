@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.fluids.FluidType;
+import net.minecraftforge.fluids.FluidType;
 
 public final class FluxGooFluidType extends FluidType {
     private static final double DRAG = 0.0001D;

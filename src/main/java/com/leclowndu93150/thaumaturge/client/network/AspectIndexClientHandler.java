@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.compat.jei.AspectJeiSync;
 import com.leclowndu93150.thaumaturge.content.aspect.AspectIndexHolder;
 import com.leclowndu93150.thaumaturge.network.ClientboundAspectIndexPayload;
 import net.minecraft.client.Minecraft;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public final class AspectIndexClientHandler {

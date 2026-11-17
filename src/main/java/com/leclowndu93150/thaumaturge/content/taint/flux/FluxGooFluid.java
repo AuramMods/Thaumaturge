@@ -33,9 +33,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 
-public abstract class FluxGooFluid extends BaseFlowingFluid {
+public abstract class FluxGooFluid extends ForgeFlowingFluid {
     private static final double MAX_DRAG = 0.5;
     private static final int GOO_DENSITY = 8;
     private static final int SLIME_SPAWN_CHANCE = 50;

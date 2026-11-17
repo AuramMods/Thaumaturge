@@ -19,7 +19,7 @@ import java.util.Map;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import org.junit.jupiter.api.Test;
 

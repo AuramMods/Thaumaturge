@@ -6,11 +6,11 @@ import com.leclowndu93150.thaumaturge.content.spa.PurifyingFluidType;
 import com.leclowndu93150.thaumaturge.content.taint.flux.FluxGooFluidType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Rarity;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.SoundActions;
-import net.neoforged.neoforge.fluids.FluidType;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.common.SoundActions;
+import net.minecraftforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public final class TTFluidTypes {

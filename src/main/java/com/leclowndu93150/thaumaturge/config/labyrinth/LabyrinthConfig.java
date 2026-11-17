@@ -2,77 +2,77 @@ package com.leclowndu93150.thaumaturge.config.labyrinth;
 
 import java.util.List;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public final class LabyrinthConfig {
-    public final ModConfigSpec.DoubleValue sizeScale;
-    public final ModConfigSpec.DoubleValue loopScale;
-    public final ModConfigSpec.DoubleValue decorationDensity;
-    public final ModConfigSpec.DoubleValue lootScale;
-    public final ModConfigSpec.ConfigValue<List<? extends String>> disabledRooms;
-    public final ModConfigSpec.ConfigValue<List<? extends String>> disabledMarkers;
-    public final ModConfigSpec.ConfigValue<String> defaultDefinition;
+    public final ForgeConfigSpec.DoubleValue sizeScale;
+    public final ForgeConfigSpec.DoubleValue loopScale;
+    public final ForgeConfigSpec.DoubleValue decorationDensity;
+    public final ForgeConfigSpec.DoubleValue lootScale;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> disabledRooms;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> disabledMarkers;
+    public final ForgeConfigSpec.ConfigValue<String> defaultDefinition;
 
-    public final ModConfigSpec.IntValue maxActiveMazes;
-    public final ModConfigSpec.IntValue regenerateConqueredAfterTicks;
-    public final ModConfigSpec.IntValue retireConqueredAfterDays;
-    public final ModConfigSpec.IntValue retireAbandonedAfterDays;
-    public final ModConfigSpec.IntValue repairChunksPerTick;
-    public final ModConfigSpec.IntValue triggerIntervalTicks;
-    public final ModConfigSpec.IntValue integrityIntervalTicks;
-    public final ModConfigSpec.DoubleValue voidContactDamage;
+    public final ForgeConfigSpec.IntValue maxActiveMazes;
+    public final ForgeConfigSpec.IntValue regenerateConqueredAfterTicks;
+    public final ForgeConfigSpec.IntValue retireConqueredAfterDays;
+    public final ForgeConfigSpec.IntValue retireAbandonedAfterDays;
+    public final ForgeConfigSpec.IntValue repairChunksPerTick;
+    public final ForgeConfigSpec.IntValue triggerIntervalTicks;
+    public final ForgeConfigSpec.IntValue integrityIntervalTicks;
+    public final ForgeConfigSpec.DoubleValue voidContactDamage;
 
-    public final ModConfigSpec.DoubleValue ritualVisCost;
-    public final ModConfigSpec.IntValue ritualChannelTicks;
-    public final ModConfigSpec.DoubleValue ritualMaxDistance;
-    public final ModConfigSpec.BooleanValue allowEyeRemoval;
-    public final ModConfigSpec.IntValue awakenEyeThreshold;
-    public final ModConfigSpec.BooleanValue sealSiteWhileLinked;
+    public final ForgeConfigSpec.DoubleValue ritualVisCost;
+    public final ForgeConfigSpec.IntValue ritualChannelTicks;
+    public final ForgeConfigSpec.DoubleValue ritualMaxDistance;
+    public final ForgeConfigSpec.BooleanValue allowEyeRemoval;
+    public final ForgeConfigSpec.IntValue awakenEyeThreshold;
+    public final ForgeConfigSpec.BooleanValue sealSiteWhileLinked;
 
-    public final ModConfigSpec.IntValue warmupTicks;
-    public final ModConfigSpec.IntValue cooldownTicks;
-    public final ModConfigSpec.IntValue maxPreloadWaitTicks;
-    public final ModConfigSpec.IntValue preloadRadiusChunks;
-    public final ModConfigSpec.IntValue returnSearchRadius;
-    public final ModConfigSpec.BooleanValue allowArrivalRepair;
-    public final ModConfigSpec.BooleanValue evacuateStrandedOnLogin;
+    public final ForgeConfigSpec.IntValue warmupTicks;
+    public final ForgeConfigSpec.IntValue cooldownTicks;
+    public final ForgeConfigSpec.IntValue maxPreloadWaitTicks;
+    public final ForgeConfigSpec.IntValue preloadRadiusChunks;
+    public final ForgeConfigSpec.IntValue returnSearchRadius;
+    public final ForgeConfigSpec.BooleanValue allowArrivalRepair;
+    public final ForgeConfigSpec.BooleanValue evacuateStrandedOnLogin;
 
-    public final ModConfigSpec.IntValue lockChargeTicks;
-    public final ModConfigSpec.IntValue manifestBlocksPerTick;
-    public final ModConfigSpec.BooleanValue protectHall;
-    public final ModConfigSpec.DoubleValue noBuildRadius;
-    public final ModConfigSpec.IntValue wipeResetTicks;
-    public final ModConfigSpec.IntValue missingBossRespawnTicks;
-    public final ModConfigSpec.EnumValue<AnnounceScope> announceScope;
-    public final ModConfigSpec.DoubleValue announceNearbyRange;
-    public final ModConfigSpec.BooleanValue scaleWithParticipants;
-    public final ModConfigSpec.BooleanValue disruptFlight;
-    public final ModConfigSpec.IntValue bossLeashRadius;
-    public final ModConfigSpec.BooleanValue openExitRift;
+    public final ForgeConfigSpec.IntValue lockChargeTicks;
+    public final ForgeConfigSpec.IntValue manifestBlocksPerTick;
+    public final ForgeConfigSpec.BooleanValue protectHall;
+    public final ForgeConfigSpec.DoubleValue noBuildRadius;
+    public final ForgeConfigSpec.IntValue wipeResetTicks;
+    public final ForgeConfigSpec.IntValue missingBossRespawnTicks;
+    public final ForgeConfigSpec.EnumValue<AnnounceScope> announceScope;
+    public final ForgeConfigSpec.DoubleValue announceNearbyRange;
+    public final ForgeConfigSpec.BooleanValue scaleWithParticipants;
+    public final ForgeConfigSpec.BooleanValue disruptFlight;
+    public final ForgeConfigSpec.IntValue bossLeashRadius;
+    public final ForgeConfigSpec.BooleanValue openExitRift;
 
-    public final ModConfigSpec.IntValue participationMinPresenceTicks;
-    public final ModConfigSpec.DoubleValue participationMinDamageFraction;
-    public final ModConfigSpec.EnumValue<PearlPolicy> pearlPolicy;
-    public final ModConfigSpec.BooleanValue keyRoomRequiresWard;
-    public final ModConfigSpec.BooleanValue reissueTablets;
-    public final ModConfigSpec.BooleanValue crumbleSpentTablets;
+    public final ForgeConfigSpec.IntValue participationMinPresenceTicks;
+    public final ForgeConfigSpec.DoubleValue participationMinDamageFraction;
+    public final ForgeConfigSpec.EnumValue<PearlPolicy> pearlPolicy;
+    public final ForgeConfigSpec.BooleanValue keyRoomRequiresWard;
+    public final ForgeConfigSpec.BooleanValue reissueTablets;
+    public final ForgeConfigSpec.BooleanValue crumbleSpentTablets;
 
-    public final ModConfigSpec.BooleanValue glyphHints;
-    public final ModConfigSpec.IntValue glyphPulseCooldownTicks;
-    public final ModConfigSpec.BooleanValue tabletResonance;
-    public final ModConfigSpec.IntValue tabletResonanceIntervalMin;
-    public final ModConfigSpec.IntValue tabletResonanceIntervalMax;
-    public final ModConfigSpec.DoubleValue glyphRange;
-    public final ModConfigSpec.IntValue tabletResonanceRangeCells;
+    public final ForgeConfigSpec.BooleanValue glyphHints;
+    public final ForgeConfigSpec.IntValue glyphPulseCooldownTicks;
+    public final ForgeConfigSpec.BooleanValue tabletResonance;
+    public final ForgeConfigSpec.IntValue tabletResonanceIntervalMin;
+    public final ForgeConfigSpec.IntValue tabletResonanceIntervalMax;
+    public final ForgeConfigSpec.DoubleValue glyphRange;
+    public final ForgeConfigSpec.IntValue tabletResonanceRangeCells;
 
-    public final ModConfigSpec.IntValue postActivationRadius;
-    public final ModConfigSpec.DoubleValue championChanceOverride;
-    public final ModConfigSpec.IntValue postGuardLeashRadius;
-    public final ModConfigSpec.DoubleValue trapDamage;
-    public final ModConfigSpec.IntValue crabVentMaxCrabs;
-    public final ModConfigSpec.IntValue crabVentActivationRange;
+    public final ForgeConfigSpec.IntValue postActivationRadius;
+    public final ForgeConfigSpec.DoubleValue championChanceOverride;
+    public final ForgeConfigSpec.IntValue postGuardLeashRadius;
+    public final ForgeConfigSpec.DoubleValue trapDamage;
+    public final ForgeConfigSpec.IntValue crabVentMaxCrabs;
+    public final ForgeConfigSpec.IntValue crabVentActivationRange;
 
-    public LabyrinthConfig(ModConfigSpec.Builder builder) {
+    public LabyrinthConfig(ForgeConfigSpec.Builder builder) {
         builder.push("labyrinth");
 
         builder.push("generation");

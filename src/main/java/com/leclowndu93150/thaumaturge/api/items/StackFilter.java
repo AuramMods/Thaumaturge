@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.api.items;
 
 import java.util.List;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jspecify.annotations.Nullable;
 
 /** A whitelist or blacklist of ghost stacks, optionally carrying per-entry size limits. */

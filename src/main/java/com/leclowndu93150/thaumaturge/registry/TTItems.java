@@ -102,11 +102,11 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
-import net.neoforged.neoforge.common.Tags;
+import net.minecraftforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTItems {
     private static final int SPAWN_EGG_BASE = 0x51436C;

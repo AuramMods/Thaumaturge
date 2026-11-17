@@ -17,13 +17,13 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.neoforge.common.PercentageAttribute;
-import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
-import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.event.ItemAttributeModifierEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.registries.DeferredRegister;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class TTAttributes {
@@ -43,6 +43,7 @@ public final class TTAttributes {
 
     public static void register(IEventBus modBus) {
         ATTRIBUTES.register(modBus);
+        modBus.addListener(TTAttributes::onAttributesCreated);
     }
 
     @SubscribeEvent
@@ -85,7 +86,6 @@ public final class TTAttributes {
         return ids;
     }
 
-    @SubscribeEvent
     public static void onAttributesCreated(EntityAttributeModificationEvent event) {
         event.add(EntityType.PLAYER, VIS_DISCOUNT);
         for (EntityType<? extends LivingEntity> type : event.getTypes()) {

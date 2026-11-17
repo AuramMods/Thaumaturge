@@ -17,9 +17,9 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.StockBehavior
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.StoreBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.UseBehavior;
 import net.minecraft.core.Registry;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTSeals {
     public static final DeferredRegister<SealType> SEALS = DeferredRegister.create(SealType.REGISTRY_KEY, TTIds.MODID);

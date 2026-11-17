@@ -34,7 +34,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockManaPod extends BaseEntityBlock {

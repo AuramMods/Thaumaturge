@@ -18,7 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 
 final class NodeTypeBehavior {
     private static final int TAINT_SPREAD_RANGE = 4;
@@ -124,7 +124,7 @@ final class NodeTypeBehavior {
             guard.discard();
             return;
         }
-        EventHooks.finalizeMobSpawn(
+        ForgeEventFactory.finalizeMobSpawn(
                 guard, level, level.getCurrentDifficultyAt(guard.blockPosition()), MobSpawnType.EVENT, null);
         level.addFreshEntity(guard);
         level.levelEvent(SPAWNER_EFFECT_EVENT, pos, 0);

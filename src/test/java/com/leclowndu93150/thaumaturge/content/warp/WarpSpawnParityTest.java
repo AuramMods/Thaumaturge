@@ -33,7 +33,7 @@ import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
@@ -171,7 +171,7 @@ class WarpSpawnParityTest {
         try (MockedConstruction<EntityCultistPortalLesser> portals = mockConstruction(
                         EntityCultistPortalLesser.class,
                         (portal, context) -> when(portal.getBoundingBox()).thenReturn(bounds));
-                MockedStatic<EventHooks> eventHooks = mockStatic(EventHooks.class);
+                MockedStatic<ForgeEventFactory> eventHooks = mockStatic(ForgeEventFactory.class);
                 MockedStatic<WarpManager> warpManager = mockStatic(WarpManager.class)) {
             GuardianSpawner.spawnPortal(player);
 

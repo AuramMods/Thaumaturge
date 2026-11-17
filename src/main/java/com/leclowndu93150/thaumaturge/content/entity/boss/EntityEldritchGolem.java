@@ -45,7 +45,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 import org.jspecify.annotations.Nullable;
 
 public class EntityEldritchGolem extends EntityThaumaturgeBoss implements RangedAttackMob {
@@ -172,7 +172,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements Ranged
             }
             return;
         }
-        if (!EventHooks.canEntityGrief((ServerLevel) level(), this)) {
+        if (!ForgeEventFactory.canEntityGrief((ServerLevel) level(), this)) {
             return;
         }
         if (stomping) {

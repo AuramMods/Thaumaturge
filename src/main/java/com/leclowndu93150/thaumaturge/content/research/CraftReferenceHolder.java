@@ -9,9 +9,9 @@ import java.util.Set;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.Item;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 
 /** Cache of every item a research entry asks the player to craft, rebuilt on datapack sync. */
 @EventBusSubscriber(modid = TTIds.MODID)

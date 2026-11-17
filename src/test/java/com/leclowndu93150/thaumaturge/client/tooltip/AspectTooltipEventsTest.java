@@ -19,7 +19,7 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 

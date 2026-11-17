@@ -42,7 +42,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ class NodeHungerPortTest {
 
     @BeforeEach
     void setUp() {
-        ModConfigSpec.IntValue interval = ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_EAT_INTERVAL;
+        ForgeConfigSpec.IntValue interval = ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_EAT_INTERVAL;
         originalEatInterval = interval.get();
         interval.set(17);
     }

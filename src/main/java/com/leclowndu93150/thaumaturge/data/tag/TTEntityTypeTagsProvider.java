@@ -13,7 +13,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 public final class TTEntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
     public TTEntityTypeTagsProvider(

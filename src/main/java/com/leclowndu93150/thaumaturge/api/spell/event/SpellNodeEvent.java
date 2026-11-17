@@ -4,8 +4,8 @@ import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import java.util.ArrayList;
 import java.util.List;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * Fired on the game bus before any node runs. Listeners may edit the target list the node receives.
@@ -13,7 +13,8 @@ import net.neoforged.bus.api.ICancellableEvent;
  *
  * @since 1.0.0
  */
-public final class SpellNodeEvent extends Event implements ICancellableEvent {
+@Cancelable
+public final class SpellNodeEvent extends Event {
     private final CastContext context;
     private final List<SpellTarget> targets;
 

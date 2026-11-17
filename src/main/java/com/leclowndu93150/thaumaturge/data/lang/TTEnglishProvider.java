@@ -8,7 +8,7 @@ import com.leclowndu93150.thaumaturge.data.labyrinth.LabyrinthEncounterBootstrap
 import com.leclowndu93150.thaumaturge.data.trim.TTTrimBootstrap;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.minecraftforge.common.data.LanguageProvider;
 
 public final class TTEnglishProvider extends LanguageProvider {
     public TTEnglishProvider(PackOutput output) {

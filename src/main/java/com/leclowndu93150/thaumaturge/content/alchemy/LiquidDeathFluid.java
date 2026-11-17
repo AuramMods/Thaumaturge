@@ -10,9 +10,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 
-public abstract class LiquidDeathFluid extends BaseFlowingFluid {
+public abstract class LiquidDeathFluid extends ForgeFlowingFluid {
     private static final float MAX_AMOUNT = 8.0F;
     private static final float BASE_DAMAGE = 1.0F;
     private static final int LEVELS_PER_DAMAGE_STEP = 2;

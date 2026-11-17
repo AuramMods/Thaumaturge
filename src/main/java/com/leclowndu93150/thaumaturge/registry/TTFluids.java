@@ -7,10 +7,10 @@ import com.leclowndu93150.thaumaturge.content.taint.flux.FluxGooFluid;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTFluids {
     public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, TTIds.MODID);
@@ -33,22 +33,22 @@ public final class TTFluids {
     public static final DeferredHolder<Fluid, LiquidDeathFluid.Flowing> LIQUID_DEATH_FLOWING =
             FLUIDS.register("flowing_liquid_death", () -> new LiquidDeathFluid.Flowing(liquidDeathProps()));
 
-    private static BaseFlowingFluid.Properties liquidDeathProps() {
-        return new BaseFlowingFluid.Properties(TTFluidTypes.LIQUID_DEATH, LIQUID_DEATH_SOURCE, LIQUID_DEATH_FLOWING)
+    private static ForgeFlowingFluid.Properties liquidDeathProps() {
+        return new ForgeFlowingFluid.Properties(TTFluidTypes.LIQUID_DEATH, LIQUID_DEATH_SOURCE, LIQUID_DEATH_FLOWING)
                 .block(() -> (LiquidBlock) TTBlocks.LIQUID_DEATH.get())
                 .bucket(TTItems.BUCKET_LIQUID_DEATH)
                 .levelDecreasePerBlock(2)
                 .tickRate(15);
     }
 
-    private static BaseFlowingFluid.Properties purifyingProps() {
-        return new BaseFlowingFluid.Properties(TTFluidTypes.PURIFYING, PURIFYING_SOURCE, PURIFYING_FLOWING)
+    private static ForgeFlowingFluid.Properties purifyingProps() {
+        return new ForgeFlowingFluid.Properties(TTFluidTypes.PURIFYING, PURIFYING_SOURCE, PURIFYING_FLOWING)
                 .block(() -> (LiquidBlock) TTBlocks.PURIFYING_FLUID.get())
                 .bucket(TTItems.BUCKET_PURIFYING);
     }
 
-    private static BaseFlowingFluid.Properties props() {
-        return new BaseFlowingFluid.Properties(TTFluidTypes.FLUX_GOO, FLUX_GOO_SOURCE, FLUX_GOO_FLOWING)
+    private static ForgeFlowingFluid.Properties props() {
+        return new ForgeFlowingFluid.Properties(TTFluidTypes.FLUX_GOO, FLUX_GOO_SOURCE, FLUX_GOO_FLOWING)
                 .block(() -> (LiquidBlock) TTBlocks.FLUX_GOO.get())
                 .tickRate(30)
                 .levelDecreasePerBlock(2)

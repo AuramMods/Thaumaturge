@@ -10,7 +10,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.common.MinecraftForge;
 
 public final class ScriptedEffect extends AbstractEffectBehavior {
     public static final MapCodec<ScriptedEffect> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
@@ -41,7 +41,7 @@ public final class ScriptedEffect extends AbstractEffectBehavior {
 
     @Override
     protected void apply(CastContext ctx, SpellTarget target, float power, int index) {
-        NeoForge.EVENT_BUS.post(new ScriptedSpellEvent(key, ctx, List.of(target), power));
+        MinecraftForge.EVENT_BUS.post(new ScriptedSpellEvent(key, ctx, List.of(target), power));
     }
 
     @Override

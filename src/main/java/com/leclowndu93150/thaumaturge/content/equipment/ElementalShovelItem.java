@@ -23,8 +23,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.ForgeEventFactory;
 import org.jspecify.annotations.Nullable;
 
 public final class ElementalShovelItem extends ShovelItem implements AreaPreviewer {
@@ -102,7 +102,7 @@ public final class ElementalShovelItem extends ShovelItem implements AreaPreview
     private static boolean mayPlace(ServerLevel level, Player player, BlockPos cell, Direction face, ItemStack shovel) {
         return player.mayUseItemAt(cell, face, shovel)
                 && player.mayInteract(level, cell)
-                && !EventHooks.onBlockPlace(player, BlockSnapshot.create(level.dimension(), level, cell), face);
+                && !ForgeEventFactory.onBlockPlace(player, BlockSnapshot.create(level.dimension(), level, cell), face);
     }
 
     private static boolean fits(Level level, BlockPos cell, BlockState source) {

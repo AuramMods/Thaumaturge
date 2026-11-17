@@ -6,9 +6,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.ForgeEventFactory;
 
 public final class SpellBlockAccess {
     private SpellBlockAccess() {}
@@ -18,7 +18,7 @@ public final class SpellBlockAccess {
         LivingEntity caster = ctx.caster();
         if (caster instanceof ServerPlayer player) {
             return player.mayInteract(level, pos)
-                    && !CommonHooks.fireBlockBreak(
+                    && !ForgeHooks.fireBlockBreak(
                                     level,
                                     player.gameMode.getGameModeForPlayer(),
                                     player,
@@ -34,7 +34,7 @@ public final class SpellBlockAccess {
         LivingEntity caster = ctx.caster();
         if (caster instanceof ServerPlayer player) {
             return player.mayInteract(level, pos)
-                    && !EventHooks.onBlockPlace(
+                    && !ForgeEventFactory.onBlockPlace(
                             player, BlockSnapshot.create(level.dimension(), level, pos), Direction.UP);
         }
         return mayGrief(ctx, caster);
@@ -44,6 +44,6 @@ public final class SpellBlockAccess {
         if (caster == null && ctx.casterId().isPresent()) {
             return false;
         }
-        return EventHooks.canEntityGrief(ctx.level(), caster);
+        return ForgeEventFactory.canEntityGrief(ctx.level(), caster);
     }
 }

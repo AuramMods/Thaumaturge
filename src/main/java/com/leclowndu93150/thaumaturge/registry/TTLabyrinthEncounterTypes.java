@@ -5,9 +5,9 @@ import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthEncounterType;
 import com.leclowndu93150.thaumaturge.content.eldritch.encounter.SingleBossEncounter;
 import com.leclowndu93150.thaumaturge.content.eldritch.encounter.SwarmEncounter;
 import net.minecraft.core.Registry;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTLabyrinthEncounterTypes {
     public static final DeferredRegister<LabyrinthEncounterType<?>> TYPES =

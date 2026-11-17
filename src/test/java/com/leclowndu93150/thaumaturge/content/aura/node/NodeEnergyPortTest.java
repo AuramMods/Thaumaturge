@@ -19,7 +19,7 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class NodeEnergyPortTest {
 
     @BeforeEach
     void setUp() {
-        ModConfigSpec.DoubleValue cost = ThaumaturgeCommonConfig.ENERGIZED_NODE_VIS_PER_POINT;
+        ForgeConfigSpec.DoubleValue cost = ThaumaturgeCommonConfig.ENERGIZED_NODE_VIS_PER_POINT;
         originalCost = cost.get();
         cost.set(6.0D);
     }
@@ -114,7 +114,7 @@ class NodeEnergyPortTest {
 
     @Test
     void zeroConfiguredCostStillRestoresOnePointPerDivisorAttemptAndServerTickDelegates() {
-        ModConfigSpec.DoubleValue cost = ThaumaturgeCommonConfig.ENERGIZED_NODE_VIS_PER_POINT;
+        ForgeConfigSpec.DoubleValue cost = ThaumaturgeCommonConfig.ENERGIZED_NODE_VIS_PER_POINT;
         try {
             cost.set(0.0D);
             MappedRegistry<IAspect> aspects = new MappedRegistry<>(IAspect.REGISTRY_KEY, Lifecycle.stable());

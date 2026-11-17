@@ -15,10 +15,10 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.neoforged.neoforge.common.SimpleTier;
-import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTMaterials {
     public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS =

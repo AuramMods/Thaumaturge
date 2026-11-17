@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 
 public final class EldritchSpawns {
     private static final float FULL_TURN_DEGREES = 360.0F;
@@ -25,7 +25,7 @@ public final class EldritchSpawns {
             return Optional.empty();
         }
         mob.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, random.nextFloat() * FULL_TURN_DEGREES, 0.0F);
-        EventHooks.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(at), MobSpawnType.EVENT, null);
+        ForgeEventFactory.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(at), MobSpawnType.EVENT, null);
         mob.setPersistenceRequired();
         mob.restrictTo(home, leash);
         return Optional.of(mob);

@@ -21,11 +21,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.CuriosCapability;
 import top.theillusivec4.curios.api.SlotContext;
@@ -43,7 +43,7 @@ public final class ThaumaturgeCuriosCompat {
         GogglesAccess.bindCurios(ThaumaturgeCuriosCompat::anyCurioMatches);
         modBus.addListener(ThaumaturgeCuriosCompat::registerCurio);
         modBus.addListener(ThaumaturgeCuriosCompat::onClientSetup);
-        NeoForge.EVENT_BUS.addListener(ThaumaturgeCuriosCompat::onItemAttributeModifier);
+        MinecraftForge.EVENT_BUS.addListener(ThaumaturgeCuriosCompat::onItemAttributeModifier);
     }
 
     private static void registerCurio(RegisterCapabilitiesEvent event) {

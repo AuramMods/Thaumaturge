@@ -31,10 +31,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockEntityCrucible extends AbstractSyncedBlockEntity implements ReadOnlyAspectContainer {
@@ -379,7 +379,7 @@ public class BlockEntityCrucible extends AbstractSyncedBlockEntity implements Re
                 } else {
                     outputSink.accept(out.copy());
                 }
-                NeoForge.EVENT_BUS.post(new CrucibleEvent.Crafted(
+                MinecraftForge.EVENT_BUS.post(new CrucibleEvent.Crafted(
                         owner, getBlockPos(), getBlockState(), this, out.copy(), recipe.aspects()));
                 craftDone = true;
                 count--;
@@ -388,7 +388,7 @@ public class BlockEntityCrucible extends AbstractSyncedBlockEntity implements Re
                 AspectList aspects = AspectIndexAccess.index().of(stack);
                 CrucibleEvent.Dissolve event =
                         new CrucibleEvent.Dissolve(owner, getBlockPos(), getBlockState(), this, stack, aspects);
-                NeoForge.EVENT_BUS.post(event);
+                MinecraftForge.EVENT_BUS.post(event);
                 aspects = event.getAspects();
                 if (!aspects.isEmpty() && !event.isCanceled()) {
                     for (AspectInstance aspect : aspects.entries()) {

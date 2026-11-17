@@ -14,7 +14,7 @@ import java.util.Map;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.ModLoader;
+import net.minecraftforge.fml.ModLoader;
 
 public final class GolemAccessoryRenderTable {
     public static final GolemAccessoryRenderTable EMPTY = new GolemAccessoryRenderTable(Map.of());

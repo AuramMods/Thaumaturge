@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import java.lang.reflect.Method;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 import org.jspecify.annotations.Nullable;
 
 public final class IrisCompat {

@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 
 public final class GuardianSpawner {
     private static final int SPAWN_ATTEMPTS = 50;
@@ -69,7 +69,7 @@ public final class GuardianSpawner {
             if (!canPlace(level, portal)) {
                 continue;
             }
-            EventHooks.finalizeMobSpawn(
+            ForgeEventFactory.finalizeMobSpawn(
                     portal, level, level.getCurrentDifficultyAt(portal.blockPosition()), reason, null);
             level.addFreshEntity(portal);
             return true;
