@@ -84,7 +84,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.conditions.NotCondition;
 import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
 import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
-import net.neoforged.neoforge.registries.DeferredItem;
+import net.minecraftforge.registries.RegistryObject;
 
 public final class TTRecipeProvider extends RecipeProvider {
     private static final int ARCANE_GRINDSTONE_VIS = 50;
@@ -2453,8 +2453,8 @@ public final class TTRecipeProvider extends RecipeProvider {
     private void sealCrucible(
             HolderLookup<IAspect> aspects,
             ResearchGate gate,
-            DeferredItem<ItemSealPlacer> result,
-            DeferredItem<ItemSealPlacer> catalyst,
+            RegistryObject<ItemSealPlacer> result,
+            RegistryObject<ItemSealPlacer> catalyst,
             UnaryOperator<CrucibleRecipeBuilder> configure) {
         configure
                 .apply(new CrucibleRecipeBuilder(
@@ -3273,7 +3273,7 @@ public final class TTRecipeProvider extends RecipeProvider {
 
     private void elementalRodInfusion(
             HolderLookup<IAspect> aspects,
-            DeferredItem<? extends Item> rod,
+            RegistryObject<? extends Item> rod,
             Ingredient catalyst,
             ResourceKey<IAspect> primal,
             ResourceKey<IAspect> flavor,
@@ -3290,7 +3290,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .save(output);
     }
 
-    private void staffCoreRecipe(DeferredItem<? extends Item> core, DeferredItem<? extends Item> rod, int vis) {
+    private void staffCoreRecipe(RegistryObject<? extends Item> core, RegistryObject<? extends Item> rod, int vis) {
         arcaneShaped(new ItemStack(core.get()), vis)
                 .pattern("  S")
                 .pattern(" G ")

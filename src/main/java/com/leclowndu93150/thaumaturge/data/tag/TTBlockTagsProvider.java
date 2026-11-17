@@ -17,8 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 
 public final class TTBlockTagsProvider extends BlockTagsProvider {
     public TTBlockTagsProvider(
@@ -347,7 +346,7 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                 .add(TTBlocks.METAL_BRASS_BLOCK.get())
                 .add(TTBlocks.METAL_VOID_BLOCK.get());
 
-        for (DeferredBlock<BlockCandleHolder> holder : TTBlocks.CANDLE_HOLDERS.values()) {
+        for (RegistryObject<BlockCandleHolder> holder : TTBlocks.CANDLE_HOLDERS.values()) {
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(holder.get());
         }
 
@@ -427,7 +426,7 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                 .add(Blocks.SOUL_FIRE)
                 .add(Blocks.SOUL_CAMPFIRE)
                 .add(Blocks.MAGMA_BLOCK)
-                .add(TTBlocks.NITORS.values().stream().map(DeferredHolder::get).toArray(Block[]::new));
+                .add(TTBlocks.NITORS.values().stream().map(RegistryObject::get).toArray(Block[]::new));
 
         tag(TTBlockTags.SCAN_CLAY).add(Blocks.CLAY).addTag(BlockTags.TERRACOTTA);
 

@@ -9,28 +9,28 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTFluids {
     public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, TTIds.MODID);
 
-    public static final DeferredHolder<Fluid, FluxGooFluid.Source> FLUX_GOO_SOURCE =
+    public static final RegistryObject<FluxGooFluid.Source> FLUX_GOO_SOURCE =
             FLUIDS.register("flux_goo", () -> new FluxGooFluid.Source(props()));
 
-    public static final DeferredHolder<Fluid, FluxGooFluid.Flowing> FLUX_GOO_FLOWING =
+    public static final RegistryObject<FluxGooFluid.Flowing> FLUX_GOO_FLOWING =
             FLUIDS.register("flowing_flux_goo", () -> new FluxGooFluid.Flowing(props()));
 
-    public static final DeferredHolder<Fluid, PurifyingFluid.Source> PURIFYING_SOURCE =
+    public static final RegistryObject<PurifyingFluid.Source> PURIFYING_SOURCE =
             FLUIDS.register("purifying", () -> new PurifyingFluid.Source(purifyingProps()));
 
-    public static final DeferredHolder<Fluid, PurifyingFluid.Flowing> PURIFYING_FLOWING =
+    public static final RegistryObject<PurifyingFluid.Flowing> PURIFYING_FLOWING =
             FLUIDS.register("flowing_purifying", () -> new PurifyingFluid.Flowing(purifyingProps()));
 
-    public static final DeferredHolder<Fluid, LiquidDeathFluid.Source> LIQUID_DEATH_SOURCE =
+    public static final RegistryObject<LiquidDeathFluid.Source> LIQUID_DEATH_SOURCE =
             FLUIDS.register("liquid_death", () -> new LiquidDeathFluid.Source(liquidDeathProps()));
 
-    public static final DeferredHolder<Fluid, LiquidDeathFluid.Flowing> LIQUID_DEATH_FLOWING =
+    public static final RegistryObject<LiquidDeathFluid.Flowing> LIQUID_DEATH_FLOWING =
             FLUIDS.register("flowing_liquid_death", () -> new LiquidDeathFluid.Flowing(liquidDeathProps()));
 
     private static ForgeFlowingFluid.Properties liquidDeathProps() {

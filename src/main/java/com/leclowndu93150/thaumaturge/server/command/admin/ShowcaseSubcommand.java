@@ -18,7 +18,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 
 final class ShowcaseSubcommand implements AdminSubcommand {
     private static final String POS = "pos";
@@ -38,14 +38,14 @@ final class ShowcaseSubcommand implements AdminSubcommand {
 
     private static int build(CommandSourceStack source, BlockPos origin) throws CommandSyntaxException {
         List<Block> blocks = TTBlocks.BLOCKS.getEntries().stream()
-                .<Block>map(DeferredHolder::value)
+                .<Block>map(RegistryObject::get)
                 .filter(block -> block.asItem() instanceof BlockItem item && item.getBlock() == block)
                 .toList();
         List<Item> items = TTItems.ITEMS.getEntries().stream()
-                .<Item>map(DeferredHolder::value)
+                .<Item>map(RegistryObject::get)
                 .toList();
         List<EntityType<?>> entities = TTEntities.ENTITIES.getEntries().stream()
-                .<EntityType<?>>map(DeferredHolder::value)
+                .<EntityType<?>>map(RegistryObject::get)
                 .toList();
         ShowcaseBuilder builder = new ShowcaseBuilder(
                 source.getLevel(), origin, Direction.fromYRot(source.getRotation().y), blocks, items, entities);

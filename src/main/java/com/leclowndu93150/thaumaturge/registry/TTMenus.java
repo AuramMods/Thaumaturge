@@ -25,70 +25,70 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTMenus {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, TTIds.MODID);
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuArcaneGrindstone>> ARCANE_GRINDSTONE =
+    public static final RegistryObject<MenuType<MenuArcaneGrindstone>> ARCANE_GRINDSTONE =
             MENUS.register("arcane_grindstone", () -> IForgeMenuType.create(MenuArcaneGrindstone::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuFocalManipulator>> FOCAL_MANIPULATOR =
+    public static final RegistryObject<MenuType<MenuFocalManipulator>> FOCAL_MANIPULATOR =
             MENUS.register("focal_manipulator", () -> IForgeMenuType.create(MenuFocalManipulator::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuResearchTable>> RESEARCH_TABLE =
+    public static final RegistryObject<MenuType<MenuResearchTable>> RESEARCH_TABLE =
             MENUS.register("research_table", () -> IForgeMenuType.create(MenuResearchTable::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuDeconstructionTable>> DECONSTRUCTION_TABLE =
+    public static final RegistryObject<MenuType<MenuDeconstructionTable>> DECONSTRUCTION_TABLE =
             MENUS.register("deconstruction_table", () -> IForgeMenuType.create(MenuDeconstructionTable::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuArcaneWorkbench>> ARCANE_WORKBENCH =
+    public static final RegistryObject<MenuType<MenuArcaneWorkbench>> ARCANE_WORKBENCH =
             MENUS.register("arcane_workbench", () -> IForgeMenuType.create(MenuArcaneWorkbench::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuSpa>> SPA =
+    public static final RegistryObject<MenuType<MenuSpa>> SPA =
             MENUS.register("spa", () -> IForgeMenuType.create(MenuSpa::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuPotionSprayer>> POTION_SPRAYER =
+    public static final RegistryObject<MenuType<MenuPotionSprayer>> POTION_SPRAYER =
             MENUS.register("potion_sprayer", () -> IForgeMenuType.create(MenuPotionSprayer::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuSmelter>> SMELTER =
+    public static final RegistryObject<MenuType<MenuSmelter>> SMELTER =
             MENUS.register("smelter", () -> IForgeMenuType.create(MenuSmelter::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuGolemBuilder>> GOLEM_BUILDER =
+    public static final RegistryObject<MenuType<MenuGolemBuilder>> GOLEM_BUILDER =
             MENUS.register("golem_builder", () -> IForgeMenuType.create(MenuGolemBuilder::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuGolemLogistics>> GOLEM_LOGISTICS =
+    public static final RegistryObject<MenuType<MenuGolemLogistics>> GOLEM_LOGISTICS =
             MENUS.register("golem_logistics", () -> IForgeMenuType.create(MenuGolemLogistics::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuThaumatorium>> THAUMATORIUM =
+    public static final RegistryObject<MenuType<MenuThaumatorium>> THAUMATORIUM =
             MENUS.register("thaumatorium", () -> IForgeMenuType.create(MenuThaumatorium::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuVoidSiphon>> VOID_SIPHON =
+    public static final RegistryObject<MenuType<MenuVoidSiphon>> VOID_SIPHON =
             MENUS.register("void_siphon", () -> IForgeMenuType.create(MenuVoidSiphon::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuSealBase>> SEAL =
+    public static final RegistryObject<MenuType<MenuSealBase>> SEAL =
             MENUS.register("seal", () -> IForgeMenuType.create(MenuSealBase::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuFocusPouch>> FOCUS_POUCH =
+    public static final RegistryObject<MenuType<MenuFocusPouch>> FOCUS_POUCH =
             MENUS.register("focus_pouch", () -> IForgeMenuType.create(MenuFocusPouch::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuPech>> PECH =
+    public static final RegistryObject<MenuType<MenuPech>> PECH =
             MENUS.register("pech", () -> IForgeMenuType.create(MenuPech::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuTurretBasic>> TURRET_BASIC =
+    public static final RegistryObject<MenuType<MenuTurretBasic>> TURRET_BASIC =
             MENUS.register("turret_basic", () -> IForgeMenuType.create(MenuTurretBasic::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuTurretAdvanced>> TURRET_ADVANCED =
+    public static final RegistryObject<MenuType<MenuTurretAdvanced>> TURRET_ADVANCED =
             MENUS.register("turret_advanced", () -> IForgeMenuType.create(MenuTurretAdvanced::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuArcaneBore>> ARCANE_BORE =
+    public static final RegistryObject<MenuType<MenuArcaneBore>> ARCANE_BORE =
             MENUS.register("arcane_bore", () -> IForgeMenuType.create(MenuArcaneBore::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuHandMirror>> HAND_MIRROR =
+    public static final RegistryObject<MenuType<MenuHandMirror>> HAND_MIRROR =
             MENUS.register("hand_mirror", () -> IForgeMenuType.create(MenuHandMirror::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<MenuThaumostaticHarness>> THAUMOSTATIC_HARNESS =
+    public static final RegistryObject<MenuType<MenuThaumostaticHarness>> THAUMOSTATIC_HARNESS =
             MENUS.register("thaumostatic_harness", () -> IForgeMenuType.create(MenuThaumostaticHarness::new));
 
     private TTMenus() {}

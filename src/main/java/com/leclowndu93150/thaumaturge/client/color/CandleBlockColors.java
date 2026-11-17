@@ -9,7 +9,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.registries.DeferredBlock;
+import net.minecraftforge.registries.RegistryObject;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID, value = Dist.CLIENT)
 public final class CandleBlockColors {
@@ -31,7 +31,7 @@ public final class CandleBlockColors {
                         .map(dye -> 0xFF000000 | dye.getMapColor().col)
                         .orElse(NO_TINT)
                 : NO_TINT;
-        for (DeferredBlock<BlockCandleHolder> holder : TTBlocks.CANDLE_HOLDERS.values()) {
+        for (RegistryObject<BlockCandleHolder> holder : TTBlocks.CANDLE_HOLDERS.values()) {
             event.register(holderTint, holder.get());
         }
     }

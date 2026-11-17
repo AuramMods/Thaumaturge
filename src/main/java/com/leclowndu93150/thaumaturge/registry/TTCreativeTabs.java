@@ -24,15 +24,14 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTCreativeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, TTIds.MODID);
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> THAUMATURGE = CREATIVE_MODE_TABS.register(
+    public static final RegistryObject<CreativeModeTab> THAUMATURGE = CREATIVE_MODE_TABS.register(
             "thaumaturge",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.thaumaturge"))
@@ -236,7 +235,7 @@ public final class TTCreativeTabs {
                         for (DyeColor dye : DyeColor.values()) {
                             output.accept(TTItems.CANDLES.get(dye).get());
                         }
-                        for (DeferredItem<BlockItem> holder : TTItems.CANDLE_HOLDERS.values()) {
+                        for (RegistryObject<BlockItem> holder : TTItems.CANDLE_HOLDERS.values()) {
                             output.accept(holder.get());
                         }
 

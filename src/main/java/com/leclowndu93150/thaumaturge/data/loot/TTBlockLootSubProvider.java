@@ -38,7 +38,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePrope
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import net.neoforged.neoforge.registries.DeferredBlock;
+import net.minecraftforge.registries.RegistryObject;
 
 public final class TTBlockLootSubProvider extends BlockLootSubProvider {
     private static final float AMBER_CURIO_CHANCE = 0.1F;
@@ -233,7 +233,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
                                                                 CopyComponentsFunction.Source.BLOCK_ENTITY)
                                                         .include(TTDataComponents.NODE_DATA.get()))))));
 
-        for (DeferredBlock<BlockCandleHolder> holder : TTBlocks.CANDLE_HOLDERS.values()) {
+        for (RegistryObject<BlockCandleHolder> holder : TTBlocks.CANDLE_HOLDERS.values()) {
             add(holder.get(), candleHolderTable(holder.get()));
         }
         for (DyeColor dye : DyeColor.values()) {

@@ -21,7 +21,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import net.neoforged.neoforge.registries.DeferredBlock;
+import net.minecraftforge.registries.RegistryObject;
 import org.jspecify.annotations.Nullable;
 
 final class ResearchTableBonuses {
@@ -57,7 +57,7 @@ final class ResearchTableBonuses {
         this.bonus = bonus;
     }
 
-    private record CrystalRow(DeferredBlock<?> block, ResourceKey<IAspect> aspect) {}
+    private record CrystalRow(RegistryObject<?> block, ResourceKey<IAspect> aspect) {}
 
     static AspectList recalculate(Level level, BlockPos tablePos, AspectList current, RandomSource random) {
         return new ResearchTableBonuses(level, random, current).run(tablePos);

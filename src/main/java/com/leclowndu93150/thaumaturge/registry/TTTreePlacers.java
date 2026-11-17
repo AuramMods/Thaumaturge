@@ -13,7 +13,7 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerTy
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTTreePlacers {
@@ -24,22 +24,22 @@ public final class TTTreePlacers {
     public static final DeferredRegister<TreeDecoratorType<?>> TREE_DECORATORS =
             DeferredRegister.create(Registries.TREE_DECORATOR_TYPE, TTIds.MODID);
 
-    public static final DeferredHolder<TrunkPlacerType<?>, TrunkPlacerType<CrownTrunkPlacer>> CROWN_TRUNK =
+    public static final RegistryObject<TrunkPlacerType<CrownTrunkPlacer>> CROWN_TRUNK =
             TRUNK_PLACERS.register("crown_trunk_placer", () -> new TrunkPlacerType<>(CrownTrunkPlacer.CODEC));
-    public static final DeferredHolder<FoliagePlacerType<?>, FoliagePlacerType<CrownFoliagePlacer>> CROWN_FOLIAGE =
+    public static final RegistryObject<FoliagePlacerType<CrownFoliagePlacer>> CROWN_FOLIAGE =
             FOLIAGE_PLACERS.register("crown_foliage_placer", () -> new FoliagePlacerType<>(CrownFoliagePlacer.CODEC));
-    public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<SpiderNestDecorator>> SPIDER_NEST =
+    public static final RegistryObject<TreeDecoratorType<SpiderNestDecorator>> SPIDER_NEST =
             TREE_DECORATORS.register("spider_nest", () -> new TreeDecoratorType<>(SpiderNestDecorator.CODEC));
 
-    public static final DeferredHolder<TrunkPlacerType<?>, TrunkPlacerType<SilverwoodTrunkPlacer>> SILVERWOOD_TRUNK =
+    public static final RegistryObject<TrunkPlacerType<SilverwoodTrunkPlacer>> SILVERWOOD_TRUNK =
             TRUNK_PLACERS.register("silverwood_trunk_placer", () -> new TrunkPlacerType<>(SilverwoodTrunkPlacer.CODEC));
-    public static final DeferredHolder<FoliagePlacerType<?>, FoliagePlacerType<LeafCellFoliagePlacer>>
+    public static final RegistryObject<FoliagePlacerType<LeafCellFoliagePlacer>>
             LEAF_CELL_FOLIAGE = FOLIAGE_PLACERS.register(
                     "leaf_cell_foliage_placer", () -> new FoliagePlacerType<>(LeafCellFoliagePlacer.CODEC));
-    public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<DetachedLeafPruner>>
+    public static final RegistryObject<TreeDecoratorType<DetachedLeafPruner>>
             DETACHED_LEAF_PRUNER = TREE_DECORATORS.register(
                     "detached_leaf_pruner", () -> new TreeDecoratorType<>(DetachedLeafPruner.CODEC));
-    public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<ScatteredFlowersDecorator>>
+    public static final RegistryObject<TreeDecoratorType<ScatteredFlowersDecorator>>
             SCATTERED_FLOWERS = TREE_DECORATORS.register(
                     "scattered_flowers", () -> new TreeDecoratorType<>(ScatteredFlowersDecorator.CODEC));
 

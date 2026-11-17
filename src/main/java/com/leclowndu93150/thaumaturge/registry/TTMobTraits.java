@@ -26,7 +26,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTMobTraits {
@@ -40,71 +40,72 @@ public final class TTMobTraits {
 
     public static final DeferredRegister<MobTrait> TRAITS = DeferredRegister.create(MobTrait.REGISTRY_KEY, TTIds.MODID);
 
-    private static final Registry<MobTrait> REGISTRY = TRAITS.makeRegistry(builder -> builder.sync(true));
+    private static final java.util.function.Supplier<net.minecraftforge.registries.IForgeRegistry<MobTrait>> REGISTRY =
+            TRAITS.makeRegistry(() -> new net.minecraftforge.registries.RegistryBuilder<MobTrait>().hasTags());
 
-    public static final DeferredHolder<MobTrait, ModifierChampionTrait> BOLD = TRAITS.register(
+    public static final RegistryObject<ModifierChampionTrait> BOLD = TRAITS.register(
             "bold",
             () -> new ModifierChampionTrait(
                     Attributes.MOVEMENT_SPEED, BOLD_SPEED, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
-    public static final DeferredHolder<MobTrait, SpinedChampionTrait> SPINED =
+    public static final RegistryObject<SpinedChampionTrait> SPINED =
             TRAITS.register("spine", SpinedChampionTrait::new);
-    public static final DeferredHolder<MobTrait, ArmoredChampionTrait> ARMORED =
+    public static final RegistryObject<ArmoredChampionTrait> ARMORED =
             TRAITS.register("armor", ArmoredChampionTrait::new);
-    public static final DeferredHolder<MobTrait, ModifierChampionTrait> MIGHTY = TRAITS.register(
+    public static final RegistryObject<ModifierChampionTrait> MIGHTY = TRAITS.register(
             "mighty",
             () -> new ModifierChampionTrait(
                     Attributes.ATTACK_DAMAGE, MIGHTY_DAMAGE, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-    public static final DeferredHolder<MobTrait, EffectChampionTrait> GRIM =
+    public static final RegistryObject<EffectChampionTrait> GRIM =
             TRAITS.register("grim", () -> new EffectChampionTrait(MobEffects.WITHER, GRIM_WITHER_TICKS));
-    public static final DeferredHolder<MobTrait, WardedChampionTrait> WARDED =
+    public static final RegistryObject<WardedChampionTrait> WARDED =
             TRAITS.register("warded", WardedChampionTrait::new);
-    public static final DeferredHolder<MobTrait, WarpChampionTrait> WARP =
+    public static final RegistryObject<WarpChampionTrait> WARP =
             TRAITS.register("warp", WarpChampionTrait::new);
-    public static final DeferredHolder<MobTrait, UndyingChampionTrait> UNDYING =
+    public static final RegistryObject<UndyingChampionTrait> UNDYING =
             TRAITS.register("undying", UndyingChampionTrait::new);
-    public static final DeferredHolder<MobTrait, FieryChampionTrait> FIERY =
+    public static final RegistryObject<FieryChampionTrait> FIERY =
             TRAITS.register("fiery", FieryChampionTrait::new);
-    public static final DeferredHolder<MobTrait, EffectChampionTrait> SICKLY =
+    public static final RegistryObject<EffectChampionTrait> SICKLY =
             TRAITS.register("sickly", () -> new EffectChampionTrait(MobEffects.HUNGER, SICKLY_HUNGER_TICKS));
-    public static final DeferredHolder<MobTrait, EffectChampionTrait> VENOMOUS =
+    public static final RegistryObject<EffectChampionTrait> VENOMOUS =
             TRAITS.register("venomous", () -> new EffectChampionTrait(MobEffects.POISON, VENOMOUS_POISON_TICKS));
-    public static final DeferredHolder<MobTrait, VampiricChampionTrait> VAMPIRIC =
+    public static final RegistryObject<VampiricChampionTrait> VAMPIRIC =
             TRAITS.register("vampiric", VampiricChampionTrait::new);
-    public static final DeferredHolder<MobTrait, InfestedChampionTrait> INFESTED =
+    public static final RegistryObject<InfestedChampionTrait> INFESTED =
             TRAITS.register("infested", InfestedChampionTrait::new);
 
-    public static final DeferredHolder<MobTrait, TaintedTrait> TAINTED = TRAITS.register("tainted", TaintedTrait::new);
-    public static final DeferredHolder<MobTrait, TaintGrazingTrait> TAINT_GRAZING =
+    public static final RegistryObject<TaintedTrait> TAINTED = TRAITS.register("tainted", TaintedTrait::new);
+    public static final RegistryObject<TaintGrazingTrait> TAINT_GRAZING =
             TRAITS.register("taint_grazing", TaintGrazingTrait::new);
-    public static final DeferredHolder<MobTrait, MarkerTrait> TAINT_BLAST =
+    public static final RegistryObject<MarkerTrait> TAINT_BLAST =
             TRAITS.register("taint_blast", MarkerTrait::new);
-    public static final DeferredHolder<MobTrait, TaintBroodTrait> TAINT_BROOD =
+    public static final RegistryObject<TaintBroodTrait> TAINT_BROOD =
             TRAITS.register("taint_brood", TaintBroodTrait::new);
-    public static final DeferredHolder<MobTrait, LeapingTrait> LEAPING = TRAITS.register("leaping", LeapingTrait::new);
-    public static final DeferredHolder<MobTrait, MarkerTrait> TAINT_SHEARING =
+    public static final RegistryObject<LeapingTrait> LEAPING = TRAITS.register("leaping", LeapingTrait::new);
+    public static final RegistryObject<MarkerTrait> TAINT_SHEARING =
             TRAITS.register("taint_shearing", MarkerTrait::new);
-    public static final DeferredHolder<MobTrait, MarkerTrait> FLUX_MILK =
+    public static final RegistryObject<MarkerTrait> FLUX_MILK =
             TRAITS.register("flux_milk", MarkerTrait::new);
-    public static final DeferredHolder<MobTrait, TaintLayingTrait> TAINT_LAYING =
+    public static final RegistryObject<TaintLayingTrait> TAINT_LAYING =
             TRAITS.register("taint_laying", TaintLayingTrait::new);
-    public static final DeferredHolder<MobTrait, MarkerTrait> SWARM_BURST =
+    public static final RegistryObject<MarkerTrait> SWARM_BURST =
             TRAITS.register("swarm_burst", MarkerTrait::new);
-    public static final DeferredHolder<MobTrait, WarpingStrikeTrait> WARPING_STRIKE =
+    public static final RegistryObject<WarpingStrikeTrait> WARPING_STRIKE =
             TRAITS.register("warping_strike", WarpingStrikeTrait::new);
-    public static final DeferredHolder<MobTrait, MarkerTrait> TAINT_ARROWS =
+    public static final RegistryObject<MarkerTrait> TAINT_ARROWS =
             TRAITS.register("taint_arrows", MarkerTrait::new);
-    public static final DeferredHolder<MobTrait, MarkerTrait> TAINT_BREWING =
+    public static final RegistryObject<MarkerTrait> TAINT_BREWING =
             TRAITS.register("taint_brewing", MarkerTrait::new);
-    public static final DeferredHolder<MobTrait, StrikeEffectTrait> LIFTING_STRIKE = TRAITS.register(
+    public static final RegistryObject<StrikeEffectTrait> LIFTING_STRIKE = TRAITS.register(
             "lifting_strike",
             () -> new StrikeEffectTrait(MobEffects.LEVITATION, LIFTING_LEVITATION_TICKS, LIFTING_LEVITATION_AMPLIFIER));
-    public static final DeferredHolder<MobTrait, TaintacleLureTrait> TAINTACLE_LURE =
+    public static final RegistryObject<TaintacleLureTrait> TAINTACLE_LURE =
             TRAITS.register("taintacle_lure", TaintacleLureTrait::new);
 
     private TTMobTraits() {}
 
     public static Registry<MobTrait> registry() {
-        return REGISTRY;
+        return ForgeRegistration.vanillaRegistry(REGISTRY);
     }
 
     public static void register(IEventBus modBus) {

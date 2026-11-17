@@ -47,171 +47,171 @@ import net.minecraft.core.registries.Registries;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTParticles {
     public static final DeferredRegister<ParticleType<?>> PARTICLES =
             DeferredRegister.create(Registries.PARTICLE_TYPE, TTIds.MODID);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<SparkleParticleOptions>> SPARKLE =
+    public static final RegistryObject<ParticleType<SparkleParticleOptions>> SPARKLE =
             register("sparkle", SparkleParticleOptions.CODEC, SparkleParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<WispyMoteParticleOptions>> WISPY_MOTE =
+    public static final RegistryObject<ParticleType<WispyMoteParticleOptions>> WISPY_MOTE =
             register("wispy_mote", WispyMoteParticleOptions.CODEC, WispyMoteParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<CurlyWispParticleOptions>> CURLY_WISP =
+    public static final RegistryObject<ParticleType<CurlyWispParticleOptions>> CURLY_WISP =
             register("curly_wisp", CurlyWispParticleOptions.CODEC, CurlyWispParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<WispFlameParticleOptions>> WISP_FLAME =
+    public static final RegistryObject<ParticleType<WispFlameParticleOptions>> WISP_FLAME =
             register("wisp_flame", WispFlameParticleOptions.CODEC, WispFlameParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<TaintFumeParticleOptions>> TAINT_FUME =
+    public static final RegistryObject<ParticleType<TaintFumeParticleOptions>> TAINT_FUME =
             register("taint_fume", TaintFumeParticleOptions.CODEC, TaintFumeParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<TaintSwarmParticleOptions>> TAINT_SWARM =
+    public static final RegistryObject<ParticleType<TaintSwarmParticleOptions>> TAINT_SWARM =
             register("taint_swarm", TaintSwarmParticleOptions.CODEC, TaintSwarmParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<LightningFlashParticleOptions>> LIGHTNING_FLASH =
+    public static final RegistryObject<ParticleType<LightningFlashParticleOptions>> LIGHTNING_FLASH =
             register(
                     "lightning_flash", LightningFlashParticleOptions.CODEC, LightningFlashParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<StabilizerRuneParticleOptions>> STABILIZER_RUNE =
+    public static final RegistryObject<ParticleType<StabilizerRuneParticleOptions>> STABILIZER_RUNE =
             register(
                     "stabilizer_rune", StabilizerRuneParticleOptions.CODEC, StabilizerRuneParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<BubbleParticleOptions>> BUBBLE =
+    public static final RegistryObject<ParticleType<BubbleParticleOptions>> BUBBLE =
             register("bubble", BubbleParticleOptions.CODEC, BubbleParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<SlimyBubbleParticleOptions>> SLIMY_BUBBLE =
+    public static final RegistryObject<ParticleType<SlimyBubbleParticleOptions>> SLIMY_BUBBLE =
             register("slimy_bubble", SlimyBubbleParticleOptions.CODEC, SlimyBubbleParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<SparkParticleOptions>> SPARK =
+    public static final RegistryObject<ParticleType<SparkParticleOptions>> SPARK =
             register("spark", SparkParticleOptions.CODEC, SparkParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<BurstParticleOptions>> BURST =
+    public static final RegistryObject<ParticleType<BurstParticleOptions>> BURST =
             register("burst", BurstParticleOptions.CODEC, BurstParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<ScanGlyphParticleOptions>> SCAN_GLYPH =
+    public static final RegistryObject<ParticleType<ScanGlyphParticleOptions>> SCAN_GLYPH =
             register("scan_glyph", ScanGlyphParticleOptions.CODEC, ScanGlyphParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<SlashParticleOptions>> SLASH =
+    public static final RegistryObject<ParticleType<SlashParticleOptions>> SLASH =
             register("slash", SlashParticleOptions.CODEC, SlashParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, TTColorParticleType> PUFF = color("puff");
-    public static final DeferredHolder<ParticleType<?>, TTColorParticleType> FLASH = color("flash");
-    public static final DeferredHolder<ParticleType<?>, TTColorParticleType> FOCUS_CLOUD = color("focus_cloud");
-    public static final DeferredHolder<ParticleType<?>, TTColorParticleType> BLOCK_MIST = color("block_mist");
-    public static final DeferredHolder<ParticleType<?>, TTColorParticleType> MIST_FLAT = color("mist_flat");
-    public static final DeferredHolder<ParticleType<?>, TTColorParticleType> GOO_DRIP = color("goo_drip");
-    public static final DeferredHolder<ParticleType<?>, TTColorParticleType> LEAF_MOTE = color("leaf_mote");
+    public static final RegistryObject<TTColorParticleType> PUFF = color("puff");
+    public static final RegistryObject<TTColorParticleType> FLASH = color("flash");
+    public static final RegistryObject<TTColorParticleType> FOCUS_CLOUD = color("focus_cloud");
+    public static final RegistryObject<TTColorParticleType> BLOCK_MIST = color("block_mist");
+    public static final RegistryObject<TTColorParticleType> MIST_FLAT = color("mist_flat");
+    public static final RegistryObject<TTColorParticleType> GOO_DRIP = color("goo_drip");
+    public static final RegistryObject<TTColorParticleType> LEAF_MOTE = color("leaf_mote");
 
-    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> LEVITATOR_MIST = simple("levitator_mist");
-    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> GOLEM_TRAIL = simple("golem_trail");
-    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> POLLUTION_FUME = simple("pollution_fume");
-    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> PECH_CURSE = simple("pech_curse");
-    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> CRIMSON_SMOKE = simple("crimson_smoke");
+    public static final RegistryObject<SimpleParticleType> LEVITATOR_MIST = simple("levitator_mist");
+    public static final RegistryObject<SimpleParticleType> GOLEM_TRAIL = simple("golem_trail");
+    public static final RegistryObject<SimpleParticleType> POLLUTION_FUME = simple("pollution_fume");
+    public static final RegistryObject<SimpleParticleType> PECH_CURSE = simple("pech_curse");
+    public static final RegistryObject<SimpleParticleType> CRIMSON_SMOKE = simple("crimson_smoke");
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<FireMoteParticleOptions>> FIRE_MOTE =
+    public static final RegistryObject<ParticleType<FireMoteParticleOptions>> FIRE_MOTE =
             register("fire_mote", FireMoteParticleOptions.CODEC, FireMoteParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<NitorCoreParticleOptions>> NITOR_CORE =
+    public static final RegistryObject<ParticleType<NitorCoreParticleOptions>> NITOR_CORE =
             register("nitor_core", NitorCoreParticleOptions.CODEC, NitorCoreParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<VentParticleOptions>> VENT =
+    public static final RegistryObject<ParticleType<VentParticleOptions>> VENT =
             register("vent", VentParticleOptions.CODEC, VentParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<BlockRunesParticleOptions>> BLOCK_RUNES =
+    public static final RegistryObject<ParticleType<BlockRunesParticleOptions>> BLOCK_RUNES =
             register("block_runes", BlockRunesParticleOptions.CODEC, BlockRunesParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<SmokeSpiralParticleOptions>> SMOKE_SPIRAL =
+    public static final RegistryObject<ParticleType<SmokeSpiralParticleOptions>> SMOKE_SPIRAL =
             register("smoke_spiral", SmokeSpiralParticleOptions.CODEC, SmokeSpiralParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<VisSparkleParticleOptions>> VIS_SPARKLE =
+    public static final RegistryObject<ParticleType<VisSparkleParticleOptions>> VIS_SPARKLE =
             register("vis_sparkle", VisSparkleParticleOptions.CODEC, VisSparkleParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<WispParticleOptions>> WISP =
+    public static final RegistryObject<ParticleType<WispParticleOptions>> WISP =
             register("wisp", WispParticleOptions.CODEC, WispParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<BoltParticleOptions>> BOLT =
+    public static final RegistryObject<ParticleType<BoltParticleOptions>> BOLT =
             register("bolt", BoltParticleOptions.CODEC, BoltParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<BoreDebrisParticleOptions>> BORE_DEBRIS =
+    public static final RegistryObject<ParticleType<BoreDebrisParticleOptions>> BORE_DEBRIS =
             register("bore_debris", BoreDebrisParticleOptions.CODEC, BoreDebrisParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<InfusionCrumbsParticleOptions>> INFUSION_CRUMBS =
+    public static final RegistryObject<ParticleType<InfusionCrumbsParticleOptions>> INFUSION_CRUMBS =
             register(
                     "infusion_crumbs", InfusionCrumbsParticleOptions.CODEC, InfusionCrumbsParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<BoreSparkleParticleOptions>> BORE_SPARKLE =
+    public static final RegistryObject<ParticleType<BoreSparkleParticleOptions>> BORE_SPARKLE =
             register("bore_sparkle", BoreSparkleParticleOptions.CODEC, BoreSparkleParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<EssentiaDropParticleOptions>> ESSENTIA_DROP =
+    public static final RegistryObject<ParticleType<EssentiaDropParticleOptions>> ESSENTIA_DROP =
             register("essentia_drop", EssentiaDropParticleOptions.CODEC, EssentiaDropParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<FluxGooDropletParticleOptions>> FLUX_GOO_DROPLET =
+    public static final RegistryObject<ParticleType<FluxGooDropletParticleOptions>> FLUX_GOO_DROPLET =
             register(
                     "flux_goo_droplet",
                     FluxGooDropletParticleOptions.CODEC,
                     FluxGooDropletParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<ShieldSparkParticleOptions>> SHIELD_SPARK =
+    public static final RegistryObject<ParticleType<ShieldSparkParticleOptions>> SHIELD_SPARK =
             register("shield_spark", ShieldSparkParticleOptions.CODEC, ShieldSparkParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<WardFlashParticleOptions>> WARD_FLASH =
+    public static final RegistryObject<ParticleType<WardFlashParticleOptions>> WARD_FLASH =
             register("ward_flash", WardFlashParticleOptions.CODEC, WardFlashParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<FlameFanParticleOptions>> FLAME_FAN =
+    public static final RegistryObject<ParticleType<FlameFanParticleOptions>> FLAME_FAN =
             register("flame_fan", FlameFanParticleOptions.CODEC, FlameFanParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<CrackShardParticleOptions>> CRACK_SHARD =
+    public static final RegistryObject<ParticleType<CrackShardParticleOptions>> CRACK_SHARD =
             register("crack_shard", CrackShardParticleOptions.CODEC, CrackShardParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<AirGustParticleOptions>> AIR_GUST =
+    public static final RegistryObject<ParticleType<AirGustParticleOptions>> AIR_GUST =
             register("air_gust", AirGustParticleOptions.CODEC, AirGustParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<EarthPebbleParticleOptions>> EARTH_PEBBLE =
+    public static final RegistryObject<ParticleType<EarthPebbleParticleOptions>> EARTH_PEBBLE =
             register("earth_pebble", EarthPebbleParticleOptions.CODEC, EarthPebbleParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<FrostFlakeParticleOptions>> FROST_FLAKE =
+    public static final RegistryObject<ParticleType<FrostFlakeParticleOptions>> FROST_FLAKE =
             register("frost_flake", FrostFlakeParticleOptions.CODEC, FrostFlakeParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<FluxSwirlParticleOptions>> FLUX_SWIRL =
+    public static final RegistryObject<ParticleType<FluxSwirlParticleOptions>> FLUX_SWIRL =
             register("flux_swirl", FluxSwirlParticleOptions.CODEC, FluxSwirlParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<RiftShardParticleOptions>> RIFT_SHARD =
+    public static final RegistryObject<ParticleType<RiftShardParticleOptions>> RIFT_SHARD =
             register("rift_shard", RiftShardParticleOptions.CODEC, RiftShardParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, ParticleType<GolemEmoteParticleOptions>> GOLEM_EMOTE =
+    public static final RegistryObject<ParticleType<GolemEmoteParticleOptions>> GOLEM_EMOTE =
             register("golem_emote", GolemEmoteParticleOptions.CODEC, GolemEmoteParticleOptions.STREAM_CODEC);
 
-    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> CURSE_SMOKE = simple("curse_smoke");
-    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> PRIMAL_FLARE = simple("primal_flare");
-    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> HEAL_FLASH = simple("heal_flash");
+    public static final RegistryObject<SimpleParticleType> CURSE_SMOKE = simple("curse_smoke");
+    public static final RegistryObject<SimpleParticleType> PRIMAL_FLARE = simple("primal_flare");
+    public static final RegistryObject<SimpleParticleType> HEAL_FLASH = simple("heal_flash");
 
-    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> TAINT_SPLOSION = simple("taint_splosion");
+    public static final RegistryObject<SimpleParticleType> TAINT_SPLOSION = simple("taint_splosion");
 
     private TTParticles() {}
 
-    private static <T extends ParticleOptions> DeferredHolder<ParticleType<?>, ParticleType<T>> register(
+    private static <T extends ParticleOptions> RegistryObject<ParticleType<T>> register(
             String name, MapCodec<T> codec, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) {
         return PARTICLES.register(name, () -> new TTParticleType<>(codec, streamCodec));
     }
 
-    private static DeferredHolder<ParticleType<?>, TTColorParticleType> color(String name) {
+    private static RegistryObject<TTColorParticleType> color(String name) {
         return PARTICLES.register(name, TTColorParticleType::new);
     }
 
-    private static DeferredHolder<ParticleType<?>, SimpleParticleType> simple(String name) {
+    private static RegistryObject<SimpleParticleType> simple(String name) {
         return PARTICLES.register(name, () -> new SimpleParticleType(false));
     }
 
-    public static ColorParticleOption colorOf(DeferredHolder<ParticleType<?>, TTColorParticleType> type, int color) {
+    public static ColorParticleOption colorOf(RegistryObject<TTColorParticleType> type, int color) {
         return ColorParticleOption.create(type.get(), color);
     }
 
     public static ColorParticleOption colorOf(
-            DeferredHolder<ParticleType<?>, TTColorParticleType> type, float r, float g, float b) {
+            RegistryObject<TTColorParticleType> type, float r, float g, float b) {
         return ColorParticleOption.create(type.get(), r, g, b);
     }
 

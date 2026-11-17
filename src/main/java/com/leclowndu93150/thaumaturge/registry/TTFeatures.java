@@ -20,44 +20,44 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTFeatures {
     public static final DeferredRegister<Feature<?>> FEATURES =
             DeferredRegister.create(Registries.FEATURE, TTIds.MODID);
 
-    public static final DeferredHolder<Feature<?>, OptionalDynamicTreeFeature> COMPAT_TREE =
+    public static final RegistryObject<OptionalDynamicTreeFeature> COMPAT_TREE =
             FEATURES.register("compat_tree", OptionalDynamicTreeFeature::new);
 
-    public static final DeferredHolder<Feature<?>, CrystalClusterFeature> CRYSTAL_CLUSTER =
+    public static final RegistryObject<CrystalClusterFeature> CRYSTAL_CLUSTER =
             FEATURES.register("crystal_cluster", () -> new CrystalClusterFeature(CrystalClusterConfig.CODEC));
 
-    public static final DeferredHolder<Feature<?>, MagicForestFloraFeature> MAGIC_FOREST_FLORA =
+    public static final RegistryObject<MagicForestFloraFeature> MAGIC_FOREST_FLORA =
             FEATURES.register("magic_forest_flora", () -> new MagicForestFloraFeature(MagicForestFloraConfig.CODEC));
 
-    public static final DeferredHolder<Feature<?>, ManaPodFeature> MANA_PODS =
+    public static final RegistryObject<ManaPodFeature> MANA_PODS =
             FEATURES.register("mana_pods", () -> new ManaPodFeature(NoneFeatureConfiguration.CODEC));
 
-    public static final DeferredHolder<Feature<?>, Feature<NodeFeatureConfig>> NODE =
+    public static final RegistryObject<Feature<NodeFeatureConfig>> NODE =
             FEATURES.register("node", () -> new NodeFeature(NodeFeatureConfig.CODEC));
 
-    public static final DeferredHolder<Feature<?>, CrimsonPortalFeature> CRIMSON_PORTAL =
+    public static final RegistryObject<CrimsonPortalFeature> CRIMSON_PORTAL =
             FEATURES.register("crimson_portal", () -> new CrimsonPortalFeature(NoneFeatureConfiguration.CODEC));
 
-    public static final DeferredHolder<Feature<?>, ObsidianTotemFeature> OBSIDIAN_TOTEM =
+    public static final RegistryObject<ObsidianTotemFeature> OBSIDIAN_TOTEM =
             FEATURES.register("obsidian_totem", () -> new ObsidianTotemFeature(NoneFeatureConfiguration.CODEC));
 
-    public static final DeferredHolder<Feature<?>, HilltopStonesFeature> HILLTOP_STONES =
+    public static final RegistryObject<HilltopStonesFeature> HILLTOP_STONES =
             FEATURES.register("hilltop_stones", () -> new HilltopStonesFeature(NoneFeatureConfiguration.CODEC));
 
-    public static final DeferredHolder<Feature<?>, MagicalCavePondFeature> MAGICAL_CAVE_POND =
+    public static final RegistryObject<MagicalCavePondFeature> MAGICAL_CAVE_POND =
             FEATURES.register("magical_cave_pond", () -> new MagicalCavePondFeature(NoneFeatureConfiguration.CODEC));
 
-    public static final DeferredHolder<Feature<?>, MagicalCaveBushFeature> MAGICAL_CAVE_BUSH =
+    public static final RegistryObject<MagicalCaveBushFeature> MAGICAL_CAVE_BUSH =
             FEATURES.register("magical_cave_bush", () -> new MagicalCaveBushFeature(NoneFeatureConfiguration.CODEC));
 
-    public static final DeferredHolder<Feature<?>, TaintBiomeFeature> TAINT_BIOME =
+    public static final RegistryObject<TaintBiomeFeature> TAINT_BIOME =
             FEATURES.register("taint_biome", () -> new TaintBiomeFeature(TaintBiomeConfig.CODEC));
 
     private TTFeatures() {}

@@ -84,14 +84,14 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, TTIds.MODID);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityBanner>> BANNER =
+    public static final RegistryObject<BlockEntityType<BlockEntityBanner>> BANNER =
             BLOCK_ENTITIES.register(
                     "banner", () -> new BlockEntityType<>(BlockEntityBanner::new, bannerBlocks(), null));
 
@@ -106,7 +106,7 @@ public final class TTBlockEntities {
         return blocks;
     }
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityNode>> NODE =
+    public static final RegistryObject<BlockEntityType<BlockEntityNode>> NODE =
             BLOCK_ENTITIES.register(
                     "node",
                     () -> new BlockEntityType<>(
@@ -117,7 +117,7 @@ public final class TTBlockEntities {
                                     TTBlocks.SILVERWOOD_NODE_LOG.get()),
                             null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityNodeStabilizer>> NODE_STABILIZER =
+    public static final RegistryObject<BlockEntityType<BlockEntityNodeStabilizer>> NODE_STABILIZER =
             BLOCK_ENTITIES.register(
                     "node_stabilizer",
                     () -> new BlockEntityType<>(
@@ -125,61 +125,61 @@ public final class TTBlockEntities {
                             Set.of(TTBlocks.NODE_STABILIZER.get(), TTBlocks.NODE_STABILIZER_ADVANCED.get()),
                             null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityVisRelay>> VIS_RELAY =
+    public static final RegistryObject<BlockEntityType<BlockEntityVisRelay>> VIS_RELAY =
             BLOCK_ENTITIES.register(
                     "vis_relay",
                     () -> new BlockEntityType<>(BlockEntityVisRelay::new, Set.of(TTBlocks.VIS_RELAY.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityNodeTransducer>> NODE_TRANSDUCER =
+    public static final RegistryObject<BlockEntityType<BlockEntityNodeTransducer>> NODE_TRANSDUCER =
             BLOCK_ENTITIES.register(
                     "node_transducer",
                     () -> new BlockEntityType<>(
                             BlockEntityNodeTransducer::new, Set.of(TTBlocks.NODE_TRANSDUCER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityJarNode>> JAR_NODE =
+    public static final RegistryObject<BlockEntityType<BlockEntityJarNode>> JAR_NODE =
             BLOCK_ENTITIES.register(
                     "jar_node",
                     () -> new BlockEntityType<>(BlockEntityJarNode::new, Set.of(TTBlocks.JAR_NODE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityFocalManipulator>>
+    public static final RegistryObject<BlockEntityType<BlockEntityFocalManipulator>>
             FOCAL_MANIPULATOR = BLOCK_ENTITIES.register(
                     "focal_manipulator",
                     () -> new BlockEntityType<>(
                             BlockEntityFocalManipulator::new, Set.of(TTBlocks.FOCAL_MANIPULATOR.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityManaPod>> MANA_POD =
+    public static final RegistryObject<BlockEntityType<BlockEntityManaPod>> MANA_POD =
             BLOCK_ENTITIES.register(
                     "mana_pod",
                     () -> new BlockEntityType<>(BlockEntityManaPod::new, Set.of(TTBlocks.MANA_POD.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityResearchTable>> RESEARCH_TABLE =
+    public static final RegistryObject<BlockEntityType<BlockEntityResearchTable>> RESEARCH_TABLE =
             BLOCK_ENTITIES.register(
                     "research_table",
                     () -> new BlockEntityType<>(
                             BlockEntityResearchTable::new, Set.of(TTBlocks.RESEARCH_TABLE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityDeconstructionTable>>
+    public static final RegistryObject<BlockEntityType<BlockEntityDeconstructionTable>>
             DECONSTRUCTION_TABLE = BLOCK_ENTITIES.register(
                     "deconstruction_table",
                     () -> new BlockEntityType<>(
                             BlockEntityDeconstructionTable::new, Set.of(TTBlocks.DECONSTRUCTION_TABLE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityArcaneWorkbench>>
+    public static final RegistryObject<BlockEntityType<BlockEntityArcaneWorkbench>>
             ARCANE_WORKBENCH = BLOCK_ENTITIES.register(
                     "arcane_workbench",
                     () -> new BlockEntityType<>(
                             BlockEntityArcaneWorkbench::new, Set.of(TTBlocks.ARCANE_WORKBENCH.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityCrucible>> CRUCIBLE =
+    public static final RegistryObject<BlockEntityType<BlockEntityCrucible>> CRUCIBLE =
             BLOCK_ENTITIES.register(
                     "crucible",
                     () -> new BlockEntityType<>(BlockEntityCrucible::new, Set.of(TTBlocks.CRUCIBLE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntitySpa>> SPA =
+    public static final RegistryObject<BlockEntityType<BlockEntitySpa>> SPA =
             BLOCK_ENTITIES.register(
                     "spa", () -> new BlockEntityType<>(BlockEntitySpa::new, Set.of(TTBlocks.SPA.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntitySmelter>> SMELTER =
+    public static final RegistryObject<BlockEntityType<BlockEntitySmelter>> SMELTER =
             BLOCK_ENTITIES.register(
                     "smelter",
                     () -> new BlockEntityType<>(
@@ -190,7 +190,7 @@ public final class TTBlockEntities {
                                     TTBlocks.SMELTER_VOID.get()),
                             null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityAdvancedAlchemicalFurnace>>
+    public static final RegistryObject<BlockEntityType<BlockEntityAdvancedAlchemicalFurnace>>
             ADVANCED_ALCHEMICAL_FURNACE = BLOCK_ENTITIES.register(
                     "advanced_alchemical_furnace",
                     () -> new BlockEntityType<>(
@@ -198,17 +198,17 @@ public final class TTBlockEntities {
                             Set.of(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get()),
                             null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityAlembic>> ALEMBIC =
+    public static final RegistryObject<BlockEntityType<BlockEntityAlembic>> ALEMBIC =
             BLOCK_ENTITIES.register(
                     "alembic",
                     () -> new BlockEntityType<>(BlockEntityAlembic::new, Set.of(TTBlocks.ALEMBIC.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityBellows>> BELLOWS =
+    public static final RegistryObject<BlockEntityType<BlockEntityBellows>> BELLOWS =
             BLOCK_ENTITIES.register(
                     "bellows",
                     () -> new BlockEntityType<>(BlockEntityBellows::new, Set.of(TTBlocks.BELLOWS.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AbstractBlockEntityJar>> JAR =
+    public static final RegistryObject<BlockEntityType<AbstractBlockEntityJar>> JAR =
             BLOCK_ENTITIES.register(
                     "jar",
                     () -> new BlockEntityType<>(
@@ -218,57 +218,57 @@ public final class TTBlockEntities {
                                     .collect(Collectors.toUnmodifiableSet()),
                             null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityJarBrain>> JAR_BRAIN =
+    public static final RegistryObject<BlockEntityType<BlockEntityJarBrain>> JAR_BRAIN =
             BLOCK_ENTITIES.register(
                     "jar_brain",
                     () -> new BlockEntityType<>(BlockEntityJarBrain::new, Set.of(TTBlocks.JAR_BRAIN.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityThaumatorium>> THAUMATORIUM =
+    public static final RegistryObject<BlockEntityType<BlockEntityThaumatorium>> THAUMATORIUM =
             BLOCK_ENTITIES.register(
                     "thaumatorium",
                     () -> new BlockEntityType<>(
                             BlockEntityThaumatorium::new, Set.of(TTBlocks.THAUMATORIUM.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityThaumatoriumTop>>
+    public static final RegistryObject<BlockEntityType<BlockEntityThaumatoriumTop>>
             THAUMATORIUM_TOP = BLOCK_ENTITIES.register(
                     "thaumatorium_top",
                     () -> new BlockEntityType<>(
                             BlockEntityThaumatoriumTop::new, Set.of(TTBlocks.THAUMATORIUM_TOP.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityCondenser>> CONDENSER =
+    public static final RegistryObject<BlockEntityType<BlockEntityCondenser>> CONDENSER =
             BLOCK_ENTITIES.register(
                     "condenser",
                     () -> new BlockEntityType<>(BlockEntityCondenser::new, Set.of(TTBlocks.CONDENSER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityStabilizer>> STABILIZER =
+    public static final RegistryObject<BlockEntityType<BlockEntityStabilizer>> STABILIZER =
             BLOCK_ENTITIES.register(
                     "stabilizer",
                     () -> new BlockEntityType<>(BlockEntityStabilizer::new, Set.of(TTBlocks.STABILIZER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityRedstoneRelay>> REDSTONE_RELAY =
+    public static final RegistryObject<BlockEntityType<BlockEntityRedstoneRelay>> REDSTONE_RELAY =
             BLOCK_ENTITIES.register(
                     "redstone_relay",
                     () -> new BlockEntityType<>(
                             BlockEntityRedstoneRelay::new, Set.of(TTBlocks.REDSTONE_RELAY.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityVoidSiphon>> VOID_SIPHON =
+    public static final RegistryObject<BlockEntityType<BlockEntityVoidSiphon>> VOID_SIPHON =
             BLOCK_ENTITIES.register(
                     "void_siphon",
                     () -> new BlockEntityType<>(BlockEntityVoidSiphon::new, Set.of(TTBlocks.VOID_SIPHON.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEverfullUrn>> EVERFULL_URN =
+    public static final RegistryObject<BlockEntityType<BlockEntityEverfullUrn>> EVERFULL_URN =
             BLOCK_ENTITIES.register(
                     "everfull_urn",
                     () -> new BlockEntityType<>(
                             BlockEntityEverfullUrn::new, Set.of(TTBlocks.EVERFULL_URN.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityVisGenerator>> VIS_GENERATOR =
+    public static final RegistryObject<BlockEntityType<BlockEntityVisGenerator>> VIS_GENERATOR =
             BLOCK_ENTITIES.register(
                     "vis_generator",
                     () -> new BlockEntityType<>(
                             BlockEntityVisGenerator::new, Set.of(TTBlocks.VIS_GENERATOR.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEssentiaPort>> ESSENTIA_PORT =
+    public static final RegistryObject<BlockEntityType<BlockEntityEssentiaPort>> ESSENTIA_PORT =
             BLOCK_ENTITIES.register(
                     "essentia_port",
                     () -> new BlockEntityType<>(
@@ -276,7 +276,7 @@ public final class TTBlockEntities {
                             Set.of(TTBlocks.ESSENTIA_INPUT.get(), TTBlocks.ESSENTIA_OUTPUT.get()),
                             null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityArcaneEar>> ARCANE_EAR =
+    public static final RegistryObject<BlockEntityType<BlockEntityArcaneEar>> ARCANE_EAR =
             BLOCK_ENTITIES.register(
                     "arcane_ear",
                     () -> new BlockEntityType<>(
@@ -284,133 +284,133 @@ public final class TTBlockEntities {
                             Set.of(TTBlocks.ARCANE_EAR.get(), TTBlocks.ARCANE_EAR_TOGGLE.get()),
                             null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityLampArcane>> LAMP_ARCANE =
+    public static final RegistryObject<BlockEntityType<BlockEntityLampArcane>> LAMP_ARCANE =
             BLOCK_ENTITIES.register(
                     "lamp_arcane",
                     () -> new BlockEntityType<>(BlockEntityLampArcane::new, Set.of(TTBlocks.LAMP_ARCANE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityLampGrowth>> LAMP_GROWTH =
+    public static final RegistryObject<BlockEntityType<BlockEntityLampGrowth>> LAMP_GROWTH =
             BLOCK_ENTITIES.register(
                     "lamp_growth",
                     () -> new BlockEntityType<>(BlockEntityLampGrowth::new, Set.of(TTBlocks.LAMP_GROWTH.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityLampFertility>> LAMP_FERTILITY =
+    public static final RegistryObject<BlockEntityType<BlockEntityLampFertility>> LAMP_FERTILITY =
             BLOCK_ENTITIES.register(
                     "lamp_fertility",
                     () -> new BlockEntityType<>(
                             BlockEntityLampFertility::new, Set.of(TTBlocks.LAMP_FERTILITY.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityCentrifuge>> CENTRIFUGE =
+    public static final RegistryObject<BlockEntityType<BlockEntityCentrifuge>> CENTRIFUGE =
             BLOCK_ENTITIES.register(
                     "centrifuge",
                     () -> new BlockEntityType<>(BlockEntityCentrifuge::new, Set.of(TTBlocks.CENTRIFUGE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEssentiaReservoir>>
+    public static final RegistryObject<BlockEntityType<BlockEntityEssentiaReservoir>>
             ESSENTIA_RESERVOIR = BLOCK_ENTITIES.register(
                     "essentia_reservoir",
                     () -> new BlockEntityType<>(
                             BlockEntityEssentiaReservoir::new, Set.of(TTBlocks.ESSENTIA_RESERVOIR.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEssentiaCrystalizer>>
+    public static final RegistryObject<BlockEntityType<BlockEntityEssentiaCrystalizer>>
             ESSENTIA_CRYSTALIZER = BLOCK_ENTITIES.register(
                     "essentia_crystalizer",
                     () -> new BlockEntityType<>(
                             BlockEntityEssentiaCrystalizer::new, Set.of(TTBlocks.ESSENTIA_CRYSTALIZER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityFluxScrubber>> FLUX_SCRUBBER =
+    public static final RegistryObject<BlockEntityType<BlockEntityFluxScrubber>> FLUX_SCRUBBER =
             BLOCK_ENTITIES.register(
                     "flux_scrubber",
                     () -> new BlockEntityType<>(
                             BlockEntityFluxScrubber::new, Set.of(TTBlocks.FLUX_SCRUBBER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityHungryChest>> HUNGRY_CHEST =
+    public static final RegistryObject<BlockEntityType<BlockEntityHungryChest>> HUNGRY_CHEST =
             BLOCK_ENTITIES.register(
                     "hungry_chest",
                     () -> new BlockEntityType<>(
                             BlockEntityHungryChest::new, Set.of(TTBlocks.HUNGRY_CHEST.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEldritchAltar>> ELDRITCH_ALTAR =
+    public static final RegistryObject<BlockEntityType<BlockEntityEldritchAltar>> ELDRITCH_ALTAR =
             BLOCK_ENTITIES.register(
                     "eldritch_altar",
                     () -> new BlockEntityType<>(
                             BlockEntityEldritchAltar::new, Set.of(TTBlocks.ELDRITCH_ALTAR.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEldritchObelisk>>
+    public static final RegistryObject<BlockEntityType<BlockEntityEldritchObelisk>>
             ELDRITCH_OBELISK = BLOCK_ENTITIES.register(
                     "eldritch_obelisk",
                     () -> new BlockEntityType<>(
                             BlockEntityEldritchObelisk::new, Set.of(TTBlocks.ELDRITCH_OBELISK.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEldritchReliquary>>
+    public static final RegistryObject<BlockEntityType<BlockEntityEldritchReliquary>>
             ELDRITCH_RELIQUARY = BLOCK_ENTITIES.register(
                     "eldritch_reliquary",
                     () -> BlockEntityType.Builder.of(
                                     BlockEntityEldritchReliquary::new, TTBlocks.ELDRITCH_RELIQUARY.get())
                             .build(null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEldritchLock>> ELDRITCH_LOCK =
+    public static final RegistryObject<BlockEntityType<BlockEntityEldritchLock>> ELDRITCH_LOCK =
             BLOCK_ENTITIES.register(
                     "eldritch_lock",
                     () -> new BlockEntityType<>(
                             BlockEntityEldritchLock::new, Set.of(TTBlocks.ELDRITCH_LOCK.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEldritchCrabSpawner>>
+    public static final RegistryObject<BlockEntityType<BlockEntityEldritchCrabSpawner>>
             ELDRITCH_CRAB_SPAWNER = BLOCK_ENTITIES.register(
                     "eldritch_crab_spawner",
                     () -> new BlockEntityType<>(
                             BlockEntityEldritchCrabSpawner::new, Set.of(TTBlocks.ELDRITCH_CRAB_SPAWNER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEldritchTrap>> ELDRITCH_TRAP =
+    public static final RegistryObject<BlockEntityType<BlockEntityEldritchTrap>> ELDRITCH_TRAP =
             BLOCK_ENTITIES.register(
                     "eldritch_trap",
                     () -> new BlockEntityType<>(
                             BlockEntityEldritchTrap::new, Set.of(TTBlocks.ELDRITCH_TRAP.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEldritchPortal>> ELDRITCH_PORTAL =
+    public static final RegistryObject<BlockEntityType<BlockEntityEldritchPortal>> ELDRITCH_PORTAL =
             BLOCK_ENTITIES.register(
                     "eldritch_portal",
                     () -> new BlockEntityType<>(
                             BlockEntityEldritchPortal::new, Set.of(TTBlocks.ELDRITCH_PORTAL.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEldritchCap>> ELDRITCH_CAP =
+    public static final RegistryObject<BlockEntityType<BlockEntityEldritchCap>> ELDRITCH_CAP =
             BLOCK_ENTITIES.register(
                     "eldritch_cap",
                     () -> new BlockEntityType<>(
                             BlockEntityEldritchCap::new, Set.of(TTBlocks.ELDRITCH_CAPSTONE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEldritchNothing>>
+    public static final RegistryObject<BlockEntityType<BlockEntityEldritchNothing>>
             ELDRITCH_NOTHING = BLOCK_ENTITIES.register(
                     "eldritch_nothing",
                     () -> new BlockEntityType<>(
                             BlockEntityEldritchNothing::new, Set.of(TTBlocks.ELDRITCH_NOTHING.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityMirror>> MIRROR =
+    public static final RegistryObject<BlockEntityType<BlockEntityMirror>> MIRROR =
             BLOCK_ENTITIES.register(
                     "mirror", () -> new BlockEntityType<>(BlockEntityMirror::new, Set.of(TTBlocks.MIRROR.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityMirrorEssentia>> MIRROR_ESSENTIA =
+    public static final RegistryObject<BlockEntityType<BlockEntityMirrorEssentia>> MIRROR_ESSENTIA =
             BLOCK_ENTITIES.register(
                     "mirror_essentia",
                     () -> new BlockEntityType<>(
                             BlockEntityMirrorEssentia::new, Set.of(TTBlocks.MIRROR_ESSENTIA.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityBarrierStone>> BARRIER_STONE =
+    public static final RegistryObject<BlockEntityType<BlockEntityBarrierStone>> BARRIER_STONE =
             BLOCK_ENTITIES.register(
                     "barrier_stone",
                     () -> new BlockEntityType<>(
                             BlockEntityBarrierStone::new, Set.of(TTBlocks.PAVING_STONE_BARRIER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityDioptra>> DIOPTRA =
+    public static final RegistryObject<BlockEntityType<BlockEntityDioptra>> DIOPTRA =
             BLOCK_ENTITIES.register(
                     "dioptra",
                     () -> new BlockEntityType<>(BlockEntityDioptra::new, Set.of(TTBlocks.DIOPTRA.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityJarVoid>> JAR_VOID =
+    public static final RegistryObject<BlockEntityType<BlockEntityJarVoid>> JAR_VOID =
             BLOCK_ENTITIES.register(
                     "jar_void",
                     () -> new BlockEntityType<>(BlockEntityJarVoid::new, Set.of(TTBlocks.JAR_VOID.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityJarCreative>> JAR_CREATIVE =
+    public static final RegistryObject<BlockEntityType<BlockEntityJarCreative>> JAR_CREATIVE =
             BLOCK_ENTITIES.register(
                     "jar_creative",
                     () -> new BlockEntityType<>(
@@ -420,37 +420,37 @@ public final class TTBlockEntities {
         return List.of(JAR.get(), JAR_VOID.get(), JAR_CREATIVE.get());
     }
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityTube>> TUBE =
+    public static final RegistryObject<BlockEntityType<BlockEntityTube>> TUBE =
             BLOCK_ENTITIES.register(
                     "tube", () -> new BlockEntityType<>(BlockEntityTube::new, Set.of(TTBlocks.TUBE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityTubeValve>> TUBE_VALVE =
+    public static final RegistryObject<BlockEntityType<BlockEntityTubeValve>> TUBE_VALVE =
             BLOCK_ENTITIES.register(
                     "tube_valve",
                     () -> new BlockEntityType<>(BlockEntityTubeValve::new, Set.of(TTBlocks.TUBE_VALVE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityTubeRestrict>> TUBE_RESTRICT =
+    public static final RegistryObject<BlockEntityType<BlockEntityTubeRestrict>> TUBE_RESTRICT =
             BLOCK_ENTITIES.register(
                     "tube_restrict",
                     () -> new BlockEntityType<>(
                             BlockEntityTubeRestrict::new, Set.of(TTBlocks.TUBE_RESTRICT.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityTubeFilter>> TUBE_FILTER =
+    public static final RegistryObject<BlockEntityType<BlockEntityTubeFilter>> TUBE_FILTER =
             BLOCK_ENTITIES.register(
                     "tube_filter",
                     () -> new BlockEntityType<>(BlockEntityTubeFilter::new, Set.of(TTBlocks.TUBE_FILTER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityTubeOneway>> TUBE_ONEWAY =
+    public static final RegistryObject<BlockEntityType<BlockEntityTubeOneway>> TUBE_ONEWAY =
             BLOCK_ENTITIES.register(
                     "tube_oneway",
                     () -> new BlockEntityType<>(BlockEntityTubeOneway::new, Set.of(TTBlocks.TUBE_ONEWAY.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityTubeBuffer>> TUBE_BUFFER =
+    public static final RegistryObject<BlockEntityType<BlockEntityTubeBuffer>> TUBE_BUFFER =
             BLOCK_ENTITIES.register(
                     "tube_buffer",
                     () -> new BlockEntityType<>(BlockEntityTubeBuffer::new, Set.of(TTBlocks.TUBE_BUFFER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityNitor>> NITOR =
+    public static final RegistryObject<BlockEntityType<BlockEntityNitor>> NITOR =
             BLOCK_ENTITIES.register(
                     "nitor",
                     () -> new BlockEntityType<>(
@@ -460,19 +460,19 @@ public final class TTBlockEntities {
                                     .collect(Collectors.toSet()),
                             null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityInfernalFurnace>>
+    public static final RegistryObject<BlockEntityType<BlockEntityInfernalFurnace>>
             INFERNAL_FURNACE = BLOCK_ENTITIES.register(
                     "infernal_furnace",
                     () -> new BlockEntityType<>(
                             BlockEntityInfernalFurnace::new, Set.of(TTBlocks.INFERNAL_FURNACE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityInfusionMatrix>> INFUSION_MATRIX =
+    public static final RegistryObject<BlockEntityType<BlockEntityInfusionMatrix>> INFUSION_MATRIX =
             BLOCK_ENTITIES.register(
                     "infusion_matrix",
                     () -> new BlockEntityType<>(
                             BlockEntityInfusionMatrix::new, Set.of(TTBlocks.INFUSION_MATRIX.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityPedestal>> PEDESTAL =
+    public static final RegistryObject<BlockEntityType<BlockEntityPedestal>> PEDESTAL =
             BLOCK_ENTITIES.register(
                     "pedestal",
                     () -> new BlockEntityType<>(
@@ -483,51 +483,51 @@ public final class TTBlockEntities {
                                     TTBlocks.PEDESTAL_ELDRITCH.get()),
                             null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityRechargePedestal>>
+    public static final RegistryObject<BlockEntityType<BlockEntityRechargePedestal>>
             RECHARGE_PEDESTAL = BLOCK_ENTITIES.register(
                     "recharge_pedestal",
                     () -> new BlockEntityType<>(
                             BlockEntityRechargePedestal::new, Set.of(TTBlocks.RECHARGE_PEDESTAL.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityPatternCrafter>> PATTERN_CRAFTER =
+    public static final RegistryObject<BlockEntityType<BlockEntityPatternCrafter>> PATTERN_CRAFTER =
             BLOCK_ENTITIES.register(
                     "pattern_crafter",
                     () -> new BlockEntityType<>(
                             BlockEntityPatternCrafter::new, Set.of(TTBlocks.PATTERN_CRAFTER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityPotionSprayer>> POTION_SPRAYER =
+    public static final RegistryObject<BlockEntityType<BlockEntityPotionSprayer>> POTION_SPRAYER =
             BLOCK_ENTITIES.register(
                     "potion_sprayer",
                     () -> new BlockEntityType<>(
                             BlockEntityPotionSprayer::new, Set.of(TTBlocks.POTION_SPRAYER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityLevitator>> LEVITATOR =
+    public static final RegistryObject<BlockEntityType<BlockEntityLevitator>> LEVITATOR =
             BLOCK_ENTITIES.register(
                     "levitator",
                     () -> new BlockEntityType<>(BlockEntityLevitator::new, Set.of(TTBlocks.LEVITATOR.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityGolemBuilder>> GOLEM_BUILDER =
+    public static final RegistryObject<BlockEntityType<BlockEntityGolemBuilder>> GOLEM_BUILDER =
             BLOCK_ENTITIES.register(
                     "golem_builder",
                     () -> new BlockEntityType<>(
                             BlockEntityGolemBuilder::new, Set.of(TTBlocks.GOLEM_BUILDER.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityArcaneBore>> ARCANE_BORE =
+    public static final RegistryObject<BlockEntityType<BlockEntityArcaneBore>> ARCANE_BORE =
             BLOCK_ENTITIES.register(
                     "arcane_bore",
                     () -> new BlockEntityType<>(BlockEntityArcaneBore::new, Set.of(TTBlocks.ARCANE_BORE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityHole>> HOLE =
+    public static final RegistryObject<BlockEntityType<BlockEntityHole>> HOLE =
             BLOCK_ENTITIES.register(
                     "hole", () -> new BlockEntityType<>(BlockEntityHole::new, Set.of(TTBlocks.HOLE.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEtherealBloom>> ETHEREAL_BLOOM =
+    public static final RegistryObject<BlockEntityType<BlockEntityEtherealBloom>> ETHEREAL_BLOOM =
             BLOCK_ENTITIES.register(
                     "ethereal_bloom",
                     () -> new BlockEntityType<>(
                             BlockEntityEtherealBloom::new, Set.of(TTBlocks.ETHEREAL_BLOOM.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityItemGrate>> ITEM_GRATE =
+    public static final RegistryObject<BlockEntityType<BlockEntityItemGrate>> ITEM_GRATE =
             BLOCK_ENTITIES.register(
                     "item_grate",
                     () -> new BlockEntityType<>(BlockEntityItemGrate::new, Set.of(TTBlocks.ITEM_GRATE.get()), null));

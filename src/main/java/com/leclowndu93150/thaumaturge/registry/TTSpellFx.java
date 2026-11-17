@@ -5,54 +5,55 @@ import com.leclowndu93150.thaumaturge.api.spell.fx.SpellFxStyle;
 import com.leclowndu93150.thaumaturge.content.spell.fx.SpellFxStyles;
 import net.minecraft.core.Registry;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTSpellFx {
     public static final DeferredRegister<SpellFxStyle> STYLES =
             DeferredRegister.create(SpellFxStyle.REGISTRY_KEY, TTIds.MODID);
 
-    private static final Registry<SpellFxStyle> REGISTRY = STYLES.makeRegistry(builder -> builder.sync(true));
+    private static final java.util.function.Supplier<net.minecraftforge.registries.IForgeRegistry<SpellFxStyle>> REGISTRY =
+            STYLES.makeRegistry(() -> new net.minecraftforge.registries.RegistryBuilder<SpellFxStyle>().hasTags());
 
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> SPARKLE =
+    public static final RegistryObject<SpellFxStyle> SPARKLE =
             STYLES.register("sparkle", () -> SpellFxStyles::sparkle);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> MOTE =
+    public static final RegistryObject<SpellFxStyle> MOTE =
             STYLES.register("mote", () -> SpellFxStyles::mote);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> FLAME =
+    public static final RegistryObject<SpellFxStyle> FLAME =
             STYLES.register("flame", () -> SpellFxStyles::flame);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> FROST =
+    public static final RegistryObject<SpellFxStyle> FROST =
             STYLES.register("frost", () -> SpellFxStyles::frost);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> GUST =
+    public static final RegistryObject<SpellFxStyle> GUST =
             STYLES.register("gust", () -> SpellFxStyles::gust);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> PEBBLE =
+    public static final RegistryObject<SpellFxStyle> PEBBLE =
             STYLES.register("pebble", () -> SpellFxStyles::pebble);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> FLUX =
+    public static final RegistryObject<SpellFxStyle> FLUX =
             STYLES.register("flux", () -> SpellFxStyles::flux);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> HEAL =
+    public static final RegistryObject<SpellFxStyle> HEAL =
             STYLES.register("heal", () -> SpellFxStyles::heal);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> CURSE =
+    public static final RegistryObject<SpellFxStyle> CURSE =
             STYLES.register("curse", () -> SpellFxStyles::curse);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> CRACK =
+    public static final RegistryObject<SpellFxStyle> CRACK =
             STYLES.register("crack", () -> SpellFxStyles::crack);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> RIFT =
+    public static final RegistryObject<SpellFxStyle> RIFT =
             STYLES.register("rift", () -> SpellFxStyles::rift);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> PRIMAL =
+    public static final RegistryObject<SpellFxStyle> PRIMAL =
             STYLES.register("primal", () -> SpellFxStyles::primal);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> WARD =
+    public static final RegistryObject<SpellFxStyle> WARD =
             STYLES.register("ward", () -> SpellFxStyles::ward);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> BUBBLE =
+    public static final RegistryObject<SpellFxStyle> BUBBLE =
             STYLES.register("bubble", () -> SpellFxStyles::bubble);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> SPARK =
+    public static final RegistryObject<SpellFxStyle> SPARK =
             STYLES.register("spark", () -> SpellFxStyles::spark);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> LEAF =
+    public static final RegistryObject<SpellFxStyle> LEAF =
             STYLES.register("leaf", () -> SpellFxStyles::leaf);
-    public static final DeferredHolder<SpellFxStyle, SpellFxStyle> SMOKE =
+    public static final RegistryObject<SpellFxStyle> SMOKE =
             STYLES.register("smoke", () -> SpellFxStyles::smoke);
 
     private TTSpellFx() {}
 
     public static Registry<SpellFxStyle> registry() {
-        return REGISTRY;
+        return ForgeRegistration.vanillaRegistry(REGISTRY);
     }
 
     public static void register(IEventBus modBus) {

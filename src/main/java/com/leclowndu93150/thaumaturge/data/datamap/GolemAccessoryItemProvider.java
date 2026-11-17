@@ -9,7 +9,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.common.data.DataMapProvider;
-import net.neoforged.neoforge.registries.DeferredItem;
+import net.minecraftforge.registries.RegistryObject;
 
 public final class GolemAccessoryItemProvider extends DataMapProvider {
     public GolemAccessoryItemProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
@@ -32,7 +32,7 @@ public final class GolemAccessoryItemProvider extends DataMapProvider {
     }
 
     private static void add(
-            Builder<GolemAccessoryItem, Item> builder, DeferredItem<Item> item, GolemAccessory accessory) {
+            Builder<GolemAccessoryItem, Item> builder, RegistryObject<Item> item, GolemAccessory accessory) {
         builder.add(item, new GolemAccessoryItem(accessory.id()), false);
     }
 }

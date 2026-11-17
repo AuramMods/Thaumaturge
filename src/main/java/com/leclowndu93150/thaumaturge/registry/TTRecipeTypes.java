@@ -10,14 +10,14 @@ import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingRec
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTRecipeTypes {
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES =
             DeferredRegister.create(Registries.RECIPE_TYPE, TTIds.MODID);
 
-    public static final DeferredHolder<RecipeType<?>, RecipeType<DustTrigger>> DUST_TRIGGER =
+    public static final RegistryObject<RecipeType<DustTrigger>> DUST_TRIGGER =
             RECIPE_TYPES.register("dust_trigger", () -> new RecipeType<DustTrigger>() {
                 @Override
                 public String toString() {
@@ -25,7 +25,7 @@ public final class TTRecipeTypes {
                 }
             });
 
-    public static final DeferredHolder<RecipeType<?>, RecipeType<InfusionRecipe>> INFUSION =
+    public static final RegistryObject<RecipeType<InfusionRecipe>> INFUSION =
             RECIPE_TYPES.register("infusion", () -> new RecipeType<InfusionRecipe>() {
                 @Override
                 public String toString() {
@@ -33,7 +33,7 @@ public final class TTRecipeTypes {
                 }
             });
 
-    public static final DeferredHolder<RecipeType<?>, RecipeType<InfusionEnchantmentRecipe>> INFUSION_ENCHANTMENT =
+    public static final RegistryObject<RecipeType<InfusionEnchantmentRecipe>> INFUSION_ENCHANTMENT =
             RECIPE_TYPES.register("infusion_enchantment", () -> new RecipeType<InfusionEnchantmentRecipe>() {
                 @Override
                 public String toString() {
@@ -41,7 +41,7 @@ public final class TTRecipeTypes {
                 }
             });
 
-    public static final DeferredHolder<RecipeType<?>, RecipeType<InfusionRunicAugmentRecipe>> RUNIC_AUGMENT =
+    public static final RegistryObject<RecipeType<InfusionRunicAugmentRecipe>> RUNIC_AUGMENT =
             RECIPE_TYPES.register("runic_augment", () -> new RecipeType<InfusionRunicAugmentRecipe>() {
                 @Override
                 public String toString() {
@@ -49,7 +49,7 @@ public final class TTRecipeTypes {
                 }
             });
 
-    public static final DeferredHolder<RecipeType<?>, RecipeType<CrucibleRecipe>> CRUCIBLE =
+    public static final RegistryObject<RecipeType<CrucibleRecipe>> CRUCIBLE =
             RECIPE_TYPES.register("crucible", () -> new RecipeType<CrucibleRecipe>() {
                 @Override
                 public String toString() {
@@ -57,7 +57,7 @@ public final class TTRecipeTypes {
                 }
             });
 
-    public static final DeferredHolder<RecipeType<?>, RecipeType<ArcaneCraftingRecipe>> ARCANE =
+    public static final RegistryObject<RecipeType<ArcaneCraftingRecipe>> ARCANE =
             RECIPE_TYPES.register("arcane_workbench", () -> new RecipeType<ArcaneCraftingRecipe>() {
                 @Override
                 public String toString() {

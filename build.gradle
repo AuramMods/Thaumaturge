@@ -63,6 +63,7 @@ sourceSets {
     portCodec {
         java.srcDir 'src/main/java'
         java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
+        java.include 'com/leclowndu93150/thaumaturge/registry/ForgeRegistration.java'
         compileClasspath += sourceSets.main.compileClasspath
     }
     portCodecTest {

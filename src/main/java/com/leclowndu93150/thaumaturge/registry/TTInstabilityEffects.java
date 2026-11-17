@@ -9,30 +9,30 @@ import com.leclowndu93150.thaumaturge.content.infusion.instability.WarpEffect;
 import com.leclowndu93150.thaumaturge.content.infusion.instability.ZapEffect;
 import net.minecraft.core.Registry;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTInstabilityEffects {
     public static final DeferredRegister<InstabilityEffectType<?>> EFFECTS =
             DeferredRegister.create(InstabilityEffectType.REGISTRY_KEY, TTIds.MODID);
-    private static final Registry<InstabilityEffectType<?>> REGISTRY =
-            EFFECTS.makeRegistry(builder -> builder.sync(false));
+    private static final java.util.function.Supplier<net.minecraftforge.registries.IForgeRegistry<InstabilityEffectType<?>>> REGISTRY =
+            EFFECTS.makeRegistry(() -> new net.minecraftforge.registries.RegistryBuilder<InstabilityEffectType<?>>().hasTags().disableSync());
 
-    public static final DeferredHolder<InstabilityEffectType<?>, InstabilityEffectType<EjectEffect>> EJECT =
+    public static final RegistryObject<InstabilityEffectType<EjectEffect>> EJECT =
             EFFECTS.register("eject", () -> new InstabilityEffectType<>(EjectEffect.CODEC));
-    public static final DeferredHolder<InstabilityEffectType<?>, InstabilityEffectType<ZapEffect>> ZAP =
+    public static final RegistryObject<InstabilityEffectType<ZapEffect>> ZAP =
             EFFECTS.register("zap", () -> new InstabilityEffectType<>(ZapEffect.CODEC));
-    public static final DeferredHolder<InstabilityEffectType<?>, InstabilityEffectType<HarmEffect>> HARM =
+    public static final RegistryObject<InstabilityEffectType<HarmEffect>> HARM =
             EFFECTS.register("harm", () -> new InstabilityEffectType<>(HarmEffect.CODEC));
-    public static final DeferredHolder<InstabilityEffectType<?>, InstabilityEffectType<WarpEffect>> WARP =
+    public static final RegistryObject<InstabilityEffectType<WarpEffect>> WARP =
             EFFECTS.register("warp", () -> new InstabilityEffectType<>(WarpEffect.CODEC));
-    public static final DeferredHolder<InstabilityEffectType<?>, InstabilityEffectType<ExplodeEffect>> EXPLODE =
+    public static final RegistryObject<InstabilityEffectType<ExplodeEffect>> EXPLODE =
             EFFECTS.register("explode", () -> new InstabilityEffectType<>(ExplodeEffect.CODEC));
 
     private TTInstabilityEffects() {}
 
     public static Registry<InstabilityEffectType<?>> registry() {
-        return REGISTRY;
+        return ForgeRegistration.vanillaRegistry(REGISTRY);
     }
 
     public static void register(IEventBus modBus) {

@@ -19,7 +19,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.registries.DeferredBlock;
+import net.minecraftforge.registries.RegistryObject;
 
 public final class EnchantingStatsProvider implements DataProvider {
     private static final String REGISTRY_PATH = "apothic_enchanting/enchanting_stats";
@@ -142,7 +142,7 @@ public final class EnchantingStatsProvider implements DataProvider {
     }
 
     @SafeVarargs
-    private void add(String name, EnchantingStats stats, DeferredBlock<? extends Block>... members) {
+    private void add(String name, EnchantingStats stats, RegistryObject<? extends Block>... members) {
         HolderSet<Block> set = HolderSet.direct(Arrays.stream(members)
                 .map(member -> this.blocks.getOrThrow(member.getKey()))
                 .toList());

@@ -43,14 +43,14 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES =
             DeferredRegister.create(Registries.ENTITY_TYPE, TTIds.MODID);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityBrainyZombie>> BRAINY_ZOMBIE = register(
+    public static final RegistryObject<EntityType<EntityBrainyZombie>> BRAINY_ZOMBIE = register(
             "brainy_zombie",
             () -> EntityType.Builder.of(EntityBrainyZombie::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
@@ -58,7 +58,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityBrainyDrowned>> BRAINY_DROWNED = register(
+    public static final RegistryObject<EntityType<EntityBrainyDrowned>> BRAINY_DROWNED = register(
             "brainy_drowned",
             () -> EntityType.Builder.of(EntityBrainyDrowned::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
@@ -66,7 +66,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityBrainyHusk>> BRAINY_HUSK = register(
+    public static final RegistryObject<EntityType<EntityBrainyHusk>> BRAINY_HUSK = register(
             "brainy_husk",
             () -> EntityType.Builder.of(EntityBrainyHusk::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
@@ -74,7 +74,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityGiantBrainyZombie>> GIANT_BRAINY_ZOMBIE =
+    public static final RegistryObject<EntityType<EntityGiantBrainyZombie>> GIANT_BRAINY_ZOMBIE =
             register(
                     "giant_brainy_zombie",
                     () -> EntityType.Builder.of(EntityGiantBrainyZombie::new, MobCategory.MONSTER)
@@ -83,7 +83,7 @@ public final class TTEntities {
                             .clientTrackingRange(8)
                             .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityMindSpider>> MIND_SPIDER = register(
+    public static final RegistryObject<EntityType<EntityMindSpider>> MIND_SPIDER = register(
             "mind_spider",
             () -> EntityType.Builder.of(EntityMindSpider::new, MobCategory.MONSTER)
                     .sized(0.7F, 0.5F)
@@ -91,7 +91,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityFireBat>> FIRE_BAT = register(
+    public static final RegistryObject<EntityType<EntityFireBat>> FIRE_BAT = register(
             "firebat",
             () -> EntityType.Builder.of(EntityFireBat::new, MobCategory.MONSTER)
                     .sized(0.5F, 0.9F)
@@ -99,14 +99,14 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<WispEntity>> WISP = register(
+    public static final RegistryObject<EntityType<WispEntity>> WISP = register(
             "wisp",
             () -> EntityType.Builder.of(WispEntity::new, MobCategory.MONSTER)
                     .sized(0.9F, 0.9F)
                     .clientTrackingRange(10)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<ThaumicSlime>> THAUMIC_SLIME = register(
+    public static final RegistryObject<EntityType<ThaumicSlime>> THAUMIC_SLIME = register(
             "thaumic_slime",
             () -> EntityType.Builder.of(ThaumicSlime::new, MobCategory.MONSTER)
                     .sized(0.52F, 0.52F)
@@ -115,44 +115,44 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintCrawler>> TAINT_CRAWLER = register(
+    public static final RegistryObject<EntityType<EntityTaintCrawler>> TAINT_CRAWLER = register(
             "taint_crawler",
             () -> EntityType.Builder.of(EntityTaintCrawler::new, MobCategory.MONSTER)
                     .sized(0.5F, 0.4F)
                     .eyeHeight(0.1F)
                     .clientTrackingRange(8));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintSeed>> TAINT_SEED = register(
+    public static final RegistryObject<EntityType<EntityTaintSeed>> TAINT_SEED = register(
             "taint_seed",
             () -> EntityType.Builder.of(EntityTaintSeed::new, MobCategory.MONSTER)
                     .sized(1.5F, 1.25F)
                     .clientTrackingRange(8));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintSeedPrime>> TAINT_SEED_PRIME = register(
+    public static final RegistryObject<EntityType<EntityTaintSeedPrime>> TAINT_SEED_PRIME = register(
             "taint_seed_prime",
             () -> EntityType.Builder.of(EntityTaintSeedPrime::new, MobCategory.MONSTER)
                     .sized(2.0F, 2.0F)
                     .clientTrackingRange(8));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintSwarm>> TAINT_SWARM = register(
+    public static final RegistryObject<EntityType<EntityTaintSwarm>> TAINT_SWARM = register(
             "taint_swarm",
             () -> EntityType.Builder.of(EntityTaintSwarm::new, MobCategory.MONSTER)
                     .sized(2.0F, 2.0F)
                     .clientTrackingRange(8));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintacle>> TAINTACLE = register(
+    public static final RegistryObject<EntityType<EntityTaintacle>> TAINTACLE = register(
             "taintacle",
             () -> EntityType.Builder.of(EntityTaintacle::new, MobCategory.MONSTER)
                     .sized(0.8F, 3.0F)
                     .clientTrackingRange(8));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintacleSmall>> TAINTACLE_SMALL = register(
+    public static final RegistryObject<EntityType<EntityTaintacleSmall>> TAINTACLE_SMALL = register(
             "taintacle_small",
             () -> EntityType.Builder.of(EntityTaintacleSmall::new, MobCategory.MONSTER)
                     .sized(0.22F, 1.0F)
                     .clientTrackingRange(8));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityCausalityCollapser>> CAUSALITY_COLLAPSER =
+    public static final RegistryObject<EntityType<EntityCausalityCollapser>> CAUSALITY_COLLAPSER =
             register(
                     "causality_collapser",
                     () -> EntityType.Builder.<EntityCausalityCollapser>of(
@@ -161,7 +161,7 @@ public final class TTEntities {
                             .clientTrackingRange(4)
                             .updateInterval(10));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityFluxRift>> FLUX_RIFT = register(
+    public static final RegistryObject<EntityType<EntityFluxRift>> FLUX_RIFT = register(
             "flux_rift",
             () -> EntityType.Builder.<EntityFluxRift>of(EntityFluxRift::new, MobCategory.MISC)
                     .sized(2.0F, 2.0F)
@@ -169,35 +169,35 @@ public final class TTEntities {
                     .clientTrackingRange(10)
                     .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityFallingTaint>> FALLING_TAINT = register(
+    public static final RegistryObject<EntityType<EntityFallingTaint>> FALLING_TAINT = register(
             "falling_taint",
             () -> EntityType.Builder.<EntityFallingTaint>of(EntityFallingTaint::new, MobCategory.MISC)
                     .sized(0.98F, 0.98F)
                     .clientTrackingRange(10)
                     .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityBottleTaint>> BOTTLE_TAINT = register(
+    public static final RegistryObject<EntityType<EntityBottleTaint>> BOTTLE_TAINT = register(
             "bottle_taint",
             () -> EntityType.Builder.<EntityBottleTaint>of(EntityBottleTaint::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
                     .clientTrackingRange(8)
                     .updateInterval(10));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<ThrownTaintedEgg>> TAINTED_EGG = register(
+    public static final RegistryObject<EntityType<ThrownTaintedEgg>> TAINTED_EGG = register(
             "tainted_egg",
             () -> EntityType.Builder.<ThrownTaintedEgg>of(ThrownTaintedEgg::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
                     .clientTrackingRange(4)
                     .updateInterval(10));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SpellProjectile>> FOCUS_PROJECTILE = register(
+    public static final RegistryObject<EntityType<SpellProjectile>> FOCUS_PROJECTILE = register(
             "focus_projectile",
             () -> EntityType.Builder.<SpellProjectile>of(SpellProjectile::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
                     .clientTrackingRange(6)
                     .updateInterval(5));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SpellCloud>> FOCUS_CLOUD = register(
+    public static final RegistryObject<EntityType<SpellCloud>> FOCUS_CLOUD = register(
             "focus_cloud",
             () -> EntityType.Builder.<SpellCloud>of(SpellCloud::new, MobCategory.MISC)
                     .sized(1.0F, 0.5F)
@@ -205,26 +205,26 @@ public final class TTEntities {
                     .clientTrackingRange(10)
                     .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SpellMine>> FOCUS_MINE = register(
+    public static final RegistryObject<EntityType<SpellMine>> FOCUS_MINE = register(
             "focus_mine",
             () -> EntityType.Builder.<SpellMine>of(SpellMine::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
                     .clientTrackingRange(4)
                     .updateInterval(10));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SpellBat>> SPELL_BAT = register(
+    public static final RegistryObject<EntityType<SpellBat>> SPELL_BAT = register(
             "spell_bat",
             () -> EntityType.Builder.<SpellBat>of(SpellBat::new, MobCategory.MISC)
                     .sized(0.5F, 0.9F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintSpore>> TAINT_SPORE = register(
+    public static final RegistryObject<EntityType<EntityTaintSpore>> TAINT_SPORE = register(
             "taint_spore",
             () -> EntityType.Builder.of(EntityTaintSpore::new, MobCategory.MONSTER)
                     .sized(0.7F, 0.7F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintSporeSwarmer>> TAINT_SPORE_SWARMER =
+    public static final RegistryObject<EntityType<EntityTaintSporeSwarmer>> TAINT_SPORE_SWARMER =
             register(
                     "taint_spore_swarmer",
                     () -> EntityType.Builder.of(EntityTaintSporeSwarmer::new, MobCategory.MONSTER)
@@ -232,7 +232,7 @@ public final class TTEntities {
                             .clientTrackingRange(8)
                             .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<Spider>> LEGACY_TAINT_SPIDER = register(
+    public static final RegistryObject<EntityType<Spider>> LEGACY_TAINT_SPIDER = register(
             "taint_spider",
             () -> EntityType.Builder.of(Spider::new, MobCategory.MONSTER)
                     .sized(1.4F, 0.9F)
@@ -240,42 +240,42 @@ public final class TTEntities {
                     .eyeHeight(0.65F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
-    public static final DeferredHolder<EntityType<?>, EntityType<Creeper>> LEGACY_TAINT_CREEPER = register(
+    public static final RegistryObject<EntityType<Creeper>> LEGACY_TAINT_CREEPER = register(
             "taint_creeper",
             () -> EntityType.Builder.of(Creeper::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.7F)
                     .noSummon()
                     .clientTrackingRange(8)
                     .updateInterval(3));
-    public static final DeferredHolder<EntityType<?>, EntityType<Cow>> LEGACY_TAINT_COW = register(
+    public static final RegistryObject<EntityType<Cow>> LEGACY_TAINT_COW = register(
             "taint_cow",
             () -> EntityType.Builder.of(Cow::new, MobCategory.MONSTER)
                     .sized(0.9F, 1.3F)
                     .noSummon()
                     .clientTrackingRange(8)
                     .updateInterval(3));
-    public static final DeferredHolder<EntityType<?>, EntityType<Pig>> LEGACY_TAINT_PIG = register(
+    public static final RegistryObject<EntityType<Pig>> LEGACY_TAINT_PIG = register(
             "taint_pig",
             () -> EntityType.Builder.of(Pig::new, MobCategory.MONSTER)
                     .sized(0.9F, 0.9F)
                     .noSummon()
                     .clientTrackingRange(8)
                     .updateInterval(3));
-    public static final DeferredHolder<EntityType<?>, EntityType<Chicken>> LEGACY_TAINT_CHICKEN = register(
+    public static final RegistryObject<EntityType<Chicken>> LEGACY_TAINT_CHICKEN = register(
             "taint_chicken",
             () -> EntityType.Builder.of(Chicken::new, MobCategory.MONSTER)
                     .sized(0.5F, 0.8F)
                     .noSummon()
                     .clientTrackingRange(8)
                     .updateInterval(3));
-    public static final DeferredHolder<EntityType<?>, EntityType<Sheep>> LEGACY_TAINT_SHEEP = register(
+    public static final RegistryObject<EntityType<Sheep>> LEGACY_TAINT_SHEEP = register(
             "taint_sheep",
             () -> EntityType.Builder.of(Sheep::new, MobCategory.MONSTER)
                     .sized(0.9F, 1.3F)
                     .noSummon()
                     .clientTrackingRange(8)
                     .updateInterval(3));
-    public static final DeferredHolder<EntityType<?>, EntityType<Villager>> LEGACY_TAINT_VILLAGER = register(
+    public static final RegistryObject<EntityType<Villager>> LEGACY_TAINT_VILLAGER = register(
             "taint_villager",
             () -> EntityType.Builder.<Villager>of((type, level) -> new Villager(type, level), MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
@@ -284,7 +284,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SpellSprite>> SPELL_SPRITE = register(
+    public static final RegistryObject<EntityType<SpellSprite>> SPELL_SPRITE = register(
             "spell_sprite",
             () -> EntityType.Builder.<SpellSprite>of(SpellSprite::new, MobCategory.MISC)
                     .sized(0.3F, 0.3F)
@@ -292,7 +292,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(2));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SpellWall>> SPELL_WALL = register(
+    public static final RegistryObject<EntityType<SpellWall>> SPELL_WALL = register(
             "spell_wall",
             () -> EntityType.Builder.<SpellWall>of(SpellWall::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F)
@@ -300,7 +300,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntitySpecialItem>> SPECIAL_ITEM = register(
+    public static final RegistryObject<EntityType<EntitySpecialItem>> SPECIAL_ITEM = register(
             "special_item",
             () -> EntityType.Builder.<EntitySpecialItem>of(EntitySpecialItem::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
@@ -308,7 +308,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityFollowingItem>> FOLLOWING_ITEM = register(
+    public static final RegistryObject<EntityType<EntityFollowingItem>> FOLLOWING_ITEM = register(
             "following_item",
             () -> EntityType.Builder.<EntityFollowingItem>of(EntityFollowingItem::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
@@ -316,21 +316,21 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<ThrownAlumentum>> ALUMENTUM = register(
+    public static final RegistryObject<EntityType<ThrownAlumentum>> ALUMENTUM = register(
             "thrown_alumentum",
             () -> EntityType.Builder.<ThrownAlumentum>of(ThrownAlumentum::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
                     .clientTrackingRange(64)
                     .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityGolemDart>> GOLEM_DART = register(
+    public static final RegistryObject<EntityType<EntityGolemDart>> GOLEM_DART = register(
             "golem_dart",
             () -> EntityType.Builder.<EntityGolemDart>of(EntityGolemDart::new, MobCategory.MISC)
                     .sized(0.2F, 0.2F)
                     .clientTrackingRange(4)
                     .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityPech>> PECH = register(
+    public static final RegistryObject<EntityType<EntityPech>> PECH = register(
             "pech",
             () -> EntityType.Builder.of(EntityPech::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.8F)
@@ -338,14 +338,14 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityEldritchCrab>> ELDRITCH_CRAB = register(
+    public static final RegistryObject<EntityType<EntityEldritchCrab>> ELDRITCH_CRAB = register(
             "eldritch_crab",
             () -> EntityType.Builder.of(EntityEldritchCrab::new, MobCategory.MONSTER)
                     .sized(0.8F, 0.6F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityInhabitedZombie>> INHABITED_ZOMBIE = register(
+    public static final RegistryObject<EntityType<EntityInhabitedZombie>> INHABITED_ZOMBIE = register(
             "inhabited_zombie",
             () -> EntityType.Builder.of(EntityInhabitedZombie::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
@@ -353,7 +353,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityEldritchGuardian>> ELDRITCH_GUARDIAN = register(
+    public static final RegistryObject<EntityType<EntityEldritchGuardian>> ELDRITCH_GUARDIAN = register(
             "eldritch_guardian",
             () -> EntityType.Builder.of(EntityEldritchGuardian::new, MobCategory.MONSTER)
                     .sized(0.8F, 2.25F)
@@ -361,7 +361,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityCultistKnight>> CULTIST_KNIGHT = register(
+    public static final RegistryObject<EntityType<EntityCultistKnight>> CULTIST_KNIGHT = register(
             "cultist_knight",
             () -> EntityType.Builder.of(EntityCultistKnight::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.8F)
@@ -369,7 +369,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityCultistCleric>> CULTIST_CLERIC = register(
+    public static final RegistryObject<EntityType<EntityCultistCleric>> CULTIST_CLERIC = register(
             "cultist_cleric",
             () -> EntityType.Builder.of(EntityCultistCleric::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.8F)
@@ -377,7 +377,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityCultistRanger>> CULTIST_RANGER = register(
+    public static final RegistryObject<EntityType<EntityCultistRanger>> CULTIST_RANGER = register(
             "cultist_ranger",
             () -> EntityType.Builder.of(EntityCultistRanger::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.8F)
@@ -385,7 +385,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityCultistRangerCaptain>> CULTIST_RANGER_CAPTAIN =
+    public static final RegistryObject<EntityType<EntityCultistRangerCaptain>> CULTIST_RANGER_CAPTAIN =
             register(
                     "cultist_ranger_captain",
                     () -> EntityType.Builder.of(EntityCultistRangerCaptain::new, MobCategory.MONSTER)
@@ -394,14 +394,14 @@ public final class TTEntities {
                             .clientTrackingRange(8)
                             .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityCultistLeader>> CULTIST_LEADER = register(
+    public static final RegistryObject<EntityType<EntityCultistLeader>> CULTIST_LEADER = register(
             "cultist_leader",
             () -> EntityType.Builder.of(EntityCultistLeader::new, MobCategory.MONSTER)
                     .sized(0.75F, 2.25F)
                     .clientTrackingRange(10)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityCultistPortalGreater>> CULTIST_PORTAL_GREATER =
+    public static final RegistryObject<EntityType<EntityCultistPortalGreater>> CULTIST_PORTAL_GREATER =
             register(
                     "cultist_portal_greater",
                     () -> EntityType.Builder.of(EntityCultistPortalGreater::new, MobCategory.MONSTER)
@@ -410,7 +410,7 @@ public final class TTEntities {
                             .clientTrackingRange(10)
                             .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityEldritchGolem>> ELDRITCH_GOLEM = register(
+    public static final RegistryObject<EntityType<EntityEldritchGolem>> ELDRITCH_GOLEM = register(
             "eldritch_golem",
             () -> EntityType.Builder.of(EntityEldritchGolem::new, MobCategory.MONSTER)
                     .sized(1.75F, 3.5F)
@@ -419,7 +419,7 @@ public final class TTEntities {
                     .clientTrackingRange(10)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityEldritchWarden>> ELDRITCH_WARDEN = register(
+    public static final RegistryObject<EntityType<EntityEldritchWarden>> ELDRITCH_WARDEN = register(
             "eldritch_warden",
             () -> EntityType.Builder.of(EntityEldritchWarden::new, MobCategory.MONSTER)
                     .sized(1.5F, 3.5F)
@@ -427,14 +427,14 @@ public final class TTEntities {
                     .clientTrackingRange(10)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintacleGiant>> TAINTACLE_GIANT = register(
+    public static final RegistryObject<EntityType<EntityTaintacleGiant>> TAINTACLE_GIANT = register(
             "taintacle_giant",
             () -> EntityType.Builder.of(EntityTaintacleGiant::new, MobCategory.MONSTER)
                     .sized(1.1F, 6.0F)
                     .clientTrackingRange(10)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityCultistPortalLesser>> CULTIST_PORTAL_LESSER =
+    public static final RegistryObject<EntityType<EntityCultistPortalLesser>> CULTIST_PORTAL_LESSER =
             register(
                     "cultist_portal_lesser",
                     () -> EntityType.Builder.of(EntityCultistPortalLesser::new, MobCategory.MONSTER)
@@ -443,28 +443,28 @@ public final class TTEntities {
                             .clientTrackingRange(10)
                             .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityEldritchOrb>> ELDRITCH_ORB = register(
+    public static final RegistryObject<EntityType<EntityEldritchOrb>> ELDRITCH_ORB = register(
             "eldritch_orb",
             () -> EntityType.Builder.<EntityEldritchOrb>of(EntityEldritchOrb::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
                     .clientTrackingRange(4)
                     .updateInterval(10));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityGolemOrb>> GOLEM_ORB = register(
+    public static final RegistryObject<EntityType<EntityGolemOrb>> GOLEM_ORB = register(
             "golem_orb",
             () -> EntityType.Builder.<EntityGolemOrb>of(EntityGolemOrb::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
                     .clientTrackingRange(4)
                     .updateInterval(10));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityAspectOrb>> ASPECT_ORB = register(
+    public static final RegistryObject<EntityType<EntityAspectOrb>> ASPECT_ORB = register(
             "aspect_orb",
             () -> EntityType.Builder.<EntityAspectOrb>of(EntityAspectOrb::new, MobCategory.MISC)
                     .sized(0.125F, 0.125F)
                     .clientTrackingRange(6)
                     .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityThaumaturgeGolem>> THAUMATURGE_GOLEM = register(
+    public static final RegistryObject<EntityType<EntityThaumaturgeGolem>> THAUMATURGE_GOLEM = register(
             "golem",
             () -> EntityType.Builder.<EntityThaumaturgeGolem>of(EntityThaumaturgeGolem::new, MobCategory.MISC)
                     .sized(0.4F, 0.9F)
@@ -472,7 +472,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityTurretCrossbow>> TURRET_CROSSBOW = register(
+    public static final RegistryObject<EntityType<EntityTurretCrossbow>> TURRET_CROSSBOW = register(
             "turret_crossbow",
             () -> EntityType.Builder.<EntityTurretCrossbow>of(EntityTurretCrossbow::new, MobCategory.MISC)
                     .sized(0.95F, 1.25F)
@@ -480,7 +480,7 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityTurretCrossbowAdvanced>>
+    public static final RegistryObject<EntityType<EntityTurretCrossbowAdvanced>>
             TURRET_CROSSBOW_ADVANCED = register(
                     "turret_crossbow_advanced",
                     () -> EntityType.Builder.<EntityTurretCrossbowAdvanced>of(
@@ -490,7 +490,7 @@ public final class TTEntities {
                             .clientTrackingRange(8)
                             .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityArcaneBore>> ARCANE_BORE = register(
+    public static final RegistryObject<EntityType<EntityArcaneBore>> ARCANE_BORE = register(
             "arcane_bore",
             () -> EntityType.Builder.<EntityArcaneBore>of(EntityArcaneBore::new, MobCategory.MISC)
                     .sized(0.9F, 0.9F)
@@ -498,14 +498,14 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityGrapple>> GRAPPLE = register(
+    public static final RegistryObject<EntityType<EntityGrapple>> GRAPPLE = register(
             "grapple",
             () -> EntityType.Builder.<EntityGrapple>of(EntityGrapple::new, MobCategory.MISC)
                     .sized(0.1F, 0.1F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityEldritchHierophant>> ELDRITCH_HIEROPHANT =
+    public static final RegistryObject<EntityType<EntityEldritchHierophant>> ELDRITCH_HIEROPHANT =
             register(
                     "eldritch_hierophant",
                     () -> EntityType.Builder.of(EntityEldritchHierophant::new, MobCategory.MONSTER)
@@ -514,7 +514,7 @@ public final class TTEntities {
                             .clientTrackingRange(12)
                             .updateInterval(2));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityHierophantCrescent>> HIEROPHANT_CRESCENT =
+    public static final RegistryObject<EntityType<EntityHierophantCrescent>> HIEROPHANT_CRESCENT =
             register(
                     "hierophant_crescent",
                     () -> EntityType.Builder.<EntityHierophantCrescent>of(
@@ -524,7 +524,7 @@ public final class TTEntities {
                             .clientTrackingRange(12)
                             .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityHierophantSigil>> HIEROPHANT_SIGIL = register(
+    public static final RegistryObject<EntityType<EntityHierophantSigil>> HIEROPHANT_SIGIL = register(
             "hierophant_sigil",
             () -> EntityType.Builder.<EntityHierophantSigil>of(EntityHierophantSigil::new, MobCategory.MISC)
                     .sized(0.1F, 0.1F)
@@ -532,7 +532,7 @@ public final class TTEntities {
                     .clientTrackingRange(12)
                     .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityHierophantNova>> HIEROPHANT_NOVA = register(
+    public static final RegistryObject<EntityType<EntityHierophantNova>> HIEROPHANT_NOVA = register(
             "hierophant_nova",
             () -> EntityType.Builder.<EntityHierophantNova>of(EntityHierophantNova::new, MobCategory.MISC)
                     .sized(0.1F, 0.1F)
@@ -540,7 +540,7 @@ public final class TTEntities {
                     .clientTrackingRange(12)
                     .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityHierophantHammer>> HIEROPHANT_HAMMER = register(
+    public static final RegistryObject<EntityType<EntityHierophantHammer>> HIEROPHANT_HAMMER = register(
             "hierophant_hammer",
             () -> EntityType.Builder.<EntityHierophantHammer>of(EntityHierophantHammer::new, MobCategory.MISC)
                     .sized(0.1F, 0.1F)
@@ -550,7 +550,7 @@ public final class TTEntities {
 
     private TTEntities() {}
 
-    private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> register(
+    private static <T extends Entity> RegistryObject<EntityType<T>> register(
             String name, Supplier<EntityType.Builder<T>> builderSupplier) {
         return ENTITIES.register(name, () -> builderSupplier.get().build(TTIds.MODID + ":" + name));
     }

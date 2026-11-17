@@ -157,38 +157,38 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredBlock;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTBlocks {
     private static final int WOODEN_BUTTON_PRESS_TICKS = 30;
 
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(TTIds.MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(net.minecraft.core.registries.Registries.BLOCK, TTIds.MODID);
 
-    public static final DeferredBlock<BlockWardedGlass> WARDED_GLASS = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockWardedGlass> WARDED_GLASS = ForgeRegistration.registerBlock(BLOCKS,
             "warded_glass",
             BlockWardedGlass::new,
             BlockBehaviour.Properties.of().strength(0.3F).sound(SoundType.GLASS).noOcclusion());
-    public static final DeferredBlock<BlockArcaneDoor> ARCANE_DOOR = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockArcaneDoor> ARCANE_DOOR = ForgeRegistration.registerBlock(BLOCKS,
             "arcane_door",
             BlockArcaneDoor::new,
             BlockBehaviour.Properties.of().strength(3.0F).sound(SoundType.WOOD).noOcclusion());
-    public static final DeferredBlock<BlockArcanePressurePlate> ARCANE_PRESSURE_PLATE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockArcanePressurePlate> ARCANE_PRESSURE_PLATE = ForgeRegistration.registerBlock(BLOCKS,
             "arcane_pressure_plate",
             BlockArcanePressurePlate::new,
             BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.WOOD).noCollission());
-    public static final DeferredBlock<BlockGolemFetter> GOLEM_FETTER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockGolemFetter> GOLEM_FETTER = ForgeRegistration.registerBlock(BLOCKS,
             "golem_fetter",
             BlockGolemFetter::new,
             BlockBehaviour.Properties.of().strength(2.0F).sound(SoundType.STONE));
-    public static final DeferredBlock<Block> TALLOW_BLOCK = BLOCKS.registerSimpleBlock(
+    public static final RegistryObject<Block> TALLOW_BLOCK = ForgeRegistration.registerSimpleBlock(BLOCKS,
             "tallow_block", BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.HONEY_BLOCK));
-    public static final DeferredBlock<BlockItemGrate> ITEM_GRATE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockItemGrate> ITEM_GRATE = ForgeRegistration.registerBlock(BLOCKS,
             "item_grate",
             BlockItemGrate::new,
             BlockBehaviour.Properties.of().strength(2.0F).sound(SoundType.METAL).noOcclusion());
 
-    public static final DeferredBlock<BlockFocalManipulator> FOCAL_MANIPULATOR = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockFocalManipulator> FOCAL_MANIPULATOR = ForgeRegistration.registerBlock(BLOCKS,
             "focal_manipulator",
             BlockFocalManipulator::new,
             BlockBehaviour.Properties.of()
@@ -197,7 +197,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockResearchTable> RESEARCH_TABLE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockResearchTable> RESEARCH_TABLE = ForgeRegistration.registerBlock(BLOCKS,
             "research_table",
             BlockResearchTable::new,
             BlockBehaviour.Properties.of()
@@ -207,7 +207,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .pushReaction(PushReaction.BLOCK));
 
-    public static final DeferredBlock<BlockDeconstructionTable> DECONSTRUCTION_TABLE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockDeconstructionTable> DECONSTRUCTION_TABLE = ForgeRegistration.registerBlock(BLOCKS,
             "deconstruction_table",
             BlockDeconstructionTable::new,
             BlockBehaviour.Properties.of()
@@ -216,7 +216,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockArcaneWorkbench> ARCANE_WORKBENCH = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockArcaneWorkbench> ARCANE_WORKBENCH = ForgeRegistration.registerBlock(BLOCKS,
             "arcane_workbench",
             BlockArcaneWorkbench::new,
             BlockBehaviour.Properties.of()
@@ -225,7 +225,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockCrucible> CRUCIBLE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockCrucible> CRUCIBLE = ForgeRegistration.registerBlock(BLOCKS,
             "crucible",
             BlockCrucible::new,
             BlockBehaviour.Properties.of()
@@ -234,7 +234,7 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockArcaneWorkbenchCharger> ARCANE_WORKBENCH_CHARGER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockArcaneWorkbenchCharger> ARCANE_WORKBENCH_CHARGER = ForgeRegistration.registerBlock(BLOCKS,
             "arcane_workbench_charger",
             BlockArcaneWorkbenchCharger::new,
             BlockBehaviour.Properties.of()
@@ -244,7 +244,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockAlembic> ALEMBIC = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockAlembic> ALEMBIC = ForgeRegistration.registerBlock(BLOCKS,
             "alembic",
             BlockAlembic::new,
             BlockBehaviour.Properties.of()
@@ -254,7 +254,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .instrument(NoteBlockInstrument.BASEDRUM));
 
-    public static final DeferredBlock<BlockBellows> BELLOWS = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockBellows> BELLOWS = ForgeRegistration.registerBlock(BLOCKS,
             "bellows",
             BlockBellows::new,
             BlockBehaviour.Properties.of()
@@ -264,7 +264,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .instrument(NoteBlockInstrument.BASEDRUM));
 
-    public static final DeferredBlock<BlockSmelter> SMELTER_BASIC = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockSmelter> SMELTER_BASIC = ForgeRegistration.registerBlock(BLOCKS,
             "smelter_basic",
             BlockSmelter::new,
             BlockBehaviour.Properties.of()
@@ -275,7 +275,7 @@ public final class TTBlocks {
                     .requiresCorrectToolForDrops()
                     .lightLevel(bs -> bs.getValue(BlockSmelter.LIT) ? 13 : 0));
 
-    public static final DeferredBlock<BlockSmelter> SMELTER_THAUMIUM = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockSmelter> SMELTER_THAUMIUM = ForgeRegistration.registerBlock(BLOCKS,
             "smelter_thaumium",
             BlockSmelter::new,
             BlockBehaviour.Properties.of()
@@ -286,7 +286,7 @@ public final class TTBlocks {
                     .requiresCorrectToolForDrops()
                     .lightLevel(bs -> bs.getValue(BlockSmelter.LIT) ? 13 : 0));
 
-    public static final DeferredBlock<BlockSmelter> SMELTER_VOID = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockSmelter> SMELTER_VOID = ForgeRegistration.registerBlock(BLOCKS,
             "smelter_void",
             BlockSmelter::new,
             BlockBehaviour.Properties.of()
@@ -297,7 +297,7 @@ public final class TTBlocks {
                     .requiresCorrectToolForDrops()
                     .lightLevel(bs -> bs.getValue(BlockSmelter.LIT) ? 13 : 0));
 
-    public static final DeferredBlock<BlockSmelterAux> SMELTER_AUX = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockSmelterAux> SMELTER_AUX = ForgeRegistration.registerBlock(BLOCKS,
             "smelter_aux",
             BlockSmelterAux::new,
             BlockBehaviour.Properties.of()
@@ -308,7 +308,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockSmelterVent> SMELTER_VENT = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockSmelterVent> SMELTER_VENT = ForgeRegistration.registerBlock(BLOCKS,
             "smelter_vent",
             BlockSmelterVent::new,
             BlockBehaviour.Properties.of()
@@ -318,7 +318,7 @@ public final class TTBlocks {
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockJar> JAR_NORMAL = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockJar> JAR_NORMAL = ForgeRegistration.registerBlock(BLOCKS,
             "jar_normal",
             BlockJar::new,
             BlockBehaviour.Properties.of()
@@ -327,7 +327,7 @@ public final class TTBlocks {
                     .sound(TTSoundTypes.JAR)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockJarVoid> JAR_VOID = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockJarVoid> JAR_VOID = ForgeRegistration.registerBlock(BLOCKS,
             "jar_void",
             BlockJarVoid::new,
             BlockBehaviour.Properties.of()
@@ -336,7 +336,7 @@ public final class TTBlocks {
                     .sound(TTSoundTypes.JAR)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockJarCreative> JAR_CREATIVE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockJarCreative> JAR_CREATIVE = ForgeRegistration.registerBlock(BLOCKS,
             "jar_creative",
             BlockJarCreative::new,
             BlockBehaviour.Properties.of()
@@ -345,24 +345,24 @@ public final class TTBlocks {
                     .sound(TTSoundTypes.JAR)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockTube> TUBE = BLOCKS.registerBlock("tube", BlockTube::new, tubeProps());
+    public static final RegistryObject<BlockTube> TUBE = ForgeRegistration.registerBlock(BLOCKS, "tube", BlockTube::new, tubeProps());
 
-    public static final DeferredBlock<BlockTubeValve> TUBE_VALVE =
-            BLOCKS.registerBlock("tube_valve", BlockTubeValve::new, tubeProps());
+    public static final RegistryObject<BlockTubeValve> TUBE_VALVE =
+            ForgeRegistration.registerBlock(BLOCKS, "tube_valve", BlockTubeValve::new, tubeProps());
 
-    public static final DeferredBlock<BlockTubeRestrict> TUBE_RESTRICT =
-            BLOCKS.registerBlock("tube_restrict", BlockTubeRestrict::new, tubeProps());
+    public static final RegistryObject<BlockTubeRestrict> TUBE_RESTRICT =
+            ForgeRegistration.registerBlock(BLOCKS, "tube_restrict", BlockTubeRestrict::new, tubeProps());
 
-    public static final DeferredBlock<BlockTubeFilter> TUBE_FILTER =
-            BLOCKS.registerBlock("tube_filter", BlockTubeFilter::new, tubeProps());
+    public static final RegistryObject<BlockTubeFilter> TUBE_FILTER =
+            ForgeRegistration.registerBlock(BLOCKS, "tube_filter", BlockTubeFilter::new, tubeProps());
 
-    public static final DeferredBlock<BlockTubeOneway> TUBE_ONEWAY =
-            BLOCKS.registerBlock("tube_oneway", BlockTubeOneway::new, tubeProps());
+    public static final RegistryObject<BlockTubeOneway> TUBE_ONEWAY =
+            ForgeRegistration.registerBlock(BLOCKS, "tube_oneway", BlockTubeOneway::new, tubeProps());
 
-    public static final DeferredBlock<BlockTubeBuffer> TUBE_BUFFER =
-            BLOCKS.registerBlock("tube_buffer", BlockTubeBuffer::new, tubeProps());
+    public static final RegistryObject<BlockTubeBuffer> TUBE_BUFFER =
+            ForgeRegistration.registerBlock(BLOCKS, "tube_buffer", BlockTubeBuffer::new, tubeProps());
 
-    public static final DeferredBlock<BlockEssentiaReservoir> ESSENTIA_RESERVOIR = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEssentiaReservoir> ESSENTIA_RESERVOIR = ForgeRegistration.registerBlock(BLOCKS,
             "essentia_reservoir",
             BlockEssentiaReservoir::new,
             BlockBehaviour.Properties.of()
@@ -371,7 +371,7 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockEssentiaCrystalizer> ESSENTIA_CRYSTALIZER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEssentiaCrystalizer> ESSENTIA_CRYSTALIZER = ForgeRegistration.registerBlock(BLOCKS,
             "essentia_crystalizer",
             BlockEssentiaCrystalizer::new,
             BlockBehaviour.Properties.of()
@@ -380,7 +380,7 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockFluxGoo> FLUX_GOO = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockFluxGoo> FLUX_GOO = ForgeRegistration.registerBlock(BLOCKS,
             "flux_goo",
             props -> new BlockFluxGoo(FluxGooRefs.sourceFluid(), props),
             BlockBehaviour.Properties.of()
@@ -393,7 +393,7 @@ public final class TTBlocks {
                     .noLootTable()
                     .liquid());
 
-    public static final DeferredBlock<BlockFluxGas> FLUX_GAS = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockFluxGas> FLUX_GAS = ForgeRegistration.registerBlock(BLOCKS,
             "flux_gas",
             BlockFluxGas::new,
             BlockBehaviour.Properties.of()
@@ -408,7 +408,7 @@ public final class TTBlocks {
                     .noLootTable()
                     .randomTicks());
 
-    public static final DeferredBlock<BlockPurifyingFluid> PURIFYING_FLUID = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockPurifyingFluid> PURIFYING_FLUID = ForgeRegistration.registerBlock(BLOCKS,
             "purifying_fluid",
             props -> new BlockPurifyingFluid(TTFluids.PURIFYING_SOURCE.get(), props),
             BlockBehaviour.Properties.of()
@@ -421,7 +421,7 @@ public final class TTBlocks {
                     .noLootTable()
                     .liquid());
 
-    public static final DeferredBlock<BlockLiquidDeath> LIQUID_DEATH = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockLiquidDeath> LIQUID_DEATH = ForgeRegistration.registerBlock(BLOCKS,
             "liquid_death",
             props -> new BlockLiquidDeath(TTFluids.LIQUID_DEATH_SOURCE.get(), props),
             BlockBehaviour.Properties.of()
@@ -433,7 +433,7 @@ public final class TTBlocks {
                     .noLootTable()
                     .liquid());
 
-    public static final DeferredBlock<BlockSpa> SPA = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockSpa> SPA = ForgeRegistration.registerBlock(BLOCKS,
             "spa",
             BlockSpa::new,
             BlockBehaviour.Properties.of()
@@ -442,19 +442,19 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockTaintRock> TAINT_ROCK =
-            BLOCKS.registerBlock("taint_rock", BlockTaintRock::new, taintBlockProps());
+    public static final RegistryObject<BlockTaintRock> TAINT_ROCK =
+            ForgeRegistration.registerBlock(BLOCKS, "taint_rock", BlockTaintRock::new, taintBlockProps());
 
-    public static final DeferredBlock<BlockTaintSoil> TAINT_SOIL =
-            BLOCKS.registerBlock("taint_soil", BlockTaintSoil::new, taintBlockProps());
+    public static final RegistryObject<BlockTaintSoil> TAINT_SOIL =
+            ForgeRegistration.registerBlock(BLOCKS, "taint_soil", BlockTaintSoil::new, taintBlockProps());
 
-    public static final DeferredBlock<BlockTaintCrust> TAINT_CRUST =
-            BLOCKS.registerBlock("taint_crust", BlockTaintCrust::new, taintBlockProps());
+    public static final RegistryObject<BlockTaintCrust> TAINT_CRUST =
+            ForgeRegistration.registerBlock(BLOCKS, "taint_crust", BlockTaintCrust::new, taintBlockProps());
 
-    public static final DeferredBlock<BlockTaintGeyser> TAINT_GEYSER =
-            BLOCKS.registerBlock("taint_geyser", BlockTaintGeyser::new, taintBlockProps());
+    public static final RegistryObject<BlockTaintGeyser> TAINT_GEYSER =
+            ForgeRegistration.registerBlock(BLOCKS, "taint_geyser", BlockTaintGeyser::new, taintBlockProps());
 
-    public static final DeferredBlock<BlockTaintLog> TAINT_LOG = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockTaintLog> TAINT_LOG = ForgeRegistration.registerBlock(BLOCKS,
             "taint_log",
             BlockTaintLog::new,
             BlockBehaviour.Properties.of()
@@ -464,7 +464,7 @@ public final class TTBlocks {
                     .randomTicks()
                     .ignitedByLava());
 
-    public static final DeferredBlock<BlockTaintFeature> TAINT_FEATURE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockTaintFeature> TAINT_FEATURE = ForgeRegistration.registerBlock(BLOCKS,
             "taint_feature",
             BlockTaintFeature::new,
             BlockBehaviour.Properties.of()
@@ -476,7 +476,7 @@ public final class TTBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .randomTicks());
 
-    public static final DeferredBlock<BlockTaintFibre> TAINT_FIBRE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockTaintFibre> TAINT_FIBRE = ForgeRegistration.registerBlock(BLOCKS,
             "taint_fibre",
             BlockTaintFibre::new,
             BlockBehaviour.Properties.of()
@@ -494,7 +494,7 @@ public final class TTBlocks {
                         return 0;
                     }));
 
-    public static final DeferredBlock<BlockTaintSporeStalk> TAINT_SPORE_STALK = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockTaintSporeStalk> TAINT_SPORE_STALK = ForgeRegistration.registerBlock(BLOCKS,
             "taint_spore_stalk",
             BlockTaintSporeStalk::new,
             BlockBehaviour.Properties.of()
@@ -574,7 +574,7 @@ public final class TTBlocks {
 
     //
 
-    public static final DeferredBlock<Block> ORE_AMBER = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> ORE_AMBER = ForgeRegistration.registerBlock(BLOCKS,
             "ore_amber",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -583,7 +583,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<Block> ORE_CINNABAR = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> ORE_CINNABAR = ForgeRegistration.registerBlock(BLOCKS,
             "ore_cinnabar",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -592,7 +592,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<Block> ORE_QUARTZ = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> ORE_QUARTZ = ForgeRegistration.registerBlock(BLOCKS,
             "ore_quartz",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -601,7 +601,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<Block> DEEPSLATE_ORE_AMBER = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> DEEPSLATE_ORE_AMBER = ForgeRegistration.registerBlock(BLOCKS,
             "deepslate_ore_amber",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -610,7 +610,7 @@ public final class TTBlocks {
                     .sound(SoundType.DEEPSLATE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<Block> DEEPSLATE_ORE_CINNABAR = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> DEEPSLATE_ORE_CINNABAR = ForgeRegistration.registerBlock(BLOCKS,
             "deepslate_ore_cinnabar",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -619,7 +619,7 @@ public final class TTBlocks {
                     .sound(SoundType.DEEPSLATE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<Block> DEEPSLATE_ORE_QUARTZ = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> DEEPSLATE_ORE_QUARTZ = ForgeRegistration.registerBlock(BLOCKS,
             "deepslate_ore_quartz",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -628,64 +628,64 @@ public final class TTBlocks {
                     .sound(SoundType.DEEPSLATE)
                     .requiresCorrectToolForDrops());
 
-    public static final Map<DyeColor, DeferredBlock<BlockNitor>> NITORS = new EnumMap<>(DyeColor.class);
+    public static final Map<DyeColor, RegistryObject<BlockNitor>> NITORS = new EnumMap<>(DyeColor.class);
 
     static {
         for (DyeColor dye : DyeColor.values()) {
             NITORS.put(
                     dye,
-                    BLOCKS.registerBlock(
+                    ForgeRegistration.registerBlock(BLOCKS,
                             "nitor_" + dye.getName(), props -> new BlockNitor(dye, props), nitorProps(dye)));
         }
     }
 
-    public static final Map<DyeColor, DeferredBlock<BlockCandle>> CANDLES = new EnumMap<>(DyeColor.class);
+    public static final Map<DyeColor, RegistryObject<BlockCandle>> CANDLES = new EnumMap<>(DyeColor.class);
 
     static {
         for (DyeColor dye : DyeColor.values()) {
             CANDLES.put(
                     dye,
-                    BLOCKS.registerBlock(
+                    ForgeRegistration.registerBlock(BLOCKS,
                             "candle_" + dye.getName(), props -> new BlockCandle(dye, props), candleProps(dye)));
         }
     }
 
-    public static final Map<CandleHolderMaterial, DeferredBlock<BlockCandleHolder>> CANDLE_HOLDERS =
+    public static final Map<CandleHolderMaterial, RegistryObject<BlockCandleHolder>> CANDLE_HOLDERS =
             new EnumMap<>(CandleHolderMaterial.class);
 
     static {
         for (CandleHolderMaterial material : CandleHolderMaterial.values()) {
             CANDLE_HOLDERS.put(
                     material,
-                    BLOCKS.registerBlock(
+                    ForgeRegistration.registerBlock(BLOCKS,
                             "candle_holder_" + material.getSerializedName(),
                             props -> new BlockCandleHolder(material, props),
                             candleHolderProps(material)));
         }
     }
 
-    public static final Map<DyeColor, DeferredBlock<BannerStandingBlock>> BANNERS = new EnumMap<>(DyeColor.class);
-    public static final Map<DyeColor, DeferredBlock<BannerWallBlock>> WALL_BANNERS = new EnumMap<>(DyeColor.class);
+    public static final Map<DyeColor, RegistryObject<BannerStandingBlock>> BANNERS = new EnumMap<>(DyeColor.class);
+    public static final Map<DyeColor, RegistryObject<BannerWallBlock>> WALL_BANNERS = new EnumMap<>(DyeColor.class);
 
     static {
         for (DyeColor dye : DyeColor.values()) {
             BANNERS.put(
                     dye,
-                    BLOCKS.registerBlock(
+                    ForgeRegistration.registerBlock(BLOCKS,
                             "banner_" + dye.getName(), props -> new BannerStandingBlock(dye, props), bannerProps(dye)));
             WALL_BANNERS.put(
                     dye,
-                    BLOCKS.registerBlock(
+                    ForgeRegistration.registerBlock(BLOCKS,
                             "wall_banner_" + dye.getName(),
                             props -> new BannerWallBlock(dye, props),
                             bannerProps(dye)));
         }
     }
 
-    public static final DeferredBlock<BannerStandingBlock> BANNER_CRIMSON_CULT = BLOCKS.registerBlock(
+    public static final RegistryObject<BannerStandingBlock> BANNER_CRIMSON_CULT = ForgeRegistration.registerBlock(BLOCKS,
             "banner_crimson_cult", props -> new BannerStandingBlock(null, props), bannerProps(null));
 
-    public static final DeferredBlock<BannerWallBlock> WALL_BANNER_CRIMSON_CULT = BLOCKS.registerBlock(
+    public static final RegistryObject<BannerWallBlock> WALL_BANNER_CRIMSON_CULT = ForgeRegistration.registerBlock(BLOCKS,
             "wall_banner_crimson_cult", props -> new BannerWallBlock(null, props), bannerProps(null));
 
     private static BlockBehaviour.Properties bannerProps(DyeColor dye) {
@@ -727,22 +727,22 @@ public final class TTBlocks {
 
     //
 
-    public static final DeferredBlock<BlockCrystal> CRYSTAL_AER = registerCrystal("crystal_aer", TTAspects.AER, false);
-    public static final DeferredBlock<BlockCrystal> CRYSTAL_IGNIS =
+    public static final RegistryObject<BlockCrystal> CRYSTAL_AER = registerCrystal("crystal_aer", TTAspects.AER, false);
+    public static final RegistryObject<BlockCrystal> CRYSTAL_IGNIS =
             registerCrystal("crystal_ignis", TTAspects.IGNIS, false);
-    public static final DeferredBlock<BlockCrystal> CRYSTAL_AQUA =
+    public static final RegistryObject<BlockCrystal> CRYSTAL_AQUA =
             registerCrystal("crystal_aqua", TTAspects.AQUA, false);
-    public static final DeferredBlock<BlockCrystal> CRYSTAL_TERRA =
+    public static final RegistryObject<BlockCrystal> CRYSTAL_TERRA =
             registerCrystal("crystal_terra", TTAspects.TERRA, false);
-    public static final DeferredBlock<BlockCrystal> CRYSTAL_ORDO =
+    public static final RegistryObject<BlockCrystal> CRYSTAL_ORDO =
             registerCrystal("crystal_ordo", TTAspects.ORDO, false);
-    public static final DeferredBlock<BlockCrystal> CRYSTAL_PERDITIO =
+    public static final RegistryObject<BlockCrystal> CRYSTAL_PERDITIO =
             registerCrystal("crystal_perditio", TTAspects.PERDITIO, false);
-    public static final DeferredBlock<BlockCrystal> CRYSTAL_VITIUM =
+    public static final RegistryObject<BlockCrystal> CRYSTAL_VITIUM =
             registerCrystal("crystal_vitium", TTAspects.VITIUM, true);
 
-    private static DeferredBlock<BlockCrystal> registerCrystal(String name, ResourceKey<IAspect> aspect, boolean flux) {
-        return BLOCKS.registerBlock(
+    private static RegistryObject<BlockCrystal> registerCrystal(String name, ResourceKey<IAspect> aspect, boolean flux) {
+        return ForgeRegistration.registerBlock(BLOCKS,
                 name,
                 props -> new BlockCrystal(props, aspect, flux),
                 BlockBehaviour.Properties.of()
@@ -757,7 +757,7 @@ public final class TTBlocks {
 
     //
 
-    public static final DeferredBlock<BlockArcaneGrindstone> ARCANE_GRINDSTONE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockArcaneGrindstone> ARCANE_GRINDSTONE = ForgeRegistration.registerBlock(BLOCKS,
             "arcane_grindstone",
             BlockArcaneGrindstone::new,
             BlockBehaviour.Properties.of()
@@ -767,7 +767,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .pushReaction(PushReaction.BLOCK));
 
-    public static final DeferredBlock<BlockInfusionMatrix> INFUSION_MATRIX = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockInfusionMatrix> INFUSION_MATRIX = ForgeRegistration.registerBlock(BLOCKS,
             "infusion_matrix",
             BlockInfusionMatrix::new,
             BlockBehaviour.Properties.of()
@@ -776,13 +776,13 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockPedestal> PEDESTAL_ARCANE =
-            BLOCKS.registerBlock("pedestal_arcane", BlockPedestal::new, pedestalProps());
+    public static final RegistryObject<BlockPedestal> PEDESTAL_ARCANE =
+            ForgeRegistration.registerBlock(BLOCKS, "pedestal_arcane", BlockPedestal::new, pedestalProps());
 
-    public static final DeferredBlock<BlockRechargePedestal> RECHARGE_PEDESTAL =
-            BLOCKS.registerBlock("recharge_pedestal", BlockRechargePedestal::new, pedestalProps());
+    public static final RegistryObject<BlockRechargePedestal> RECHARGE_PEDESTAL =
+            ForgeRegistration.registerBlock(BLOCKS, "recharge_pedestal", BlockRechargePedestal::new, pedestalProps());
 
-    public static final DeferredBlock<BlockInlay> INLAY = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockInlay> INLAY = ForgeRegistration.registerBlock(BLOCKS,
             "inlay",
             BlockInlay::new,
             BlockBehaviour.Properties.of()
@@ -793,7 +793,7 @@ public final class TTBlocks {
                     .noCollission()
                     .lightLevel(state -> 1));
 
-    public static final DeferredBlock<BlockPatternCrafter> PATTERN_CRAFTER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockPatternCrafter> PATTERN_CRAFTER = ForgeRegistration.registerBlock(BLOCKS,
             "pattern_crafter",
             BlockPatternCrafter::new,
             BlockBehaviour.Properties.of()
@@ -803,7 +803,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .isRedstoneConductor((state, level, pos) -> false));
 
-    public static final DeferredBlock<BlockPotionSprayer> POTION_SPRAYER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockPotionSprayer> POTION_SPRAYER = ForgeRegistration.registerBlock(BLOCKS,
             "potion_sprayer",
             BlockPotionSprayer::new,
             BlockBehaviour.Properties.of()
@@ -811,7 +811,7 @@ public final class TTBlocks {
                     .strength(2.0F, 20.0F)
                     .sound(SoundType.METAL));
 
-    public static final DeferredBlock<BlockLevitator> LEVITATOR = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockLevitator> LEVITATOR = ForgeRegistration.registerBlock(BLOCKS,
             "levitator",
             BlockLevitator::new,
             BlockBehaviour.Properties.of()
@@ -820,7 +820,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockGolemBuilder> GOLEM_BUILDER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockGolemBuilder> GOLEM_BUILDER = ForgeRegistration.registerBlock(BLOCKS,
             "golem_builder",
             BlockGolemBuilder::new,
             BlockBehaviour.Properties.of()
@@ -829,7 +829,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockArcaneBore> ARCANE_BORE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockArcaneBore> ARCANE_BORE = ForgeRegistration.registerBlock(BLOCKS,
             "arcane_bore",
             BlockArcaneBore::new,
             BlockBehaviour.Properties.of()
@@ -838,101 +838,101 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockPlaceholder> PLACEHOLDER_IRON_BARS =
-            BLOCKS.registerBlock("placeholder_iron_bars", BlockPlaceholder::new, pressPlaceholderProps());
+    public static final RegistryObject<BlockPlaceholder> PLACEHOLDER_IRON_BARS =
+            ForgeRegistration.registerBlock(BLOCKS, "placeholder_iron_bars", BlockPlaceholder::new, pressPlaceholderProps());
 
-    public static final DeferredBlock<BlockPlaceholder> PLACEHOLDER_CAULDRON =
-            BLOCKS.registerBlock("placeholder_cauldron", BlockPlaceholder::new, pressPlaceholderProps());
+    public static final RegistryObject<BlockPlaceholder> PLACEHOLDER_CAULDRON =
+            ForgeRegistration.registerBlock(BLOCKS, "placeholder_cauldron", BlockPlaceholder::new, pressPlaceholderProps());
 
-    public static final DeferredBlock<BlockPlaceholder> PLACEHOLDER_ANVIL =
-            BLOCKS.registerBlock("placeholder_anvil", BlockPlaceholder::new, pressPlaceholderProps());
+    public static final RegistryObject<BlockPlaceholder> PLACEHOLDER_ANVIL =
+            ForgeRegistration.registerBlock(BLOCKS, "placeholder_anvil", BlockPlaceholder::new, pressPlaceholderProps());
 
-    public static final DeferredBlock<BlockPlaceholder> PLACEHOLDER_TABLE =
-            BLOCKS.registerBlock("placeholder_table", BlockPlaceholder::new, pressPlaceholderProps());
+    public static final RegistryObject<BlockPlaceholder> PLACEHOLDER_TABLE =
+            ForgeRegistration.registerBlock(BLOCKS, "placeholder_table", BlockPlaceholder::new, pressPlaceholderProps());
 
-    public static final DeferredBlock<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER =
-            BLOCKS.registerBlock(
+    public static final RegistryObject<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER =
+            ForgeRegistration.registerBlock(BLOCKS,
                     "advanced_alchemical_furnace_alembic_placeholder",
                     BlockPlaceholder::new,
                     advancedFurnacePlaceholderProps());
 
-    public static final DeferredBlock<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER =
-            BLOCKS.registerBlock(
+    public static final RegistryObject<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER =
+            ForgeRegistration.registerBlock(BLOCKS,
                     "advanced_alchemical_furnace_construct_placeholder",
                     BlockPlaceholder::new,
                     advancedFurnacePlaceholderProps());
 
-    public static final DeferredBlock<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER =
-            BLOCKS.registerBlock(
+    public static final RegistryObject<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER =
+            ForgeRegistration.registerBlock(BLOCKS,
                     "advanced_alchemical_furnace_advanced_construct_placeholder",
                     BlockPlaceholder::new,
                     advancedFurnacePlaceholderProps());
 
-    public static final DeferredBlock<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_NOZZLE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_NOZZLE = ForgeRegistration.registerBlock(BLOCKS,
             "advanced_alchemical_furnace_nozzle",
             BlockPlaceholder::new,
             advancedFurnacePlaceholderProps().noLootTable().noOcclusion());
 
-    public static final DeferredBlock<BlockPedestal> PEDESTAL_ANCIENT =
-            BLOCKS.registerBlock("pedestal_ancient", BlockPedestal::new, pedestalProps());
+    public static final RegistryObject<BlockPedestal> PEDESTAL_ANCIENT =
+            ForgeRegistration.registerBlock(BLOCKS, "pedestal_ancient", BlockPedestal::new, pedestalProps());
 
-    public static final DeferredBlock<BlockPedestal> PEDESTAL_ELDRITCH =
-            BLOCKS.registerBlock("pedestal_eldritch", BlockPedestal::new, pedestalProps());
+    public static final RegistryObject<BlockPedestal> PEDESTAL_ELDRITCH =
+            ForgeRegistration.registerBlock(BLOCKS, "pedestal_eldritch", BlockPedestal::new, pedestalProps());
 
-    public static final DeferredBlock<BlockPillar> PILLAR_ARCANE =
-            BLOCKS.registerBlock("pillar_arcane", BlockPillar::new, pillarProps());
+    public static final RegistryObject<BlockPillar> PILLAR_ARCANE =
+            ForgeRegistration.registerBlock(BLOCKS, "pillar_arcane", BlockPillar::new, pillarProps());
 
-    public static final DeferredBlock<BlockPillar> PILLAR_ANCIENT =
-            BLOCKS.registerBlock("pillar_ancient", BlockPillar::new, pillarProps());
+    public static final RegistryObject<BlockPillar> PILLAR_ANCIENT =
+            ForgeRegistration.registerBlock(BLOCKS, "pillar_ancient", BlockPillar::new, pillarProps());
 
-    public static final DeferredBlock<BlockPillar> PILLAR_ELDRITCH =
-            BLOCKS.registerBlock("pillar_eldritch", BlockPillar::new, pillarProps());
+    public static final RegistryObject<BlockPillar> PILLAR_ELDRITCH =
+            ForgeRegistration.registerBlock(BLOCKS, "pillar_eldritch", BlockPillar::new, pillarProps());
 
-    public static final DeferredBlock<Block> STONE_ARCANE =
-            BLOCKS.registerBlock("stone_arcane", Block::new, stoneProps());
+    public static final RegistryObject<Block> STONE_ARCANE =
+            ForgeRegistration.registerBlock(BLOCKS, "stone_arcane", Block::new, stoneProps());
 
-    public static final DeferredBlock<Block> STONE_ARCANE_BRICK =
-            BLOCKS.registerBlock("stone_arcane_brick", Block::new, stoneProps());
+    public static final RegistryObject<Block> STONE_ARCANE_BRICK =
+            ForgeRegistration.registerBlock(BLOCKS, "stone_arcane_brick", Block::new, stoneProps());
 
-    public static final DeferredBlock<Block> STONE_ANCIENT =
-            BLOCKS.registerBlock("stone_ancient", Block::new, stoneProps());
+    public static final RegistryObject<Block> STONE_ANCIENT =
+            ForgeRegistration.registerBlock(BLOCKS, "stone_ancient", Block::new, stoneProps());
 
-    public static final DeferredBlock<Block> STONE_ANCIENT_TILE =
-            BLOCKS.registerBlock("stone_ancient_tile", Block::new, stoneProps());
+    public static final RegistryObject<Block> STONE_ANCIENT_TILE =
+            ForgeRegistration.registerBlock(BLOCKS, "stone_ancient_tile", Block::new, stoneProps());
 
-    public static final DeferredBlock<Block> STONE_ANCIENT_ROCK =
-            BLOCKS.registerBlock("stone_ancient_rock", Block::new, unbreakableProps());
+    public static final RegistryObject<Block> STONE_ANCIENT_ROCK =
+            ForgeRegistration.registerBlock(BLOCKS, "stone_ancient_rock", Block::new, unbreakableProps());
 
-    public static final DeferredBlock<Block> STONE_ANCIENT_GLYPHED =
-            BLOCKS.registerBlock("stone_ancient_glyphed", Block::new, stoneProps());
+    public static final RegistryObject<Block> STONE_ANCIENT_GLYPHED =
+            ForgeRegistration.registerBlock(BLOCKS, "stone_ancient_glyphed", Block::new, stoneProps());
 
-    public static final DeferredBlock<Block> STONE_ANCIENT_DOORWAY =
-            BLOCKS.registerBlock("stone_ancient_doorway", Block::new, unbreakableProps());
+    public static final RegistryObject<Block> STONE_ANCIENT_DOORWAY =
+            ForgeRegistration.registerBlock(BLOCKS, "stone_ancient_doorway", Block::new, unbreakableProps());
 
-    public static final DeferredBlock<Block> STONE_ELDRITCH_TILE =
-            BLOCKS.registerBlock("stone_eldritch_tile", Block::new, eldritchTileProps());
+    public static final RegistryObject<Block> STONE_ELDRITCH_TILE =
+            ForgeRegistration.registerBlock(BLOCKS, "stone_eldritch_tile", Block::new, eldritchTileProps());
 
-    public static final DeferredBlock<Block> STONE_POROUS =
-            BLOCKS.registerBlock("stone_porous", Block::new, porousProps());
+    public static final RegistryObject<Block> STONE_POROUS =
+            ForgeRegistration.registerBlock(BLOCKS, "stone_porous", Block::new, porousProps());
 
-    public static final DeferredBlock<BlockStairsTT> STAIRS_ARCANE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockStairsTT> STAIRS_ARCANE = ForgeRegistration.registerBlock(BLOCKS,
             "stairs_arcane", props -> new BlockStairsTT(STONE_ARCANE.get().defaultBlockState(), props), stoneProps());
 
-    public static final DeferredBlock<BlockStairsTT> STAIRS_ARCANE_BRICK = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockStairsTT> STAIRS_ARCANE_BRICK = ForgeRegistration.registerBlock(BLOCKS,
             "stairs_arcane_brick",
             props -> new BlockStairsTT(STONE_ARCANE_BRICK.get().defaultBlockState(), props),
             stoneProps());
 
-    public static final DeferredBlock<BlockStairsTT> STAIRS_ANCIENT = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockStairsTT> STAIRS_ANCIENT = ForgeRegistration.registerBlock(BLOCKS,
             "stairs_ancient", props -> new BlockStairsTT(STONE_ANCIENT.get().defaultBlockState(), props), stoneProps());
 
-    public static final DeferredBlock<Block> MATRIX_SPEED =
-            BLOCKS.registerBlock("matrix_speed", Block::new, stoneProps());
+    public static final RegistryObject<Block> MATRIX_SPEED =
+            ForgeRegistration.registerBlock(BLOCKS, "matrix_speed", Block::new, stoneProps());
 
-    public static final DeferredBlock<Block> MATRIX_COST =
-            BLOCKS.registerBlock("matrix_cost", Block::new, stoneProps());
+    public static final RegistryObject<Block> MATRIX_COST =
+            ForgeRegistration.registerBlock(BLOCKS, "matrix_cost", Block::new, stoneProps());
 
-    public static final DeferredBlock<BlockVisBattery> VIS_BATTERY = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockVisBattery> VIS_BATTERY = ForgeRegistration.registerBlock(BLOCKS,
             "vis_battery",
             BlockVisBattery::new,
             BlockBehaviour.Properties.of()
@@ -942,7 +942,7 @@ public final class TTBlocks {
                     .randomTicks()
                     .lightLevel(state -> state.getValue(BlockVisBattery.CHARGE)));
 
-    public static final DeferredBlock<BlockDioptra> DIOPTRA = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockDioptra> DIOPTRA = ForgeRegistration.registerBlock(BLOCKS,
             "dioptra",
             BlockDioptra::new,
             BlockBehaviour.Properties.of()
@@ -951,7 +951,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockJarBrain> JAR_BRAIN = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockJarBrain> JAR_BRAIN = ForgeRegistration.registerBlock(BLOCKS,
             "jar_brain",
             BlockJarBrain::new,
             BlockBehaviour.Properties.of()
@@ -960,22 +960,22 @@ public final class TTBlocks {
                     .sound(TTSoundTypes.JAR)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockArcaneEar> ARCANE_EAR =
-            BLOCKS.registerBlock("arcane_ear", props -> new BlockArcaneEar(false, props), earProps());
+    public static final RegistryObject<BlockArcaneEar> ARCANE_EAR =
+            ForgeRegistration.registerBlock(BLOCKS, "arcane_ear", props -> new BlockArcaneEar(false, props), earProps());
 
-    public static final DeferredBlock<BlockArcaneEar> ARCANE_EAR_TOGGLE =
-            BLOCKS.registerBlock("arcane_ear_toggle", props -> new BlockArcaneEar(true, props), earProps());
+    public static final RegistryObject<BlockArcaneEar> ARCANE_EAR_TOGGLE =
+            ForgeRegistration.registerBlock(BLOCKS, "arcane_ear_toggle", props -> new BlockArcaneEar(true, props), earProps());
 
-    public static final DeferredBlock<BlockLampArcane> LAMP_ARCANE =
-            BLOCKS.registerBlock("lamp_arcane", BlockLampArcane::new, lampProps());
+    public static final RegistryObject<BlockLampArcane> LAMP_ARCANE =
+            ForgeRegistration.registerBlock(BLOCKS, "lamp_arcane", BlockLampArcane::new, lampProps());
 
-    public static final DeferredBlock<BlockLampGrowth> LAMP_GROWTH =
-            BLOCKS.registerBlock("lamp_growth", BlockLampGrowth::new, lampProps());
+    public static final RegistryObject<BlockLampGrowth> LAMP_GROWTH =
+            ForgeRegistration.registerBlock(BLOCKS, "lamp_growth", BlockLampGrowth::new, lampProps());
 
-    public static final DeferredBlock<BlockLampFertility> LAMP_FERTILITY =
-            BLOCKS.registerBlock("lamp_fertility", BlockLampFertility::new, lampProps());
+    public static final RegistryObject<BlockLampFertility> LAMP_FERTILITY =
+            ForgeRegistration.registerBlock(BLOCKS, "lamp_fertility", BlockLampFertility::new, lampProps());
 
-    public static final DeferredBlock<BlockCentrifuge> CENTRIFUGE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockCentrifuge> CENTRIFUGE = ForgeRegistration.registerBlock(BLOCKS,
             "centrifuge",
             BlockCentrifuge::new,
             BlockBehaviour.Properties.of()
@@ -984,7 +984,7 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockHungryChest> HUNGRY_CHEST = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockHungryChest> HUNGRY_CHEST = ForgeRegistration.registerBlock(BLOCKS,
             "hungry_chest",
             BlockHungryChest::new,
             BlockBehaviour.Properties.of()
@@ -993,7 +993,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockEverfullUrn> EVERFULL_URN = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEverfullUrn> EVERFULL_URN = ForgeRegistration.registerBlock(BLOCKS,
             "everfull_urn",
             BlockEverfullUrn::new,
             BlockBehaviour.Properties.of()
@@ -1002,7 +1002,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockVisGenerator> VIS_GENERATOR = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockVisGenerator> VIS_GENERATOR = ForgeRegistration.registerBlock(BLOCKS,
             "vis_generator",
             BlockVisGenerator::new,
             BlockBehaviour.Properties.of()
@@ -1011,13 +1011,13 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockEssentiaPort> ESSENTIA_INPUT =
-            BLOCKS.registerBlock("essentia_input", props -> new BlockEssentiaPort(true, props), portProps());
+    public static final RegistryObject<BlockEssentiaPort> ESSENTIA_INPUT =
+            ForgeRegistration.registerBlock(BLOCKS, "essentia_input", props -> new BlockEssentiaPort(true, props), portProps());
 
-    public static final DeferredBlock<BlockEssentiaPort> ESSENTIA_OUTPUT =
-            BLOCKS.registerBlock("essentia_output", props -> new BlockEssentiaPort(false, props), portProps());
+    public static final RegistryObject<BlockEssentiaPort> ESSENTIA_OUTPUT =
+            ForgeRegistration.registerBlock(BLOCKS, "essentia_output", props -> new BlockEssentiaPort(false, props), portProps());
 
-    public static final DeferredBlock<BlockCondenser> CONDENSER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockCondenser> CONDENSER = ForgeRegistration.registerBlock(BLOCKS,
             "condenser",
             BlockCondenser::new,
             BlockBehaviour.Properties.of()
@@ -1026,7 +1026,7 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockFluxScrubber> FLUX_SCRUBBER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockFluxScrubber> FLUX_SCRUBBER = ForgeRegistration.registerBlock(BLOCKS,
             "flux_scrubber",
             BlockFluxScrubber::new,
             BlockBehaviour.Properties.of()
@@ -1035,18 +1035,18 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockCondenserLattice> CONDENSER_LATTICE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockCondenserLattice> CONDENSER_LATTICE = ForgeRegistration.registerBlock(BLOCKS,
             "condenser_lattice",
             props -> new BlockCondenserLattice(false, props),
             latticeProps().lightLevel(state -> 5));
 
-    public static final DeferredBlock<BlockCondenserLattice> CONDENSER_LATTICE_DIRTY = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockCondenserLattice> CONDENSER_LATTICE_DIRTY = ForgeRegistration.registerBlock(BLOCKS,
             "condenser_lattice_dirty", props -> new BlockCondenserLattice(true, props), latticeProps());
 
-    public static final DeferredBlock<BlockStabilizer> STABILIZER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockStabilizer> STABILIZER = ForgeRegistration.registerBlock(BLOCKS,
             "stabilizer", BlockStabilizer::new, stoneProps().noOcclusion());
 
-    public static final DeferredBlock<BlockRedstoneRelay> REDSTONE_RELAY = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockRedstoneRelay> REDSTONE_RELAY = ForgeRegistration.registerBlock(BLOCKS,
             "redstone_relay",
             BlockRedstoneRelay::new,
             BlockBehaviour.Properties.of()
@@ -1055,7 +1055,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockVoidSiphon> VOID_SIPHON = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockVoidSiphon> VOID_SIPHON = ForgeRegistration.registerBlock(BLOCKS,
             "void_siphon",
             BlockVoidSiphon::new,
             BlockBehaviour.Properties.of()
@@ -1064,7 +1064,7 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockThaumatorium> THAUMATORIUM = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockThaumatorium> THAUMATORIUM = ForgeRegistration.registerBlock(BLOCKS,
             "thaumatorium",
             BlockThaumatorium::new,
             BlockBehaviour.Properties.of()
@@ -1073,7 +1073,7 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockThaumatoriumTop> THAUMATORIUM_TOP = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockThaumatoriumTop> THAUMATORIUM_TOP = ForgeRegistration.registerBlock(BLOCKS,
             "thaumatorium_top",
             BlockThaumatoriumTop::new,
             BlockBehaviour.Properties.of()
@@ -1083,7 +1083,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .noLootTable());
 
-    public static final DeferredBlock<BlockBrainBox> BRAIN_BOX = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockBrainBox> BRAIN_BOX = ForgeRegistration.registerBlock(BLOCKS,
             "brain_box",
             BlockBrainBox::new,
             BlockBehaviour.Properties.of()
@@ -1160,7 +1160,7 @@ public final class TTBlocks {
 
     //
 
-    public static final DeferredBlock<BlockSaplingTT> SAPLING_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockSaplingTT> SAPLING_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "sapling_greatwood",
             props -> new BlockSaplingTT(TTTreeGrowers.GREATWOOD, props),
             BlockBehaviour.Properties.of()
@@ -1171,7 +1171,7 @@ public final class TTBlocks {
                     .sound(SoundType.GRASS)
                     .pushReaction(PushReaction.DESTROY));
 
-    public static final DeferredBlock<BlockSaplingTT> SAPLING_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockSaplingTT> SAPLING_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "sapling_silverwood",
             props -> new BlockSaplingTT(TTTreeGrowers.SILVERWOOD, props),
             BlockBehaviour.Properties.of()
@@ -1182,12 +1182,12 @@ public final class TTBlocks {
                     .sound(SoundType.GRASS)
                     .pushReaction(PushReaction.DESTROY));
 
-    public static final DeferredBlock<FlowerPotBlock> POTTED_SAPLING_GREATWOOD =
+    public static final RegistryObject<FlowerPotBlock> POTTED_SAPLING_GREATWOOD =
             pottedPlant("potted_sapling_greatwood", SAPLING_GREATWOOD);
-    public static final DeferredBlock<FlowerPotBlock> POTTED_SAPLING_SILVERWOOD =
+    public static final RegistryObject<FlowerPotBlock> POTTED_SAPLING_SILVERWOOD =
             pottedPlant("potted_sapling_silverwood", SAPLING_SILVERWOOD);
 
-    public static final DeferredBlock<BlockGreatwoodLog> LOG_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockGreatwoodLog> LOG_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "log_greatwood",
             BlockGreatwoodLog::new,
             BlockBehaviour.Properties.of()
@@ -1196,7 +1196,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
-    public static final DeferredBlock<RotatedPillarBlock> WOOD_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<RotatedPillarBlock> WOOD_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "greatwood",
             RotatedPillarBlock::new,
             BlockBehaviour.Properties.of()
@@ -1205,7 +1205,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
-    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_LOG_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<RotatedPillarBlock> STRIPPED_LOG_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "stripped_log_greatwood",
             RotatedPillarBlock::new,
             BlockBehaviour.Properties.of()
@@ -1214,7 +1214,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
-    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_WOOD_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<RotatedPillarBlock> STRIPPED_WOOD_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "stripped_greatwood",
             RotatedPillarBlock::new,
             BlockBehaviour.Properties.of()
@@ -1223,7 +1223,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
-    public static final DeferredBlock<RotatedPillarBlock> LOG_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<RotatedPillarBlock> LOG_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "log_silverwood",
             RotatedPillarBlock::new,
             BlockBehaviour.Properties.of()
@@ -1233,7 +1233,7 @@ public final class TTBlocks {
                     .lightLevel(state -> 5)
                     .ignitedByLava());
 
-    public static final DeferredBlock<BlockSilverwoodNodeLog> SILVERWOOD_NODE_LOG = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockSilverwoodNodeLog> SILVERWOOD_NODE_LOG = ForgeRegistration.registerBlock(BLOCKS,
             "silverwood_node_log",
             BlockSilverwoodNodeLog::new,
             BlockBehaviour.Properties.of()
@@ -1243,7 +1243,7 @@ public final class TTBlocks {
                     .lightLevel(state -> 5)
                     .ignitedByLava());
 
-    public static final DeferredBlock<RotatedPillarBlock> WOOD_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<RotatedPillarBlock> WOOD_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "silverwood",
             RotatedPillarBlock::new,
             BlockBehaviour.Properties.of()
@@ -1253,7 +1253,7 @@ public final class TTBlocks {
                     .lightLevel(state -> 5)
                     .ignitedByLava());
 
-    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_LOG_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<RotatedPillarBlock> STRIPPED_LOG_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "stripped_log_silverwood",
             RotatedPillarBlock::new,
             BlockBehaviour.Properties.of()
@@ -1263,7 +1263,7 @@ public final class TTBlocks {
                     .lightLevel(state -> 5)
                     .ignitedByLava());
 
-    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_WOOD_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<RotatedPillarBlock> STRIPPED_WOOD_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "stripped_silverwood",
             RotatedPillarBlock::new,
             BlockBehaviour.Properties.of()
@@ -1273,18 +1273,18 @@ public final class TTBlocks {
                     .lightLevel(state -> 5)
                     .ignitedByLava());
 
-    public static final DeferredBlock<LeavesBlock> LEAVES_GREATWOOD =
-            BLOCKS.registerBlock("leaves_greatwood", LeavesBlock::new, leavesProps());
+    public static final RegistryObject<LeavesBlock> LEAVES_GREATWOOD =
+            ForgeRegistration.registerBlock(BLOCKS, "leaves_greatwood", LeavesBlock::new, leavesProps());
 
-    public static final DeferredBlock<LeavesBlock> LEAVES_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<LeavesBlock> LEAVES_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "leaves_silverwood", LeavesBlock::new, leavesProps().mapColor(MapColor.COLOR_LIGHT_BLUE));
 
-    public static final DeferredBlock<PoweredRailBlock> ACTIVATOR_RAIL = BLOCKS.registerBlock(
+    public static final RegistryObject<PoweredRailBlock> ACTIVATOR_RAIL = ForgeRegistration.registerBlock(BLOCKS,
             "activator_rail",
             properties -> new PoweredRailBlock(properties, true),
             BlockBehaviour.Properties.of().noCollission().strength(0.7F).sound(SoundType.METAL));
 
-    public static final DeferredBlock<Block> PLANK_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> PLANK_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "plank_greatwood",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -1293,7 +1293,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
-    public static final DeferredBlock<Block> PLANK_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> PLANK_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "plank_silverwood",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -1315,7 +1315,7 @@ public final class TTBlocks {
 
     //
 
-    public static final DeferredBlock<MagicPlantBlock> PLANT_SHIMMERLEAF = BLOCKS.registerBlock(
+    public static final RegistryObject<MagicPlantBlock> PLANT_SHIMMERLEAF = ForgeRegistration.registerBlock(BLOCKS,
             "shimmerleaf",
             props -> new MagicPlantBlock(
                     TTBlockTags.SHIMMERLEAF_SOIL, MagicPlantTraits.SHIMMERLEAF_GLINTS, Optional.empty(), props),
@@ -1328,7 +1328,7 @@ public final class TTBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockEtherealBloom> ETHEREAL_BLOOM = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEtherealBloom> ETHEREAL_BLOOM = ForgeRegistration.registerBlock(BLOCKS,
             "ethereal_bloom",
             BlockEtherealBloom::new,
             BlockBehaviour.Properties.of()
@@ -1340,7 +1340,7 @@ public final class TTBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .noOcclusion());
 
-    public static final DeferredBlock<MagicPlantBlock> PLANT_CINDERPEARL = BLOCKS.registerBlock(
+    public static final RegistryObject<MagicPlantBlock> PLANT_CINDERPEARL = ForgeRegistration.registerBlock(BLOCKS,
             "cinderpearl",
             props -> new MagicPlantBlock(
                     TTBlockTags.CINDERPEARL_SOIL, MagicPlantTraits.CINDERPEARL_EMBERS, Optional.empty(), props),
@@ -1353,7 +1353,7 @@ public final class TTBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .noOcclusion());
 
-    public static final DeferredBlock<MagicPlantBlock> PLANT_VISHROOM = BLOCKS.registerBlock(
+    public static final RegistryObject<MagicPlantBlock> PLANT_VISHROOM = ForgeRegistration.registerBlock(BLOCKS,
             "vishroom",
             props -> new MagicPlantBlock(
                     TTBlockTags.VISHROOM_SOIL,
@@ -1369,17 +1369,17 @@ public final class TTBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .noOcclusion());
 
-    public static final DeferredBlock<FlowerPotBlock> POTTED_SHIMMERLEAF =
+    public static final RegistryObject<FlowerPotBlock> POTTED_SHIMMERLEAF =
             pottedPlant("potted_shimmerleaf", PLANT_SHIMMERLEAF);
-    public static final DeferredBlock<FlowerPotBlock> POTTED_CINDERPEARL =
+    public static final RegistryObject<FlowerPotBlock> POTTED_CINDERPEARL =
             pottedPlant("potted_cinderpearl", PLANT_CINDERPEARL);
-    public static final DeferredBlock<FlowerPotBlock> POTTED_VISHROOM = pottedPlant("potted_vishroom", PLANT_VISHROOM);
+    public static final RegistryObject<FlowerPotBlock> POTTED_VISHROOM = pottedPlant("potted_vishroom", PLANT_VISHROOM);
 
-    public static final DeferredBlock<BlockGrassAmbient> GRASS_AMBIENT = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockGrassAmbient> GRASS_AMBIENT = ForgeRegistration.registerBlock(BLOCKS,
             "grass_ambient", BlockGrassAmbient::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK));
 
-    private static DeferredBlock<FlowerPotBlock> pottedPlant(String name, DeferredBlock<? extends Block> plant) {
-        return BLOCKS.registerBlock(
+    private static RegistryObject<FlowerPotBlock> pottedPlant(String name, RegistryObject<? extends Block> plant) {
+        return ForgeRegistration.registerBlock(BLOCKS,
                 name,
                 properties -> new FlowerPotBlock(() -> (FlowerPotBlock) Blocks.FLOWER_POT, plant, properties),
                 BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_OAK_SAPLING));
@@ -1395,7 +1395,7 @@ public final class TTBlocks {
     }
 
     //
-    public static final DeferredBlock<BlockMetalTT> ALCHEMICAL_CONSTRUCT = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockMetalTT> ALCHEMICAL_CONSTRUCT = ForgeRegistration.registerBlock(BLOCKS,
             "alchemical_construct",
             BlockMetalTT::new,
             BlockBehaviour.Properties.of()
@@ -1404,7 +1404,7 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockMetalTT> ADVANCED_ALCHEMICAL_CONSTRUCT = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockMetalTT> ADVANCED_ALCHEMICAL_CONSTRUCT = ForgeRegistration.registerBlock(BLOCKS,
             "advanced_alchemical_construct",
             BlockMetalTT::new,
             BlockBehaviour.Properties.of()
@@ -1413,8 +1413,8 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockAdvancedAlchemicalFurnace> ADVANCED_ALCHEMICAL_FURNACE =
-            BLOCKS.registerBlock(
+    public static final RegistryObject<BlockAdvancedAlchemicalFurnace> ADVANCED_ALCHEMICAL_FURNACE =
+            ForgeRegistration.registerBlock(BLOCKS,
                     "advanced_alchemical_furnace",
                     BlockAdvancedAlchemicalFurnace::new,
                     BlockBehaviour.Properties.of()
@@ -1425,7 +1425,7 @@ public final class TTBlocks {
                             .requiresCorrectToolForDrops()
                             .lightLevel(state -> state.getValue(BlockAdvancedAlchemicalFurnace.LIT) ? 10 : 0));
 
-    public static final DeferredBlock<BlockMetalTT> METAL_THAUMIUM_BLOCK = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockMetalTT> METAL_THAUMIUM_BLOCK = ForgeRegistration.registerBlock(BLOCKS,
             "metal_thaumium",
             BlockMetalTT::new,
             BlockBehaviour.Properties.of()
@@ -1434,7 +1434,7 @@ public final class TTBlocks {
                     .sound(SoundType.AMETHYST)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockMetalTT> METAL_BRASS_BLOCK = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockMetalTT> METAL_BRASS_BLOCK = ForgeRegistration.registerBlock(BLOCKS,
             "metal_brass",
             BlockMetalTT::new,
             BlockBehaviour.Properties.of()
@@ -1443,7 +1443,7 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockMetalTT> METAL_VOID_BLOCK = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockMetalTT> METAL_VOID_BLOCK = ForgeRegistration.registerBlock(BLOCKS,
             "metal_void",
             BlockMetalTT::new,
             BlockBehaviour.Properties.of()
@@ -1452,7 +1452,7 @@ public final class TTBlocks {
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<SlabBlock> SLAB_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<SlabBlock> SLAB_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "slab_greatwood",
             SlabBlock::new,
             BlockBehaviour.Properties.of()
@@ -1461,7 +1461,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
-    public static final DeferredBlock<SlabBlock> SLAB_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<SlabBlock> SLAB_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "slab_silverwood",
             SlabBlock::new,
             BlockBehaviour.Properties.of()
@@ -1470,7 +1470,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
-    public static final DeferredBlock<SlabBlock> SLAB_ARCANE_STONE = BLOCKS.registerBlock(
+    public static final RegistryObject<SlabBlock> SLAB_ARCANE_STONE = ForgeRegistration.registerBlock(BLOCKS,
             "slab_arcane_stone",
             SlabBlock::new,
             BlockBehaviour.Properties.of()
@@ -1479,7 +1479,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<SlabBlock> SLAB_ARCANE_BRICK = BLOCKS.registerBlock(
+    public static final RegistryObject<SlabBlock> SLAB_ARCANE_BRICK = ForgeRegistration.registerBlock(BLOCKS,
             "slab_arcane_brick",
             SlabBlock::new,
             BlockBehaviour.Properties.of()
@@ -1488,7 +1488,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<SlabBlock> SLAB_ANCIENT = BLOCKS.registerBlock(
+    public static final RegistryObject<SlabBlock> SLAB_ANCIENT = ForgeRegistration.registerBlock(BLOCKS,
             "slab_ancient",
             SlabBlock::new,
             BlockBehaviour.Properties.of()
@@ -1497,7 +1497,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<SlabBlock> SLAB_ELDRITCH = BLOCKS.registerBlock(
+    public static final RegistryObject<SlabBlock> SLAB_ELDRITCH = ForgeRegistration.registerBlock(BLOCKS,
             "slab_eldritch",
             SlabBlock::new,
             BlockBehaviour.Properties.of()
@@ -1506,7 +1506,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockStairsTT> STAIRS_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockStairsTT> STAIRS_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "stairs_greatwood",
             props -> new BlockStairsTT(PLANK_GREATWOOD.get().defaultBlockState(), props),
             BlockBehaviour.Properties.of()
@@ -1515,7 +1515,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
-    public static final DeferredBlock<BlockStairsTT> STAIRS_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockStairsTT> STAIRS_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "stairs_silverwood",
             props -> new BlockStairsTT(PLANK_SILVERWOOD.get().defaultBlockState(), props),
             BlockBehaviour.Properties.of()
@@ -1524,7 +1524,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
-    public static final DeferredBlock<DoorBlock> DOOR_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<DoorBlock> DOOR_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "door_greatwood",
             props -> new DoorBlock(BlockSetType.OAK, props),
             BlockBehaviour.Properties.of()
@@ -1535,7 +1535,7 @@ public final class TTBlocks {
                     .ignitedByLava()
                     .pushReaction(PushReaction.DESTROY));
 
-    public static final DeferredBlock<TrapDoorBlock> TRAPDOOR_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<TrapDoorBlock> TRAPDOOR_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "trapdoor_greatwood",
             props -> new TrapDoorBlock(BlockSetType.OAK, props),
             BlockBehaviour.Properties.of()
@@ -1546,7 +1546,7 @@ public final class TTBlocks {
                     .isValidSpawn((state, level, pos, type) -> false)
                     .ignitedByLava());
 
-    public static final DeferredBlock<FenceBlock> FENCE_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<FenceBlock> FENCE_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "fence_greatwood",
             FenceBlock::new,
             BlockBehaviour.Properties.of()
@@ -1557,7 +1557,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
-    public static final DeferredBlock<FenceGateBlock> FENCE_GATE_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<FenceGateBlock> FENCE_GATE_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "fence_gate_greatwood",
             props -> new FenceGateBlock(WoodType.OAK, props),
             BlockBehaviour.Properties.of()
@@ -1567,12 +1567,12 @@ public final class TTBlocks {
                     .strength(2.0F, 3.0F)
                     .ignitedByLava());
 
-    public static final DeferredBlock<ButtonBlock> BUTTON_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<ButtonBlock> BUTTON_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "button_greatwood",
             props -> new ButtonBlock(BlockSetType.OAK, WOODEN_BUTTON_PRESS_TICKS, props),
             BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY));
 
-    public static final DeferredBlock<PressurePlateBlock> PRESSURE_PLATE_GREATWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<PressurePlateBlock> PRESSURE_PLATE_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "pressure_plate_greatwood",
             props -> new PressurePlateBlock(BlockSetType.OAK, props),
             BlockBehaviour.Properties.of()
@@ -1584,7 +1584,7 @@ public final class TTBlocks {
                     .ignitedByLava()
                     .pushReaction(PushReaction.DESTROY));
 
-    public static final DeferredBlock<DoorBlock> DOOR_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<DoorBlock> DOOR_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "door_silverwood",
             props -> new DoorBlock(BlockSetType.OAK, props),
             BlockBehaviour.Properties.of()
@@ -1595,7 +1595,7 @@ public final class TTBlocks {
                     .ignitedByLava()
                     .pushReaction(PushReaction.DESTROY));
 
-    public static final DeferredBlock<TrapDoorBlock> TRAPDOOR_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<TrapDoorBlock> TRAPDOOR_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "trapdoor_silverwood",
             props -> new TrapDoorBlock(BlockSetType.OAK, props),
             BlockBehaviour.Properties.of()
@@ -1606,7 +1606,7 @@ public final class TTBlocks {
                     .isValidSpawn((state, level, pos, type) -> false)
                     .ignitedByLava());
 
-    public static final DeferredBlock<FenceBlock> FENCE_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<FenceBlock> FENCE_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "fence_silverwood",
             FenceBlock::new,
             BlockBehaviour.Properties.of()
@@ -1617,7 +1617,7 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
-    public static final DeferredBlock<FenceGateBlock> FENCE_GATE_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<FenceGateBlock> FENCE_GATE_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "fence_gate_silverwood",
             props -> new FenceGateBlock(WoodType.OAK, props),
             BlockBehaviour.Properties.of()
@@ -1627,12 +1627,12 @@ public final class TTBlocks {
                     .strength(2.0F, 3.0F)
                     .ignitedByLava());
 
-    public static final DeferredBlock<ButtonBlock> BUTTON_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<ButtonBlock> BUTTON_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "button_silverwood",
             props -> new ButtonBlock(BlockSetType.OAK, WOODEN_BUTTON_PRESS_TICKS, props),
             BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY));
 
-    public static final DeferredBlock<PressurePlateBlock> PRESSURE_PLATE_SILVERWOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<PressurePlateBlock> PRESSURE_PLATE_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "pressure_plate_silverwood",
             props -> new PressurePlateBlock(BlockSetType.OAK, props),
             BlockBehaviour.Properties.of()
@@ -1644,7 +1644,7 @@ public final class TTBlocks {
                     .ignitedByLava()
                     .pushReaction(PushReaction.DESTROY));
 
-    public static final DeferredBlock<BlockTable> TABLE_WOOD = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockTable> TABLE_WOOD = ForgeRegistration.registerBlock(BLOCKS,
             "table_wood",
             BlockTable::new,
             BlockBehaviour.Properties.of()
@@ -1654,7 +1654,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .ignitedByLava());
 
-    public static final DeferredBlock<BlockTable> TABLE_STONE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockTable> TABLE_STONE = ForgeRegistration.registerBlock(BLOCKS,
             "table_stone",
             BlockTable::new,
             BlockBehaviour.Properties.of()
@@ -1663,7 +1663,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockPavingStone> PAVING_STONE_TRAVEL = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockPavingStone> PAVING_STONE_TRAVEL = ForgeRegistration.registerBlock(BLOCKS,
             "paving_stone_travel",
             props -> new BlockPavingStone(false, props),
             BlockBehaviour.Properties.of()
@@ -1672,7 +1672,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockPavingStone> PAVING_STONE_BARRIER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockPavingStone> PAVING_STONE_BARRIER = ForgeRegistration.registerBlock(BLOCKS,
             "paving_stone_barrier",
             props -> new BlockPavingStone(true, props),
             BlockBehaviour.Properties.of()
@@ -1681,7 +1681,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockBarrier> BARRIER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockBarrier> BARRIER = ForgeRegistration.registerBlock(BLOCKS,
             "barrier",
             BlockBarrier::new,
             BlockBehaviour.Properties.of()
@@ -1692,7 +1692,7 @@ public final class TTBlocks {
                     .dynamicShape()
                     .isValidSpawn((state, level, pos, type) -> false));
 
-    public static final DeferredBlock<BlockManaPod> MANA_POD = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockManaPod> MANA_POD = ForgeRegistration.registerBlock(BLOCKS,
             "mana_pod",
             BlockManaPod::new,
             BlockBehaviour.Properties.of()
@@ -1705,7 +1705,7 @@ public final class TTBlocks {
                     .lightLevel(state -> state.getValue(BlockManaPod.AGE))
                     .isValidSpawn((state, level, pos, type) -> false));
 
-    public static final DeferredBlock<BlockNode> NODE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockNode> NODE = ForgeRegistration.registerBlock(BLOCKS,
             "node",
             BlockNode::new,
             BlockBehaviour.Properties.of()
@@ -1715,7 +1715,7 @@ public final class TTBlocks {
                     .noLootTable()
                     .isValidSpawn((state, level, pos, type) -> false));
 
-    public static final DeferredBlock<BlockJarNode> JAR_NODE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockJarNode> JAR_NODE = ForgeRegistration.registerBlock(BLOCKS,
             "jar_node",
             BlockJarNode::new,
             BlockBehaviour.Properties.of()
@@ -1724,7 +1724,7 @@ public final class TTBlocks {
                     .sound(TTSoundTypes.JAR)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockNodeStabilizer> NODE_STABILIZER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockNodeStabilizer> NODE_STABILIZER = ForgeRegistration.registerBlock(BLOCKS,
             "node_stabilizer",
             props -> new BlockNodeStabilizer(props, false),
             BlockBehaviour.Properties.of()
@@ -1732,7 +1732,7 @@ public final class TTBlocks {
                     .strength(2.0F, 10.0F)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockNodeStabilizer> NODE_STABILIZER_ADVANCED = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockNodeStabilizer> NODE_STABILIZER_ADVANCED = ForgeRegistration.registerBlock(BLOCKS,
             "node_stabilizer_advanced",
             props -> new BlockNodeStabilizer(props, true),
             BlockBehaviour.Properties.of()
@@ -1740,7 +1740,7 @@ public final class TTBlocks {
                     .strength(2.0F, 10.0F)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockVisRelay> VIS_RELAY = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockVisRelay> VIS_RELAY = ForgeRegistration.registerBlock(BLOCKS,
             "vis_relay",
             BlockVisRelay::new,
             BlockBehaviour.Properties.of()
@@ -1749,7 +1749,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .sound(SoundType.AMETHYST));
 
-    public static final DeferredBlock<BlockNodeTransducer> NODE_TRANSDUCER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockNodeTransducer> NODE_TRANSDUCER = ForgeRegistration.registerBlock(BLOCKS,
             "node_transducer",
             BlockNodeTransducer::new,
             BlockBehaviour.Properties.of()
@@ -1757,10 +1757,10 @@ public final class TTBlocks {
                     .strength(2.0F, 10.0F)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockAmber> AMBER_BRICK =
-            BLOCKS.registerBlock("amber_brick", BlockAmber::new, amberProps());
+    public static final RegistryObject<BlockAmber> AMBER_BRICK =
+            ForgeRegistration.registerBlock(BLOCKS, "amber_brick", BlockAmber::new, amberProps());
 
-    public static final DeferredBlock<Block> FLESH_BLOCK = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> FLESH_BLOCK = ForgeRegistration.registerBlock(BLOCKS,
             "flesh_block",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -1768,7 +1768,7 @@ public final class TTBlocks {
                     .strength(0.25F, 2.0F)
                     .sound(TTSoundTypes.GORE));
 
-    public static final DeferredBlock<BlockEffectShock> EFFECT_SHOCK = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEffectShock> EFFECT_SHOCK = ForgeRegistration.registerBlock(BLOCKS,
             "effect_shock",
             BlockEffectShock::new,
             BlockBehaviour.Properties.of()
@@ -1782,7 +1782,7 @@ public final class TTBlocks {
                     .noLootTable()
                     .pushReaction(PushReaction.DESTROY));
 
-    public static final DeferredBlock<Block> OBSIDIAN_TILE = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> OBSIDIAN_TILE = ForgeRegistration.registerBlock(BLOCKS,
             "obsidian_tile",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -1791,7 +1791,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockObsidianTotem> OBSIDIAN_TOTEM = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockObsidianTotem> OBSIDIAN_TOTEM = ForgeRegistration.registerBlock(BLOCKS,
             "obsidian_totem",
             BlockObsidianTotem::new,
             BlockBehaviour.Properties.of()
@@ -1800,7 +1800,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockObsidianTotemCharged> OBSIDIAN_TOTEM_CHARGED = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockObsidianTotemCharged> OBSIDIAN_TOTEM_CHARGED = ForgeRegistration.registerBlock(BLOCKS,
             "obsidian_totem_charged",
             BlockObsidianTotemCharged::new,
             BlockBehaviour.Properties.of()
@@ -1809,7 +1809,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<Block> ELDRITCH_STONE = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> ELDRITCH_STONE = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_stone",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -1818,7 +1818,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<Block> ELDRITCH_STONE_INERT = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> ELDRITCH_STONE_INERT = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_stone_inert",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -1828,7 +1828,7 @@ public final class TTBlocks {
                     .requiresCorrectToolForDrops()
                     .isValidSpawn((state, level, pos, type) -> false));
 
-    public static final DeferredBlock<Block> ELDRITCH_ROCK = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> ELDRITCH_ROCK = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_rock",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -1837,7 +1837,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<Block> ELDRITCH_CRUST = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> ELDRITCH_CRUST = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_crust",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -1845,7 +1845,7 @@ public final class TTBlocks {
                     .strength(2.0F, 10.0F)
                     .sound(TTSoundTypes.GORE));
 
-    public static final DeferredBlock<BlockEldritchInset> ELDRITCH_CRUST_GLOWING = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchInset> ELDRITCH_CRUST_GLOWING = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_crust_glowing",
             props -> new BlockEldritchInset(ConstantInt.of(0), props),
             BlockBehaviour.Properties.of()
@@ -1855,7 +1855,7 @@ public final class TTBlocks {
                     .lightLevel(state -> 12)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockMirror> MIRROR = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockMirror> MIRROR = ForgeRegistration.registerBlock(BLOCKS,
             "mirror",
             props -> new BlockMirror(props, false),
             BlockBehaviour.Properties.of()
@@ -1864,7 +1864,7 @@ public final class TTBlocks {
                     .sound(TTSoundTypes.JAR)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockMirror> MIRROR_ESSENTIA = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockMirror> MIRROR_ESSENTIA = ForgeRegistration.registerBlock(BLOCKS,
             "mirror_essentia",
             props -> new BlockMirror(props, true),
             BlockBehaviour.Properties.of()
@@ -1873,7 +1873,7 @@ public final class TTBlocks {
                     .sound(TTSoundTypes.JAR)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockStairsTT> STAIRS_ELDRITCH = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockStairsTT> STAIRS_ELDRITCH = ForgeRegistration.registerBlock(BLOCKS,
             "stairs_eldritch",
             props -> new BlockStairsTT(ELDRITCH_STONE.get().defaultBlockState(), props),
             BlockBehaviour.Properties.of()
@@ -1882,7 +1882,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<RotatedPillarBlock> STONE_ELDRITCH_PILLAR = BLOCKS.registerBlock(
+    public static final RegistryObject<RotatedPillarBlock> STONE_ELDRITCH_PILLAR = ForgeRegistration.registerBlock(BLOCKS,
             "stone_eldritch_pillar",
             RotatedPillarBlock::new,
             BlockBehaviour.Properties.of()
@@ -1890,7 +1890,7 @@ public final class TTBlocks {
                     .strength(2.0F, 10.0F)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
-    public static final DeferredBlock<BlockStairsTT> STAIRS_ELDRITCH_TILE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockStairsTT> STAIRS_ELDRITCH_TILE = ForgeRegistration.registerBlock(BLOCKS,
             "stairs_eldritch_tile",
             props -> new BlockStairsTT(STONE_ELDRITCH_TILE.get().defaultBlockState(), props),
             BlockBehaviour.Properties.of()
@@ -1898,7 +1898,7 @@ public final class TTBlocks {
                     .strength(2.0F, 10.0F)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
-    public static final DeferredBlock<BlockStairsTT> STAIRS_ELDRITCH_ROCK = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockStairsTT> STAIRS_ELDRITCH_ROCK = ForgeRegistration.registerBlock(BLOCKS,
             "stairs_eldritch_rock",
             props -> new BlockStairsTT(ELDRITCH_ROCK.get().defaultBlockState(), props),
             BlockBehaviour.Properties.of()
@@ -1907,7 +1907,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockEldritchDoor> ELDRITCH_DOOR = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchDoor> ELDRITCH_DOOR = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_door",
             BlockEldritchDoor::new,
             BlockBehaviour.Properties.of()
@@ -1916,7 +1916,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .lightLevel(state -> 12));
 
-    public static final DeferredBlock<Block> ELDRITCH_PEDESTAL = BLOCKS.registerBlock(
+    public static final RegistryObject<Block> ELDRITCH_PEDESTAL = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_pedestal",
             Block::new,
             BlockBehaviour.Properties.of()
@@ -1925,7 +1925,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockEldritchInset> ELDRITCH_STONE_CRYSTAL = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchInset> ELDRITCH_STONE_CRYSTAL = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_stone_crystal",
             props -> new BlockEldritchInset(UniformInt.of(1, 4), props),
             BlockBehaviour.Properties.of()
@@ -1935,7 +1935,7 @@ public final class TTBlocks {
                     .lightLevel(state -> 12)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockEldritchNothing> ELDRITCH_NOTHING = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchNothing> ELDRITCH_NOTHING = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_nothing",
             BlockEldritchNothing::new,
             BlockBehaviour.Properties.of()
@@ -1947,7 +1947,7 @@ public final class TTBlocks {
                     .noLootTable()
                     .dynamicShape());
 
-    public static final DeferredBlock<BlockEldritchNothingDormant> ELDRITCH_NOTHING_DORMANT = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchNothingDormant> ELDRITCH_NOTHING_DORMANT = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_nothing_dormant",
             BlockEldritchNothingDormant::new,
             BlockBehaviour.Properties.of()
@@ -1958,7 +1958,7 @@ public final class TTBlocks {
                     .pushReaction(PushReaction.BLOCK)
                     .isValidSpawn((state, level, pos, type) -> false));
 
-    public static final DeferredBlock<BlockEldritchReliquary> ELDRITCH_RELIQUARY = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchReliquary> ELDRITCH_RELIQUARY = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_reliquary",
             BlockEldritchReliquary::new,
             BlockBehaviour.Properties.of()
@@ -1970,7 +1970,7 @@ public final class TTBlocks {
                     .pushReaction(PushReaction.BLOCK)
                     .isValidSpawn((state, level, pos, type) -> false));
 
-    public static final DeferredBlock<BlockEldritchLock> ELDRITCH_LOCK = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchLock> ELDRITCH_LOCK = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_lock",
             BlockEldritchLock::new,
             BlockBehaviour.Properties.of()
@@ -1980,7 +1980,7 @@ public final class TTBlocks {
                     .lightLevel(state -> 5)
                     .noLootTable());
 
-    public static final DeferredBlock<BlockEldritchCrabSpawner> ELDRITCH_CRAB_SPAWNER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchCrabSpawner> ELDRITCH_CRAB_SPAWNER = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_crab_spawner",
             BlockEldritchCrabSpawner::new,
             BlockBehaviour.Properties.of()
@@ -1991,7 +1991,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockEldritchTrap> ELDRITCH_TRAP = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchTrap> ELDRITCH_TRAP = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_trap",
             BlockEldritchTrap::new,
             BlockBehaviour.Properties.of()
@@ -2000,7 +2000,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .noLootTable());
 
-    public static final DeferredBlock<BlockEldritchAltar> ELDRITCH_ALTAR = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchAltar> ELDRITCH_ALTAR = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_altar",
             BlockEldritchAltar::new,
             BlockBehaviour.Properties.of()
@@ -2011,7 +2011,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .noLootTable());
 
-    public static final DeferredBlock<BlockEldritchObelisk> ELDRITCH_OBELISK = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchObelisk> ELDRITCH_OBELISK = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_obelisk",
             BlockEldritchObelisk::new,
             BlockBehaviour.Properties.of()
@@ -2022,7 +2022,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .noLootTable());
 
-    public static final DeferredBlock<BlockEldritchPillar> ELDRITCH_PILLAR = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchPillar> ELDRITCH_PILLAR = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_pillar",
             BlockEldritchPillar::new,
             BlockBehaviour.Properties.of()
@@ -2033,7 +2033,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .noLootTable());
 
-    public static final DeferredBlock<BlockEldritchCap> ELDRITCH_CAPSTONE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchCap> ELDRITCH_CAPSTONE = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_capstone",
             BlockEldritchCap::new,
             BlockBehaviour.Properties.of()
@@ -2044,7 +2044,7 @@ public final class TTBlocks {
                     .noOcclusion()
                     .noLootTable());
 
-    public static final DeferredBlock<BlockEldritchPortal> ELDRITCH_PORTAL = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEldritchPortal> ELDRITCH_PORTAL = ForgeRegistration.registerBlock(BLOCKS,
             "eldritch_portal",
             BlockEldritchPortal::new,
             BlockBehaviour.Properties.of()
@@ -2056,10 +2056,10 @@ public final class TTBlocks {
                     .noCollission()
                     .pushReaction(PushReaction.BLOCK));
 
-    public static final DeferredBlock<BlockAmber> AMBER_BLOCK =
-            BLOCKS.registerBlock("amber_block", BlockAmber::new, amberProps());
+    public static final RegistryObject<BlockAmber> AMBER_BLOCK =
+            ForgeRegistration.registerBlock(BLOCKS, "amber_block", BlockAmber::new, amberProps());
 
-    public static final DeferredBlock<BlockPlaceholder> OBSIDIAN_PLACEHOLDER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockPlaceholder> OBSIDIAN_PLACEHOLDER = ForgeRegistration.registerBlock(BLOCKS,
             "placeholder_obsidian",
             props -> new BlockPlaceholder(props, true),
             BlockBehaviour.Properties.of()
@@ -2068,7 +2068,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockPlaceholder> NETHER_BRICKS_PLACEHOLDER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockPlaceholder> NETHER_BRICKS_PLACEHOLDER = ForgeRegistration.registerBlock(BLOCKS,
             "placeholder_nether_bricks",
             props -> new BlockPlaceholder(props, true),
             BlockBehaviour.Properties.of()
@@ -2077,7 +2077,7 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<BlockInfernalFurnace> INFERNAL_FURNACE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockInfernalFurnace> INFERNAL_FURNACE = ForgeRegistration.registerBlock(BLOCKS,
             "infernal_furnace",
             BlockInfernalFurnace::new,
             BlockBehaviour.Properties.of()
@@ -2089,7 +2089,7 @@ public final class TTBlocks {
                     .noLootTable()
                     .lightLevel(state -> 13));
 
-    public static final DeferredBlock<BlockHole> HOLE = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockHole> HOLE = ForgeRegistration.registerBlock(BLOCKS,
             "hole",
             BlockHole::new,
             BlockBehaviour.Properties.of()
@@ -2101,7 +2101,7 @@ public final class TTBlocks {
                     .noLootTable()
                     .pushReaction(PushReaction.BLOCK));
 
-    public static final DeferredBlock<BlockEffectSap> EFFECT_SAP = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEffectSap> EFFECT_SAP = ForgeRegistration.registerBlock(BLOCKS,
             "effect_sap",
             BlockEffectSap::new,
             BlockBehaviour.Properties.of()
@@ -2115,7 +2115,7 @@ public final class TTBlocks {
                     .noLootTable()
                     .pushReaction(PushReaction.DESTROY));
 
-    public static final DeferredBlock<BlockEffectGlimmer> EFFECT_GLIMMER = BLOCKS.registerBlock(
+    public static final RegistryObject<BlockEffectGlimmer> EFFECT_GLIMMER = ForgeRegistration.registerBlock(BLOCKS,
             "effect_glimmer",
             BlockEffectGlimmer::new,
             BlockBehaviour.Properties.of()
@@ -2128,21 +2128,21 @@ public final class TTBlocks {
                     .noLootTable()
                     .pushReaction(PushReaction.DESTROY));
 
-    public static final DeferredBlock<BlockLoot> LOOT_URN_COMMON =
+    public static final RegistryObject<BlockLoot> LOOT_URN_COMMON =
             lootBlock("loot_urn_common", BlockLoot.LootType.COMMON, false);
-    public static final DeferredBlock<BlockLoot> LOOT_URN_UNCOMMON =
+    public static final RegistryObject<BlockLoot> LOOT_URN_UNCOMMON =
             lootBlock("loot_urn_uncommon", BlockLoot.LootType.UNCOMMON, false);
-    public static final DeferredBlock<BlockLoot> LOOT_URN_RARE =
+    public static final RegistryObject<BlockLoot> LOOT_URN_RARE =
             lootBlock("loot_urn_rare", BlockLoot.LootType.RARE, false);
-    public static final DeferredBlock<BlockLoot> LOOT_CRATE_COMMON =
+    public static final RegistryObject<BlockLoot> LOOT_CRATE_COMMON =
             lootBlock("loot_crate_common", BlockLoot.LootType.COMMON, true);
-    public static final DeferredBlock<BlockLoot> LOOT_CRATE_UNCOMMON =
+    public static final RegistryObject<BlockLoot> LOOT_CRATE_UNCOMMON =
             lootBlock("loot_crate_uncommon", BlockLoot.LootType.UNCOMMON, true);
-    public static final DeferredBlock<BlockLoot> LOOT_CRATE_RARE =
+    public static final RegistryObject<BlockLoot> LOOT_CRATE_RARE =
             lootBlock("loot_crate_rare", BlockLoot.LootType.RARE, true);
 
-    private static DeferredBlock<BlockLoot> lootBlock(String id, BlockLoot.LootType type, boolean crate) {
-        return BLOCKS.registerBlock(
+    private static RegistryObject<BlockLoot> lootBlock(String id, BlockLoot.LootType type, boolean crate) {
+        return ForgeRegistration.registerBlock(BLOCKS,
                 id,
                 props -> new BlockLoot(type, crate, props),
                 BlockBehaviour.Properties.of()
@@ -2159,42 +2159,42 @@ public final class TTBlocks {
         registerPottedPlants();
     }
 
-    public static final DeferredBlock<WallBlock> WALL_ARCANE_STONE =
-            BLOCKS.registerBlock("wall_arcane_stone", WallBlock::new, stoneWallProps());
-    public static final DeferredBlock<WallBlock> WALL_ARCANE_BRICK =
-            BLOCKS.registerBlock("wall_arcane_brick", WallBlock::new, stoneWallProps());
-    public static final DeferredBlock<RotatedPillarBlock> STONE_ARCANE_PILLAR =
-            BLOCKS.registerBlock("stone_arcane_pillar", RotatedPillarBlock::new, stoneProps());
-    public static final DeferredBlock<WallBlock> WALL_ANCIENT =
-            BLOCKS.registerBlock("wall_ancient", WallBlock::new, stoneWallProps());
-    public static final DeferredBlock<BlockStairsTT> STAIRS_ANCIENT_TILE = BLOCKS.registerBlock(
+    public static final RegistryObject<WallBlock> WALL_ARCANE_STONE =
+            ForgeRegistration.registerBlock(BLOCKS, "wall_arcane_stone", WallBlock::new, stoneWallProps());
+    public static final RegistryObject<WallBlock> WALL_ARCANE_BRICK =
+            ForgeRegistration.registerBlock(BLOCKS, "wall_arcane_brick", WallBlock::new, stoneWallProps());
+    public static final RegistryObject<RotatedPillarBlock> STONE_ARCANE_PILLAR =
+            ForgeRegistration.registerBlock(BLOCKS, "stone_arcane_pillar", RotatedPillarBlock::new, stoneProps());
+    public static final RegistryObject<WallBlock> WALL_ANCIENT =
+            ForgeRegistration.registerBlock(BLOCKS, "wall_ancient", WallBlock::new, stoneWallProps());
+    public static final RegistryObject<BlockStairsTT> STAIRS_ANCIENT_TILE = ForgeRegistration.registerBlock(BLOCKS,
             "stairs_ancient_tile",
             props -> new BlockStairsTT(STONE_ANCIENT_TILE.get().defaultBlockState(), props),
             stoneProps());
-    public static final DeferredBlock<SlabBlock> SLAB_ANCIENT_TILE =
-            BLOCKS.registerBlock("slab_ancient_tile", SlabBlock::new, stoneProps());
-    public static final DeferredBlock<WallBlock> WALL_ANCIENT_TILE =
-            BLOCKS.registerBlock("wall_ancient_tile", WallBlock::new, stoneWallProps());
-    public static final DeferredBlock<BlockStairsTT> STAIRS_ANCIENT_ROCK = BLOCKS.registerBlock(
+    public static final RegistryObject<SlabBlock> SLAB_ANCIENT_TILE =
+            ForgeRegistration.registerBlock(BLOCKS, "slab_ancient_tile", SlabBlock::new, stoneProps());
+    public static final RegistryObject<WallBlock> WALL_ANCIENT_TILE =
+            ForgeRegistration.registerBlock(BLOCKS, "wall_ancient_tile", WallBlock::new, stoneWallProps());
+    public static final RegistryObject<BlockStairsTT> STAIRS_ANCIENT_ROCK = ForgeRegistration.registerBlock(BLOCKS,
             "stairs_ancient_rock",
             props -> new BlockStairsTT(STONE_ANCIENT_ROCK.get().defaultBlockState(), props),
             stoneProps());
-    public static final DeferredBlock<SlabBlock> SLAB_ANCIENT_ROCK =
-            BLOCKS.registerBlock("slab_ancient_rock", SlabBlock::new, stoneProps());
-    public static final DeferredBlock<WallBlock> WALL_ANCIENT_ROCK =
-            BLOCKS.registerBlock("wall_ancient_rock", WallBlock::new, stoneWallProps());
-    public static final DeferredBlock<RotatedPillarBlock> STONE_ANCIENT_PILLAR =
-            BLOCKS.registerBlock("stone_ancient_pillar", RotatedPillarBlock::new, stoneProps());
-    public static final DeferredBlock<SlabBlock> SLAB_ELDRITCH_STONE =
-            BLOCKS.registerBlock("slab_eldritch_stone", SlabBlock::new, eldritchStoneProps());
-    public static final DeferredBlock<WallBlock> WALL_ELDRITCH_STONE =
-            BLOCKS.registerBlock("wall_eldritch_stone", WallBlock::new, eldritchWallProps());
-    public static final DeferredBlock<WallBlock> WALL_ELDRITCH_TILE =
-            BLOCKS.registerBlock("wall_eldritch_tile", WallBlock::new, eldritchWallProps());
-    public static final DeferredBlock<SlabBlock> SLAB_ELDRITCH_ROCK =
-            BLOCKS.registerBlock("slab_eldritch_rock", SlabBlock::new, eldritchStoneProps());
-    public static final DeferredBlock<WallBlock> WALL_ELDRITCH_ROCK =
-            BLOCKS.registerBlock("wall_eldritch_rock", WallBlock::new, eldritchWallProps());
+    public static final RegistryObject<SlabBlock> SLAB_ANCIENT_ROCK =
+            ForgeRegistration.registerBlock(BLOCKS, "slab_ancient_rock", SlabBlock::new, stoneProps());
+    public static final RegistryObject<WallBlock> WALL_ANCIENT_ROCK =
+            ForgeRegistration.registerBlock(BLOCKS, "wall_ancient_rock", WallBlock::new, stoneWallProps());
+    public static final RegistryObject<RotatedPillarBlock> STONE_ANCIENT_PILLAR =
+            ForgeRegistration.registerBlock(BLOCKS, "stone_ancient_pillar", RotatedPillarBlock::new, stoneProps());
+    public static final RegistryObject<SlabBlock> SLAB_ELDRITCH_STONE =
+            ForgeRegistration.registerBlock(BLOCKS, "slab_eldritch_stone", SlabBlock::new, eldritchStoneProps());
+    public static final RegistryObject<WallBlock> WALL_ELDRITCH_STONE =
+            ForgeRegistration.registerBlock(BLOCKS, "wall_eldritch_stone", WallBlock::new, eldritchWallProps());
+    public static final RegistryObject<WallBlock> WALL_ELDRITCH_TILE =
+            ForgeRegistration.registerBlock(BLOCKS, "wall_eldritch_tile", WallBlock::new, eldritchWallProps());
+    public static final RegistryObject<SlabBlock> SLAB_ELDRITCH_ROCK =
+            ForgeRegistration.registerBlock(BLOCKS, "slab_eldritch_rock", SlabBlock::new, eldritchStoneProps());
+    public static final RegistryObject<WallBlock> WALL_ELDRITCH_ROCK =
+            ForgeRegistration.registerBlock(BLOCKS, "wall_eldritch_rock", WallBlock::new, eldritchWallProps());
 
     private static BlockBehaviour.Properties stoneWallProps() {
         return stoneProps().forceSolidOn();

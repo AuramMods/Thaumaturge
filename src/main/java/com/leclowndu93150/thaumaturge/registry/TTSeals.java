@@ -18,39 +18,40 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.StoreBehavior
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.UseBehavior;
 import net.minecraft.core.Registry;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTSeals {
     public static final DeferredRegister<SealType> SEALS = DeferredRegister.create(SealType.REGISTRY_KEY, TTIds.MODID);
-    private static final Registry<SealType> REGISTRY = SEALS.makeRegistry(builder -> builder.sync(false));
+    private static final java.util.function.Supplier<net.minecraftforge.registries.IForgeRegistry<SealType>> REGISTRY =
+            SEALS.makeRegistry(() -> new net.minecraftforge.registries.RegistryBuilder<SealType>().hasTags().disableSync());
 
-    public static final DeferredHolder<SealType, SealType> PICKUP = SEALS.register(
+    public static final RegistryObject<SealType> PICKUP = SEALS.register(
             "pickup", () -> collect(1).placer(TTItems.SEAL_PICKUP).build());
-    public static final DeferredHolder<SealType, SealType> PICKUP_ADVANCED = SEALS.register(
+    public static final RegistryObject<SealType> PICKUP_ADVANCED = SEALS.register(
             "pickup_advanced",
             () -> collect(9)
                     .showSettings()
                     .requires(TTGolemTraits.SMART)
                     .placer(TTItems.SEAL_PICKUP_ADVANCED)
                     .build());
-    public static final DeferredHolder<SealType, SealType> FILL =
+    public static final RegistryObject<SealType> FILL =
             SEALS.register("fill", () -> store(1).placer(TTItems.SEAL_FILL).build());
-    public static final DeferredHolder<SealType, SealType> FILL_ADVANCED = SEALS.register(
+    public static final RegistryObject<SealType> FILL_ADVANCED = SEALS.register(
             "fill_advanced",
             () -> store(9).showSettings()
                     .requires(TTGolemTraits.SMART)
                     .placer(TTItems.SEAL_FILL_ADVANCED)
                     .build());
-    public static final DeferredHolder<SealType, SealType> EMPTY =
+    public static final RegistryObject<SealType> EMPTY =
             SEALS.register("empty", () -> empty(1).placer(TTItems.SEAL_EMPTY).build());
-    public static final DeferredHolder<SealType, SealType> EMPTY_ADVANCED = SEALS.register(
+    public static final RegistryObject<SealType> EMPTY_ADVANCED = SEALS.register(
             "empty_advanced",
             () -> empty(9).showSettings()
                     .requires(TTGolemTraits.SMART)
                     .placer(TTItems.SEAL_EMPTY_ADVANCED)
                     .build());
-    public static final DeferredHolder<SealType, SealType> HARVEST = SEALS.register(
+    public static final RegistryObject<SealType> HARVEST = SEALS.register(
             "harvest",
             () -> SealType.builder(HarvestBehavior::new)
                     .persistent(HarvestBehavior.CODEC, HarvestBehavior.class)
@@ -60,34 +61,34 @@ public final class TTSeals {
                     .requires(TTGolemTraits.DEFT, TTGolemTraits.SMART)
                     .placer(TTItems.SEAL_HARVEST)
                     .build());
-    public static final DeferredHolder<SealType, SealType> BUTCHER = SEALS.register(
+    public static final RegistryObject<SealType> BUTCHER = SEALS.register(
             "butcher",
             () -> SealType.builder(ButcherBehavior::new)
                     .area()
                     .requires(TTGolemTraits.FIGHTER, TTGolemTraits.SMART)
                     .placer(TTItems.SEAL_BUTCHER)
                     .build());
-    public static final DeferredHolder<SealType, SealType> GUARD = SEALS.register(
+    public static final RegistryObject<SealType> GUARD = SEALS.register(
             "guard",
             () -> guard().requires(TTGolemTraits.FIGHTER)
                     .placer(TTItems.SEAL_GUARD)
                     .build());
-    public static final DeferredHolder<SealType, SealType> GUARD_ADVANCED = SEALS.register(
+    public static final RegistryObject<SealType> GUARD_ADVANCED = SEALS.register(
             "guard_advanced",
             () -> guard().showSettings()
                     .requires(TTGolemTraits.FIGHTER, TTGolemTraits.SMART)
                     .placer(TTItems.SEAL_GUARD_ADVANCED)
                     .build());
-    public static final DeferredHolder<SealType, SealType> LUMBER = SEALS.register(
+    public static final RegistryObject<SealType> LUMBER = SEALS.register(
             "lumber",
             () -> SealType.builder(FellBehavior::new)
                     .area()
                     .requires(TTGolemTraits.BREAKER, TTGolemTraits.SMART)
                     .placer(TTItems.SEAL_LUMBER)
                     .build());
-    public static final DeferredHolder<SealType, SealType> BREAKER = SEALS.register(
+    public static final RegistryObject<SealType> BREAKER = SEALS.register(
             "breaker", () -> breaker(1).placer(TTItems.SEAL_BREAKER).build());
-    public static final DeferredHolder<SealType, SealType> USE = SEALS.register(
+    public static final RegistryObject<SealType> USE = SEALS.register(
             "use",
             () -> SealType.builder(UseBehavior::new)
                     .filter(1, SealFilterMode.PLAIN)
@@ -103,7 +104,7 @@ public final class TTSeals {
                     .placement(SealPlacements.ANYWHERE)
                     .placer(TTItems.SEAL_USE)
                     .build());
-    public static final DeferredHolder<SealType, SealType> PROVIDER = SEALS.register(
+    public static final RegistryObject<SealType> PROVIDER = SEALS.register(
             "provider",
             () -> SealType.builder(ProvideBehavior::new)
                     .filter(9, SealFilterMode.PLAIN)
@@ -114,7 +115,7 @@ public final class TTSeals {
                     .placement(SealPlacements.CONTAINER)
                     .placer(TTItems.SEAL_PROVIDER)
                     .build());
-    public static final DeferredHolder<SealType, SealType> STOCK = SEALS.register(
+    public static final RegistryObject<SealType> STOCK = SEALS.register(
             "stock",
             () -> SealType.builder(StockBehavior::new)
                     .filter(9, SealFilterMode.WHITELIST_WITH_LIMITS)
@@ -124,7 +125,7 @@ public final class TTSeals {
                     .placement(SealPlacements.CONTAINER)
                     .placer(TTItems.SEAL_STOCK)
                     .build());
-    public static final DeferredHolder<SealType, SealType> BREAKER_ADVANCED = SEALS.register(
+    public static final RegistryObject<SealType> BREAKER_ADVANCED = SEALS.register(
             "breaker_advanced",
             () -> breaker(9)
                     .settings(BreakBehavior.SILK_TOUCH)
@@ -175,7 +176,7 @@ public final class TTSeals {
     }
 
     public static Registry<SealType> registry() {
-        return REGISTRY;
+        return ForgeRegistration.vanillaRegistry(REGISTRY);
     }
 
     public static void register(IEventBus modBus) {

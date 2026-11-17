@@ -23,59 +23,60 @@ import com.leclowndu93150.thaumaturge.content.spell.action.WindBurstAction;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTSpellActions {
     public static final DeferredRegister<SpellActionType<?>> ACTIONS =
             DeferredRegister.create(SpellActionType.REGISTRY_KEY, TTIds.MODID);
 
-    private static final Registry<SpellActionType<?>> REGISTRY = ACTIONS.makeRegistry(builder -> builder.sync(false));
+    private static final java.util.function.Supplier<net.minecraftforge.registries.IForgeRegistry<SpellActionType<?>>> REGISTRY =
+            ACTIONS.makeRegistry(() -> new net.minecraftforge.registries.RegistryBuilder<SpellActionType<?>>().hasTags().disableSync());
 
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<DamageAction>> DAMAGE =
+    public static final RegistryObject<SpellActionType<DamageAction>> DAMAGE =
             register("damage", DamageAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<IgniteAction>> IGNITE =
+    public static final RegistryObject<SpellActionType<IgniteAction>> IGNITE =
             register("ignite", IgniteAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<FreezeAction>> FREEZE =
+    public static final RegistryObject<SpellActionType<FreezeAction>> FREEZE =
             register("freeze", FreezeAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<MobEffectAction>> MOB_EFFECT =
+    public static final RegistryObject<SpellActionType<MobEffectAction>> MOB_EFFECT =
             register("mob_effect", MobEffectAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<KnockbackAction>> KNOCKBACK =
+    public static final RegistryObject<SpellActionType<KnockbackAction>> KNOCKBACK =
             register("knockback", KnockbackAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<HealAction>> HEAL =
+    public static final RegistryObject<SpellActionType<HealAction>> HEAL =
             register("heal", HealAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<ExtinguishAction>> EXTINGUISH =
+    public static final RegistryObject<SpellActionType<ExtinguishAction>> EXTINGUISH =
             register("extinguish", ExtinguishAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<TeleportAction>> TELEPORT =
+    public static final RegistryObject<SpellActionType<TeleportAction>> TELEPORT =
             register("teleport", TeleportAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<WindBurstAction>> WIND_BURST =
+    public static final RegistryObject<SpellActionType<WindBurstAction>> WIND_BURST =
             register("wind_burst", WindBurstAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<ExplodeAction>> EXPLODE =
+    public static final RegistryObject<SpellActionType<ExplodeAction>> EXPLODE =
             register("explode", ExplodeAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<PlaceBlockAction>> PLACE_BLOCK =
+    public static final RegistryObject<SpellActionType<PlaceBlockAction>> PLACE_BLOCK =
             register("place_block", PlaceBlockAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<FreezeWaterAction>> FREEZE_WATER =
+    public static final RegistryObject<SpellActionType<FreezeWaterAction>> FREEZE_WATER =
             register("freeze_water", FreezeWaterAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<GrowAction>> GROW =
+    public static final RegistryObject<SpellActionType<GrowAction>> GROW =
             register("grow", GrowAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<ErodeAction>> ERODE =
+    public static final RegistryObject<SpellActionType<ErodeAction>> ERODE =
             register("erode", ErodeAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<SapAction>> SAP =
+    public static final RegistryObject<SpellActionType<SapAction>> SAP =
             register("sap", SapAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<PolluteAction>> POLLUTE =
+    public static final RegistryObject<SpellActionType<PolluteAction>> POLLUTE =
             register("pollute", PolluteAction.CODEC);
-    public static final DeferredHolder<SpellActionType<?>, SpellActionType<DispelAction>> DISPEL =
+    public static final RegistryObject<SpellActionType<DispelAction>> DISPEL =
             register("dispel", DispelAction.CODEC);
 
     private TTSpellActions() {}
 
-    private static <A extends SpellAction> DeferredHolder<SpellActionType<?>, SpellActionType<A>> register(
+    private static <A extends SpellAction> RegistryObject<SpellActionType<A>> register(
             String path, MapCodec<A> codec) {
         return ACTIONS.register(path, () -> new SpellActionType<>(codec));
     }
 
     public static Registry<SpellActionType<?>> registry() {
-        return REGISTRY;
+        return ForgeRegistration.vanillaRegistry(REGISTRY);
     }
 
     public static void register(IEventBus modBus) {

@@ -35,7 +35,7 @@ import net.minecraft.core.BlockPos;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
@@ -43,7 +43,7 @@ public final class TTAttachments {
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS =
             DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, TTIds.MODID);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerKnowledge>> KNOWLEDGE = register(
+    public static final RegistryObject<AttachmentType<PlayerKnowledge>> KNOWLEDGE = register(
             "knowledge",
             () -> AttachmentType.builder(PlayerKnowledge::new)
                     .serialize(PlayerKnowledge.CODEC.codec())
@@ -51,13 +51,13 @@ public final class TTAttachments {
                     .copyOnDeath()
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<AuraData>> AURA = register(
+    public static final RegistryObject<AttachmentType<AuraData>> AURA = register(
             "aura",
             () -> AttachmentType.builder(AuraData::new)
                     .serialize(AuraData.CODEC.codec())
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<AspectPoolData>> ASPECT_POOL = register(
+    public static final RegistryObject<AttachmentType<AspectPoolData>> ASPECT_POOL = register(
             "aspect_pool",
             () -> AttachmentType.builder(AspectPoolData::new)
                     .serialize(AspectPoolData.CODEC.codec())
@@ -65,7 +65,7 @@ public final class TTAttachments {
                     .copyOnDeath()
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<WarpData>> WARP = register(
+    public static final RegistryObject<AttachmentType<WarpData>> WARP = register(
             "warp",
             () -> AttachmentType.builder(WarpData::new)
                     .serialize(WarpData.CODEC.codec())
@@ -73,44 +73,44 @@ public final class TTAttachments {
                     .copyOnDeath()
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DustTriggerSwapQueue>> DUST_TRIGGER_QUEUE =
+    public static final RegistryObject<AttachmentType<DustTriggerSwapQueue>> DUST_TRIGGER_QUEUE =
             register(
                     "dust_trigger_queue",
                     () -> AttachmentType.builder(DustTriggerSwapQueue::new)
                             .serialize(DustTriggerSwapQueue.CODEC.codec())
                             .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MazeStamp>> LABYRINTH_STAMP = register(
+    public static final RegistryObject<AttachmentType<MazeStamp>> LABYRINTH_STAMP = register(
             "labyrinth_stamp",
             () -> AttachmentType.builder(() -> MazeStamp.NONE)
                     .serialize(MazeStamp.CODEC.codec(), MazeStamp::present)
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BlockPos>> OBELISK_SITE_MEMBER = register(
+    public static final RegistryObject<AttachmentType<BlockPos>> OBELISK_SITE_MEMBER = register(
             "obelisk_site_member",
             () -> AttachmentType.builder(() -> BlockPos.ZERO)
                     .serialize(BlockPos.CODEC.fieldOf("altar").codec())
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<LabyrinthBinding>> LABYRINTH_BINDING =
+    public static final RegistryObject<AttachmentType<LabyrinthBinding>> LABYRINTH_BINDING =
             register(
                     "labyrinth_binding",
                     () -> AttachmentType.builder(() -> LabyrinthBinding.NONE)
                             .serialize(LabyrinthBinding.CODEC.codec(), LabyrinthBinding::bound)
                             .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TransitState>> LABYRINTH_TRANSIT = register(
+    public static final RegistryObject<AttachmentType<TransitState>> LABYRINTH_TRANSIT = register(
             "labyrinth_transit", () -> AttachmentType.builder(TransitState::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> GRAPPLE_ID =
+    public static final RegistryObject<AttachmentType<Integer>> GRAPPLE_ID =
             register("grapple_id", () -> AttachmentType.builder(() -> -1).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DestructiveSwingMemory>> DESTRUCTIVE_SWING =
+    public static final RegistryObject<AttachmentType<DestructiveSwingMemory>> DESTRUCTIVE_SWING =
             register(
                     "destructive_swing",
                     () -> AttachmentType.builder(DestructiveSwingMemory::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> DONATOR_CAPE = register(
+    public static final RegistryObject<AttachmentType<Boolean>> DONATOR_CAPE = register(
             "donator_cape",
             () -> AttachmentType.builder(() -> false)
                     .serialize(Codec.BOOL)
@@ -118,62 +118,62 @@ public final class TTAttachments {
                     .copyOnDeath()
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> DONATOR_WELCOMED = register(
+    public static final RegistryObject<AttachmentType<Boolean>> DONATOR_WELCOMED = register(
             "donator_welcomed",
             () -> AttachmentType.builder(() -> false)
                     .serialize(Codec.BOOL)
                     .copyOnDeath()
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> CASTER_COOLDOWN =
+    public static final RegistryObject<AttachmentType<Long>> CASTER_COOLDOWN =
             register("caster_cooldown", () -> AttachmentType.builder(() -> 0L).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> CLOUD_JUMP_TIME =
+    public static final RegistryObject<AttachmentType<Long>> CLOUD_JUMP_TIME =
             register("cloud_jump_time", () -> AttachmentType.builder(() -> 0L).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<RunicShieldState>> RUNIC_SHIELD = register(
+    public static final RegistryObject<AttachmentType<RunicShieldState>> RUNIC_SHIELD = register(
             "runic_shield", () -> AttachmentType.builder(RunicShieldState::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<CastBudgets>> SPELL_BUDGETS = register(
+    public static final RegistryObject<AttachmentType<CastBudgets>> SPELL_BUDGETS = register(
             "spell_budgets", () -> AttachmentType.builder(CastBudgets::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DelayedSpells>> DELAYED_SPELLS = register(
+    public static final RegistryObject<AttachmentType<DelayedSpells>> DELAYED_SPELLS = register(
             "delayed_spells", () -> AttachmentType.builder(DelayedSpells::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BlockWorkQueues>> BLOCK_WORK_QUEUES = register(
+    public static final RegistryObject<AttachmentType<BlockWorkQueues>> BLOCK_WORK_QUEUES = register(
             "block_work_queues",
             () -> AttachmentType.builder(BlockWorkQueues::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SealsChunkData>> SEALS = register(
+    public static final RegistryObject<AttachmentType<SealsChunkData>> SEALS = register(
             "seals",
             () -> AttachmentType.builder(SealsChunkData::new)
                     .serialize(SealsChunkData.CODEC.codec())
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SealWorldIndex>> SEAL_INDEX = register(
+    public static final RegistryObject<AttachmentType<SealWorldIndex>> SEAL_INDEX = register(
             "seal_index", () -> AttachmentType.builder(SealWorldIndex::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<WardChunkData>> WARDS = register(
+    public static final RegistryObject<AttachmentType<WardChunkData>> WARDS = register(
             "wards",
             () -> AttachmentType.builder(WardChunkData::new)
                     .serialize(WardChunkData.CODEC.codec())
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ArcaneLockChunkData>> ARCANE_LOCKS = register(
+    public static final RegistryObject<AttachmentType<ArcaneLockChunkData>> ARCANE_LOCKS = register(
             "arcane_locks",
             () -> AttachmentType.builder(ArcaneLockChunkData::new)
                     .serialize(ArcaneLockChunkData.CODEC.codec())
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TaskBoard>> GOLEM_TASKS =
+    public static final RegistryObject<AttachmentType<TaskBoard>> GOLEM_TASKS =
             register("golem_tasks", () -> AttachmentType.builder(TaskBoard::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Set<BlockPos>>> EAR_INDEX = register(
+    public static final RegistryObject<AttachmentType<Set<BlockPos>>> EAR_INDEX = register(
             "ear_index",
             () -> AttachmentType.<Set<BlockPos>>builder(() -> ConcurrentHashMap.newKeySet())
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MobTraitState>> MOB_TRAITS = register(
+    public static final RegistryObject<AttachmentType<MobTraitState>> MOB_TRAITS = register(
             "mob_traits",
             () -> AttachmentType.builder(() -> MobTraitState.EMPTY)
                     .serialize(MobTraitState.CODEC.codec(), state -> !state.isEmpty())
@@ -181,67 +181,67 @@ public final class TTAttachments {
                     .copyOnDeath()
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MobTraitRuntime>> MOB_TRAIT_RUNTIME = register(
+    public static final RegistryObject<AttachmentType<MobTraitRuntime>> MOB_TRAIT_RUNTIME = register(
             "mob_trait_runtime",
             () -> AttachmentType.builder(MobTraitRuntime::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> CHAMPION_ROLLED = register(
+    public static final RegistryObject<AttachmentType<Boolean>> CHAMPION_ROLLED = register(
             "champion_rolled",
             () -> AttachmentType.builder(() -> false)
                     .serialize(Codec.BOOL)
                     .copyOnDeath()
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ChannelSummaryCache>> CHANNEL_SUMMARY =
+    public static final RegistryObject<AttachmentType<ChannelSummaryCache>> CHANNEL_SUMMARY =
             register(
                     "channel_summary",
                     () -> AttachmentType.builder(ChannelSummaryCache::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> WAYFINDING_PULSE =
+    public static final RegistryObject<AttachmentType<Long>> WAYFINDING_PULSE =
             register("wayfinding_pulse", () -> AttachmentType.builder(() -> 0L).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<FluxPressureState>> FLUX_PRESSURE = register(
+    public static final RegistryObject<AttachmentType<FluxPressureState>> FLUX_PRESSURE = register(
             "flux_pressure",
             () -> AttachmentType.builder(FluxPressureState::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> HOVERING = register(
+    public static final RegistryObject<AttachmentType<Boolean>> HOVERING = register(
             "hovering",
             () -> AttachmentType.builder(() -> false)
                     .serialize(Codec.BOOL, hovering -> hovering)
                     .sync(ByteBufCodecs.BOOL)
                     .build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> HOVER_CHARGE = register(
+    public static final RegistryObject<AttachmentType<Integer>> HOVER_CHARGE = register(
             "hover_charge",
             () -> AttachmentType.builder(() -> 0)
                     .serialize(Codec.INT, charge -> charge > 0)
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TaintPressure>> TAINT_PRESSURE = register(
+    public static final RegistryObject<AttachmentType<TaintPressure>> TAINT_PRESSURE = register(
             "taint_pressure",
             () -> AttachmentType.builder(TaintPressure::new)
                     .serialize(TaintPressure.CODEC.codec())
                     .build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TaintColumns>> TAINT_COLUMNS = register(
+    public static final RegistryObject<AttachmentType<TaintColumns>> TAINT_COLUMNS = register(
             "taint_columns",
             () -> AttachmentType.builder(TaintColumns::new)
                     .serialize(TaintColumns.CODEC.codec())
                     .build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TaintBloomIndex>> TAINT_BLOOMS = register(
+    public static final RegistryObject<AttachmentType<TaintBloomIndex>> TAINT_BLOOMS = register(
             "taint_blooms", () -> AttachmentType.builder(TaintBloomIndex::new).build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PhysicalFluxSamples>> PHYSICAL_FLUX_SAMPLES =
+    public static final RegistryObject<AttachmentType<PhysicalFluxSamples>> PHYSICAL_FLUX_SAMPLES =
             register(
                     "physical_flux_samples",
                     () -> AttachmentType.builder(PhysicalFluxSamples::new).build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> TAINT_LEGACY_IMPORTED = register(
+    public static final RegistryObject<AttachmentType<Boolean>> TAINT_LEGACY_IMPORTED = register(
             "taint_legacy_imported",
             () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> LEGACY_TAINT_SPIDERLING = register(
+    public static final RegistryObject<AttachmentType<Boolean>> LEGACY_TAINT_SPIDERLING = register(
             "legacy_taint_spiderling",
             () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
 
     private TTAttachments() {}
 
-    private static <T> DeferredHolder<AttachmentType<?>, AttachmentType<T>> register(
+    private static <T> RegistryObject<AttachmentType<T>> register(
             String name, Supplier<AttachmentType<T>> supplier) {
         return ATTACHMENTS.register(name, supplier);
     }
@@ -250,6 +250,6 @@ public final class TTAttachments {
         ATTACHMENTS.register(modBus);
     }
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> SLOT_SCAN_TIME =
+    public static final RegistryObject<AttachmentType<Long>> SLOT_SCAN_TIME =
             register("slot_scan_time", () -> AttachmentType.builder(() -> 0L).build());
 }

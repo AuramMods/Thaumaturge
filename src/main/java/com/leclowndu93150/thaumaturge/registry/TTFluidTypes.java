@@ -9,7 +9,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.fluids.FluidType;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
@@ -17,7 +17,7 @@ public final class TTFluidTypes {
     public static final DeferredRegister<FluidType> FLUID_TYPES =
             DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, TTIds.MODID);
 
-    public static final DeferredHolder<FluidType, FluxGooFluidType> FLUX_GOO = FLUID_TYPES.register(
+    public static final RegistryObject<FluxGooFluidType> FLUX_GOO = FLUID_TYPES.register(
             "flux_goo",
             () -> new FluxGooFluidType(FluidType.Properties.create()
                     .descriptionId("fluid_type.thaumaturge.flux_goo")
@@ -33,7 +33,7 @@ public final class TTFluidTypes {
                     .sound(SoundActions.FLUID_VAPORIZE, SoundEvents.FIRE_EXTINGUISH)
                     .rarity(Rarity.UNCOMMON)));
 
-    public static final DeferredHolder<FluidType, PurifyingFluidType> PURIFYING = FLUID_TYPES.register(
+    public static final RegistryObject<PurifyingFluidType> PURIFYING = FLUID_TYPES.register(
             "purifying",
             () -> new PurifyingFluidType(FluidType.Properties.create()
                     .descriptionId("fluid_type.thaumaturge.purifying")
@@ -45,7 +45,7 @@ public final class TTFluidTypes {
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
                     .rarity(Rarity.RARE)));
 
-    public static final DeferredHolder<FluidType, LiquidDeathFluidType> LIQUID_DEATH = FLUID_TYPES.register(
+    public static final RegistryObject<LiquidDeathFluidType> LIQUID_DEATH = FLUID_TYPES.register(
             "liquid_death",
             () -> new LiquidDeathFluidType(FluidType.Properties.create()
                     .descriptionId("fluid_type.thaumaturge.liquid_death")

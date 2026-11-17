@@ -20,7 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public final class TTGolemParts {
@@ -33,14 +33,18 @@ public final class TTGolemParts {
     public static final DeferredRegister<GolemAddon> ADDONS =
             DeferredRegister.create(GolemAddon.REGISTRY_KEY, TTIds.MODID);
 
-    private static final Registry<GolemMaterial> MATERIAL_REGISTRY =
-            MATERIALS.makeRegistry(builder -> builder.sync(false));
-    private static final Registry<GolemHead> HEAD_REGISTRY = HEADS.makeRegistry(builder -> builder.sync(false));
-    private static final Registry<GolemArm> ARM_REGISTRY = ARMS.makeRegistry(builder -> builder.sync(false));
-    private static final Registry<GolemLeg> LEG_REGISTRY = LEGS.makeRegistry(builder -> builder.sync(false));
-    private static final Registry<GolemAddon> ADDON_REGISTRY = ADDONS.makeRegistry(builder -> builder.sync(false));
+    private static final java.util.function.Supplier<net.minecraftforge.registries.IForgeRegistry<GolemMaterial>> MATERIAL_REGISTRY =
+            MATERIALS.makeRegistry(() -> new net.minecraftforge.registries.RegistryBuilder<GolemMaterial>().hasTags().disableSync());
+    private static final java.util.function.Supplier<net.minecraftforge.registries.IForgeRegistry<GolemHead>> HEAD_REGISTRY =
+            HEADS.makeRegistry(() -> new net.minecraftforge.registries.RegistryBuilder<GolemHead>().hasTags().disableSync());
+    private static final java.util.function.Supplier<net.minecraftforge.registries.IForgeRegistry<GolemArm>> ARM_REGISTRY =
+            ARMS.makeRegistry(() -> new net.minecraftforge.registries.RegistryBuilder<GolemArm>().hasTags().disableSync());
+    private static final java.util.function.Supplier<net.minecraftforge.registries.IForgeRegistry<GolemLeg>> LEG_REGISTRY =
+            LEGS.makeRegistry(() -> new net.minecraftforge.registries.RegistryBuilder<GolemLeg>().hasTags().disableSync());
+    private static final java.util.function.Supplier<net.minecraftforge.registries.IForgeRegistry<GolemAddon>> ADDON_REGISTRY =
+            ADDONS.makeRegistry(() -> new net.minecraftforge.registries.RegistryBuilder<GolemAddon>().hasTags().disableSync());
 
-    public static final DeferredHolder<GolemMaterial, GolemMaterial> WOOD = MATERIALS.register(
+    public static final RegistryObject<GolemMaterial> WOOD = MATERIALS.register(
             "wood",
             () -> new GolemMaterial(
                     List.of(TTIds.rl("mat_stud_wood")),
@@ -53,7 +57,7 @@ public final class TTGolemParts {
                     stack(TTItems.MECHANISM_SIMPLE),
                     List.of(TTGolemTraits.LIGHT)));
 
-    public static final DeferredHolder<GolemMaterial, GolemMaterial> IRON = MATERIALS.register(
+    public static final RegistryObject<GolemMaterial> IRON = MATERIALS.register(
             "iron",
             () -> new GolemMaterial(
                     List.of(TTIds.rl("mat_stud_iron")),
@@ -66,7 +70,7 @@ public final class TTGolemParts {
                     stack(TTItems.MECHANISM_SIMPLE),
                     List.of(TTGolemTraits.HEAVY, TTGolemTraits.FIREPROOF, TTGolemTraits.BLASTPROOF)));
 
-    public static final DeferredHolder<GolemMaterial, GolemMaterial> CLAY = MATERIALS.register(
+    public static final RegistryObject<GolemMaterial> CLAY = MATERIALS.register(
             "clay",
             () -> new GolemMaterial(
                     List.of(TTIds.rl("mat_stud_clay")),
@@ -79,7 +83,7 @@ public final class TTGolemParts {
                     stack(TTItems.MECHANISM_SIMPLE),
                     List.of(TTGolemTraits.FIREPROOF)));
 
-    public static final DeferredHolder<GolemMaterial, GolemMaterial> BRASS = MATERIALS.register(
+    public static final RegistryObject<GolemMaterial> BRASS = MATERIALS.register(
             "brass",
             () -> new GolemMaterial(
                     List.of(TTIds.rl("mat_stud_brass")),
@@ -92,7 +96,7 @@ public final class TTGolemParts {
                     stack(TTItems.MECHANISM_SIMPLE),
                     List.of(TTGolemTraits.LIGHT)));
 
-    public static final DeferredHolder<GolemMaterial, GolemMaterial> THAUMIUM = MATERIALS.register(
+    public static final RegistryObject<GolemMaterial> THAUMIUM = MATERIALS.register(
             "thaumium",
             () -> new GolemMaterial(
                     List.of(TTIds.rl("mat_stud_thaumium")),
@@ -105,7 +109,7 @@ public final class TTGolemParts {
                     stack(TTItems.MECHANISM_SIMPLE),
                     List.of(TTGolemTraits.HEAVY, TTGolemTraits.FIREPROOF, TTGolemTraits.BLASTPROOF)));
 
-    public static final DeferredHolder<GolemMaterial, GolemMaterial> VOID = MATERIALS.register(
+    public static final RegistryObject<GolemMaterial> VOID = MATERIALS.register(
             "void",
             () -> new GolemMaterial(
                     List.of(TTIds.rl("mat_stud_void")),
@@ -118,7 +122,7 @@ public final class TTGolemParts {
                     stack(TTItems.MECHANISM_SIMPLE),
                     List.of(TTGolemTraits.REPAIR)));
 
-    public static final DeferredHolder<GolemHead, GolemHead> HEAD_BASIC = HEADS.register(
+    public static final RegistryObject<GolemHead> HEAD_BASIC = HEADS.register(
             "basic",
             () -> new GolemHead(
                     List.of(TTIds.rl("mind_clockwork")),
@@ -128,7 +132,7 @@ public final class TTGolemParts {
                     null,
                     List.of()));
 
-    public static final DeferredHolder<GolemHead, GolemHead> HEAD_SMART = HEADS.register(
+    public static final RegistryObject<GolemHead> HEAD_SMART = HEADS.register(
             "smart",
             () -> new GolemHead(
                     List.of(TTIds.rl("mind_biothaumic")),
@@ -138,7 +142,7 @@ public final class TTGolemParts {
                     null,
                     List.of(TTGolemTraits.SMART, TTGolemTraits.FRAGILE)));
 
-    public static final DeferredHolder<GolemHead, GolemHead> HEAD_SMART_ARMORED = HEADS.register(
+    public static final RegistryObject<GolemHead> HEAD_SMART_ARMORED = HEADS.register(
             "smart_armored",
             () -> new GolemHead(
                     List.of(TTIds.rl("mind_biothaumic"), TTIds.rl("golem_combat_adv")),
@@ -150,7 +154,7 @@ public final class TTGolemParts {
                     null,
                     List.of(TTGolemTraits.SMART)));
 
-    public static final DeferredHolder<GolemHead, GolemHead> HEAD_SCOUT = HEADS.register(
+    public static final RegistryObject<GolemHead> HEAD_SCOUT = HEADS.register(
             "scout",
             () -> new GolemHead(
                     List.of(TTIds.rl("golem_vision")),
@@ -160,7 +164,7 @@ public final class TTGolemParts {
                     null,
                     List.of(TTGolemTraits.SCOUT, TTGolemTraits.FRAGILE)));
 
-    public static final DeferredHolder<GolemHead, GolemHead> HEAD_SMART_SCOUT = HEADS.register(
+    public static final RegistryObject<GolemHead> HEAD_SMART_SCOUT = HEADS.register(
             "smart_scout",
             () -> new GolemHead(
                     List.of(TTIds.rl("golem_vision"), TTIds.rl("mind_biothaumic")),
@@ -170,12 +174,12 @@ public final class TTGolemParts {
                     null,
                     List.of(TTGolemTraits.SCOUT, TTGolemTraits.SMART, TTGolemTraits.FRAGILE)));
 
-    public static final DeferredHolder<GolemArm, GolemArm> ARMS_BASIC = ARMS.register(
+    public static final RegistryObject<GolemArm> ARMS_BASIC = ARMS.register(
             "basic",
             () -> new GolemArm(
                     List.of(TTIds.rl("mind_clockwork")), partIcon("arms_basic"), null, List.of(), null, List.of()));
 
-    public static final DeferredHolder<GolemArm, GolemArm> ARMS_FINE = ARMS.register(
+    public static final RegistryObject<GolemArm> ARMS_FINE = ARMS.register(
             "fine",
             () -> new GolemArm(
                     List.of(TTIds.rl("mat_stud_brass")),
@@ -185,7 +189,7 @@ public final class TTGolemParts {
                     null,
                     List.of(TTGolemTraits.DEFT, TTGolemTraits.FRAGILE)));
 
-    public static final DeferredHolder<GolemArm, GolemArm> ARMS_CLAWS = ARMS.register(
+    public static final RegistryObject<GolemArm> ARMS_CLAWS = ARMS.register(
             "claws",
             () -> new GolemArm(
                     List.of(TTIds.rl("golem_combat_adv")),
@@ -198,7 +202,7 @@ public final class TTGolemParts {
                     null,
                     List.of(TTGolemTraits.FIGHTER, TTGolemTraits.CLUMSY, TTGolemTraits.BRUTAL)));
 
-    public static final DeferredHolder<GolemArm, GolemArm> ARMS_BREAKERS = ARMS.register(
+    public static final RegistryObject<GolemArm> ARMS_BREAKERS = ARMS.register(
             "breakers",
             () -> new GolemArm(
                     List.of(TTIds.rl("golem_breaker")),
@@ -211,7 +215,7 @@ public final class TTGolemParts {
                     null,
                     List.of(TTGolemTraits.BREAKER, TTGolemTraits.CLUMSY, TTGolemTraits.BRUTAL)));
 
-    public static final DeferredHolder<GolemArm, GolemArm> ARMS_DARTS = ARMS.register(
+    public static final RegistryObject<GolemArm> ARMS_DARTS = ARMS.register(
             "darts",
             () -> new GolemArm(
                     List.of(TTIds.rl("golem_combat_adv")),
@@ -225,7 +229,7 @@ public final class TTGolemParts {
                     new GolemArmDart(),
                     List.of(TTGolemTraits.FIGHTER, TTGolemTraits.CLUMSY, TTGolemTraits.RANGED, TTGolemTraits.FRAGILE)));
 
-    public static final DeferredHolder<GolemLeg, GolemLeg> LEGS_WALKER = LEGS.register(
+    public static final RegistryObject<GolemLeg> LEGS_WALKER = LEGS.register(
             "walker",
             () -> new GolemLeg(
                     List.of(TTIds.rl("mind_clockwork")),
@@ -235,7 +239,7 @@ public final class TTGolemParts {
                     null,
                     List.of()));
 
-    public static final DeferredHolder<GolemLeg, GolemLeg> LEGS_ROLLER = LEGS.register(
+    public static final RegistryObject<GolemLeg> LEGS_ROLLER = LEGS.register(
             "roller",
             () -> new GolemLeg(
                     List.of(TTIds.rl("mind_clockwork")),
@@ -248,7 +252,7 @@ public final class TTGolemParts {
                     new RollerLegDust(),
                     List.of(TTGolemTraits.WHEELED)));
 
-    public static final DeferredHolder<GolemLeg, GolemLeg> LEGS_CLIMBER = LEGS.register(
+    public static final RegistryObject<GolemLeg> LEGS_CLIMBER = LEGS.register(
             "climber",
             () -> new GolemLeg(
                     List.of(TTIds.rl("golem_climber")),
@@ -263,7 +267,7 @@ public final class TTGolemParts {
                     null,
                     List.of(TTGolemTraits.CLIMBER)));
 
-    public static final DeferredHolder<GolemLeg, GolemLeg> LEGS_FLYER = LEGS.register(
+    public static final RegistryObject<GolemLeg> LEGS_FLYER = LEGS.register(
             "flyer",
             () -> new GolemLeg(
                     List.of(TTIds.rl("golem_flyer")),
@@ -277,7 +281,7 @@ public final class TTGolemParts {
                     new GolemLegLevitator(),
                     List.of(TTGolemTraits.FLYER, TTGolemTraits.FRAGILE)));
 
-    public static final DeferredHolder<GolemAddon, GolemAddon> ADDON_NONE = ADDONS.register(
+    public static final RegistryObject<GolemAddon> ADDON_NONE = ADDONS.register(
             "none",
             () -> new GolemAddon(
                     List.of(TTIds.rl("mind_clockwork")),
@@ -287,7 +291,7 @@ public final class TTGolemParts {
                     null,
                     List.of()));
 
-    public static final DeferredHolder<GolemAddon, GolemAddon> ADDON_ARMORED = ADDONS.register(
+    public static final RegistryObject<GolemAddon> ADDON_ARMORED = ADDONS.register(
             "armored",
             () -> GolemAddon.withModels(
                     List.of(TTIds.rl("golem_combat_adv")),
@@ -299,7 +303,7 @@ public final class TTGolemParts {
                     null,
                     List.of(TTGolemTraits.ARMORED, TTGolemTraits.HEAVY)));
 
-    public static final DeferredHolder<GolemAddon, GolemAddon> ADDON_FIGHTER = ADDONS.register(
+    public static final RegistryObject<GolemAddon> ADDON_FIGHTER = ADDONS.register(
             "fighter",
             () -> new GolemAddon(
                     List.of(TTIds.rl("seal_guard")),
@@ -309,7 +313,7 @@ public final class TTGolemParts {
                     null,
                     List.of(TTGolemTraits.FIGHTER)));
 
-    public static final DeferredHolder<GolemAddon, GolemAddon> ADDON_HAULER = ADDONS.register(
+    public static final RegistryObject<GolemAddon> ADDON_HAULER = ADDONS.register(
             "hauler",
             () -> new GolemAddon(
                     List.of(TTIds.rl("mind_clockwork")),
@@ -340,23 +344,23 @@ public final class TTGolemParts {
     }
 
     public static Registry<GolemMaterial> materials() {
-        return MATERIAL_REGISTRY;
+        return ForgeRegistration.vanillaRegistry(MATERIAL_REGISTRY);
     }
 
     public static Registry<GolemHead> heads() {
-        return HEAD_REGISTRY;
+        return ForgeRegistration.vanillaRegistry(HEAD_REGISTRY);
     }
 
     public static Registry<GolemArm> arms() {
-        return ARM_REGISTRY;
+        return ForgeRegistration.vanillaRegistry(ARM_REGISTRY);
     }
 
     public static Registry<GolemLeg> legs() {
-        return LEG_REGISTRY;
+        return ForgeRegistration.vanillaRegistry(LEG_REGISTRY);
     }
 
     public static Registry<GolemAddon> addons() {
-        return ADDON_REGISTRY;
+        return ForgeRegistration.vanillaRegistry(ADDON_REGISTRY);
     }
 
     public static void register(IEventBus modBus) {

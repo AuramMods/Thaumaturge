@@ -20,7 +20,7 @@ import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.registries.DeferredBlock;
+import net.minecraftforge.registries.RegistryObject;
 import org.junit.jupiter.api.Test;
 
 final class CandleHolderPortTest {
@@ -31,7 +31,7 @@ final class CandleHolderPortTest {
         BlockColors colors = new BlockColors();
         CandleBlockColors.onRegisterBlockColors(new RegisterColorHandlersEvent.Block(colors));
 
-        for (DeferredBlock<BlockCandleHolder> holder : TTBlocks.CANDLE_HOLDERS.values()) {
+        for (RegistryObject<BlockCandleHolder> holder : TTBlocks.CANDLE_HOLDERS.values()) {
             BlockState emptyState =
                     holder.get().defaultBlockState().setValue(BlockCandleHolder.CANDLE, HeldCandle.NONE);
             BlockState blueState = holder.get().defaultBlockState().setValue(BlockCandleHolder.CANDLE, HeldCandle.BLUE);
