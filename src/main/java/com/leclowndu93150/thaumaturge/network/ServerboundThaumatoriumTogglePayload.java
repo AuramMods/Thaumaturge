@@ -8,16 +8,16 @@ import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.MenuThaumato
 import net.minecraft.core.BlockPos;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public record ServerboundThaumatoriumTogglePayload(BlockPos pos, ResourceLocation recipeId)
-        implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundThaumatoriumTogglePayload> TYPE =
-            new CustomPacketPayload.Type<>(TTIds.rl("thaumatorium_toggle"));
+        implements ModPayload {
+    public static final ModPayload.Type<ServerboundThaumatoriumTogglePayload> TYPE =
+            new ModPayload.Type<>(TTIds.rl("thaumatorium_toggle"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundThaumatoriumTogglePayload> STREAM_CODEC =
             StreamCodec.composite(
@@ -27,7 +27,7 @@ public record ServerboundThaumatoriumTogglePayload(BlockPos pos, ResourceLocatio
                     ServerboundThaumatoriumTogglePayload::recipeId,
                     ServerboundThaumatoriumTogglePayload::new);
 
-    public static void handle(ServerboundThaumatoriumTogglePayload payload, IPayloadContext context) {
+    public static void handle(ServerboundThaumatoriumTogglePayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             BlockEntityThaumatorium machine = BlockMenuGuard.target(context, payload.pos(), MenuThaumatorium.class);
             if (machine != null
@@ -39,7 +39,7 @@ public record ServerboundThaumatoriumTogglePayload(BlockPos pos, ResourceLocatio
     }
 
     @Override
-    public CustomPacketPayload.Type<ServerboundThaumatoriumTogglePayload> type() {
+    public ModPayload.Type<ServerboundThaumatoriumTogglePayload> type() {
         return TYPE;
     }
 }

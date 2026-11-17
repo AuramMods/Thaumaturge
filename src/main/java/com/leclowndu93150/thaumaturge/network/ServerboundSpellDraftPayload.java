@@ -10,11 +10,11 @@ import net.minecraft.core.BlockPos;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundSpellDraftPayload(BlockPos pos, String name, Spell spell) implements CustomPacketPayload {
+public record ServerboundSpellDraftPayload(BlockPos pos, String name, Spell spell) implements ModPayload {
     public static final Type<ServerboundSpellDraftPayload> TYPE = new Type<>(TTIds.rl("spell_draft"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundSpellDraftPayload> STREAM_CODEC =
@@ -31,11 +31,11 @@ public record ServerboundSpellDraftPayload(BlockPos pos, String name, Spell spel
     private static final int MAX_DEPTH = 24;
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 
-    public static void handle(ServerboundSpellDraftPayload payload, IPayloadContext ctx) {
+    public static void handle(ServerboundSpellDraftPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> {
             Player player = ctx.player();
             if (!(player.containerMenu instanceof MenuFocalManipulator menu)

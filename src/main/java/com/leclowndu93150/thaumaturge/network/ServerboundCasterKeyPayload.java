@@ -7,13 +7,13 @@ import com.leclowndu93150.thaumaturge.content.equipment.ElementalShovelItem;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundCasterKeyPayload(int mod) implements CustomPacketPayload {
+public record ServerboundCasterKeyPayload(int mod) implements ModPayload {
     public static final Type<ServerboundCasterKeyPayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "caster_key"));
 
@@ -21,7 +21,7 @@ public record ServerboundCasterKeyPayload(int mod) implements CustomPacketPayloa
             StreamCodec.composite(
                     ByteBufCodecs.VAR_INT, ServerboundCasterKeyPayload::mod, ServerboundCasterKeyPayload::new);
 
-    public static void handle(ServerboundCasterKeyPayload payload, IPayloadContext ctx) {
+    public static void handle(ServerboundCasterKeyPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> {
             Player player = ctx.player();
             ItemStack main = player.getMainHandItem();
@@ -41,7 +41,7 @@ public record ServerboundCasterKeyPayload(int mod) implements CustomPacketPayloa
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

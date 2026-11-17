@@ -20,7 +20,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 public final class ResearchGrants {
 
@@ -93,7 +93,7 @@ public final class ResearchGrants {
                 granted++;
                 Optional<ResourceKey<IResearchCategory>> category =
                         entry.value().category().unwrapKey();
-                PacketDistributor.sendToPlayer(
+                PayloadNetwork.sendToPlayer(
                         player, new ClientboundKnowledgeGainPayload(KnowledgeType.OBSERVATION, category, 1));
             }
         }

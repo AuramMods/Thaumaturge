@@ -10,13 +10,13 @@ import net.minecraft.core.BlockPos;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public record ServerboundGolemPressPayload(BlockPos pos, GolemProperties props, boolean craft)
-        implements CustomPacketPayload {
+        implements ModPayload {
     public static final Type<ServerboundGolemPressPayload> TYPE = new Type<>(TTIds.rl("golem_press"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundGolemPressPayload> STREAM_CODEC =
@@ -29,7 +29,7 @@ public record ServerboundGolemPressPayload(BlockPos pos, GolemProperties props, 
                     ServerboundGolemPressPayload::craft,
                     ServerboundGolemPressPayload::new);
 
-    public static void handle(ServerboundGolemPressPayload payload, IPayloadContext context) {
+    public static void handle(ServerboundGolemPressPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer player)) {
                 return;
@@ -46,13 +46,13 @@ public record ServerboundGolemPressPayload(BlockPos pos, GolemProperties props, 
                 for (int i = 0; i < stuff.length; i++) {
                     bytes[i] = (byte) (stuff[i] ? 1 : 0);
                 }
-                PacketDistributor.sendToPlayer(player, new ClientboundGolemPressStuffPayload(payload.pos(), bytes));
+                PayloadNetwork.sendToPlayer(player, new ClientboundGolemPressStuffPayload(payload.pos(), bytes));
             }
         });
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

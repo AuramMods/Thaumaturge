@@ -23,7 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class SealHandler {
@@ -100,7 +100,7 @@ public final class SealHandler {
                     level, spot.x, spot.y, spot.z, new ItemStack(seal.type().placer())));
         }
         TaskBoard.of(level).endAllFrom(pos);
-        PacketDistributor.sendToPlayersTrackingChunk(
+        PayloadNetwork.sendToPlayersTrackingChunk(
                 level, new ChunkPos(pos.pos()), ClientboundSealPayload.remove(pos));
     }
 

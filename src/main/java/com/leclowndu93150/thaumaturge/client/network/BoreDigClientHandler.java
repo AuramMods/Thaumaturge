@@ -7,12 +7,12 @@ import com.leclowndu93150.thaumaturge.network.effect.ClientboundBoreDigPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class BoreDigClientHandler {
     private BoreDigClientHandler() {}
 
-    public static void handle(ClientboundBoreDigPayload payload, IPayloadContext context) {
+    public static void handle(ClientboundBoreDigPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             ClientLevel level = Minecraft.getInstance().level;
             if (level == null) {

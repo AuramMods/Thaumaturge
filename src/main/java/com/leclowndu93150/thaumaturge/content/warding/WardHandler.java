@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class WardHandler {
@@ -73,7 +73,7 @@ public final class WardHandler {
         LevelChunk chunk = level.getChunkAt(pos);
         chunk.getData(TTAttachments.WARDS.get()).put(pos, owner);
         chunk.setUnsaved(true);
-        PacketDistributor.sendToPlayersTrackingChunk(
+        PayloadNetwork.sendToPlayersTrackingChunk(
                 level, chunk.getPos(), new ClientboundWardUpdatePayload(pos, Optional.of(owner)));
         return true;
     }
@@ -88,7 +88,7 @@ public final class WardHandler {
         }
         LevelChunk chunk = level.getChunkAt(pos);
         chunk.setUnsaved(true);
-        PacketDistributor.sendToPlayersTrackingChunk(
+        PayloadNetwork.sendToPlayersTrackingChunk(
                 level, chunk.getPos(), new ClientboundWardUpdatePayload(pos, Optional.empty()));
         return true;
     }
@@ -101,12 +101,12 @@ public final class WardHandler {
         WardAccess ward = data.take(from);
         LevelChunk source = fromLevel.getChunkAt(from);
         source.setUnsaved(true);
-        PacketDistributor.sendToPlayersTrackingChunk(
+        PayloadNetwork.sendToPlayersTrackingChunk(
                 fromLevel, source.getPos(), new ClientboundWardUpdatePayload(from, Optional.empty()));
         LevelChunk target = toLevel.getChunkAt(to);
         target.getData(TTAttachments.WARDS.get()).restore(to, ward);
         target.setUnsaved(true);
-        PacketDistributor.sendToPlayersTrackingChunk(
+        PayloadNetwork.sendToPlayersTrackingChunk(
                 toLevel, target.getPos(), new ClientboundWardUpdatePayload(to, Optional.of(ward.owner())));
     }
 
@@ -118,7 +118,7 @@ public final class WardHandler {
         if (data.isEmpty()) {
             return;
         }
-        PacketDistributor.sendToPlayer(player, ClientboundWardChunkPayload.of(chunk.getPos(), data.owners()));
+        PayloadNetwork.sendToPlayer(player, ClientboundWardChunkPayload.of(chunk.getPos(), data.owners()));
     }
 
     public static void prune(LevelChunk chunk) {

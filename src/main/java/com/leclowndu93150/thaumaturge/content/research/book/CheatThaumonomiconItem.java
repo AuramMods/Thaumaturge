@@ -14,7 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 public final class CheatThaumonomiconItem extends ThaumonomiconItem {
     public CheatThaumonomiconItem(Properties properties) {
@@ -28,7 +28,7 @@ public final class CheatThaumonomiconItem extends ThaumonomiconItem {
             if (granted > 0) {
                 TTActionBar.sendPurple(player, "message.thaumaturge.thaumonomicon.cheat_granted", granted);
             }
-            PacketDistributor.sendToPlayer(serverPlayer, ClientboundOpenThaumonomiconPayload.INSTANCE);
+            PayloadNetwork.sendToPlayer(serverPlayer, ClientboundOpenThaumonomiconPayload.INSTANCE);
         }
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
     }

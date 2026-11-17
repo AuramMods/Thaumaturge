@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 final class PrivateCues {
     private PrivateCues() {}
@@ -26,7 +26,7 @@ final class PrivateCues {
     }
 
     static void particle(ServerPlayer player, ParticleOptions options, Vec3 at, Vec3 velocity) {
-        PacketDistributor.sendToPlayer(
+        PayloadNetwork.sendToPlayer(
                 player,
                 new ClientboundSpawnParticlePayload(options, at.x, at.y, at.z, velocity.x, velocity.y, velocity.z));
     }

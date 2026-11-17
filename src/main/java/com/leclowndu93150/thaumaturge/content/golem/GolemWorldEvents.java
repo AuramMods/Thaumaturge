@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class GolemWorldEvents {
@@ -53,7 +53,7 @@ public final class GolemWorldEvents {
     @SubscribeEvent
     public static void onChunkWatch(ChunkWatchEvent.Sent event) {
         for (SealEntity seal : SealHandler.getSealsInChunk(event.getChunk())) {
-            PacketDistributor.sendToPlayer(event.getPlayer(), ClientboundSealPayload.update(seal));
+            PayloadNetwork.sendToPlayer(event.getPlayer(), ClientboundSealPayload.update(seal));
         }
     }
 

@@ -41,7 +41,7 @@ import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class GolemBuilderScreen extends AbstractTTContainerScreen<MenuGolemBuilder> {
@@ -291,7 +291,7 @@ public final class GolemBuilderScreen extends AbstractTTContainerScreen<MenuGole
                 0);
         BlockEntityGolemBuilder builder = menu.blockEntity();
         if (builder != null) {
-            PacketDistributor.sendToServer(new ServerboundGolemPressPayload(builder.getBlockPos(), props, false));
+            PayloadNetwork.sendToServer(new ServerboundGolemPressPayload(builder.getBlockPos(), props, false));
         }
         redoComps();
         GolemTrait[] tags = props.traits().toArray(new GolemTrait[0]);
@@ -564,7 +564,7 @@ public final class GolemBuilderScreen extends AbstractTTContainerScreen<MenuGole
         }
         BlockEntityGolemBuilder builder = menu.blockEntity();
         if (builder != null) {
-            PacketDistributor.sendToServer(new ServerboundGolemPressPayload(builder.getBlockPos(), props, true));
+            PayloadNetwork.sendToServer(new ServerboundGolemPressPayload(builder.getBlockPos(), props, true));
             disableAll = true;
         }
     }

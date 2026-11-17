@@ -13,7 +13,7 @@ import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 final class ReliquaryViews {
     private static final double VIEW_RANGE = 24.0;
@@ -65,6 +65,6 @@ final class ReliquaryViews {
             return;
         }
         reliquary.sentViews().put(player.getUUID(), view);
-        PacketDistributor.sendToPlayer(player, new ClientboundReliquaryViewPayload(reliquary.getBlockPos(), view));
+        PayloadNetwork.sendToPlayer(player, new ClientboundReliquaryViewPayload(reliquary.getBlockPos(), view));
     }
 }

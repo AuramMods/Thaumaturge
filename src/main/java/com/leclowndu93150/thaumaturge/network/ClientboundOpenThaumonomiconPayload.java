@@ -3,10 +3,10 @@ package com.leclowndu93150.thaumaturge.network;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 
-public record ClientboundOpenThaumonomiconPayload() implements CustomPacketPayload {
+public record ClientboundOpenThaumonomiconPayload() implements ModPayload {
     public static final ClientboundOpenThaumonomiconPayload INSTANCE = new ClientboundOpenThaumonomiconPayload();
 
     public static final Type<ClientboundOpenThaumonomiconPayload> TYPE =
@@ -16,7 +16,7 @@ public record ClientboundOpenThaumonomiconPayload() implements CustomPacketPaylo
             StreamCodec.unit(INSTANCE);
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

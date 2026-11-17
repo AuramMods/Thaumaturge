@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundInfusionSourcePayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 public final class InfusionFx {
     private static final double ITEM_STREAM_RANGE = 32.0;
@@ -12,7 +12,7 @@ public final class InfusionFx {
     private InfusionFx() {}
 
     public static void itemStream(ServerLevel level, BlockPos matrixPos, BlockPos pedestalPos) {
-        PacketDistributor.sendToPlayersNear(
+        PayloadNetwork.sendToPlayersNear(
                 level,
                 null,
                 matrixPos.getX(),

@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.network.effect;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 
 public record ClientboundStreamEffectPayload(
@@ -21,7 +21,7 @@ public record ClientboundStreamEffectPayload(
         float extraFloat2,
         int entityId,
         byte flags)
-        implements CustomPacketPayload {
+        implements ModPayload {
 
     public static final byte FLAG_REVERSE = 1;
     public static final byte FLAG_WITH_SOURCE = 2;
@@ -176,7 +176,7 @@ public record ClientboundStreamEffectPayload(
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

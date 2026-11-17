@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.client.hud.KnowledgeGainOverlay;
 import com.leclowndu93150.thaumaturge.network.ClientboundKnowledgeGainPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class KnowledgeGainClientHandler {
     private static final int BASE_DURATION_TICKS = 40;
@@ -12,7 +12,7 @@ public final class KnowledgeGainClientHandler {
 
     private KnowledgeGainClientHandler() {}
 
-    public static void handle(ClientboundKnowledgeGainPayload payload, IPayloadContext ctx) {
+    public static void handle(ClientboundKnowledgeGainPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;

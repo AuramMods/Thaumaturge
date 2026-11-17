@@ -8,7 +8,7 @@ import com.leclowndu93150.thaumaturge.network.ClientboundUpdateJEIAspectListPayl
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.fml.ModList;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class AspectGainClientHandler {
     private static final int BASE_DURATION_TICKS = 40;
@@ -17,7 +17,7 @@ public final class AspectGainClientHandler {
 
     private AspectGainClientHandler() {}
 
-    public static void handle(ClientboundAspectGainPayload payload, IPayloadContext ctx) {
+    public static void handle(ClientboundAspectGainPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player == null || mc.level == null) {
@@ -39,7 +39,7 @@ public final class AspectGainClientHandler {
         });
     }
 
-    public static void handleJEISync(ClientboundUpdateJEIAspectListPayload payload, IPayloadContext ctx) {
+    public static void handleJEISync(ClientboundUpdateJEIAspectListPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player == null || mc.level == null) {

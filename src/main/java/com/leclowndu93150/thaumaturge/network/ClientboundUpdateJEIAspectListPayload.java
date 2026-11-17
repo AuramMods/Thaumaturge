@@ -3,10 +3,10 @@ package com.leclowndu93150.thaumaturge.network;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 
-public record ClientboundUpdateJEIAspectListPayload() implements CustomPacketPayload {
+public record ClientboundUpdateJEIAspectListPayload() implements ModPayload {
     public static final ClientboundUpdateJEIAspectListPayload INSTANCE = new ClientboundUpdateJEIAspectListPayload();
     public static final Type<ClientboundUpdateJEIAspectListPayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "update_jei_aspect_list"));
@@ -15,7 +15,7 @@ public record ClientboundUpdateJEIAspectListPayload() implements CustomPacketPay
             StreamCodec.unit(INSTANCE);
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

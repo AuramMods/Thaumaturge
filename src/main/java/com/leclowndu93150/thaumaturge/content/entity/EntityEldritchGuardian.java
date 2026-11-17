@@ -41,7 +41,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public class EntityEldritchGuardian extends Monster implements RangedAttackMob {
@@ -121,7 +121,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob {
             double rangeSq = level.getDifficulty() == Difficulty.HARD ? FOG_RANGE_HARD_SQ : FOG_RANGE_SQ;
             for (Player player : level.players()) {
                 if (shouldReceiveFog(player, this, rangeSq) && player instanceof ServerPlayer serverPlayer) {
-                    PacketDistributor.sendToPlayer(serverPlayer, ClientboundWarpFXPayload.mistShort());
+                    PayloadNetwork.sendToPlayer(serverPlayer, ClientboundWarpFXPayload.mistShort());
                 }
             }
         }

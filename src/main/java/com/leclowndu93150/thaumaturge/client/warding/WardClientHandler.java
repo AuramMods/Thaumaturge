@@ -17,7 +17,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.level.ChunkEvent;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
@@ -37,7 +37,7 @@ public final class WardClientHandler {
                 0.0);
     }
 
-    public static void handleChunk(ClientboundWardChunkPayload payload, IPayloadContext context) {
+    public static void handleChunk(ClientboundWardChunkPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             UUID self = context.player().getUUID();
             List<BlockPos> owned = new ArrayList<>();
@@ -52,7 +52,7 @@ public final class WardClientHandler {
         });
     }
 
-    public static void handleUpdate(ClientboundWardUpdatePayload payload, IPayloadContext context) {
+    public static void handleUpdate(ClientboundWardUpdatePayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             if (payload.owner().isPresent()) {
                 ClientWardHolder.put(

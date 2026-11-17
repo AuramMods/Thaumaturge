@@ -38,8 +38,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.minecraftforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.connection.ConnectionType;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -137,7 +136,7 @@ class AuraCompatibilityTest {
     @Test
     void streamCodecKeepsTheExactNativeFieldOrderAndWidths() {
         RegistryFriendlyByteBuf buffer =
-                new RegistryFriendlyByteBuf(Unpooled.buffer(), RegistryAccess.EMPTY, ConnectionType.OTHER);
+                new RegistryFriendlyByteBuf(Unpooled.buffer(), RegistryAccess.EMPTY);
         try {
             AuraData data = new AuraData((short) 120, 25.5F, 8.5F);
             AuraData.STREAM_CODEC.encode(buffer, data);
@@ -282,13 +281,13 @@ class AuraCompatibilityTest {
     void pollutionUsesTheExistingNativeParticlePayloadWithoutChangingItsFormat() {
         attach(new ChunkPos(0, 0), new AuraData((short) 100, 50, 0));
         when(random.nextDouble()).thenReturn(0.5);
-        try (MockedStatic<PacketDistributor> packets = mockStatic(PacketDistributor.class)) {
+        try (MockedStatic<PayloadNetwork> packets = mockStatic(PayloadNetwork.class)) {
             AuraManager.taint(level, BlockPos.ZERO, 3, false);
             packets.verifyNoInteractions();
             AuraManager.taint(level, BlockPos.ZERO, 2, true);
             ArgumentCaptor<ClientboundSpawnParticlePayload> payload =
                     ArgumentCaptor.forClass(ClientboundSpawnParticlePayload.class);
-            packets.verify(() -> PacketDistributor.sendToPlayersNear(
+            packets.verify(() -> PayloadNetwork.sendToPlayersNear(
                     eq(level), isNull(), eq(0.5), eq(0.5), eq(0.5), eq(64.0), payload.capture()));
             assertEquals(TTParticles.POLLUTION_FUME.get(), payload.getValue().options());
             assertEquals(0.0, payload.getValue().vx());

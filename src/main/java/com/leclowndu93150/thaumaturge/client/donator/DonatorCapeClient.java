@@ -11,7 +11,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class DonatorCapeClient {
@@ -35,7 +35,7 @@ public final class DonatorCapeClient {
 
     private static void sendPreference() {
         if (isLocalDonator() && Minecraft.getInstance().getConnection() != null) {
-            PacketDistributor.sendToServer(new ServerboundDonatorCapePayload(ThaumaturgeClientConfig.donatorCape()));
+            PayloadNetwork.sendToServer(new ServerboundDonatorCapePayload(ThaumaturgeClientConfig.donatorCape()));
         }
     }
 }

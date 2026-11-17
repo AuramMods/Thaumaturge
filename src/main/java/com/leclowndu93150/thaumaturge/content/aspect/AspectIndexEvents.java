@@ -12,7 +12,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
@@ -62,7 +62,7 @@ public final class AspectIndexEvents {
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            PacketDistributor.sendToPlayer(player, new ClientboundAspectIndexPayload(AspectIndexHolder.getConcrete()));
+            PayloadNetwork.sendToPlayer(player, new ClientboundAspectIndexPayload(AspectIndexHolder.getConcrete()));
         }
     }
 
@@ -78,7 +78,7 @@ public final class AspectIndexEvents {
         }
         AspectIndexHolder.set(index);
         if (!server.getPlayerList().getPlayers().isEmpty()) {
-            PacketDistributor.sendToAllPlayers(new ClientboundAspectIndexPayload(index));
+            PayloadNetwork.sendToAllPlayers(new ClientboundAspectIndexPayload(index));
         }
     }
 }

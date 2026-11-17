@@ -5,12 +5,12 @@ import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpawnParticlePay
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class SpawnParticleClientHandler {
     private SpawnParticleClientHandler() {}
 
-    public static void handle(ClientboundSpawnParticlePayload payload, IPayloadContext ctx) {
+    public static void handle(ClientboundSpawnParticlePayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> {
             ClientLevel level = Minecraft.getInstance().level;
             if (level == null) return;

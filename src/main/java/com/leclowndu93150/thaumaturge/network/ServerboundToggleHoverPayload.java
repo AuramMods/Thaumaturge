@@ -4,11 +4,11 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.equipment.hover.HoverManager;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundToggleHoverPayload() implements CustomPacketPayload {
+public record ServerboundToggleHoverPayload() implements ModPayload {
     public static final ServerboundToggleHoverPayload INSTANCE = new ServerboundToggleHoverPayload();
 
     public static final Type<ServerboundToggleHoverPayload> TYPE = new Type<>(TTIds.rl("toggle_hover"));
@@ -16,7 +16,7 @@ public record ServerboundToggleHoverPayload() implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundToggleHoverPayload> STREAM_CODEC =
             StreamCodec.unit(INSTANCE);
 
-    public static void handle(ServerboundToggleHoverPayload payload, IPayloadContext context) {
+    public static void handle(ServerboundToggleHoverPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player) {
                 HoverManager.toggle(player);
@@ -25,7 +25,7 @@ public record ServerboundToggleHoverPayload() implements CustomPacketPayload {
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

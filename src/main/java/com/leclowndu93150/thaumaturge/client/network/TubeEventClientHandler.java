@@ -12,7 +12,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class TubeEventClientHandler {
     private static final float HISS_VOLUME = 0.25F;
@@ -24,11 +24,11 @@ public final class TubeEventClientHandler {
 
     private TubeEventClientHandler() {}
 
-    public static void handleVent(ClientboundTubeVentPayload payload, IPayloadContext ctx) {
+    public static void handleVent(ClientboundTubeVentPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> vent(payload));
     }
 
-    public static void handleCreak(ClientboundTubeCreakPayload payload, IPayloadContext ctx) {
+    public static void handleCreak(ClientboundTubeCreakPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> creak(payload));
     }
 

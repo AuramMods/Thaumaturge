@@ -47,7 +47,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -1312,7 +1312,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
                 && canUnlockResearch(knowledge, currentHighlight)) {
             EntryNode hl = currentHighlight;
             updateResearch();
-            PacketDistributor.sendToServer(new ServerboundUnlockResearchPayload(hl.id));
+            PayloadNetwork.sendToServer(new ServerboundUnlockResearchPayload(hl.id));
             persistState();
             playPageOpen();
             minecraft.setScreen(new EntryDetailScreen(hl.holder, hl.id, this));
@@ -1321,11 +1321,11 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
             EntryNode hl = currentHighlight;
             knowledge.removeFlag(hl.id, ResearchFlag.RESEARCH);
             knowledge.removeFlag(hl.id, ResearchFlag.PAGE);
-            PacketDistributor.sendToServer(
+            PayloadNetwork.sendToServer(
                     new ServerboundClearResearchFlagsPayload(hl.id, List.of(ResearchFlag.RESEARCH, ResearchFlag.PAGE)));
             int stage = knowledge.stageOf(hl.id);
             if (stage > 0 && stage >= hl.entry.stages().size() - 1) {
-                PacketDistributor.sendToServer(new ServerboundUnlockResearchPayload(hl.id));
+                PayloadNetwork.sendToServer(new ServerboundUnlockResearchPayload(hl.id));
             }
             persistState();
             playPageOpen();

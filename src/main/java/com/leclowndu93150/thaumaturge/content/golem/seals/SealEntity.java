@@ -24,7 +24,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class SealEntity implements ISealEntity {
@@ -231,7 +231,7 @@ public final class SealEntity implements ISealEntity {
     public void markChanged(Level level) {
         if (level instanceof ServerLevel server) {
             SealHandler.markDirty(server, pos.pos());
-            PacketDistributor.sendToPlayersTrackingChunk(
+            PayloadNetwork.sendToPlayersTrackingChunk(
                     server, new ChunkPos(pos.pos()), ClientboundSealPayload.update(this));
         }
     }

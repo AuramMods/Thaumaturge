@@ -45,7 +45,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssentiaConduit, IInteractWithCaster {
@@ -187,7 +187,7 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
 
     public void broadcastVent(Level level, BlockPos pos, int color) {
         if (level instanceof ServerLevel server) {
-            PacketDistributor.sendToPlayersNear(
+            PayloadNetwork.sendToPlayersNear(
                     server,
                     null,
                     pos.getX() + BLOCK_CENTER,
@@ -200,7 +200,7 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
 
     public void broadcastCreak(Level level, BlockPos pos) {
         if (level instanceof ServerLevel server) {
-            PacketDistributor.sendToPlayersNear(
+            PayloadNetwork.sendToPlayersNear(
                     server,
                     null,
                     pos.getX() + BLOCK_CENTER,

@@ -6,12 +6,12 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundUnlockResearchPayload(ResourceLocation research) implements CustomPacketPayload {
+public record ServerboundUnlockResearchPayload(ResourceLocation research) implements ModPayload {
     public static final Type<ServerboundUnlockResearchPayload> TYPE = new Type<>(TTIds.rl("unlock_research"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundUnlockResearchPayload> STREAM_CODEC =
@@ -20,7 +20,7 @@ public record ServerboundUnlockResearchPayload(ResourceLocation research) implem
                     ServerboundUnlockResearchPayload::research,
                     ServerboundUnlockResearchPayload::new);
 
-    public static void handle(ServerboundUnlockResearchPayload payload, IPayloadContext context) {
+    public static void handle(ServerboundUnlockResearchPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player) {
                 ResearchManager.unlockRequested(player, payload.research());
@@ -29,7 +29,7 @@ public record ServerboundUnlockResearchPayload(ResourceLocation research) implem
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

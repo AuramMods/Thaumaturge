@@ -27,18 +27,16 @@ import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpellFxPayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID)
 public final class TTPayloads {
-    private static final String VERSION = "2";
-
     private TTPayloads() {}
 
     @SubscribeEvent
-    public static void register(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar(VERSION);
+    public static void register(FMLCommonSetupEvent event) {
+        PayloadNetwork.Registrar registrar = PayloadNetwork.registrar();
         registrar.playToServer(
                 ServerboundDonatorCapePayload.TYPE,
                 ServerboundDonatorCapePayload.STREAM_CODEC,
@@ -62,11 +60,11 @@ public final class TTPayloads {
         registrar.playToClient(
                 ClientboundThaumatoriumRecipesPayload.TYPE,
                 ClientboundThaumatoriumRecipesPayload.STREAM_CODEC,
-                ThaumatoriumClientHandler::handle);
+                (payload, context) -> ThaumatoriumClientHandler.handle(payload, context));
         registrar.playToClient(
                 ClientboundReliquaryViewPayload.TYPE,
                 ClientboundReliquaryViewPayload.STREAM_CODEC,
-                ReliquaryViewClientHandler::handle);
+                (payload, context) -> ReliquaryViewClientHandler.handle(payload, context));
         registrar.playToServer(
                 ServerboundThaumatoriumTogglePayload.TYPE,
                 ServerboundThaumatoriumTogglePayload.STREAM_CODEC,
@@ -206,6 +204,6 @@ public final class TTPayloads {
         registrar.playToClient(
                 ClientboundTaintEnvironmentPayload.TYPE,
                 ClientboundTaintEnvironmentPayload.STREAM_CODEC,
-                TaintEnvironmentClientHandler::handle);
+                (payload, context) -> TaintEnvironmentClientHandler.handle(payload, context));
     }
 }

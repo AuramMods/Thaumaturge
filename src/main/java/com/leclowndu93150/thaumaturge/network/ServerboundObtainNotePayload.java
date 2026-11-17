@@ -7,14 +7,14 @@ import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundObtainNotePayload(ResourceLocation entry, int ordinal) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundObtainNotePayload> TYPE =
-            new CustomPacketPayload.Type<>(TTIds.rl("obtain_note"));
+public record ServerboundObtainNotePayload(ResourceLocation entry, int ordinal) implements ModPayload {
+    public static final ModPayload.Type<ServerboundObtainNotePayload> TYPE =
+            new ModPayload.Type<>(TTIds.rl("obtain_note"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundObtainNotePayload> STREAM_CODEC =
             StreamCodec.composite(
@@ -24,7 +24,7 @@ public record ServerboundObtainNotePayload(ResourceLocation entry, int ordinal) 
                     ServerboundObtainNotePayload::ordinal,
                     ServerboundObtainNotePayload::new);
 
-    public static void handle(ServerboundObtainNotePayload payload, IPayloadContext context) {
+    public static void handle(ServerboundObtainNotePayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player) {
                 ResearchNotes.obtainNote(player, payload.entry(), payload.ordinal());
@@ -33,7 +33,7 @@ public record ServerboundObtainNotePayload(ResourceLocation entry, int ordinal) 
     }
 
     @Override
-    public CustomPacketPayload.Type<ServerboundObtainNotePayload> type() {
+    public ModPayload.Type<ServerboundObtainNotePayload> type() {
         return TYPE;
     }
 }

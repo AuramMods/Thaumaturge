@@ -14,7 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public class TTDebugEvents {
@@ -38,6 +38,6 @@ public class TTDebugEvents {
         if (!RAYCAST_DEBUG_PLAYERS.contains(player.getUUID())
                 || !LoadedChunks.contains(player.level(), player.blockPosition())) return;
         HitResult hitResult = ScanRaycastHelper.performRaycast(player);
-        PacketDistributor.sendToPlayer((ServerPlayer) player, new ClientboundRaycastDebugPayload(hitResult));
+        PayloadNetwork.sendToPlayer((ServerPlayer) player, new ClientboundRaycastDebugPayload(hitResult));
     }
 }

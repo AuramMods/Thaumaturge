@@ -7,10 +7,10 @@ import net.minecraft.core.Holder;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.world.phys.Vec3;
 
-public record ClientboundSpellFxPayload(Vec3 anchor, List<Event> events) implements CustomPacketPayload {
+public record ClientboundSpellFxPayload(Vec3 anchor, List<Event> events) implements ModPayload {
     public static final Type<ClientboundSpellFxPayload> TYPE = new Type<>(TTIds.rl("spell_fx"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundSpellFxPayload> STREAM_CODEC =
@@ -29,7 +29,7 @@ public record ClientboundSpellFxPayload(Vec3 anchor, List<Event> events) impleme
                     ClientboundSpellFxPayload::new);
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 

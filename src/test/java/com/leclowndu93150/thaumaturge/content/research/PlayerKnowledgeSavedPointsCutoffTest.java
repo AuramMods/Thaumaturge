@@ -15,7 +15,6 @@ import net.minecraft.core.RegistryAccess;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.connection.ConnectionType;
 import org.junit.jupiter.api.Test;
 
 final class PlayerKnowledgeSavedPointsCutoffTest {
@@ -81,7 +80,7 @@ final class PlayerKnowledgeSavedPointsCutoffTest {
     @Test
     void attachmentStreamRoundTripKeepsOnlyValidPointsAndPreservesResearchMetadata() {
         PlayerKnowledge restored = decode(mixedSavedRecord());
-        var buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), RegistryAccess.EMPTY, ConnectionType.OTHER);
+        var buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), RegistryAccess.EMPTY);
         try {
             PlayerKnowledge.STREAM_CODEC.encode(buffer, restored);
             PlayerKnowledge received = PlayerKnowledge.STREAM_CODEC.decode(buffer);

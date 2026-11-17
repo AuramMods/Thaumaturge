@@ -24,7 +24,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class HoverClientHandler {
@@ -56,7 +56,7 @@ public final class HoverClientHandler {
         }
         while (TTKeybinds.TOGGLE_HOVER.consumeClick()) {
             if (minecraft.screen == null && HoverManager.isWearingHoverGear(player)) {
-                PacketDistributor.sendToServer(ServerboundToggleHoverPayload.INSTANCE);
+                PayloadNetwork.sendToServer(ServerboundToggleHoverPayload.INSTANCE);
             }
         }
         if (minecraft.isPaused()) {

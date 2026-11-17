@@ -11,18 +11,18 @@ import net.minecraft.core.Holder;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 import org.jspecify.annotations.Nullable;
 
 public record ServerboundTableCombinePayload(
         BlockPos pos, ResourceLocation first, ResourceLocation second, boolean bonusFirst, boolean bonusSecond)
-        implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundTableCombinePayload> TYPE =
-            new CustomPacketPayload.Type<>(TTIds.rl("table_combine"));
+        implements ModPayload {
+    public static final ModPayload.Type<ServerboundTableCombinePayload> TYPE =
+            new ModPayload.Type<>(TTIds.rl("table_combine"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTableCombinePayload> STREAM_CODEC =
             StreamCodec.composite(
@@ -38,7 +38,7 @@ public record ServerboundTableCombinePayload(
                     ServerboundTableCombinePayload::bonusSecond,
                     ServerboundTableCombinePayload::new);
 
-    public static void handle(ServerboundTableCombinePayload payload, IPayloadContext context) {
+    public static void handle(ServerboundTableCombinePayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             BlockEntityResearchTable table = BlockMenuGuard.target(context, payload.pos(), MenuResearchTable.class);
             if (table == null) {
@@ -62,7 +62,7 @@ public record ServerboundTableCombinePayload(
     }
 
     @Override
-    public CustomPacketPayload.Type<ServerboundTableCombinePayload> type() {
+    public ModPayload.Type<ServerboundTableCombinePayload> type() {
         return TYPE;
     }
 }

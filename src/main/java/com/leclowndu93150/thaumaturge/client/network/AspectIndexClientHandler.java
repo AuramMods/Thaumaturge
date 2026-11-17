@@ -5,14 +5,14 @@ import com.leclowndu93150.thaumaturge.content.aspect.AspectIndexHolder;
 import com.leclowndu93150.thaumaturge.network.ClientboundAspectIndexPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.ModList;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class AspectIndexClientHandler {
     private static final String JEI_MOD_ID = "jei";
 
     private AspectIndexClientHandler() {}
 
-    public static void handle(ClientboundAspectIndexPayload payload, IPayloadContext ctx) {
+    public static void handle(ClientboundAspectIndexPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> {
             if (!Minecraft.getInstance().hasSingleplayerServer()) {
                 AspectIndexHolder.set(payload.index());

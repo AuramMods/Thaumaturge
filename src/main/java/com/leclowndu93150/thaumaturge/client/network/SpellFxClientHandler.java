@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class SpellFxClientHandler {
     private static final int PARTICLE_BUDGET = 96;
@@ -17,7 +17,7 @@ public final class SpellFxClientHandler {
 
     private SpellFxClientHandler() {}
 
-    public static void handle(ClientboundSpellFxPayload payload, IPayloadContext ctx) {
+    public static void handle(ClientboundSpellFxPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> play(payload));
     }
 

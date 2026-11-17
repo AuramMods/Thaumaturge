@@ -4,9 +4,9 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 
-public record ClientboundWispZapPayload(int sourceId, int targetId) implements CustomPacketPayload {
+public record ClientboundWispZapPayload(int sourceId, int targetId) implements ModPayload {
     public static final Type<ClientboundWispZapPayload> TYPE = new Type<>(TTIds.rl("wisp_zap"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundWispZapPayload> STREAM_CODEC =
@@ -18,7 +18,7 @@ public record ClientboundWispZapPayload(int sourceId, int targetId) implements C
                     ClientboundWispZapPayload::new);
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

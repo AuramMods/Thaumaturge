@@ -76,7 +76,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -366,7 +366,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
         }
         rebuildPages();
         if (!flagsCleared) {
-            PacketDistributor.sendToServer(new ServerboundClearResearchFlagsPayload(
+            PayloadNetwork.sendToServer(new ServerboundClearResearchFlagsPayload(
                     entryId, List.of(ResearchFlag.RESEARCH, ResearchFlag.PAGE)));
             flagsCleared = true;
         }
@@ -851,7 +851,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
             int stageNow = PlayerResearchAccess.of(minecraft.player).stageOf(entryId);
             if (autoAdvanceRequestedStage != stageNow) {
                 autoAdvanceRequestedStage = stageNow;
-                PacketDistributor.sendToServer(new ServerboundAdvanceStagePayload(entryId));
+                PayloadNetwork.sendToServer(new ServerboundAdvanceStagePayload(entryId));
             }
         }
     }
@@ -2385,7 +2385,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
             }
             if (currentPage == 0 && !completedStageView() && !hold && !insertOpen()) {
                 if (hitStageComplete(mx, my, stage)) {
-                    PacketDistributor.sendToServer(new ServerboundAdvanceStagePayload(entryId));
+                    PayloadNetwork.sendToServer(new ServerboundAdvanceStagePayload(entryId));
                     playSound(TTSounds.WRITE.get(), 0.66F, 1.0F);
                     lastStage = PlayerResearchAccess.of(minecraft.player).stageOf(entryId);
                     holdSince = minecraft.player.level().getGameTime();
@@ -2582,7 +2582,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
             if (knowledge.knows(learnKey) || ResearchNotes.hasNoteFor(minecraft.player, learnKey)) {
                 return false;
             }
-            PacketDistributor.sendToServer(new ServerboundObtainNotePayload(entryId, ordinal));
+            PayloadNetwork.sendToServer(new ServerboundObtainNotePayload(entryId, ordinal));
             return true;
         }
         return false;

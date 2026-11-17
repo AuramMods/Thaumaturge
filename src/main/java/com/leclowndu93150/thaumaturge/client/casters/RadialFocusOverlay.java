@@ -28,7 +28,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
@@ -114,13 +114,13 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
 
             if (time > lastTime) {
                 if (centerHover && !CasterKeyHandler.radialActive && !CasterKeyHandler.radialLock) {
-                    PacketDistributor.sendToServer(new ServerboundFocusChangePayload(CasterManager.REMOVE_FOCUS));
+                    PayloadNetwork.sendToServer(new ServerboundFocusChangePayload(CasterManager.REMOVE_FOCUS));
                     CasterKeyHandler.radialLock = true;
                 }
                 for (String key : fociHover.keySet()) {
                     if (fociHover.get(key)) {
                         if (!CasterKeyHandler.radialActive && !CasterKeyHandler.radialLock) {
-                            PacketDistributor.sendToServer(new ServerboundFocusChangePayload(key));
+                            PayloadNetwork.sendToServer(new ServerboundFocusChangePayload(key));
                             CasterKeyHandler.radialLock = true;
                         }
                         if (fociScale.get(key) < HOVER_SCALE_MAX) {
@@ -262,7 +262,7 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
                     if (pendingClick) {
                         CasterKeyHandler.radialActive = false;
                         CasterKeyHandler.radialLock = true;
-                        PacketDistributor.sendToServer(new ServerboundFocusChangePayload(CasterManager.REMOVE_FOCUS));
+                        PayloadNetwork.sendToServer(new ServerboundFocusChangePayload(CasterManager.REMOVE_FOCUS));
                         if (mc.isWindowActive() && !mc.mouseHandler.isMouseGrabbed()) {
                             mc.mouseHandler.grabMouse();
                         }
@@ -299,7 +299,7 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
                     if (pendingClick) {
                         CasterKeyHandler.radialActive = false;
                         CasterKeyHandler.radialLock = true;
-                        PacketDistributor.sendToServer(new ServerboundFocusChangePayload(key));
+                        PayloadNetwork.sendToServer(new ServerboundFocusChangePayload(key));
                         if (mc.isWindowActive() && !mc.mouseHandler.isMouseGrabbed()) {
                             mc.mouseHandler.grabMouse();
                         }

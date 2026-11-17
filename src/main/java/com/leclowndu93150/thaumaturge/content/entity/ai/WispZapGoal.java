@@ -10,7 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 public final class WispZapGoal extends Goal {
     private static final double ZAP_RANGE_SQR = 16.0 * 16.0;
@@ -91,7 +91,7 @@ public final class WispZapGoal extends Goal {
                 SoundSource.HOSTILE,
                 ZAP_VOLUME,
                 ZAP_PITCH);
-        PacketDistributor.sendToPlayersNear(
+        PayloadNetwork.sendToPlayersNear(
                 level,
                 null,
                 wisp.getX(),

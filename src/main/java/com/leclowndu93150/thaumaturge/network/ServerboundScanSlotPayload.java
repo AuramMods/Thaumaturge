@@ -8,14 +8,14 @@ import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundScanSlotPayload(int slot) implements CustomPacketPayload {
+public record ServerboundScanSlotPayload(int slot) implements ModPayload {
     public static final int SELF = -1;
     public static final int CHANNEL_TICKS = 25;
     private static final int LATENCY_ALLOWANCE_TICKS = 5;
@@ -26,7 +26,7 @@ public record ServerboundScanSlotPayload(int slot) implements CustomPacketPayloa
             StreamCodec.composite(
                     ByteBufCodecs.VAR_INT, ServerboundScanSlotPayload::slot, ServerboundScanSlotPayload::new);
 
-    public static void handle(ServerboundScanSlotPayload payload, IPayloadContext context) {
+    public static void handle(ServerboundScanSlotPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer player)) {
                 return;
@@ -53,7 +53,7 @@ public record ServerboundScanSlotPayload(int slot) implements CustomPacketPayloa
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

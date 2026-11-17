@@ -6,12 +6,12 @@ import com.leclowndu93150.thaumaturge.network.ClientboundWarpFXPayload;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class WarpFXClientHandler {
     private WarpFXClientHandler() {}
 
-    public static void handle(ClientboundWarpFXPayload payload, IPayloadContext ctx) {
+    public static void handle(ClientboundWarpFXPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> {
             switch (payload.kind()) {
                 case ClientboundWarpFXPayload.KIND_HEARTBEAT -> {

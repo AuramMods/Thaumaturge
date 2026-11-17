@@ -5,11 +5,11 @@ import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundLogisticsSearchPayload(String text) implements CustomPacketPayload {
+public record ServerboundLogisticsSearchPayload(String text) implements ModPayload {
     public static final Type<ServerboundLogisticsSearchPayload> TYPE = new Type<>(TTIds.rl("logistics_search"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundLogisticsSearchPayload> STREAM_CODEC =
@@ -18,7 +18,7 @@ public record ServerboundLogisticsSearchPayload(String text) implements CustomPa
                     ServerboundLogisticsSearchPayload::text,
                     ServerboundLogisticsSearchPayload::new);
 
-    public static void handle(ServerboundLogisticsSearchPayload payload, IPayloadContext context) {
+    public static void handle(ServerboundLogisticsSearchPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player
                     && player.containerMenu instanceof MenuGolemLogistics menu) {
@@ -28,7 +28,7 @@ public record ServerboundLogisticsSearchPayload(String text) implements CustomPa
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

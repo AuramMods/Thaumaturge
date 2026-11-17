@@ -33,7 +33,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.minecraftforge.client.event.ContainerScreenEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
@@ -168,7 +168,7 @@ public final class InventoryScanHandler {
                             SOUND_VOLUME));
         }
         if (ticks >= ServerboundScanSlotPayload.CHANNEL_TICKS) {
-            PacketDistributor.sendToServer(new ServerboundScanSlotPayload(target));
+            PayloadNetwork.sendToServer(new ServerboundScanSlotPayload(target));
             ticks = 0;
         }
     }

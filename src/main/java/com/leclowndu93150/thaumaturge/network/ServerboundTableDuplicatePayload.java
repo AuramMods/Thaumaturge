@@ -8,13 +8,13 @@ import com.leclowndu93150.thaumaturge.content.research.table.MenuResearchTable;
 import net.minecraft.core.BlockPos;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundTableDuplicatePayload(BlockPos pos) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundTableDuplicatePayload> TYPE =
-            new CustomPacketPayload.Type<>(TTIds.rl("table_duplicate"));
+public record ServerboundTableDuplicatePayload(BlockPos pos) implements ModPayload {
+    public static final ModPayload.Type<ServerboundTableDuplicatePayload> TYPE =
+            new ModPayload.Type<>(TTIds.rl("table_duplicate"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTableDuplicatePayload> STREAM_CODEC =
             StreamCodec.composite(
@@ -22,7 +22,7 @@ public record ServerboundTableDuplicatePayload(BlockPos pos) implements CustomPa
                     ServerboundTableDuplicatePayload::pos,
                     ServerboundTableDuplicatePayload::new);
 
-    public static void handle(ServerboundTableDuplicatePayload payload, IPayloadContext context) {
+    public static void handle(ServerboundTableDuplicatePayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             BlockEntityResearchTable table = BlockMenuGuard.target(context, payload.pos(), MenuResearchTable.class);
             if (table != null) {
@@ -32,7 +32,7 @@ public record ServerboundTableDuplicatePayload(BlockPos pos) implements CustomPa
     }
 
     @Override
-    public CustomPacketPayload.Type<ServerboundTableDuplicatePayload> type() {
+    public ModPayload.Type<ServerboundTableDuplicatePayload> type() {
         return TYPE;
     }
 }

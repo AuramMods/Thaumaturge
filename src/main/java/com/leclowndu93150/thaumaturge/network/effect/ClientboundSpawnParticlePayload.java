@@ -5,12 +5,12 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 
 public record ClientboundSpawnParticlePayload(
         ParticleOptions options, double x, double y, double z, double vx, double vy, double vz)
-        implements CustomPacketPayload {
+        implements ModPayload {
     public static final Type<ClientboundSpawnParticlePayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "spawn_particle"));
 
@@ -39,7 +39,7 @@ public record ClientboundSpawnParticlePayload(
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

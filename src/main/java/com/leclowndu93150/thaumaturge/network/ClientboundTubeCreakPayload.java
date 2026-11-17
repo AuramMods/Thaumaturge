@@ -6,10 +6,10 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.core.BlockPos;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 
-public record ClientboundTubeCreakPayload(BlockPos pos) implements CustomPacketPayload {
+public record ClientboundTubeCreakPayload(BlockPos pos) implements ModPayload {
     public static final Type<ClientboundTubeCreakPayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "tube_creak"));
 
@@ -18,7 +18,7 @@ public record ClientboundTubeCreakPayload(BlockPos pos) implements CustomPacketP
                     VanillaStreamCodecs.BLOCK_POS, ClientboundTubeCreakPayload::pos, ClientboundTubeCreakPayload::new);
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

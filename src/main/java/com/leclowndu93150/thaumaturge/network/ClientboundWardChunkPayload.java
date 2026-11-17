@@ -13,12 +13,12 @@ import net.minecraft.core.UUIDUtil;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 
 public record ClientboundWardChunkPayload(ChunkPos chunk, List<ClientboundWardChunkPayload.Group> groups)
-        implements CustomPacketPayload {
+        implements ModPayload {
     public static final Type<ClientboundWardChunkPayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "ward_chunk"));
 
@@ -61,7 +61,7 @@ public record ClientboundWardChunkPayload(ChunkPos chunk, List<ClientboundWardCh
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 

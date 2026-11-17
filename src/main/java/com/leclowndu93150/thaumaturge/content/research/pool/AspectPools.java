@@ -21,7 +21,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class AspectPools {
@@ -47,7 +47,7 @@ public final class AspectPools {
     public static void flush(ServerPlayer player) {
         if (data(player).takeSyncPending()) {
             player.syncData(TTAttachments.ASPECT_POOL);
-            PacketDistributor.sendToPlayer(player, ClientboundUpdateJEIAspectListPayload.INSTANCE);
+            PayloadNetwork.sendToPlayer(player, ClientboundUpdateJEIAspectListPayload.INSTANCE);
         }
     }
 
@@ -119,7 +119,7 @@ public final class AspectPools {
                                 0.2F,
                                 0.9F + player.getRandom().nextFloat() * 0.2F);
             }
-            PacketDistributor.sendToPlayer(player, new ClientboundAspectGainPayload(id, granted));
+            PayloadNetwork.sendToPlayer(player, new ClientboundAspectGainPayload(id, granted));
         }
         return granted;
     }
@@ -218,7 +218,7 @@ public final class AspectPools {
             data.discover(id);
         }
         sync(player);
-        PacketDistributor.sendToPlayer(
+        PayloadNetwork.sendToPlayer(
                 player,
                 new ClientboundAspectGainPayload(aspects.getFirst().key().location(), 0));
         player.level()
@@ -240,7 +240,7 @@ public final class AspectPools {
         data.add(id, amount);
         data.discover(id);
         sync(player);
-        PacketDistributor.sendToPlayer(player, new ClientboundAspectGainPayload(id, amount));
+        PayloadNetwork.sendToPlayer(player, new ClientboundAspectGainPayload(id, amount));
         player.level()
                 .playSound(
                         null,

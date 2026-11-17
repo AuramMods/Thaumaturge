@@ -16,7 +16,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class ResearchToastEvents {
@@ -52,7 +52,7 @@ public final class ResearchToastEvents {
             shown.add(research);
         }
         for (ResourceLocation research : shown) {
-            PacketDistributor.sendToServer(
+            PayloadNetwork.sendToServer(
                     new ServerboundClearResearchFlagsPayload(research, List.of(ResearchFlag.POPUP)));
         }
     }

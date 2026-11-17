@@ -14,7 +14,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class AuraHudOverlay implements LeftHudStack.Gauge {
@@ -69,7 +69,7 @@ public final class AuraHudOverlay implements LeftHudStack.Gauge {
         }
         ChunkPos chunk = player.chunkPosition();
         if (ClientAuraCache.shouldRequest(chunk)) {
-            PacketDistributor.sendToServer(new ServerboundRequestAuraChunkPayload(chunk.x, chunk.z));
+            PayloadNetwork.sendToServer(new ServerboundRequestAuraChunkPayload(chunk.x, chunk.z));
         }
         return snapshotFor(player) != null;
     }

@@ -7,12 +7,12 @@ import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundLogisticsRequestPayload(ItemStack stack, int amount) implements CustomPacketPayload {
+public record ServerboundLogisticsRequestPayload(ItemStack stack, int amount) implements ModPayload {
     public static final Type<ServerboundLogisticsRequestPayload> TYPE = new Type<>(TTIds.rl("logistics_request"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundLogisticsRequestPayload> STREAM_CODEC =
@@ -23,7 +23,7 @@ public record ServerboundLogisticsRequestPayload(ItemStack stack, int amount) im
                     ServerboundLogisticsRequestPayload::amount,
                     ServerboundLogisticsRequestPayload::new);
 
-    public static void handle(ServerboundLogisticsRequestPayload payload, IPayloadContext context) {
+    public static void handle(ServerboundLogisticsRequestPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player
                     && player.containerMenu instanceof MenuGolemLogistics menu) {
@@ -33,7 +33,7 @@ public record ServerboundLogisticsRequestPayload(ItemStack stack, int amount) im
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

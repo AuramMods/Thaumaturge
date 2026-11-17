@@ -13,7 +13,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
@@ -59,7 +59,7 @@ public final class CasterKeyHandler {
                         && (player.getMainHandItem().getItem() instanceof FocusCaster
                                 || player.getOffhandItem().getItem() instanceof FocusCaster)) {
                     if (player.isShiftKeyDown()) {
-                        PacketDistributor.sendToServer(new ServerboundFocusChangePayload(CasterManager.REMOVE_FOCUS));
+                        PayloadNetwork.sendToServer(new ServerboundFocusChangePayload(CasterManager.REMOVE_FOCUS));
                     } else {
                         radialActive = true;
                     }
@@ -78,7 +78,7 @@ public final class CasterKeyHandler {
                             : InputConstants.isKeyDown(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT)
                                     ? MOD_SHIFT
                                     : MOD_GROW;
-                    PacketDistributor.sendToServer(new ServerboundCasterKeyPayload(mod));
+                    PayloadNetwork.sendToServer(new ServerboundCasterKeyPayload(mod));
                 }
                 keyPressedG = true;
             }

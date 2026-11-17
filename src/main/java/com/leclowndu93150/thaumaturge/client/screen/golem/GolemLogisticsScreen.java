@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -185,13 +185,13 @@ public final class GolemLogisticsScreen extends AbstractTTContainerScreen<MenuGo
     }
 
     private void onSearchChanged(String text) {
-        PacketDistributor.sendToServer(new ServerboundLogisticsSearchPayload(text));
+        PayloadNetwork.sendToServer(new ServerboundLogisticsSearchPayload(text));
     }
 
     private void sendRequest() {
         ItemStack stack = selectedStack();
         if (!stack.isEmpty()) {
-            PacketDistributor.sendToServer(
+            PayloadNetwork.sendToServer(
                     new ServerboundLogisticsRequestPayload(stack.copyWithCount(1), requestCount));
         }
     }

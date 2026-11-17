@@ -13,16 +13,16 @@ import net.minecraft.core.Holder;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public record ServerboundTablePlaceAspectPayload(BlockPos pos, int q, int r, Optional<ResourceLocation> aspect)
-        implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundTablePlaceAspectPayload> TYPE =
-            new CustomPacketPayload.Type<>(TTIds.rl("table_place_aspect"));
+        implements ModPayload {
+    public static final ModPayload.Type<ServerboundTablePlaceAspectPayload> TYPE =
+            new ModPayload.Type<>(TTIds.rl("table_place_aspect"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTablePlaceAspectPayload> STREAM_CODEC =
             StreamCodec.composite(
@@ -36,7 +36,7 @@ public record ServerboundTablePlaceAspectPayload(BlockPos pos, int q, int r, Opt
                     ServerboundTablePlaceAspectPayload::aspect,
                     ServerboundTablePlaceAspectPayload::new);
 
-    public static void handle(ServerboundTablePlaceAspectPayload payload, IPayloadContext context) {
+    public static void handle(ServerboundTablePlaceAspectPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             BlockEntityResearchTable table = BlockMenuGuard.target(context, payload.pos(), MenuResearchTable.class);
             if (table == null) {
@@ -54,7 +54,7 @@ public record ServerboundTablePlaceAspectPayload(BlockPos pos, int q, int r, Opt
     }
 
     @Override
-    public CustomPacketPayload.Type<ServerboundTablePlaceAspectPayload> type() {
+    public ModPayload.Type<ServerboundTablePlaceAspectPayload> type() {
         return TYPE;
     }
 }

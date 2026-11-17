@@ -21,7 +21,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class CloudRingClientHandler {
@@ -83,7 +83,7 @@ public final class CloudRingClientHandler {
         player.setDeltaMovement(launched);
         player.resetFallDistance();
         ForgeHooks.onLivingJump(player);
-        PacketDistributor.sendToServer(new ServerboundCloudJumpPayload());
+        PayloadNetwork.sendToServer(new ServerboundCloudJumpPayload());
         Level level = player.level();
         RandomSource random = player.getRandom();
         puff(level, player, random);

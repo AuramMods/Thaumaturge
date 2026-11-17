@@ -6,13 +6,13 @@ import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundFocusChangePayload(String focusKey) implements CustomPacketPayload {
+public record ServerboundFocusChangePayload(String focusKey) implements ModPayload {
     public static final Type<ServerboundFocusChangePayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "focus_change"));
 
@@ -22,7 +22,7 @@ public record ServerboundFocusChangePayload(String focusKey) implements CustomPa
                     ServerboundFocusChangePayload::focusKey,
                     ServerboundFocusChangePayload::new);
 
-    public static void handle(ServerboundFocusChangePayload payload, IPayloadContext ctx) {
+    public static void handle(ServerboundFocusChangePayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> {
             Player player = ctx.player();
             ItemStack main = player.getMainHandItem();
@@ -38,7 +38,7 @@ public record ServerboundFocusChangePayload(String focusKey) implements CustomPa
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

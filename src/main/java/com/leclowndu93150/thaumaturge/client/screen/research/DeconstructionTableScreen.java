@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class DeconstructionTableScreen extends AbstractTTContainerScreen<MenuDeconstructionTable> {
@@ -109,7 +109,7 @@ public final class DeconstructionTableScreen extends AbstractTTContainerScreen<M
                     && mouseX < leftPos + RESULT_X + RESULT_SIZE
                     && mouseY >= topPos + RESULT_Y
                     && mouseY < topPos + RESULT_Y + RESULT_SIZE) {
-                PacketDistributor.sendToServer(new ServerboundDeconCollectPayload(menu.pos()));
+                PayloadNetwork.sendToServer(new ServerboundDeconCollectPayload(menu.pos()));
                 if (minecraft != null && minecraft.player != null) {
                     minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TTSounds.HHON.get(), 1.0F, 0.3F));
                 }

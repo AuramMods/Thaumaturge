@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 public final class ThaumatoriumScreen extends AbstractTTContainerScreen<MenuThaumatorium> {
     private static final ResourceLocation TEXTURE = TTIds.rl("textures/gui/gui_thaumatorium.png");
@@ -191,7 +191,7 @@ public final class ThaumatoriumScreen extends AbstractTTContainerScreen<MenuThau
             int y = topPos + GRID_Y + py * CELL;
             if (mx >= x && my >= y && mx < x + CELL && my < y + CELL) {
                 if (menu.blockEntity != null) {
-                    PacketDistributor.sendToServer(new ServerboundThaumatoriumTogglePayload(
+                    PayloadNetwork.sendToServer(new ServerboundThaumatoriumTogglePayload(
                             menu.blockEntity.getBlockPos(), recipes.get(i).id()));
                 }
                 return true;

@@ -7,10 +7,10 @@ import net.minecraft.core.BlockPos;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 
-public record ClientboundTubeVentPayload(BlockPos pos, int color) implements CustomPacketPayload {
+public record ClientboundTubeVentPayload(BlockPos pos, int color) implements ModPayload {
     public static final Type<ClientboundTubeVentPayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "tube_vent"));
 
@@ -23,7 +23,7 @@ public record ClientboundTubeVentPayload(BlockPos pos, int color) implements Cus
                     ClientboundTubeVentPayload::new);
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

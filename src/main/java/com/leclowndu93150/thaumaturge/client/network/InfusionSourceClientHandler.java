@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityPedestal;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundInfusionSourcePayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class InfusionSourceClientHandler {
     private static final int PEDESTAL_FX_TICKS = 60;
@@ -13,7 +13,7 @@ public final class InfusionSourceClientHandler {
 
     private InfusionSourceClientHandler() {}
 
-    public static void handle(ClientboundInfusionSourcePayload payload, IPayloadContext ctx) {
+    public static void handle(ClientboundInfusionSourcePayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> dispatch(payload));
     }
 

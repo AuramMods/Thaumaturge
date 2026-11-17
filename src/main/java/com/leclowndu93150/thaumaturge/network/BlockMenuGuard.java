@@ -5,14 +5,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockMenuGuard {
     private BlockMenuGuard() {}
 
     public static <B extends BlockEntity> @Nullable B target(
-            IPayloadContext context, BlockPos pos, Class<? extends BlockMenu<B>> menuType) {
+            PayloadContext context, BlockPos pos, Class<? extends BlockMenu<B>> menuType) {
         if (!(context.player() instanceof ServerPlayer player)) {
             return null;
         }

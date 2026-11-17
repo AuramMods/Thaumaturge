@@ -8,14 +8,14 @@ import java.util.List;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public record ClientboundThaumatoriumRecipesPayload(int containerId, List<Entry> entries)
-        implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ClientboundThaumatoriumRecipesPayload> TYPE =
-            new CustomPacketPayload.Type<>(TTIds.rl("thaumatorium_recipes"));
+        implements ModPayload {
+    public static final ModPayload.Type<ClientboundThaumatoriumRecipesPayload> TYPE =
+            new ModPayload.Type<>(TTIds.rl("thaumatorium_recipes"));
 
     public record Entry(ResourceLocation id, ItemStack output, boolean queued, AspectList aspects) {
         public static final StreamCodec<RegistryFriendlyByteBuf, Entry> STREAM_CODEC = StreamCodec.composite(
@@ -39,7 +39,7 @@ public record ClientboundThaumatoriumRecipesPayload(int containerId, List<Entry>
                     ClientboundThaumatoriumRecipesPayload::new);
 
     @Override
-    public CustomPacketPayload.Type<ClientboundThaumatoriumRecipesPayload> type() {
+    public ModPayload.Type<ClientboundThaumatoriumRecipesPayload> type() {
         return TYPE;
     }
 }

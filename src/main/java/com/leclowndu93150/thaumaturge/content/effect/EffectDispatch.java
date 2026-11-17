@@ -7,7 +7,7 @@ import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayl
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 public final class EffectDispatch {
     private static final double DEFAULT_RADIUS = 64.0;
@@ -43,7 +43,7 @@ public final class EffectDispatch {
             double my) {
         ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.essentia(
                 from.x, from.y, from.z, to.x, to.y, to.z, color, count, scale, extend, my);
-        PacketDistributor.sendToPlayersNear(level, null, from.x, from.y, from.z, DEFAULT_RADIUS, payload);
+        PayloadNetwork.sendToPlayersNear(level, null, from.x, from.y, from.z, DEFAULT_RADIUS, payload);
     }
 
     public static void spawnVisSparkle(ServerLevel level, Vec3 origin, Vec3 target) {
@@ -59,7 +59,7 @@ public final class EffectDispatch {
     public static void spawnArc(ServerLevel level, Vec3 from, Vec3 to, int color, float gravityHint) {
         ClientboundStreamEffectPayload payload =
                 ClientboundStreamEffectPayload.arc(from.x, from.y, from.z, to.x, to.y, to.z, color, gravityHint);
-        PacketDistributor.sendToPlayersNear(level, null, from.x, from.y, from.z, DEFAULT_RADIUS, payload);
+        PayloadNetwork.sendToPlayersNear(level, null, from.x, from.y, from.z, DEFAULT_RADIUS, payload);
     }
 
     public static void spawnBolt(ServerLevel level, Vec3 from, Vec3 to, int color, float width) {
@@ -69,7 +69,7 @@ public final class EffectDispatch {
     public static void spawnBolt(ServerLevel level, Vec3 from, Vec3 to, int color, float width, int entityId) {
         ClientboundStreamEffectPayload payload =
                 ClientboundStreamEffectPayload.bolt(from.x, from.y, from.z, to.x, to.y, to.z, color, width, entityId);
-        PacketDistributor.sendToPlayersNear(level, null, from.x, from.y, from.z, DEFAULT_RADIUS, payload);
+        PayloadNetwork.sendToPlayersNear(level, null, from.x, from.y, from.z, DEFAULT_RADIUS, payload);
     }
 
     public static void spawnWisp(ServerLevel level, Vec3 origin) {
@@ -82,7 +82,7 @@ public final class EffectDispatch {
     }
 
     private static void broadcast(ServerLevel level, ParticleOptions options, Vec3 origin) {
-        PacketDistributor.sendToPlayersNear(
+        PayloadNetwork.sendToPlayersNear(
                 level,
                 null,
                 origin.x,

@@ -7,10 +7,10 @@ import net.minecraft.core.BlockPos;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 
 public record ClientboundBoreDigPayload(BlockPos target, int boreEntityId, BlockPos borePos, int delay)
-        implements CustomPacketPayload {
+        implements ModPayload {
     public static final Type<ClientboundBoreDigPayload> TYPE = new Type<>(TTIds.rl("bore_dig"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundBoreDigPayload> STREAM_CODEC =
             StreamCodec.composite(
@@ -25,7 +25,7 @@ public record ClientboundBoreDigPayload(BlockPos target, int boreEntityId, Block
                     ClientboundBoreDigPayload::new);
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

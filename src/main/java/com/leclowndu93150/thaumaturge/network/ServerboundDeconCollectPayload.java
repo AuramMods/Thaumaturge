@@ -8,19 +8,19 @@ import com.leclowndu93150.thaumaturge.content.research.decon.MenuDeconstructionT
 import net.minecraft.core.BlockPos;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundDeconCollectPayload(BlockPos pos) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundDeconCollectPayload> TYPE =
-            new CustomPacketPayload.Type<>(TTIds.rl("decon_collect"));
+public record ServerboundDeconCollectPayload(BlockPos pos) implements ModPayload {
+    public static final ModPayload.Type<ServerboundDeconCollectPayload> TYPE =
+            new ModPayload.Type<>(TTIds.rl("decon_collect"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundDeconCollectPayload> STREAM_CODEC =
             StreamCodec.composite(
                     VanillaStreamCodecs.BLOCK_POS, ServerboundDeconCollectPayload::pos, ServerboundDeconCollectPayload::new);
 
-    public static void handle(ServerboundDeconCollectPayload payload, IPayloadContext context) {
+    public static void handle(ServerboundDeconCollectPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             BlockEntityDeconstructionTable table =
                     BlockMenuGuard.target(context, payload.pos(), MenuDeconstructionTable.class);
@@ -31,7 +31,7 @@ public record ServerboundDeconCollectPayload(BlockPos pos) implements CustomPack
     }
 
     @Override
-    public CustomPacketPayload.Type<ServerboundDeconCollectPayload> type() {
+    public ModPayload.Type<ServerboundDeconCollectPayload> type() {
         return TYPE;
     }
 }

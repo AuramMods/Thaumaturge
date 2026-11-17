@@ -43,7 +43,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 public final class Effects {
     static final double DEFAULT_RADIUS = 64.0;
@@ -148,7 +148,7 @@ public final class Effects {
     }
 
     private static void sendBoreDig(ServerLevel level, BlockPos target, int boreEntityId, BlockPos borePos, int delay) {
-        PacketDistributor.sendToPlayersNear(
+        PayloadNetwork.sendToPlayersNear(
                 level,
                 null,
                 target.getX(),
@@ -290,7 +290,7 @@ public final class Effects {
 
     public static void spawn(
             ServerLevel level, ParticleOptions options, double x, double y, double z, double vx, double vy, double vz) {
-        PacketDistributor.sendToPlayersNear(
+        PayloadNetwork.sendToPlayersNear(
                 level,
                 null,
                 x,
@@ -311,7 +311,7 @@ public final class Effects {
     public static void scanGlyph(ServerPlayer viewer, double x, double y, double z, int color, int delay) {
         float brightness = (ARGB32.red(color) + ARGB32.green(color) + ARGB32.blue(color)) / (3.0F * 255.0F);
         ScanGlyphParticleOptions options = new ScanGlyphParticleOptions(color, delay, brightness >= 0.25F);
-        PacketDistributor.sendToPlayer(viewer, new ClientboundSpawnParticlePayload(options, x, y, z));
+        PayloadNetwork.sendToPlayer(viewer, new ClientboundSpawnParticlePayload(options, x, y, z));
     }
 
     public static void slash(
@@ -852,7 +852,7 @@ public final class Effects {
                     source.getId(),
                     false,
                     hit);
-            PacketDistributor.sendToPlayersNear(
+            PayloadNetwork.sendToPlayersNear(
                     level, null, source.getX(), source.getY(), source.getZ(), DEFAULT_RADIUS, payload);
         }
     }
@@ -925,7 +925,7 @@ public final class Effects {
                     BeamPayloadIds.NO_ENTITY,
                     true,
                     hit);
-            PacketDistributor.sendToPlayersNear(level, null, source.x, source.y, source.z, DEFAULT_RADIUS, payload);
+            PayloadNetwork.sendToPlayersNear(level, null, source.x, source.y, source.z, DEFAULT_RADIUS, payload);
         }
     }
 
@@ -1975,7 +1975,7 @@ public final class Effects {
         public void send() {
             ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.bore(
                     source.x, source.y, source.z, target.getId(), color, count, scale, extend, my);
-            PacketDistributor.sendToPlayersNear(level, null, source.x, source.y, source.z, DEFAULT_RADIUS, payload);
+            PayloadNetwork.sendToPlayersNear(level, null, source.x, source.y, source.z, DEFAULT_RADIUS, payload);
         }
     }
 
@@ -2010,7 +2010,7 @@ public final class Effects {
             if (target == null) return;
             ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.voidStream(
                     source.x, source.y, source.z, target.x, target.y, target.z, seed, scale);
-            PacketDistributor.sendToPlayersNear(level, null, source.x, source.y, source.z, DEFAULT_RADIUS, payload);
+            PayloadNetwork.sendToPlayersNear(level, null, source.x, source.y, source.z, DEFAULT_RADIUS, payload);
         }
     }
 

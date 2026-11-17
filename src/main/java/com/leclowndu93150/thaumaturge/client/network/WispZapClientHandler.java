@@ -8,14 +8,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class WispZapClientHandler {
     private static final float BOLT_WIDTH = 0.6F;
 
     private WispZapClientHandler() {}
 
-    public static void handle(ClientboundWispZapPayload payload, IPayloadContext ctx) {
+    public static void handle(ClientboundWispZapPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.level == null) {

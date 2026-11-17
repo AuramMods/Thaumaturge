@@ -45,7 +45,7 @@ import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuResearchTable> {
@@ -802,7 +802,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                 if (data != null && !data.complete()) {
                     ResearchNoteData.Cell cell = data.cellAt(hex);
                     if (cell != null && cell.type() == ResearchNoteData.TYPE_PLACED) {
-                        PacketDistributor.sendToServer(
+                        PayloadNetwork.sendToServer(
                                 new ServerboundTablePlaceAspectPayload(menu.pos(), hex.q(), hex.r(), Optional.empty()));
                         playSound(TTSounds.ERASE.get(), 0.2F, 1.0F);
                         return true;
@@ -825,7 +825,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
             } else if (hex != null && data != null && !data.complete()) {
                 ResearchNoteData.Cell cell = data.cellAt(hex);
                 if (cell != null && cell.type() == ResearchNoteData.TYPE_BLANK) {
-                    PacketDistributor.sendToServer(new ServerboundTablePlaceAspectPayload(
+                    PayloadNetwork.sendToServer(new ServerboundTablePlaceAspectPayload(
                             menu.pos(), hex.q(), hex.r(), Optional.of(AspectPools.idOf(draggedAspect))));
                     playSound(TTSounds.WRITE.get(), 0.2F, 1.0F);
                 }
@@ -942,7 +942,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
         int secondPoolAmount = pool().amount(AspectPools.idOf(select2)) - (select1.equals(select2) && !bonus1 ? 1 : 0);
         boolean bonus2 =
                 table != null && secondPoolAmount <= 0 && table.bonusAspects().amountOf(select2) > 0;
-        PacketDistributor.sendToServer(new ServerboundTableCombinePayload(
+        PayloadNetwork.sendToServer(new ServerboundTableCombinePayload(
                 menu.pos(), AspectPools.idOf(select1), AspectPools.idOf(select2), bonus1, bonus2));
         playSound(TTSounds.HHON.get(), 0.3F, 1.0F);
         return true;
@@ -978,7 +978,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                         .hasCompleted(BlockEntityResearchTable.RESEARCH_DUPLICATION)) {
             return false;
         }
-        PacketDistributor.sendToServer(new ServerboundTableDuplicatePayload(menu.pos()));
+        PayloadNetwork.sendToServer(new ServerboundTableDuplicatePayload(menu.pos()));
         playSound(TTSounds.CLACK.get(), 0.4F, 1.0F);
         return true;
     }

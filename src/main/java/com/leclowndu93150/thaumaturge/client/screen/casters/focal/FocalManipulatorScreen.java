@@ -32,7 +32,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -266,7 +266,7 @@ public final class FocalManipulatorScreen extends AbstractContainerScreen<MenuFo
         quietTicks = 0;
         lastSent = draft;
         lastSeen = draft;
-        PacketDistributor.sendToServer(new ServerboundSpellDraftPayload(menu.pos(), name, draft));
+        PayloadNetwork.sendToServer(new ServerboundSpellDraftPayload(menu.pos(), name, draft));
     }
 
     private void refresh() {

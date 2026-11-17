@@ -3,12 +3,12 @@ package com.leclowndu93150.thaumaturge.client.golem;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockEntityGolemBuilder;
 import com.leclowndu93150.thaumaturge.network.ClientboundGolemPressStuffPayload;
 import net.minecraft.client.Minecraft;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class GolemPressClientHandler {
     private GolemPressClientHandler() {}
 
-    public static void handle(ClientboundGolemPressStuffPayload payload, IPayloadContext context) {
+    public static void handle(ClientboundGolemPressStuffPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.level != null && mc.level.getBlockEntity(payload.pos()) instanceof BlockEntityGolemBuilder builder) {

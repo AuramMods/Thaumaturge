@@ -18,7 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class TaintEnvironmentEvents {
@@ -56,7 +56,7 @@ public final class TaintEnvironmentEvents {
         BlockPos pos = player.blockPosition();
         float pressure = TaintEcology.getSaturation(level, pos);
         float ambience = Math.max(pressure, biomeAmbience(level, pos));
-        PacketDistributor.sendToPlayer(player, new ClientboundTaintEnvironmentPayload(ambience));
+        PayloadNetwork.sendToPlayer(player, new ClientboundTaintEnvironmentPayload(ambience));
         spawnFumes(level, player, ambience);
         if (pressure >= SEVERE_ECOLOGY
                 && !ThaumaturgeCommonConfig.WUSS_MODE.get()

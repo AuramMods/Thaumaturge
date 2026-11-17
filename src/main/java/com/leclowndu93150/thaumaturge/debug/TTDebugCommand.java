@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class TTDebugCommand {
@@ -128,7 +128,7 @@ public final class TTDebugCommand {
         try {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
             TTDebugEvents.toggleRaycastDebug(player);
-            PacketDistributor.sendToPlayer(player, ClientboundToggleRaycastDebugPayload.INSTANCE);
+            PayloadNetwork.sendToPlayer(player, ClientboundToggleRaycastDebugPayload.INSTANCE);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
             ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));

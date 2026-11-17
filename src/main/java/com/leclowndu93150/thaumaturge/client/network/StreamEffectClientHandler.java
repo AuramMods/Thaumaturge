@@ -13,12 +13,12 @@ import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public final class StreamEffectClientHandler {
     private StreamEffectClientHandler() {}
 
-    public static void handle(ClientboundStreamEffectPayload payload, IPayloadContext ctx) {
+    public static void handle(ClientboundStreamEffectPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> dispatch(payload));
     }
 

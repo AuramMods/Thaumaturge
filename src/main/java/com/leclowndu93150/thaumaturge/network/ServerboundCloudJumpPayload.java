@@ -7,18 +7,18 @@ import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.ModList;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
-public record ServerboundCloudJumpPayload() implements CustomPacketPayload {
+public record ServerboundCloudJumpPayload() implements ModPayload {
     public static final Type<ServerboundCloudJumpPayload> TYPE = new Type<>(TTIds.rl("cloud_jump"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundCloudJumpPayload> STREAM_CODEC =
             StreamCodec.unit(new ServerboundCloudJumpPayload());
 
-    public static void handle(ServerboundCloudJumpPayload payload, IPayloadContext ctx) {
+    public static void handle(ServerboundCloudJumpPayload payload, PayloadContext ctx) {
         ctx.enqueueWork(() -> {
             Player player = ctx.player();
             if (!ModList.get().isLoaded(TTIds.CURIOS)
@@ -34,7 +34,7 @@ public record ServerboundCloudJumpPayload() implements CustomPacketPayload {
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

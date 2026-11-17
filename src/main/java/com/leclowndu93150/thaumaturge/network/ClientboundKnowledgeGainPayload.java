@@ -9,12 +9,12 @@ import java.util.Optional;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceKey;
 
 public record ClientboundKnowledgeGainPayload(
         KnowledgeType knowledgeType, Optional<ResourceKey<IResearchCategory>> category, int count)
-        implements CustomPacketPayload {
+        implements ModPayload {
     public static final Type<ClientboundKnowledgeGainPayload> TYPE = new Type<>(TTIds.rl("knowledge_gain"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundKnowledgeGainPayload> STREAM_CODEC =
@@ -28,7 +28,7 @@ public record ClientboundKnowledgeGainPayload(
                     ClientboundKnowledgeGainPayload::new);
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

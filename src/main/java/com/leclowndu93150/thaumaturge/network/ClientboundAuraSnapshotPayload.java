@@ -4,11 +4,11 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 
 public record ClientboundAuraSnapshotPayload(int chunkX, int chunkZ, short base, float vis, float flux)
-        implements CustomPacketPayload {
+        implements ModPayload {
     public static final Type<ClientboundAuraSnapshotPayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "aura_snapshot"));
 
@@ -27,7 +27,7 @@ public record ClientboundAuraSnapshotPayload(int chunkX, int chunkZ, short base,
                     ClientboundAuraSnapshotPayload::new);
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

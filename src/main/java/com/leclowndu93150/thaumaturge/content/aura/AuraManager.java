@@ -23,7 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class AuraManager {
@@ -207,7 +207,7 @@ public final class AuraManager {
         double z = pos.getZ() + POLLUTION_INSET + random.nextDouble() * POLLUTION_SPAN;
         ClientboundSpawnParticlePayload fume =
                 new ClientboundSpawnParticlePayload(TTParticles.POLLUTION_FUME.get(), x, y, z);
-        PacketDistributor.sendToPlayersNear(level, null, x, y, z, PARTICLE_RANGE, fume);
+        PayloadNetwork.sendToPlayersNear(level, null, x, y, z, PARTICLE_RANGE, fume);
     }
 
     private static final class DimensionState {

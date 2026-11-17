@@ -41,7 +41,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class ResearchManager {
@@ -224,7 +224,7 @@ public final class ResearchManager {
         knowledge.queueSync(player);
         int gained = knowledge.knowledgeLevel(type, key) - before;
         if (gained > 0) {
-            PacketDistributor.sendToPlayer(
+            PayloadNetwork.sendToPlayer(
                     player, new ClientboundKnowledgeGainPayload(type, Optional.ofNullable(key), gained));
         }
         return true;

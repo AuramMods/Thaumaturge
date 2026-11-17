@@ -20,7 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class MenuThaumatorium extends AbstractTTMenu implements BlockMenu<BlockEntityThaumatorium> {
@@ -80,7 +80,7 @@ public final class MenuThaumatorium extends AbstractTTMenu implements BlockMenu<
         if (lastCatalyst != null && queueSize == lastQueueSize && ItemStack.matches(catalyst, lastCatalyst)) {
             return;
         }
-        PacketDistributor.sendToPlayer(
+        PayloadNetwork.sendToPlayer(
                 player, new ClientboundThaumatoriumRecipesPayload(containerId, buildEntries(level, player, catalyst)));
         lastCatalyst = catalyst.copy();
         lastQueueSize = queueSize;

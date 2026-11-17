@@ -18,7 +18,7 @@ import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class AuraPollutionTest {
     @Test
     void pollutionUsesSourceRandomizedInsetAndSkipsHiddenOrNonPositiveEffects() {
         BlockPos pos = new BlockPos(10, 20, -5);
-        try (MockedStatic<PacketDistributor> packets = mockStatic(PacketDistributor.class)) {
+        try (MockedStatic<PayloadNetwork> packets = mockStatic(PayloadNetwork.class)) {
             AuraManager.taint(level, pos, 3.0F, false);
             AuraManager.taint(level, pos, 0.0F, true);
             AuraManager.taint(level, pos, -1.0F, true);
@@ -60,7 +60,7 @@ class AuraPollutionTest {
 
             ArgumentCaptor<ClientboundSpawnParticlePayload> payloadCaptor =
                     ArgumentCaptor.forClass(ClientboundSpawnParticlePayload.class);
-            packets.verify(() -> PacketDistributor.sendToPlayersNear(
+            packets.verify(() -> PayloadNetwork.sendToPlayersNear(
                     eq(level),
                     isNull(),
                     doubleThat(value -> Math.abs(value - 10.2) < 1.0E-9),

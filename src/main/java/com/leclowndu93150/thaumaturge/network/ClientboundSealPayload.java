@@ -7,9 +7,9 @@ import java.util.Optional;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 
-public record ClientboundSealPayload(SealPos pos, Optional<SealEntity> seal) implements CustomPacketPayload {
+public record ClientboundSealPayload(SealPos pos, Optional<SealEntity> seal) implements ModPayload {
     public static final Type<ClientboundSealPayload> TYPE = new Type<>(TTIds.rl("seal"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundSealPayload> STREAM_CODEC =
@@ -29,7 +29,7 @@ public record ClientboundSealPayload(SealPos pos, Optional<SealEntity> seal) imp
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

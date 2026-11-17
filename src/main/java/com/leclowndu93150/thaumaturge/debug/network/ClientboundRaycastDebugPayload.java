@@ -3,11 +3,11 @@ package com.leclowndu93150.thaumaturge.debug.network;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.HitResult;
 
-public record ClientboundRaycastDebugPayload(HitResult result) implements CustomPacketPayload {
+public record ClientboundRaycastDebugPayload(HitResult result) implements ModPayload {
 
     public static final Type<ClientboundRaycastDebugPayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "debug/raycast_result"));
@@ -19,7 +19,7 @@ public record ClientboundRaycastDebugPayload(HitResult result) implements Custom
                     ClientboundRaycastDebugPayload::new);
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

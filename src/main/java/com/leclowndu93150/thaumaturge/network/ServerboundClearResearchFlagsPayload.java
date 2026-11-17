@@ -9,13 +9,13 @@ import java.util.List;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
 public record ServerboundClearResearchFlagsPayload(ResourceLocation research, List<ResearchFlag> flags)
-        implements CustomPacketPayload {
+        implements ModPayload {
     public static final Type<ServerboundClearResearchFlagsPayload> TYPE = new Type<>(TTIds.rl("clear_research_flags"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundClearResearchFlagsPayload> STREAM_CODEC =
@@ -26,7 +26,7 @@ public record ServerboundClearResearchFlagsPayload(ResourceLocation research, Li
                     ServerboundClearResearchFlagsPayload::flags,
                     ServerboundClearResearchFlagsPayload::new);
 
-    public static void handle(ServerboundClearResearchFlagsPayload payload, IPayloadContext context) {
+    public static void handle(ServerboundClearResearchFlagsPayload payload, PayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer player)) return;
             var knowledge = PlayerResearchAccess.of(player);
@@ -42,7 +42,7 @@ public record ServerboundClearResearchFlagsPayload(ResourceLocation research, Li
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }

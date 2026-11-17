@@ -30,7 +30,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.PacketDistributor;
+import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.jspecify.annotations.Nullable;
 
 public final class WarpEvents {
@@ -166,7 +166,7 @@ public final class WarpEvents {
                 }
                 int counterAfterEvent =
                         (int) Math.min(warpCounter - 5.0, warpCounter - 2.0 * Math.sqrt(warpCounter) + 2.0 * gearWarp);
-                PacketDistributor.sendToPlayer(player, ClientboundWarpFXPayload.heartbeat());
+                PayloadNetwork.sendToPlayer(player, ClientboundWarpFXPayload.heartbeat());
                 wc.setCounter(counterAfterEvent);
                 if (eff > 0) {
                     dispatchEvent(player, eff, new Roll(effectiveWarp, nw, rand));
@@ -264,7 +264,7 @@ public final class WarpEvents {
     }
 
     private static void spawnMist(ServerPlayer player, int guardians) {
-        PacketDistributor.sendToPlayer(player, ClientboundWarpFXPayload.mist());
+        PayloadNetwork.sendToPlayer(player, ClientboundWarpFXPayload.mist());
         int count = Math.min(MAX_GUARDIANS, guardians);
         GuardianSpawner.spawn(player, count);
         WarpManager.sendActionBar(player, "warp.thaumaturge.text.6");

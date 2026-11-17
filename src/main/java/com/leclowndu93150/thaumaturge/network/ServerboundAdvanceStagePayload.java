@@ -5,10 +5,10 @@ import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import net.minecraft.resources.ResourceLocation;
 
-public record ServerboundAdvanceStagePayload(ResourceLocation research) implements CustomPacketPayload {
+public record ServerboundAdvanceStagePayload(ResourceLocation research) implements ModPayload {
     public static final Type<ServerboundAdvanceStagePayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "advance_stage"));
 
@@ -19,7 +19,7 @@ public record ServerboundAdvanceStagePayload(ResourceLocation research) implemen
                     ServerboundAdvanceStagePayload::new);
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<? extends ModPayload> type() {
         return TYPE;
     }
 }
