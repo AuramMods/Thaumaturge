@@ -244,7 +244,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
 
     private void syncAccessoryStates() {
         GolemAccessoryStates synced = accessoryStates.synced();
-        int size = synced.slots().isEmpty() ? 0 : synced.encodedSize(registryAccess());
+        int size = synced.slots().isEmpty() ? 0 : synced.encodedSize(level().registryAccess());
         if (size > ACCESSORY_SYNC_BUDGET_BYTES) {
             if (!accessorySyncOverBudget) {
                 accessorySyncOverBudget = true;
@@ -900,7 +900,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
         TTNbt.store(output, "props", GolemProperties.CODEC, registries, properties());
         TTNbt.store(output, "homepos", BlockPos.CODEC, registries, getRestrictCenter());
@@ -917,7 +917,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
         TTNbt.read(input, "props", GolemProperties.CODEC, registries).ifPresent(this::applyBuild);
         restrictTo(TTNbt.read(input, "homepos", BlockPos.CODEC, registries).orElse(blockPosition()), HOME_RANGE);

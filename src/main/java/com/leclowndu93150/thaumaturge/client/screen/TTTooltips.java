@@ -140,7 +140,7 @@ public final class TTTooltips {
         if (player == null) {
             return Optional.empty();
         }
-        return player.registryAccess()
+        return player.level().registryAccess()
                 .lookup(IResearchEntry.REGISTRY_KEY)
                 .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, id)))
                 .map(holder -> holder.value().nameKey());

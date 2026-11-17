@@ -321,7 +321,7 @@ public final class ResearchManager {
     }
 
     private static @Nullable IResearchEntry entryOf(ServerPlayer player, ResourceLocation id) {
-        return player.registryAccess()
+        return player.level().registryAccess()
                 .lookup(IResearchEntry.REGISTRY_KEY)
                 .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, id)))
                 .map(Holder.Reference::value)
@@ -406,7 +406,7 @@ public final class ResearchManager {
     }
 
     private static void notifyAddenda(ServerPlayer player, PlayerKnowledge knowledge, ResourceLocation completed) {
-        player.registryAccess()
+        player.level().registryAccess()
                 .lookup(IResearchEntry.REGISTRY_KEY)
                 .ifPresent(lookup -> lookup.listElements().forEach(holder -> {
                     ResourceLocation examinedId = holder.key().location();

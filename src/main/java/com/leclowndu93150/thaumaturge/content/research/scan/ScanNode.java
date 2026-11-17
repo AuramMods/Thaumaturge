@@ -121,6 +121,6 @@ public final class ScanNode implements IScannable {
     }
 
     private static Holder<IAspect> holder(Player player, ResourceKey<IAspect> key) {
-        return player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(key);
+        return player.level().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(key);
     }
 }

@@ -119,7 +119,7 @@ public final class SpellBat extends Monster implements TraceableEntity, IEntityW
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
         charge.save(output, registries);
         if (owner != null) output.putUUID("owner", owner);
@@ -128,7 +128,7 @@ public final class SpellBat extends Monster implements TraceableEntity, IEntityW
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
         charge.load(input, registries);
         owner = input.hasUUID("owner") ? input.getUUID("owner") : null;

@@ -66,7 +66,7 @@ public abstract class AbstractSpellCarrier extends Entity implements TraceableEn
 
     @Override
     protected final void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         charge.save(output, registries);
         if (owner != null) output.putUUID(OWNER_KEY, owner);
         output.putInt(AGE_KEY, tickCount);
@@ -76,7 +76,7 @@ public abstract class AbstractSpellCarrier extends Entity implements TraceableEn
 
     @Override
     protected final void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         charge.load(input, registries);
         owner = input.hasUUID(OWNER_KEY) ? input.getUUID(OWNER_KEY) : null;
         tickCount = (input.contains(AGE_KEY) ? input.getInt(AGE_KEY) : 0);

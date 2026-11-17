@@ -44,7 +44,7 @@ public record ServerboundTablePlaceAspectPayload(BlockPos pos, int q, int r, Opt
             }
             ServerPlayer player = (ServerPlayer) context.player();
             Holder<IAspect> holder = payload.aspect()
-                    .flatMap(id -> player.registryAccess()
+                    .flatMap(id -> player.level().registryAccess()
                             .lookupOrThrow(IAspect.REGISTRY_KEY)
                             .get(ResourceKey.create(IAspect.REGISTRY_KEY, id)))
                     .map(reference -> (Holder<IAspect>) reference)

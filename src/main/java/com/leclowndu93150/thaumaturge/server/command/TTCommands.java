@@ -468,7 +468,7 @@ public final class TTCommands {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         ResourceKey<IAspect> key = registryKey(ctx, "aspect", IAspect.REGISTRY_KEY, ERROR_INVALID_ASPECT);
         Holder<IAspect> aspect =
-                player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(key);
+                player.level().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(key);
         AspectPools.grantForCommand(player, aspect, amount);
         success(ctx.getSource(), "aspect.one", amount, key.location().toString());
         return Command.SINGLE_SUCCESS;
@@ -478,7 +478,7 @@ public final class TTCommands {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         ResourceKey<IAspect> key = registryKey(ctx, "aspect", IAspect.REGISTRY_KEY, ERROR_INVALID_ASPECT);
         Holder<IAspect> aspect =
-                player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(key);
+                player.level().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(key);
         ItemStack jar = new ItemStack(TTItems.JAR_NORMAL.get());
         ItemData.set(jar,
                 TTDataComponents.ESSENTIA_CONTENTS.get(),
@@ -492,7 +492,7 @@ public final class TTCommands {
 
     private static int giveReservoir(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
-        HolderLookup.RegistryLookup<IAspect> aspects = player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
+        HolderLookup.RegistryLookup<IAspect> aspects = player.level().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
         AspectList contents = parseAspectPairs(
                 ctx.getSource(),
                 aspects,
@@ -512,7 +512,7 @@ public final class TTCommands {
         BlockItem.setBlockEntityData(
                 stack,
                 TTBlockEntities.ESSENTIA_RESERVOIR.get(),
-                reservoir.saveWithoutMetadata(player.registryAccess()));
+                reservoir.saveWithoutMetadata(player.level().registryAccess()));
         if (!player.getInventory().add(stack)) {
             player.drop(stack, false);
         }
@@ -540,7 +540,7 @@ public final class TTCommands {
     private static int grantGate(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         ResourceKey<IResearchEntry> key = registryKey(ctx, "entry", IResearchEntry.REGISTRY_KEY, ERROR_INVALID_GATE);
-        Holder<IResearchEntry> holder = player.registryAccess()
+        Holder<IResearchEntry> holder = player.level().registryAccess()
                 .lookupOrThrow(IResearchEntry.REGISTRY_KEY)
                 .getOrThrow(key);
         String id = key.location().toString();
@@ -895,13 +895,13 @@ public final class TTCommands {
         ResourceLocation id = ResourceLocation.tryBuild(TTIds.MODID, tag);
         ResourceKey<IAspect> key = id == null ? null : ResourceKey.create(IAspect.REGISTRY_KEY, id);
         if (key == null
-                || player.registryAccess()
+                || player.level().registryAccess()
                         .lookupOrThrow(IAspect.REGISTRY_KEY)
                         .get(key)
                         .isEmpty()) {
             throw ERROR_INVALID_ASPECT.create(tag);
         }
-        player.getInventory().add(EssentiaCrystalFactory.of(player.registryAccess(), key));
+        player.getInventory().add(EssentiaCrystalFactory.of(player.level().registryAccess(), key));
         success(ctx.getSource(), "crystal", tag);
         return Command.SINGLE_SUCCESS;
     }

@@ -39,7 +39,7 @@ public final class ResearchToastEvents {
                 continue;
             }
             mc.player
-                    .registryAccess()
+                    .level().registryAccess()
                     .lookup(IResearchEntry.REGISTRY_KEY)
                     .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, research)))
                     .ifPresent(holder -> mc.getToasts()

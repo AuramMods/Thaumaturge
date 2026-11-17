@@ -44,7 +44,7 @@ public final class CelestialNotesItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         if (player instanceof ServerPlayer serverPlayer) {
             for (ResourceKey<IAspect> key : aspectsFor(bodyOf(stack))) {
-                Holder<IAspect> holder = Aspects.resolve(serverPlayer.registryAccess(), key);
+                Holder<IAspect> holder = Aspects.resolve(serverPlayer.level().registryAccess(), key);
                 if (holder != null) {
                     AspectPools.grant(serverPlayer, holder, STUDY_POINTS);
                 }

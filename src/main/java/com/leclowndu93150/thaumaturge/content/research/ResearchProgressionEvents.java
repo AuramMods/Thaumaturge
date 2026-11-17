@@ -92,7 +92,7 @@ public final class ResearchProgressionEvents {
     }
 
     private static boolean isCraftReference(ServerPlayer player, ItemStack crafted) {
-        return CraftReferenceHolder.isReference(player.registryAccess(), crafted.getItem());
+        return CraftReferenceHolder.isReference(player.level().registryAccess(), crafted.getItem());
     }
 
     @SubscribeEvent

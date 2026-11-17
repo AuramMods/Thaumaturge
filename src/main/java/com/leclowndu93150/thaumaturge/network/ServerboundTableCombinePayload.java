@@ -54,7 +54,7 @@ public record ServerboundTableCombinePayload(
     }
 
     private static @Nullable Holder<IAspect> resolve(ServerPlayer player, ResourceLocation id) {
-        return player.registryAccess()
+        return player.level().registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
                 .get(ResourceKey.create(IAspect.REGISTRY_KEY, id))
                 .map(reference -> (Holder<IAspect>) reference)

@@ -118,7 +118,7 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
         output.putBoolean(HOMING_KEY, homing);
         output.putFloat(SPLASH_KEY, splash);
         output.putDouble(GRAVITY_KEY, gravity);
-        charge.save(output, registryAccess());
+        charge.save(output, level().registryAccess());
     }
 
     @Override
@@ -129,7 +129,7 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
         homing = input.contains(HOMING_KEY) && input.getBoolean(HOMING_KEY);
         splash = input.contains(SPLASH_KEY) ? input.getFloat(SPLASH_KEY) : 0.0F;
         gravity = input.contains(GRAVITY_KEY) ? input.getDouble(GRAVITY_KEY) : 0.0;
-        charge.load(input, registryAccess());
+        charge.load(input, level().registryAccess());
     }
 
     @Override

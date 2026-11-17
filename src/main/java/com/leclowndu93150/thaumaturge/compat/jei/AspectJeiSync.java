@@ -115,7 +115,7 @@ public final class AspectJeiSync {
         }
         IIngredientManager ingredients = current.getIngredientManager();
         Set<ResourceLocation> changedIds = new HashSet<>();
-        player.registryAccess()
+        player.level().registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
                 .listElements()
                 .forEach(ref -> {

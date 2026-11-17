@@ -24,7 +24,7 @@ public final class ScanAspectDiscovery implements IScannable {
         if (target instanceof ScannedSky) {
             return false;
         }
-        Holder<IAspect> holder = player.registryAccess()
+        Holder<IAspect> holder = player.level().registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
                 .get(aspect)
                 .orElse(null);

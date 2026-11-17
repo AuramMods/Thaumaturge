@@ -126,7 +126,7 @@ public final class TaintedTrait implements MobTrait {
     @Override
     public AspectList aspects(LivingEntity mob) {
         Holder<IAspect> vitium =
-                mob.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.VITIUM);
+                mob.level().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.VITIUM);
         return AspectList.EMPTY.add(vitium, VITIUM);
     }
 

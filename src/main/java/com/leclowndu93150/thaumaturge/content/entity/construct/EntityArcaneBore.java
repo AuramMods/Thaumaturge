@@ -349,7 +349,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
         core.setCharge((input.contains("charge") ? input.getFloat("charge") : 0.0F));
         setFacing(Direction.values()[(input.contains("facing") ? input.getByte("facing") : (byte) 0)]);
@@ -358,7 +358,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
         output.putFloat("charge", core.charge());
         output.putByte("facing", (byte) getFacing().ordinal());

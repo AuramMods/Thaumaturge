@@ -282,7 +282,7 @@ public final class PlayerKnowledge implements PlayerResearch {
     }
 
     public void applyAutoUnlock(ServerPlayer player) {
-        player.registryAccess()
+        player.level().registryAccess()
                 .lookup(IResearchEntry.REGISTRY_KEY)
                 .ifPresent(lookup -> lookup.listElements().forEach(holder -> {
                     if (!holder.value().hasMeta(ResearchEntryMeta.AUTOUNLOCK)) {

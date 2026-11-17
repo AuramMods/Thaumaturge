@@ -35,7 +35,7 @@ public final class ResearchGrants {
     }
 
     private static Holder<IAspect> randomPrimal(ServerPlayer player) {
-        List<Holder.Reference<IAspect>> primals = player.registryAccess()
+        List<Holder.Reference<IAspect>> primals = player.level().registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
                 .listElements()
                 .filter(aspect -> aspect.value().isPrimal())
@@ -44,7 +44,7 @@ public final class ResearchGrants {
     }
 
     private static Holder<IAspect> randomDiscoveredCompound(ServerPlayer player) {
-        List<Holder.Reference<IAspect>> compounds = player.registryAccess()
+        List<Holder.Reference<IAspect>> compounds = player.level().registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
                 .listElements()
                 .filter(aspect -> !aspect.value().isPrimal())
@@ -58,7 +58,7 @@ public final class ResearchGrants {
 
     public static int grantAll(ServerPlayer player) {
         PlayerKnowledge knowledge = (PlayerKnowledge) PlayerResearchAccess.of(player);
-        List<Holder.Reference<IResearchEntry>> entries = player.registryAccess()
+        List<Holder.Reference<IResearchEntry>> entries = player.level().registryAccess()
                 .lookupOrThrow(IResearchEntry.REGISTRY_KEY)
                 .listElements()
                 .toList();
@@ -97,7 +97,7 @@ public final class ResearchGrants {
                         player, new ClientboundKnowledgeGainPayload(KnowledgeType.OBSERVATION, category, 1));
             }
         }
-        for (Holder.Reference<IAspect> aspect : player.registryAccess()
+        for (Holder.Reference<IAspect> aspect : player.level().registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
                 .listElements()
                 .toList()) {
@@ -117,7 +117,7 @@ public final class ResearchGrants {
     public static void forgetAspects(ServerPlayer player) {
         AspectPools.resetForCommand(player);
         PlayerResearch knowledge = PlayerResearchAccess.of(player);
-        for (Holder.Reference<IAspect> aspect : player.registryAccess()
+        for (Holder.Reference<IAspect> aspect : player.level().registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
                 .listElements()
                 .toList()) {

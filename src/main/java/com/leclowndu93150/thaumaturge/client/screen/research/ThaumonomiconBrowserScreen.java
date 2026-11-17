@@ -217,7 +217,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
         ResourceLocation entryId = persistedEntryId;
         return minecraft
                 .player
-                .registryAccess()
+                .level().registryAccess()
                 .lookup(IResearchEntry.REGISTRY_KEY)
                 .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, entryId)))
                 .<Screen>map(holder -> new EntryDetailScreen(holder, entryId, browser))
@@ -305,7 +305,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
         allEntries.clear();
         minecraft
                 .player
-                .registryAccess()
+                .level().registryAccess()
                 .lookup(IResearchCategory.REGISTRY_KEY)
                 .ifPresent(lookup -> lookup.listElements()
                         .forEach(ref -> ref.unwrapKey().ifPresent(key -> {
@@ -318,7 +318,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
         categoriesTT.sort(Comparator.comparingInt(ref -> ref.value().index()));
         minecraft
                 .player
-                .registryAccess()
+                .level().registryAccess()
                 .lookup(IResearchEntry.REGISTRY_KEY)
                 .ifPresent(lookup -> lookup.listElements()
                         .forEach(holder -> holder.unwrapKey().ifPresent(key -> {

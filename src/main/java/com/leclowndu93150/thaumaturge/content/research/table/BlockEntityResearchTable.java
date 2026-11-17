@@ -277,7 +277,7 @@ public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity im
 
     private @Nullable Holder<IAspect> combinationResult(
             ServerPlayer player, Holder<IAspect> first, Holder<IAspect> second) {
-        return AspectCombinations.result(player.registryAccess(), first, second);
+        return AspectCombinations.result(player.level().registryAccess(), first, second);
     }
 
     public void duplicateNote(ServerPlayer player) {
@@ -310,7 +310,7 @@ public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity im
     }
 
     public @Nullable AspectList duplicationCost(Player player, ResearchNoteData data) {
-        IResearchEntry entry = player.registryAccess()
+        IResearchEntry entry = player.level().registryAccess()
                 .lookupOrThrow(IResearchEntry.REGISTRY_KEY)
                 .get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, data.entry()))
                 .map(Holder.Reference::value)

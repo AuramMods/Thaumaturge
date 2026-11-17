@@ -318,14 +318,14 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements Ranged
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
         output.putBoolean(HEADLESS_KEY, isHeadless());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
         entityData.set(HEADLESS, (input.contains(HEADLESS_KEY) ? input.getBoolean(HEADLESS_KEY) : false));
         if (isHeadless()) {

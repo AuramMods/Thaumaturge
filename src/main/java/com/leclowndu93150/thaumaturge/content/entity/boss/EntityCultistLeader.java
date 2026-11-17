@@ -172,14 +172,14 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
         output.putByte(BossTitles.SAVE_KEY, (byte) title);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
         title = TITLES.clamp((input.contains(BossTitles.SAVE_KEY) ? input.getByte(BossTitles.SAVE_KEY) : (byte) 0));
     }

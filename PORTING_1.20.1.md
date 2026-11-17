@@ -4,7 +4,7 @@
 
 Port the complete Thaumaturge feature set at the pinned 1.21.1 baseline to Minecraft **1.20.1 on Forge**, preserving gameplay, progression, content, visuals, persistence, and multiplayer behavior. Compilation or reaching the title screen does not constitute completion.
 
-**Status: implementation in progress.** The Forge build resolves target dependencies and reaches Java 17 source compilation, which still fails on unresolved platform APIs. A headless Forge-transformed test entry point passes 97 focused foundation tests; no full mod client or world server has launched. Gameplay/runtime acceptance remains pending.
+**Status: implementation in progress.** The Forge build resolves target dependencies and reaches Java 17 source compilation, which still fails on unresolved platform APIs. A headless Forge-transformed test entry point passes 136 focused foundation tests; no full mod client or world server has launched. Gameplay/runtime acceptance remains pending.
 
 ## Baseline
 
@@ -154,7 +154,9 @@ For each following cycle, record the subsystem, changes, exact commands and outc
 
 | 016 — Block construction codecs | Retained all existing block codec definitions through an owned 1.20.1-compatible properties/simple-codec helper; adapted 105 source files | 126/126 native Forge foundation tests pass. Full diagnostic compile: 3,766 errors in 831 files; no unresolved block codec helpers. Full build/gameplay still pending | `8e043a633` |
 
-| 017 — Java 17 libraries and bootstrap types | Ported 31 clamps, 31 list endpoints, two reverse views, list prepending and 62 datagen context references across 74 production files | 136/136 native Forge tests pass; 4,532 clamp comparisons match real Java 21. Full compile still fails: 3,642 errors in 790 files | Containing commit |
+| 017 — Java 17 libraries and bootstrap types | Ported 31 clamps, 31 list endpoints, two reverse views, list prepending and 62 datagen context references across 74 production files | 136/136 native Forge tests pass; 4,532 clamp comparisons match real Java 21. Full compile still fails: 3,642 errors in 790 files | `b2010ae7e` |
+
+| 018 — Entity registry access | Replaced 85 newer entity registry convenience calls with native access through the entity’s current level across 43 files | Pinned baseline bytecode confirms the exact delegation. Full compile still fails: 3,557 errors in 775 files, zero missing registryAccess methods. World/network/progression runtime remains pending | Containing commit |
 
 ## Cycle 001 evidence and next work
 
@@ -334,3 +336,10 @@ For each following cycle, record the subsystem, changes, exact commands and outc
 - `./gradlew runForgePortTests --console=plain` using the recorded toolchains passes **136/136 tests**, 0 failed/skipped/aborted, 23 successful containers (`forge-tests.log`, `native-test-summary.json`). The **10 new tests** cover list order/null/empty/exception contracts, mutable and immutable reverse views, integral overflow boundaries, floating invalid bounds/NaN/infinities and signed zero. This is still the focused foundation suite, not the original complete mod suite.
 - The expanded full Java 17 compile terminates normally with **3,642 errors in 790 files** (`main-compile-expanded.log`, `diagnostics-expanded.json`). No migrated BootstrapContext/list/clamp API diagnostics remain. Recipe/input/serializer conversion, native entity/level registry lookup, capabilities, rendering and integrations are among the large remaining groups. The entire main source set remains included.
 - No game window, audio or world server was launched. Next: continue native context/API conversion and recipes, then run the complete tests/datagen and live acceptance as those become buildable. Full operational parity is not achieved.
+
+## Cycle 018 evidence and next work
+
+- Inspected pinned official 1.21.1 `Entity.registryAccess()` bytecode: it delegates directly to `level().registryAccess()` (`build/port-evidence/cycle-018/reference-entity-methods.txt`, `reference-entity-registry-bytecode.txt`). Confirmed the actual Forge 47.4.29 Entity exposes `level()` and lacks the newer convenience method (`native-entity-signatures.txt`).
+- Replaced **85** compiler-identified convenience calls in **43 files** with that exact native delegation, including research screens/commands, client/server packet handlers, mobs/constructs/bosses and spell carriers. No lookup is cached; each call follows its entity's current world. Explicit and bare inherited calls retain their original receivers. `entity-registry-lookups.json` records every original and replacement line. Registry keys and handler/AI/progression logic are unchanged.
+- The expanded full Java 17 compile terminates normally with **3,557 errors in 775 files**, exactly 85 fewer diagnostics, and **zero** missing registryAccess methods (`main-compile-expanded.log`, `diagnostics-expanded.json`). The full mod still fails to compile. No new behavior test was added for a delegation identical to the inspected baseline; cycle 017's 136/136 focused Forge result remains the latest foundation-suite run and is not new live-world validation.
+- No game window, audio or world server was launched. Next: Forge tick events, recipes and remaining native gameplay/client/integration APIs. World switching, entity lifecycle, registry ownership, packet validation and progression still require complete live acceptance.

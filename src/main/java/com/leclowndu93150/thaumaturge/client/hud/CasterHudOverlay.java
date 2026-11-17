@@ -142,9 +142,9 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
         boolean hasFocus = FocusItems.isFocus(focusStack);
         Map<ResourceKey<IAspect>, Integer> costSplit = null;
         Optional<SpellSummary> summary =
-                hasFocus ? FocusItems.summary(focusStack, player.registryAccess(), null) : Optional.empty();
+                hasFocus ? FocusItems.summary(focusStack, player.level().registryAccess(), null) : Optional.empty();
         if (summary.isPresent() && summary.get().vis() > 0.0F) {
-            costSplit = FocusItems.visSplit(summary.get(), 1.0F, player.registryAccess());
+            costSplit = FocusItems.visSplit(summary.get(), 1.0F, player.level().registryAccess());
         }
         float costModifier = wand.visCostFactor(casterStack, player, false);
         boolean sneak = player.isShiftKeyDown();
@@ -273,7 +273,7 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
         graphics.pose().popPose();
 
         if (hasFocus) {
-            BlockState picked = picksBlocks(focusStack, player.registryAccess())
+            BlockState picked = picksBlocks(focusStack, player.level().registryAccess())
                     ? wand.rememberedBlock(player.getMainHandItem())
                     : null;
             ItemStack pickedStack = picked == null

@@ -127,7 +127,7 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        TTNbt.store(output, "Block", BlockState.CODEC, registryAccess(), fallTile);
+        TTNbt.store(output, "Block", BlockState.CODEC, level().registryAccess(), fallTile);
         output.putLong("Origin", originPos.asLong());
         output.putInt("Time", fallTime);
     }
@@ -139,7 +139,7 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
         if (!resolved.isAir()) {
             fallTile = resolved;
         }
-        TTNbt.read(input, "Block", BlockState.CODEC, registryAccess())
+        TTNbt.read(input, "Block", BlockState.CODEC, level().registryAccess())
                 .filter(state -> !state.isAir())
                 .ifPresent(state -> fallTile = state);
         originPos = BlockPos.of(input.getLong("Origin"));

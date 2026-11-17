@@ -87,17 +87,17 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
-        charge.save(output, registryAccess());
+        charge.save(output, level().registryAccess());
         TTNbt.store(output, TRAP_KEY, Trap.CODEC, registries, new Trap(armed(), allies));
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
-        charge.load(input, registryAccess());
+        charge.load(input, level().registryAccess());
         Trap trap = TTNbt.read(input, TRAP_KEY, Trap.CODEC, registries).orElse(Trap.UNSET);
         entityData.set(ARMED, trap.armed());
         allies = trap.allies();

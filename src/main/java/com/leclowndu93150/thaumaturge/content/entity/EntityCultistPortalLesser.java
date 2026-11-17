@@ -152,14 +152,14 @@ public class EntityCultistPortalLesser extends Monster {
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
         output.putBoolean("active", this.isActive());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
         this.setActive((input.contains("active") ? input.getBoolean("active") : false));
     }

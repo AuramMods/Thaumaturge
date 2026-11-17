@@ -119,7 +119,7 @@ public final class ResearchNotes {
 
     public static boolean obtainNote(ServerPlayer player, ResourceLocation entryId, int ordinal) {
         ResourceKey<IResearchEntry> key = ResourceKey.create(IResearchEntry.REGISTRY_KEY, entryId);
-        IResearchEntry entry = player.registryAccess()
+        IResearchEntry entry = player.level().registryAccess()
                 .lookupOrThrow(IResearchEntry.REGISTRY_KEY)
                 .get(key)
                 .map(holder -> holder.value())
@@ -139,7 +139,7 @@ public final class ResearchNotes {
         }
         consumeInk(player, false);
         consumeItem(player, Items.PAPER);
-        AspectList anchors = anchors(player.registryAccess(), entry);
+        AspectList anchors = anchors(player.level().registryAccess(), entry);
         ResearchNoteData data =
                 NoteGenerator.generate(entryId, ordinal, anchors, entry.complexity(), player.getRandom());
         ItemStack note = new ItemStack(TTItems.RESEARCH_NOTE.get());

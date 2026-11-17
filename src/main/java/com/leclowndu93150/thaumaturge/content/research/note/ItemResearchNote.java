@@ -54,7 +54,7 @@ public final class ItemResearchNote extends Item {
                     1.0F);
             serverPlayer.sendSystemMessage(Component.translatable(
                             "message.thaumaturge.research_note.learned",
-                            ResearchNotes.entryName(serverPlayer.registryAccess(), data.entry()))
+                            ResearchNotes.entryName(serverPlayer.level().registryAccess(), data.entry()))
                     .withStyle(ChatFormatting.DARK_PURPLE));
             ResearchManager.advanceStage(serverPlayer, data.entry());
         }

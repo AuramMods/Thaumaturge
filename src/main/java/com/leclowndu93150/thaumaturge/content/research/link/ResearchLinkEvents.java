@@ -144,7 +144,7 @@ public final class ResearchLinkEvents {
     private static void applyUnion(ServerPlayer player, ResearchLinkData.Link link) {
         PlayerKnowledge knowledge = (PlayerKnowledge) PlayerResearchAccess.of(player);
         HolderLookup.RegistryLookup<IResearchEntry> entries =
-                player.registryAccess().lookupOrThrow(IResearchEntry.REGISTRY_KEY);
+                player.level().registryAccess().lookupOrThrow(IResearchEntry.REGISTRY_KEY);
         boolean changed = false;
         boolean progressed;
         do {

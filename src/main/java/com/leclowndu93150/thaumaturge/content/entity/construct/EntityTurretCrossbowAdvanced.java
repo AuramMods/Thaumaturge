@@ -179,14 +179,14 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
         entityData.set(FLAGS, (input.contains("targets") ? input.getByte("targets") : (byte) 0));
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
         output.putByte("targets", entityData.get(FLAGS));
     }

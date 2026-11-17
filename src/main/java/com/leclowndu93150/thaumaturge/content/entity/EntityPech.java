@@ -392,14 +392,14 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
         PechSavedState.save(output, registries, this.loot, this.isDomesticated(), this.rageTicks(), this.variant());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
         PechSavedState.State saved = PechSavedState.load(input, registries);
         this.loot = saved.loot();

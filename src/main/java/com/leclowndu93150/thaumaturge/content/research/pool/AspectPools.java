@@ -211,7 +211,7 @@ public final class AspectPools {
 
     public static int grantAllForCommand(ServerPlayer player, int amount) {
         AspectPoolData data = data(player);
-        List<Holder.Reference<IAspect>> aspects = player.registryAccess()
+        List<Holder.Reference<IAspect>> aspects = player.level().registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
                 .listElements()
                 .toList();

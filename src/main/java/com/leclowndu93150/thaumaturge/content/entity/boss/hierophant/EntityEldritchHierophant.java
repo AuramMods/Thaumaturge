@@ -517,7 +517,7 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
         TTNbt.store(output, "ArenaOrigin", Vec3.CODEC, registries, arenaOrigin());
         TTNbt.store(output, "Awakened", Codec.BOOL, registries, awakened());
@@ -527,7 +527,7 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
         arenaOrigin = TTNbt.read(input, "ArenaOrigin", Vec3.CODEC, registries).orElse(position());
         entityData.set(

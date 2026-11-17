@@ -482,7 +482,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
     private int activeKnowledgeRowCount() {
         if (minecraft == null || minecraft.player == null) return 0;
         PlayerResearch knowledge = PlayerResearchAccess.of(minecraft.player);
-        HolderLookup.Provider registries = minecraft.player.registryAccess();
+        HolderLookup.Provider registries = minecraft.player.level().registryAccess();
         Optional<? extends HolderLookup.RegistryLookup<IResearchCategory>> lookupOpt =
                 registries.lookup(IResearchCategory.REGISTRY_KEY);
         if (lookupOpt.isEmpty()) return 0;
@@ -1031,7 +1031,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
     private void drawPrereqIcon(GuiGraphics graphics, int x, int y, ResourceLocation prereq) {
         Optional<Holder.Reference<IResearchEntry>> entry = minecraft
                 .player
-                .registryAccess()
+                .level().registryAccess()
                 .lookup(IResearchEntry.REGISTRY_KEY)
                 .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, prereq)));
         if (entry.isPresent()) {
@@ -1810,7 +1810,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
 
     private AspectList knownAspects() {
         if (minecraft == null || minecraft.player == null) return AspectList.EMPTY;
-        HolderLookup.Provider registries = minecraft.player.registryAccess();
+        HolderLookup.Provider registries = minecraft.player.level().registryAccess();
         Optional<? extends HolderLookup.RegistryLookup<IAspect>> lookupOpt = registries.lookup(IAspect.REGISTRY_KEY);
         if (lookupOpt.isEmpty()) return AspectList.EMPTY;
         HolderLookup.RegistryLookup<IAspect> lookup = lookupOpt.get();
@@ -1856,7 +1856,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
         if (minecraft == null || minecraft.player == null) return false;
         PlayerResearch knowledge = PlayerResearchAccess.of(minecraft.player);
         Optional<? extends HolderLookup.RegistryLookup<IResearchCategory>> lookupOpt =
-                minecraft.player.registryAccess().lookup(IResearchCategory.REGISTRY_KEY);
+                minecraft.player.level().registryAccess().lookup(IResearchCategory.REGISTRY_KEY);
         if (lookupOpt.isEmpty()) return false;
         for (Holder.Reference<IResearchCategory> ref :
                 lookupOpt.get().listElements().toList()) {
@@ -1872,7 +1872,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
     private void drawKnowledges(GuiGraphics graphics, int x, int y, int mouseX, int mouseY, boolean inpage) {
         if (minecraft == null || minecraft.player == null) return;
         PlayerResearch knowledge = PlayerResearchAccess.of(minecraft.player);
-        HolderLookup.Provider registries = minecraft.player.registryAccess();
+        HolderLookup.Provider registries = minecraft.player.level().registryAccess();
         Optional<? extends HolderLookup.RegistryLookup<IResearchCategory>> lookupOpt =
                 registries.lookup(IResearchCategory.REGISTRY_KEY);
         if (lookupOpt.isEmpty()) return;

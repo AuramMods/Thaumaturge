@@ -168,11 +168,11 @@ public abstract class AbstractHierophantSpell extends Entity {
 
     @Override
     protected final void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
     }
 
     @Override
     protected final void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
     }
 }

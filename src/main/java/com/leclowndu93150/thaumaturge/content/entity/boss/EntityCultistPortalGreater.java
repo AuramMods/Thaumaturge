@@ -71,14 +71,14 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
         output.putInt("stage", this.stage);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
         this.stage = (input.contains("stage") ? input.getInt("stage") : 0);
     }

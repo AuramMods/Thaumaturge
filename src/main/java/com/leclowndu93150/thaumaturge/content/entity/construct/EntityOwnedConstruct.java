@@ -190,7 +190,7 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.addAdditionalSaveData(output);
         output.putBoolean(COMMISSIONED_KEY, commissioned);
         if (getOwnerUUID() != null) output.putUUID(MASTER_KEY, getOwnerUUID());
@@ -198,7 +198,7 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
+        HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
         commissioned = (input.contains(COMMISSIONED_KEY) ? input.getBoolean(COMMISSIONED_KEY) : false);
         entityData.set(MASTER, input.hasUUID(MASTER_KEY) ? Optional.of(input.getUUID(MASTER_KEY)) : Optional.empty());

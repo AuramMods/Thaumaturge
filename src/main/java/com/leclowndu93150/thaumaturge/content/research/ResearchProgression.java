@@ -105,7 +105,7 @@ public final class ResearchProgression {
     }
 
     private static HolderLookup.RegistryLookup<IResearchEntry> entries(ServerPlayer player) {
-        return player.registryAccess().lookupOrThrow(IResearchEntry.REGISTRY_KEY);
+        return player.level().registryAccess().lookupOrThrow(IResearchEntry.REGISTRY_KEY);
     }
 
     private static void collect(

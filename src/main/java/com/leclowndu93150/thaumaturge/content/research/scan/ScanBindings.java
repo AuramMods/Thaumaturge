@@ -26,7 +26,7 @@ public final class ScanBindings implements ScanningManager.Bindings {
             return false;
         }
         boolean hasEntry = serverPlayer
-                .registryAccess()
+                .level().registryAccess()
                 .lookupOrThrow(IResearchEntry.REGISTRY_KEY)
                 .get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, research))
                 .isPresent();

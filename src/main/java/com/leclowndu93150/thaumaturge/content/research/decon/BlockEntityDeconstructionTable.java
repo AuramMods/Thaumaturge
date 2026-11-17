@@ -119,7 +119,7 @@ public final class BlockEntityDeconstructionTable extends AbstractSyncedBlockEnt
         if (resultAspect == null || getLevel() == null) {
             return;
         }
-        HolderLookup.RegistryLookup<IAspect> lookup = player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
+        HolderLookup.RegistryLookup<IAspect> lookup = player.level().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
         ResourceLocation collected = resultAspect;
         lookup.get(ResourceKey.create(IAspect.REGISTRY_KEY, collected)).ifPresent(holder -> {
             AspectPools.grant(player, holder, 1);
