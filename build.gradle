@@ -30,8 +30,7 @@ minecraft {
         }
         client {
             workingDirectory project.file('run/client')
-            property 'fml.earlyprogresswindow', 'false'
-            property 'thaumaturge.backgroundTest', 'true'
+            property 'apple.awt.UIElement', 'true'
         }
         server {
             workingDirectory project.file('run/server')
@@ -53,6 +52,13 @@ mixin {
 }
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
+
+// Separate source sets let the window controls be tested before the mod compiles.
+// Neither the agent nor its dependencies enter the distributable mod JAR.
+sourceSets {
+    backgroundAgent { java.srcDir 'porting/testing/java' }
+    backgroundSmoke { java.srcDir 'porting/testing/smoke' }
+}
 
 repositories {
     mavenCentral()
@@ -84,6 +90,11 @@ dependencies {
     testImplementation fg.deobf("maven.modrinth:jade:${jade_version}")
     testImplementation fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    backgroundAgentImplementation 'org.ow2.asm:asm:9.7.1'
+    backgroundSmokeImplementation 'org.lwjgl:lwjgl-glfw:3.3.1'
+    backgroundSmokeRuntimeOnly 'org.lwjgl:lwjgl:3.3.1:natives-macos-arm64'
+    backgroundSmokeRuntimeOnly 'org.lwjgl:lwjgl-glfw:3.3.1:natives-macos-arm64'
 
     // Run with -PportIntegrations to exercise optional JEI and Jade integration.
     if (providers.gradleProperty('portIntegrations').isPresent()) {
@@ -120,8 +131,30 @@ jar {
     finalizedBy 'reobfJar'
 }
 
-// Test settings are local to dedicated profiles. Background window control is
-// implemented separately before the first graphical run; these settings mute it.
+// Use Zip so MixinGradle does not attach the main mod's mixins/compilation to
+// this independent Java instrumentation archive.
+def backgroundAgentJar = tasks.register('backgroundAgentJar', Zip) {
+    destinationDirectory = layout.buildDirectory.dir('libs')
+    archiveExtension = 'jar'
+    archiveClassifier = 'background-test-agent'
+    from sourceSets.backgroundAgent.output
+    from({ configurations.backgroundAgentRuntimeClasspath.collect { zipTree(it) } }) {
+        exclude 'META-INF/MANIFEST.MF', 'META-INF/*.SF', 'META-INF/*.RSA'
+    }
+    from('porting/testing/MANIFEST.MF') { into 'META-INF' }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register('runBackgroundWindowSmoke', JavaExec) {
+    dependsOn backgroundAgentJar
+    classpath = sourceSets.backgroundSmoke.runtimeClasspath
+    mainClass = 'com.aurammods.thaumaturge.testing.BackgroundWindowSmoke'
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(17) }
+    doFirst { jvmArgs "-javaagent:${backgroundAgentJar.get().archiveFile.get().asFile}" }
+    jvmArgs '-XstartOnFirstThread', '-Dapple.awt.UIElement=true'
+}
+
+// Test settings are local to dedicated profiles.
 def prepareClientProfile = tasks.register('prepareClientProfile') {
     doLast {
         def profile = file('run/client')
@@ -133,6 +166,13 @@ def prepareClientProfile = tasks.register('prepareClientProfile') {
         settings.removeAll { line -> overrides.containsKey(line.split(':', 2)[0]) }
         settings.addAll(overrides.collect { key, value -> "${key}:${value}" })
         options.setText(settings.join('\n') + '\n', 'UTF-8')
+        def configDirectory = new File(profile, 'config')
+        configDirectory.mkdirs()
+        def fmlConfig = new File(configDirectory, 'fml.toml')
+        def fmlSettings = fmlConfig.exists() ? fmlConfig.readLines('UTF-8') : []
+        fmlSettings.removeAll { it ==~ /\s*earlyWindowControl\s*=.*/ }
+        fmlSettings.add('earlyWindowControl = false')
+        fmlConfig.setText(fmlSettings.join('\n') + '\n', 'UTF-8')
     }
 }
 def prepareTestServers = tasks.register('prepareTestServers') {
@@ -144,5 +184,9 @@ def prepareTestServers = tasks.register('prepareTestServers') {
         }
     }
 }
-tasks.matching { it.name == 'runClient' }.configureEach { dependsOn prepareClientProfile }
+// This run configuration is solely for background testing on the user's Mac.
+minecraft.runs.client.jvmArg "-javaagent:${backgroundAgentJar.get().archiveFile.get().asFile}"
+tasks.matching { it.name == 'runClient' }.configureEach {
+    dependsOn prepareClientProfile, backgroundAgentJar
+}
 tasks.matching { it.name in ['runServer', 'runGameTestServer'] }.configureEach { dependsOn prepareTestServers }
