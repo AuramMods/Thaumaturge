@@ -1,0 +1,131 @@
+# Thaumaturge Forge 1.20.1 port tracker
+
+## Objective and current status
+
+Port the complete Thaumaturge feature set at the pinned 1.21.1 baseline to Minecraft **1.20.1 on Forge**, preserving gameplay, progression, content, visuals, persistence, and multiplayer behavior. Compilation or reaching the title screen does not constitute completion.
+
+**Status: investigation and planning complete; implementation has not started.** No build, tests, server, or game client was run during planning. This file and `PORT_GOAL_1.20.1.md` are the planning deliverables. Implementation starts when the user submits the goal prompt in goal mode.
+
+## Baseline
+
+| Item | Observed value |
+| --- | --- |
+| Investigation date | 2026-11-17 |
+| Repository | `https://github.com/AuramMods/Thaumaturge.git` |
+| Working branch | `1.20.1`, created directly from `origin/1.21.1` without tracking that source branch |
+| Pinned source commit | `999486b1cff8e34094ed870157657e07adc5f743` (`bump to 1.1.1`) |
+| Source platform | Minecraft 1.21.1, NeoForge 21.1.238, Java 21 |
+| Source mod version | 1.1.1 |
+| Other branch | `main` targets Minecraft 26.1.2 / NeoForge and is farther from the requested target |
+| Build | Prism 0.6.4, Gradle wrapper 9.7.0, Spotless 8.9.0 |
+| Source inventory | 2,330 main Java files; approximately 254,000 lines |
+| Test inventory | 317 test Java files; 1,079 `@Test` and 15 `@ParameterizedTest` annotations (not executed-test counts) |
+| Networking / mixins | 42 `playToClient` / `playToServer` registrations in `TTPayloads`; 32 mixin Java files |
+| Repository instructions | No repository/ancestor `AGENTS.md`, `docs/MANUAL_CHANGE_PROTOCOL.md`, or root `.codegraph/` found during initial inspection; user-supplied instructions still apply |
+
+The repository ignores `docs`, so the tracked port documents live at the root. Preserve `LICENSE`, `CREDITS.md`, registry identities, and source history. Do not redirect the port to `main` or continuously incorporate moving upstream changes without a concrete reason recorded here.
+
+The official Forge download page listed **47.4.29 latest** and **47.4.28 recommended** for 1.20.1 when inspected. Select and pin an actual tested Forge 47.x release during implementation. Forge's 1.20.1 documentation specifies Java 17; target Java 17 bytecode and runtime compatibility. Build-tool JVM requirements may differ and need a compatible wrapper/plugin combination.
+
+Sources: [Forge downloads](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.1.html), [Forge 1.20.1 setup](https://docs.minecraftforge.net/en/1.20.1/gettingstarted/).
+
+## Conversion map
+
+Paths below are relative to `src/main/java/com/leclowndu93150/thaumaturge/` unless otherwise stated. Counts are text-search indicators, not confirmed compiler errors or effort estimates.
+
+| Area | Evidence in baseline | Required work and verification |
+| --- | --- | --- |
+| Build and distribution | Root Gradle files use Prism's NeoForge DSL and `NeoForgeExtension`; CI selects Java 25 while the game toolchain is 21 | Establish Forge 1.20.1 development, datagen, test, client, server, and reobfuscated distribution tasks. Use compatible Gradle/JDK/plugins; replace Prism if necessary. Fix CI and metadata without publishing. |
+| Loader and registrations | `Thaumaturge.java`, `registry/`, config/event subscriptions; 464 source files mention NeoForge APIs | Convert mod construction, event buses, deferred registrations, configs, sided initialization, attributes, capabilities, and lifecycle hooks to actual Forge semantics. |
+| Persistent and transient state | `registry/TTAttachments.java`: knowledge, aspect pools, warp, aura, seals, wards, locks, labyrinth state, spell queues, and more | Replace attachments with appropriate Forge capabilities, saved data, or owned fields. Preserve defaults, serialization, dirty marking, invalidation, copy-on-death, synchronization recipients/timing, and transient-state cleanup. |
+| Item state | `registry/TTDataComponents.java`; 107 files mention component APIs or the mod's component registry | Implement 1.20.1 NBT/capability-backed item state. Preserve item copies, stacks, crafting results, inventories, drops, tooltips, sync, defaults, and existing mod-level legacy readers. |
+| Networking | `network/TTPayloads.java`, `network/`, `client/network/`; 175 files mention modern payload/stream-codec/buffer APIs | Replace NeoForge payload registration and modern buffers/codecs with Forge networking. Preserve protocol checks, directions, thread scheduling, server-side validation, tracking, login/rejoin, dimension transfers, and client-only class isolation. |
+| Capabilities and automation | `registry/TTCapabilities.java`, `api/capability/`, `api/essentia/`, machine/block entity code | Port item/fluid/energy/custom capabilities with correct sided access and provider lifecycle. Exercise hoppers, pipes, storage, inventories, and unloaded/reloaded chunks. |
+| Data maps and custom registries | `registry/TTDataMaps.java`, `registry/TTDatapackRegistries.java`, `data/datamap/` | Reimplement reloadable data-map behavior and required client synchronization; preserve tag matching, overrides, defaults, custom research/aspect/spell/worldgen registries, and reload behavior. |
+| Recipes and generated data | `content/recipe/SimpleRecipeSerializer.java`, `content/recipe/`, `data/`; 323 files mention `RecipeInput`, `RecipeHolder`, or `MapCodec` | Adapt serializers and container/recipe APIs; convert item-stack JSON, conditions, tags, loot, advancements, registries, and 1.21 directory/schema differences. Regenerate and test packaged resources. |
+| Java and vanilla APIs | Java 21 mixin level; 42 files contain newer API/syntax candidates | Audit Java 17 compatibility and vanilla signature changes throughout the source. Port newer vanilla content references deliberately, preserving mod behavior. |
+| Client and rendering | `client/`, shader assets, custom models, renderers, HUDs, screens, particles | Port model/buffer/shader/render-event APIs and input/menu behavior. Visually test transparency, lighting, equipment, held items, particles, overlays, GUI scaling, and resource reload. |
+| Mixins / access transformers | `TTMixinPlugin.java`, `mixin/`, `src/main/resources/thaumaturge.mixins.json`, `META-INF/` | Audit every target, descriptor, injection point, optional-mod condition, refmap and access transform against 1.20.1. Verify in an actual packaged Forge launch as well as development. |
+| Worldgen / dimensions | `content/world/`, `content/eldritch/`, `data/worldgen/`, Lithostitched dependency | Preserve biomes, vegetation, ores, nodes, structures, portals, labyrinth generation, encounters, and return travel. Test new chunks and save/restart. |
+| Tests | JUnit Jupiter/Mockito tests use NeoForge's unit-test integration; a GameTest run is configured | Port the existing suite without deleting behavior assertions to obtain a pass. Add focused runtime tests for persistence, recipes, sync, and gameplay; a configured GameTest task alone proves no test coverage. |
+
+Forge references: [capability lifetime, persistence, and sync](https://docs.minecraftforge.net/en/1.20.1/datastorage/capabilities/), [SimpleChannel networking](https://docs.minecraftforge.net/en/1.20.1/networking/simpleimpl/), [custom recipes](https://docs.minecraftforge.net/en/1.20.1/resources/server/recipes/custom/), [GameTests](https://docs.minecraftforge.net/en/1.20.1/misc/gametest/).
+
+## Dependencies and integrations
+
+These are discovery results from publisher-provided Modrinth version metadata filtered for **Forge + 1.20.1**, not tested dependency pins. Verify artifacts, transitive dependencies, APIs, and runtime compatibility during the port. An empty query is not proof that a project has no compatible release elsewhere.
+
+| Integration | Baseline role | Candidate / outstanding investigation |
+| --- | --- | --- |
+| Lithostitched | Required worldgen library, baseline 1.8.0 NeoForge | [1.4.12-forge-20.1](https://modrinth.com/mod/lithostitched/version/Uqt1Zm1l); audit worldgen API and data compatibility |
+| Curios | Required equipment integration, baseline 9.5.1 | [5.14.1+1.20.1](https://modrinth.com/mod/curios/version/IPQlZkz1); port slots, items, renderers, and persistence |
+| JEI | Optional recipes, aspect browsing, GUI transfer, internal mixins | [15.74.0.234 beta](https://modrinth.com/mod/jei/version/6E4ps2ER) was the newest returned candidate; choose an appropriate tested version |
+| Jade | Optional machine/entity information | [11.13.3+forge](https://modrinth.com/mod/jade/version/xJQHCmWJ) |
+| Dynamic Trees | Optional tree placement and bundled tree/resource packs | [1.20.1-1.4.11](https://modrinth.com/mod/vdjF5PL5/version/iGSXZxgo) |
+| Distant Horizons | Optional fog/render integration | [3.3.3-1.20.1](https://modrinth.com/mod/distanthorizons/version/6UnEfsRQ) |
+| Iris / shaders | Optional rendering integration and mixins | No Iris result for the target filter. [Oculus 1.20.1-1.8.0](https://modrinth.com/mod/oculus/version/iQ1SwGc3) is a candidate equivalent, requiring API and renderer-dependency investigation |
+| FTB Library | Compile-only sidebar integration | Target lookup failed; resolve from the publisher's Maven/release sources. Availability remains unverified |
+| Sable | Optional ship/sub-level integration spread through space helpers and mixins | No target-filter result; investigate publisher releases/source before deciding feasibility. Preserve normal-world spatial behavior regardless |
+| Apothic Enchanting | Enchanting-stat compatibility/data | No target-filter result. [Apotheosis 7.4.8](https://modrinth.com/mod/apotheosis/version/tT3CLYvK) exists for the target and needs semantic/API investigation |
+
+Core content must not disappear because a dependency API differs. Port available target integrations and exercise both their presence and absence. Record any genuinely unavailable integration with primary-source evidence, attempted alternatives, and gameplay impact; obtain an explicit user scope decision before treating a feature omission as accepted completion. Do not silently turn optional integrations into required dependencies.
+
+## Work phases
+
+Each phase can require multiple cycles. End **every implementation/fix cycle with its own commit**, including an honest validation summary and a tracker update. Intermediate commits may be incomplete or failing if accurately documented; no empty commits or artificial pass claims.
+
+1. **Baseline and platform:** refine the content/dependency inventory; preserve an immutable baseline; establish Forge/Java 17 build, metadata, datagen, and runnable test configurations. Implement the silent, non-focusing test-launch setup before any graphical game launch.
+2. **Foundations:** convert registrations/events, attachments, item data, capabilities, networking, data maps, and shared serialization. Use actual compilation errors and focused behavior tests to drive work.
+3. **Gameplay:** port all feature families, recipes, worldgen, dimensions, AI, inventory transactions, equipment, and progression. Maintain coverage against the baseline inventory.
+4. **Client and integrations:** finish models, screens, rendering, particles, shaders, mixins, and supported target integrations. Exercise optional dependencies absent and present.
+5. **Runtime validation:** automated tests, datagen, headless server tests, silent background client inspection, progression, persistence, multiplayer, and sustained ticking. Fix discovered defects in separate cycles.
+6. **Packaged artifact:** install the reobfuscated distributable and declared dependencies into clean Forge 1.20.1 client/server instances; rerun essential scenarios; finish installation/build instructions and evidence. Do not publish a release as part of this goal.
+
+## Feature and acceptance matrix
+
+Expand these rows into concrete cases as implementation proceeds. Every row needs an outcome, exact tested version/commit, reproducible procedure or command, and evidence. Use **pending**, **in progress**, **pass**, **fail**, or **blocked**, rather than implying untested behavior works.
+
+| Feature family | Required observable coverage | Status |
+| --- | --- | --- |
+| Build, loader, resources | Clean checkout can resolve dependencies, generate resources, run tests, build a distributable, and load the declared Forge metadata/mixins | Pending |
+| Registrations and content | Inventory every baseline item/block/entity/menu/recipe/custom registry; reconcile target IDs and assets; no silently dropped content | Pending |
+| Research and progression | Survival entry into the mod, Thaumonomicon, scanning, aspect discovery/pools, research table/notes, unlocks, prerequisites, and late-game progression | Pending |
+| Aura, nodes, vis | World/chunk aura, node types, interaction/jarring, recharge, transducers, relays, and chunk unload/reload | Pending |
+| Alchemy and essentia | Crucible, furnaces/alembics, jars/phials, tubes/suction/filters/valves, reservoirs, thaumatorium, transport, and item/fluid automation | Pending |
+| Arcane crafting and infusion | Recipe matching, vis/aspect/research costs, consumed inputs and returned containers, charging, instability, failure/recovery, and completed outputs | Pending |
+| Wands, casters, spells | Parts/upgrades, focus editor/equipment/selection, delivery/effects/modifiers, charge/cooldowns, server-authoritative effects, and visuals | Pending |
+| Golems and automation | Construction, materials/parts/accessories, seals, task selection, movement, inventory use, farming, combat, ownership, and persistence | Pending |
+| Equipment and devices | Armor/trims, tools, shields, Curios, runic shielding, flight/hover, bore, lamps, mirrors, levitators, locks, wards, and remaining registered devices | Pending |
+| Flux, taint, warp | Pollution and cleanup, rifts, taint spread/entities/biomes, warp effects, configuration, and long-running updates | Pending |
+| Worldgen and encounters | Trees/plants/crystals/ores, biomes, nodes, structures, pechs/cultists/other mobs, eldritch progression, portals, labyrinths, bosses, and return travel | Pending |
+| Client presentation | Screens/HUD/keybindings, items/armor/entities/block entities, connected models, shaders, lighting/transparency, particles, textures, translations, and resource reload | Pending |
+| Persistence and isolation | Save/restart, chunk unload/reload, item move/copy/drop, death/respawn, logout/rejoin, dimension travel, world changes, and separate players' state | Pending |
+| Multiplayer | Actual client connection to dedicated Forge server, two-player state/tracking and interactions, progression, crafting, combat, synchronization, and reconnect | Pending |
+| Optional integrations | Tested absence and presence of each supported integration, including recipe transfer/tooltips/tree packs/shader effects as applicable | Pending |
+| Stability and package | Sustained representative world activity without port-related crashes, duplication/loss, repeated errors, or severe regressions; actual distribution tested outside development | Pending |
+
+Fresh Forge 1.20.1 worlds and persistence within the port are required. Downgrading an existing Minecraft 1.21.1 world is a separate task and is not assumed safe or part of this goal.
+
+## Silent background game testing
+
+- Use dedicated test profiles/directories and worlds; do not change the user's normal Minecraft profile or system audio.
+- Before **every** graphical launch, provision the test profile with `soundCategory_master:0.0`, `narrator:0`, and `fullscreen:false`. Handle first-run accessibility/narrator setup silently. Keep those settings in effect across restarts. Preserve the mod's normal sound content and functionality.
+- Launch without activating the game, launcher, or early loading window. On macOS, a shell background job alone does not prevent window activation. Use a genuinely non-activating launch/window mechanism, including Forge early-window handling and development-only GLFW window hints/hooks if necessary; verify the actual focus behavior. Do not claim `open -g` controls a child Java window without evidence.
+- Use background-capable inspection/automation and logs; do not repeatedly foreground the client or inject input into the user's active application. Allow the test world to tick while unfocused where needed.
+- Prefer headless dedicated-server/GameTest runs for nonvisual checks, and perform the necessary graphical checks in the background. If a particular visual action truly needs foreground access and no safe alternative works, request a single coordinated session; keep that evidence pending until performed.
+- Accept the Minecraft server EULA automatically in dedicated test directories, as explicitly authorized by the user.
+- Record commands, process IDs, logs, and outcomes; stop only task-owned game/server processes after use. Keep saves, caches, large logs, and screenshots out of commits; retain useful evidence locally with paths in this tracker.
+
+## Completion requirements
+
+All applicable feature rows must have passing evidence, with no unresolved port-related compile, startup, resource, persistence, progression, rendering, or multiplayer defects. A successful build, a zero-test run, or a title-screen screenshot alone is insufficient. Any accepted exception must be an explicit user decision recorded here, never an assumption made to finish early.
+
+Deliver the tested distributable JAR and checksum, exact Minecraft/Forge/Java/dependency versions, installation and reproducible build/test instructions, completed feature matrix, final commit, and a concise account of verification and any explicitly accepted limitations. Keep the goal incomplete while required behavior or evidence is missing. Do not publish, tag a release, or merge into an unrelated branch merely to finish this goal.
+
+## Cycle ledger
+
+| Cycle | Change | Validation / result | Commit |
+| --- | --- | --- | --- |
+| 000 — planning | Inspected branches, baseline architecture, test inventory, target Forge docs, and dependency metadata; created `1.20.1` and the port documents | Static inspection only; no implementation, build, tests, or game launch | The commit introducing this tracker; locate with `git log --diff-filter=A --format=%h -- PORTING_1.20.1.md` |
+
+For each following cycle, record the subsystem, changes, exact commands and outcomes (including failures), evidence paths, remaining issues, next action, and commit reference. A cycle may refer to its containing commit until the next cycle fills in its hash. Keep this document current so work resumes without rediscovering prior results.
