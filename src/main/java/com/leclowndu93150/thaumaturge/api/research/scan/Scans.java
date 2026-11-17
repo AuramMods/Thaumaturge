@@ -54,8 +54,8 @@ public final class Scans {
         List<Item> forms = itemForms(placed.stream());
         return matching(
                 research,
-                (player, target) -> target instanceof ScannedBlock(var pos)
-                        ? placed.contains(player.level().getBlockState(pos).getBlock())
+                (player, target) -> target instanceof ScannedBlock block
+                        ? placed.contains(player.level().getBlockState(block.pos()).getBlock())
                         : forms.contains(target.carriedStack().getItem()));
     }
 
@@ -71,8 +71,8 @@ public final class Scans {
         List<Item> forms = withItemForm ? itemForms(Stream.of(state.getBlock())) : List.of();
         return matching(
                 research,
-                (player, target) -> target instanceof ScannedBlock(var pos)
-                        ? player.level().getBlockState(pos) == state
+                (player, target) -> target instanceof ScannedBlock block
+                        ? player.level().getBlockState(block.pos()) == state
                         : forms.contains(target.carriedStack().getItem()));
     }
 
@@ -86,8 +86,8 @@ public final class Scans {
     public static IScannable blockTag(ResourceLocation research, TagKey<Block> tag) {
         return matching(
                 research,
-                (player, target) -> target instanceof ScannedBlock(var pos)
-                        && player.level().getBlockState(pos).is(tag));
+                (player, target) -> target instanceof ScannedBlock block
+                        && player.level().getBlockState(block.pos()).is(tag));
     }
 
     /**
@@ -132,7 +132,7 @@ public final class Scans {
      * @return the subject
      */
     public static IScannable entities(ResourceLocation research, Predicate<Entity> test) {
-        return matching(research, (player, target) -> target instanceof ScannedEntity(var entity) && test.test(entity));
+        return matching(research, (player, target) -> target instanceof ScannedEntity scanned && test.test(scanned.entity()));
     }
 
     /**

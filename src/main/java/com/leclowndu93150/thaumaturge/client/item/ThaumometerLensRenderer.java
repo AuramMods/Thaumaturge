@@ -112,9 +112,11 @@ public final class ThaumometerLensRenderer {
         }
 
         Readout readout;
-        if (target instanceof ScannedBlock(BlockPos pos)) {
+        if (target instanceof ScannedBlock block) {
+            BlockPos pos = block.pos();
             readout = blockReadout(level, player, target, pos);
-        } else if (target instanceof ScannedEntity(Entity entity)) {
+        } else if (target instanceof ScannedEntity scanned) {
+            var entity = scanned.entity();
             readout = entityReadout(player, entity);
         } else {
             readout = Readout.plain(Component.literal(FALLBACK_NAME), AspectList.EMPTY);

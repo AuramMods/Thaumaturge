@@ -60,31 +60,28 @@ final class ScanInventories {
             @Nullable Direction side,
             Set<IItemHandler> seen,
             List<IItemHandler> handlers) {
-        IItemHandler handler =
-                switch (target) {
-                    case ScannedBlock(var pos) ->
-                        LoadedChunks.contains(player.level(), pos)
-                                ? player.level().getCapability(Capabilities.ItemHandler.BLOCK, pos, side)
-                                : null;
-                    case ScannedEntity(var entity) ->
-                        side == null ? entity.getCapability(Capabilities.ItemHandler.ENTITY) : null;
-                    default -> null;
-                };
+        IItemHandler handler = null;
+        if (target instanceof ScannedBlock block) {
+            var pos = block.pos();
+            handler = LoadedChunks.contains(player.level(), pos)
+                    ? player.level().getCapability(Capabilities.ItemHandler.BLOCK, pos, side)
+                    : null;
+        } else if (target instanceof ScannedEntity scanned && side == null) {
+            handler = scanned.entity().getCapability(Capabilities.ItemHandler.ENTITY);
+        }
         if (handler != null && seen.add(handler)) {
             handlers.add(handler);
         }
     }
 
     private static @Nullable Container container(Player player, ScanTarget target) {
-        Object candidate =
-                switch (target) {
-                    case ScannedBlock(var pos) ->
-                        LoadedChunks.contains(player.level(), pos)
-                                ? player.level().getBlockEntity(pos)
-                                : null;
-                    case ScannedEntity(var entity) -> entity;
-                    default -> null;
-                };
+        Object candidate = null;
+        if (target instanceof ScannedBlock block) {
+            var pos = block.pos();
+            candidate = LoadedChunks.contains(player.level(), pos) ? player.level().getBlockEntity(pos) : null;
+        } else if (target instanceof ScannedEntity scanned) {
+            candidate = scanned.entity();
+        }
         return candidate instanceof Container container ? container : null;
     }
 }

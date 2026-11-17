@@ -71,9 +71,9 @@ public record ScanEntry(
      * @return whether the target is one of the listed blocks, items or entity types; listed blocks also match their item form
      */
     public boolean matches(Player player, ScanTarget target) {
-        if (target instanceof ScannedBlock(var pos)) {
+        if (target instanceof ScannedBlock block) {
             return blocks.isPresent()
-                    && blocks.get().contains(player.level().getBlockState(pos).getBlockHolder());
+                    && blocks.get().contains(player.level().getBlockState(block.pos()).getBlockHolder());
         }
         Entity creature = target.creature();
         if (creature != null) {

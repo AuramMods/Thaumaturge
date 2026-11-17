@@ -55,9 +55,11 @@ public final class ThaumometerClientHandler {
         if (!ScanningManager.isStillScannable(player, target)) {
             return;
         }
-        if (target instanceof ScannedBlock(var pos)) {
+        if (target instanceof ScannedBlock block) {
+            BlockPos pos = block.pos();
             ClientEffects.scanHighlight(minecraft.level, pos);
-        } else if (target instanceof ScannedEntity(var entity)) {
+        } else if (target instanceof ScannedEntity scanned) {
+            var entity = scanned.entity();
             ClientEffects.scanHighlight(entity);
         }
     }
@@ -126,10 +128,12 @@ public final class ThaumometerClientHandler {
         private static final int NO_ENTITY = -1;
 
         static TargetIdentity of(ScanTarget target) {
-            if (target instanceof ScannedEntity(var entity)) {
+            if (target instanceof ScannedEntity scanned) {
+                var entity = scanned.entity();
                 return new TargetIdentity(entity.getId(), null);
             }
-            if (target instanceof ScannedBlock(var pos)) {
+            if (target instanceof ScannedBlock block) {
+                BlockPos pos = block.pos();
                 return new TargetIdentity(NO_ENTITY, pos.immutable());
             }
             return new TargetIdentity(NO_ENTITY, null);
@@ -138,7 +142,8 @@ public final class ThaumometerClientHandler {
 
     private static void drawScanTickFx(Level level, ScanTarget target) {
         RandomSource rand = level.getRandom();
-        if (target instanceof ScannedEntity(var entity)) {
+        if (target instanceof ScannedEntity scanned) {
+            var entity = scanned.entity();
             ClientEffects.blockRunes(
                     level,
                     entity.getX() - 0.5,
@@ -149,7 +154,8 @@ public final class ThaumometerClientHandler {
                     0.3F + rand.nextFloat() * 0.7F,
                     (int) (entity.getBbHeight() * RUNE_ENTITY_HEIGHT_SCALE),
                     RUNE_GRAVITY);
-        } else if (target instanceof ScannedBlock(var pos)) {
+        } else if (target instanceof ScannedBlock block) {
+            BlockPos pos = block.pos();
             ClientEffects.blockRunes(
                     level,
                     pos.getX(),

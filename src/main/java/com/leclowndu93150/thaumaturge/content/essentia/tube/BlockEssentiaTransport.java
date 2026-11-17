@@ -163,13 +163,12 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
     static void syncNeighbourSide(Level world, BlockPos origin, Direction side, boolean open) {
         BlockPos neighbourPos = origin.relative(side);
         Direction back = side.getOpposite();
-        switch (world.getBlockEntity(neighbourPos)) {
-            case BlockEntityTube tube -> {
-                tube.setOpenSide(back, open);
-                BlockEntityTube.pushUpdate(tube);
-            }
-            case BlockEntityTubeBuffer buffer -> buffer.setOpenSide(back, open);
-            case null, default -> {}
+        var neighbour = world.getBlockEntity(neighbourPos);
+        if (neighbour instanceof BlockEntityTube tube) {
+            tube.setOpenSide(back, open);
+            BlockEntityTube.pushUpdate(tube);
+        } else if (neighbour instanceof BlockEntityTubeBuffer buffer) {
+            buffer.setOpenSide(back, open);
         }
         refreshConnections(world, origin);
         refreshConnections(world, neighbourPos);

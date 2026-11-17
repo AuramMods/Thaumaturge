@@ -222,9 +222,10 @@ public final class ScanningManager {
      * @return the item form, or an empty stack
      */
     public static ItemStack stackOf(Player player, ScanTarget target) {
-        if (!(target instanceof ScannedBlock(var pos))) {
+        if (!(target instanceof ScannedBlock block)) {
             return target.carriedStack();
         }
+        BlockPos pos = block.pos();
         BlockState state = player.level().getBlockState(pos);
         if (BINDING.get().hidesItemForm(state)) {
             return ItemStack.EMPTY;

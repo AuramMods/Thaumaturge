@@ -201,13 +201,14 @@ public sealed interface AspectInput
                 .apply(i, ObjectForm::new));
 
         static ObjectForm of(AspectInput input) {
-            return switch (input) {
-                case Choice choice ->
-                    new ObjectForm(Optional.of(choice.choices()), Optional.empty(), Optional.of(choice.defaultKey()));
-                case FromAffinities from ->
-                    new ObjectForm(Optional.empty(), Optional.of(from.reaction()), Optional.of(from.defaultKey()));
-                default -> new ObjectForm(Optional.empty(), Optional.empty(), Optional.empty());
-            };
+            java.util.Objects.requireNonNull(input);
+            if (input instanceof Choice choice) {
+                return new ObjectForm(Optional.of(choice.choices()), Optional.empty(), Optional.of(choice.defaultKey()));
+            }
+            if (input instanceof FromAffinities from) {
+                return new ObjectForm(Optional.empty(), Optional.of(from.reaction()), Optional.of(from.defaultKey()));
+            }
+            return new ObjectForm(Optional.empty(), Optional.empty(), Optional.empty());
         }
 
         AspectInput toInput() {
@@ -215,7 +216,7 @@ public sealed interface AspectInput
                 return new FromAffinities(affinity.get(), defaultKey.get());
             }
             if (choices.isPresent() && !choices.get().isEmpty()) {
-                return new Choice(choices.get(), defaultKey.orElse(choices.get().getFirst()));
+                return new Choice(choices.get(), defaultKey.orElse(choices.get().get(0)));
             }
             return NONE;
         }

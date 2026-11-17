@@ -77,8 +77,8 @@ public final class ScanNode implements IScannable {
     }
 
     private static @Nullable BlockEntityNode nodeAt(Player player, ScanTarget target) {
-        if (target instanceof ScannedBlock(BlockPos pos)
-                && player.level().getBlockEntity(pos) instanceof BlockEntityNode node) {
+        if (target instanceof ScannedBlock block
+                && player.level().getBlockEntity(block.pos()) instanceof BlockEntityNode node) {
             return node;
         }
         return null;

@@ -4,7 +4,7 @@
 
 Port the complete Thaumaturge feature set at the pinned 1.21.1 baseline to Minecraft **1.20.1 on Forge**, preserving gameplay, progression, content, visuals, persistence, and multiplayer behavior. Compilation or reaching the title screen does not constitute completion.
 
-**Status: implementation in progress.** The Forge build resolves target dependencies and reaches Java 17 source compilation. Compilation currently fails on Java 21 syntax; no game/server has been launched. All runtime acceptance remains pending.
+**Status: implementation in progress.** The Forge build resolves target dependencies and reaches Java 17 source compilation. Compilation currently fails on unresolved NeoForge and newer Minecraft APIs; no game/server has been launched. All runtime acceptance remains pending.
 
 ## Baseline
 
@@ -127,7 +127,9 @@ Deliver the tested distributable JAR and checksum, exact Minecraft/Forge/Java/de
 | Cycle | Change | Validation / result | Commit |
 | --- | --- | --- | --- |
 | 000 — planning | Inspected branches, baseline architecture, test inventory, target Forge docs, and dependency metadata; created `1.20.1` and the port documents | Static inspection only; no implementation, build, tests, or game launch | `f5b15d267` |
-| 001 — Forge platform | Replaced Prism/NeoForge DSL with ForgeGradle 6.0.54, MixinGradle 0.7.38, Gradle 8.14.3, Forge 47.4.29, official 1.20.1 mappings, Java 17 toolchain; converted metadata/pack/mixin level; target dependency pins, isolated profiles/EULA tasks, and build CI | Resource processing and profile setup pass; actual Java 17 compilation reaches 62 syntax errors in 10 files. Logs under `build/port-evidence/cycle-001/`. No runtime launch | Containing commit |
+| 001 — Forge platform | Replaced Prism/NeoForge DSL with ForgeGradle 6.0.54, MixinGradle 0.7.38, Gradle 8.14.3, Forge 47.4.29, official 1.20.1 mappings, Java 17 toolchain; converted metadata/pack/mixin level; target dependency pins, isolated profiles/EULA tasks, and build CI | Resource processing and profile setup pass; actual Java 17 compilation reaches 62 syntax errors in 10 files. Logs under `build/port-evidence/cycle-001/`. No runtime launch | `c7688493e` |
+
+| 002 — Java 17 language | Converted record deconstruction and pattern switches in scanning, essentia tubes, aspect inputs, thaumometer client rendering and debug overlay to Java 17 constructs | `./gradlew compileJava --console=plain` reaches type checking; no prior syntax errors, but the 2,000-error cap is reached on unresolved NeoForge/modern APIs. Log: `build/port-evidence/cycle-002/compile.log`. No behavior tests can run yet | Containing commit |
 
 For each following cycle, record the subsystem, changes, exact commands and outcomes (including failures), evidence paths, remaining issues, next action, and commit reference. A cycle may refer to its containing commit until the next cycle fills in its hash. Keep this document current so work resumes without rediscovering prior results.
 
@@ -141,3 +143,9 @@ For each following cycle, record the subsystem, changes, exact commands and outc
 - The prior formatter plugin was removed with the Prism build; preserving its Palantir 2.96 formatter on Java 17 requires separate investigation. Existing tests remain configured with JUnit/Mockito; NeoForge test bootstrap still needs replacement before test execution can be claimed. Dynamic Trees development tree-pack layout still needs porting.
 - Background focus control is not yet implemented or verified. Do not launch a graphical client until that mechanism is ready.
 - Next: convert Java 21 syntax to Java 17, compile again to inventory API errors, then port foundational storage/network/registry APIs.
+
+## Cycle 002 evidence and next work
+
+- Replaced record deconstruction with type patterns and record accessors, and type switches with ordered `instanceof` branches. Preserved null handling for neighbouring tube entities and the object-form input's null rejection.
+- Java 17 compiler now parses all main source files and reports unresolved loader/API types. It reaches the configured 2,000 diagnostic limit, so this count is a lower bound, not a full defect inventory. Existing behavior tests remain unexecuted because main compilation fails.
+- Next: convert shared Forge loader/event imports and explicit mod-bus subscriptions, registration wrappers, and foundational APIs; then recapture compiler diagnostics.

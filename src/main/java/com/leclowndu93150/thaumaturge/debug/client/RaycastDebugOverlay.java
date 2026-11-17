@@ -31,18 +31,16 @@ public final class RaycastDebugOverlay implements LayeredDraw.Layer {
             return "Level Null ?????";
         }
         if (result.getType() == HitResult.Type.MISS) return "Miss";
-        return switch (result) {
-            case BlockHitResult block ->
-                "Block : " + block.getBlockPos().toShortString() + " | "
-                        + BuiltInRegistries.BLOCK.getKey(
-                                mc.level.getBlockState(block.getBlockPos()).getBlock())
-                        + " | " + block.getDirection();
-            case EntityHitResult entity ->
-                "Entity : " + entity.getEntity().getName().getString() + " | "
-                        + BuiltInRegistries.ENTITY_TYPE.getKey(
-                                entity.getEntity().getType()) + " | " + entity.getLocation();
-            default -> "Invalid : " + result.getType() + " | " + result.getLocation();
-        };
+        if (result instanceof BlockHitResult block) {
+            return "Block : " + block.getBlockPos().toShortString() + " | "
+                    + BuiltInRegistries.BLOCK.getKey(mc.level.getBlockState(block.getBlockPos()).getBlock())
+                    + " | " + block.getDirection();
+        }
+        if (result instanceof EntityHitResult entity) {
+            return "Entity : " + entity.getEntity().getName().getString() + " | "
+                    + BuiltInRegistries.ENTITY_TYPE.getKey(entity.getEntity().getType()) + " | " + entity.getLocation();
+        }
+        return "Invalid : " + result.getType() + " | " + result.getLocation();
     }
 
     @SubscribeEvent
