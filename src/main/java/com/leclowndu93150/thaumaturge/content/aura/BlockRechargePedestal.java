@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -10,7 +12,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -28,7 +29,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockRechargePedestal extends BaseEntityBlock {
+public final class BlockRechargePedestal extends BaseEntityBlock implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockRechargePedestal> CODEC = simpleCodec(BlockRechargePedestal::new);
 
     private static final float POP_VOLUME = 0.25F;
@@ -74,13 +81,13 @@ public final class BlockRechargePedestal extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         return interact(level, pos, player, InteractionHand.MAIN_HAND);
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    public ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,

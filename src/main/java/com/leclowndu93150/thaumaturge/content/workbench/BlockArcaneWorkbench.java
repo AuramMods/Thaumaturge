@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.workbench;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -19,7 +21,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public class BlockArcaneWorkbench extends BaseEntityBlock {
+public class BlockArcaneWorkbench extends BaseEntityBlock implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
@@ -65,7 +73,7 @@ public class BlockArcaneWorkbench extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("gotdream"))) {
             return InteractionResult.CONSUME;

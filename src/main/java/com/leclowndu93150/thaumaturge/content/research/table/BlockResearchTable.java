@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.table;
 
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -7,6 +8,7 @@ import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,7 +37,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockResearchTable extends BaseEntityBlock {
+public final class BlockResearchTable extends BaseEntityBlock implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockResearchTable> CODEC = simpleCodec(BlockResearchTable::new);
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -152,7 +160,7 @@ public final class BlockResearchTable extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!level.isClientSide()) {
             BlockPos main = mainPos(state, pos);

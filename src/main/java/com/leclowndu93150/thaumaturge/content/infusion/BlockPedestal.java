@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
@@ -9,7 +11,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -27,7 +28,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockPedestal extends BaseEntityBlock {
+public final class BlockPedestal extends BaseEntityBlock implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockPedestal> CODEC = simpleCodec(BlockPedestal::new);
     public static final IntegerProperty CHARGE = IntegerProperty.create("charge", 0, 15);
 
@@ -76,13 +83,13 @@ public final class BlockPedestal extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         return swap(level, pos, player, InteractionHand.MAIN_HAND);
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    public ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,

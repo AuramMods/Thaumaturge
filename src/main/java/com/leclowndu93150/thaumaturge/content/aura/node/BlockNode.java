@@ -3,6 +3,8 @@ package com.leclowndu93150.thaumaturge.content.aura.node;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.item.PrimordialPearlItem;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
@@ -12,7 +14,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -33,7 +35,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockNode extends Block implements EntityBlock {
+public final class BlockNode extends Block implements EntityBlock, BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockNode> CODEC = simpleCodec(BlockNode::new);
 
     private static final VoxelShape SHAPE = box(4.8, 4.8, 4.8, 11.2, 11.2, 11.2);
@@ -78,7 +86,7 @@ public final class BlockNode extends Block implements EntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    public ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,
@@ -87,7 +95,7 @@ public final class BlockNode extends Block implements EntityBlock {
             InteractionHand hand,
             BlockHitResult hit) {
         ItemInteractionResult pearlResult = tryPrimordialPearl(stack, level, pos, player);
-        return pearlResult != null ? pearlResult : super.useItemOn(stack, state, level, pos, player, hand, hit);
+        return pearlResult != null ? pearlResult : BlockInteractions.super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
 
     public static @Nullable ItemInteractionResult tryPrimordialPearl(

@@ -1,13 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
 import com.leclowndu93150.thaumaturge.api.research.IResearchTableAid;
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -22,7 +23,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public final class BlockCandleHolder extends AbstractCandleBlock implements IResearchTableAid {
+public final class BlockCandleHolder extends AbstractCandleBlock implements IResearchTableAid, BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final EnumProperty<HeldCandle> CANDLE = EnumProperty.create("candle", HeldCandle.class);
 
     private static final int LIT_LIGHT = 14;
@@ -73,7 +80,7 @@ public final class BlockCandleHolder extends AbstractCandleBlock implements IRes
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    public ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,
@@ -98,7 +105,7 @@ public final class BlockCandleHolder extends AbstractCandleBlock implements IRes
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         HeldCandle held = state.getValue(CANDLE);
         if (!held.isPresent()) {

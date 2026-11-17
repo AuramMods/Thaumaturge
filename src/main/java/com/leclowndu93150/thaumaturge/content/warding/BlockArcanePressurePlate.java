@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,7 +21,13 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-public final class BlockArcanePressurePlate extends PressurePlateBlock {
+public final class BlockArcanePressurePlate extends PressurePlateBlock implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockArcanePressurePlate> CODEC = simpleCodec(BlockArcanePressurePlate::new);
     public static final IntegerProperty MODE = IntegerProperty.create("mode", 0, 2);
 
@@ -56,7 +64,7 @@ public final class BlockArcanePressurePlate extends PressurePlateBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(level instanceof ServerLevel server)) {
             return InteractionResult.SUCCESS;

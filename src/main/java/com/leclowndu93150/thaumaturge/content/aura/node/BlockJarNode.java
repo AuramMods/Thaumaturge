@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
 import com.leclowndu93150.thaumaturge.api.casters.FocusCaster;
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockJar;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -9,7 +11,7 @@ import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -26,7 +28,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockJarNode extends Block implements EntityBlock {
+public final class BlockJarNode extends Block implements EntityBlock, BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockJarNode> CODEC = simpleCodec(BlockJarNode::new);
 
     public BlockJarNode(BlockBehaviour.Properties properties) {
@@ -44,7 +52,7 @@ public final class BlockJarNode extends Block implements EntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    public ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,
@@ -73,7 +81,7 @@ public final class BlockJarNode extends Block implements EntityBlock {
             }
             return ItemInteractionResult.SUCCESS;
         }
-        return super.useItemOn(stack, state, level, pos, player, hand, hit);
+        return BlockInteractions.super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
 
     @Override

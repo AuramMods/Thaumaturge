@@ -1,11 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.itemdata.ItemData;
-
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -22,7 +23,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +45,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockCondenserLattice extends Block {
+public final class BlockCondenserLattice extends Block implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockCondenserLattice> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     Codec.BOOL.fieldOf("dirty").forGetter(BlockCondenserLattice::isDirty), propertiesCodec())
             .apply(instance, BlockCondenserLattice::new));
@@ -180,7 +187,7 @@ public final class BlockCondenserLattice extends Block {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    public ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,
@@ -189,7 +196,7 @@ public final class BlockCondenserLattice extends Block {
             InteractionHand hand,
             BlockHitResult hit) {
         if (!dirty || !stack.is(TTItems.FILTER.get())) {
-            return super.useItemOn(stack, state, level, pos, player, hand, hit);
+            return BlockInteractions.super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
         if (level instanceof ServerLevel serverLevel) {
             consumeFilter(player, stack);

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.crucible;
 
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -11,7 +13,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -34,7 +35,13 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import org.jspecify.annotations.Nullable;
 
-public class BlockCrucible extends BaseEntityBlock {
+public class BlockCrucible extends BaseEntityBlock implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     private static final int LAVA_HURT_INTERVAL = 10;
     private static final int AMBIENT_POP_ODDS = 8;
     private static final double AMBIENT_POP_HEIGHT = 0.7;
@@ -88,7 +95,7 @@ public class BlockCrucible extends BaseEntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    public ItemInteractionResult useItemOn(
             ItemStack itemStack,
             BlockState state,
             Level level,
@@ -113,7 +120,7 @@ public class BlockCrucible extends BaseEntityBlock {
                 return ItemInteractionResult.CONSUME;
             }
         }
-        return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
+        return BlockInteractions.super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
@@ -148,7 +155,7 @@ public class BlockCrucible extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!(level.getBlockEntity(pos) instanceof BlockEntityCrucible crucible)) return InteractionResult.PASS;

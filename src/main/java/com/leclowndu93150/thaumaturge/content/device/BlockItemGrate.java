@@ -1,9 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +29,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 /** Hopper-fed grate: it accepts insertion only from above while open, then drops the stack below. */
-public final class BlockItemGrate extends BaseEntityBlock {
+public final class BlockItemGrate extends BaseEntityBlock implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockItemGrate> CODEC = simpleCodec(BlockItemGrate::new);
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -65,7 +73,7 @@ public final class BlockItemGrate extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         level.setBlock(pos, state.cycle(OPEN), UPDATE_CLIENTS);
         level.invalidateCapabilities(pos);

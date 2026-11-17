@@ -1,9 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -20,7 +22,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockDioptra extends BaseEntityBlock {
+public final class BlockDioptra extends BaseEntityBlock implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockDioptra> CODEC = simpleCodec(BlockDioptra::new);
 
     private static final int GRID_CENTER_INDEX =
@@ -48,7 +56,7 @@ public final class BlockDioptra extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         boolean enabled = state.getValue(BlockStateProperties.ENABLED);
         level.setBlock(pos, state.setValue(BlockStateProperties.ENABLED, !enabled), Block.UPDATE_ALL);

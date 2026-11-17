@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
@@ -7,6 +8,7 @@ import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -22,7 +24,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockThaumatoriumTop extends BaseEntityBlock {
+public final class BlockThaumatoriumTop extends BaseEntityBlock implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockThaumatoriumTop> CODEC = simpleCodec(BlockThaumatoriumTop::new);
     private static final Map<Direction, VoxelShape> SHAPES = lowered();
 
@@ -69,7 +77,7 @@ public final class BlockThaumatoriumTop extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         BlockState below = level.getBlockState(pos.below());
         if (below.is(TTBlocks.THAUMATORIUM.get())) {

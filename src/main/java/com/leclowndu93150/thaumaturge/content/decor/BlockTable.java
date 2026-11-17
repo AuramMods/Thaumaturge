@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockResearchTable;
@@ -12,7 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -25,7 +27,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public final class BlockTable extends Block {
+public final class BlockTable extends Block implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockTable> CODEC = simpleCodec(BlockTable::new);
 
     private static final VoxelShape SHAPE = Shapes.or(
@@ -66,7 +74,7 @@ public final class BlockTable extends Block {
             List.of(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST);
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    public ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,

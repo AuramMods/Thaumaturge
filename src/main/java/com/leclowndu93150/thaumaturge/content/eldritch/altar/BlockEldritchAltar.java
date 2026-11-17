@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.altar;
 
 import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchStructure;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -14,7 +16,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -31,7 +32,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEldritchAltar extends BlockEldritchStructure implements EntityBlock, IInteractWithCaster {
+public final class BlockEldritchAltar extends BlockEldritchStructure implements EntityBlock, IInteractWithCaster, BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final MapCodec<BlockEldritchAltar> CODEC = simpleCodec(BlockEldritchAltar::new);
     private static final float EYE_VOLUME = 0.4F;
     private static final VoxelShape SHAPE = Shapes.or(
@@ -81,7 +88,7 @@ public final class BlockEldritchAltar extends BlockEldritchStructure implements 
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    public ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,
@@ -106,7 +113,7 @@ public final class BlockEldritchAltar extends BlockEldritchStructure implements 
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!player.isShiftKeyDown()
                 || !ThaumaturgeServerConfig.LABYRINTH.allowEyeRemoval.get()

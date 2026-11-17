@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.lock;
 
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.eldritch.encounter.EncounterPhases;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthService;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeRecord;
@@ -11,7 +12,6 @@ import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;

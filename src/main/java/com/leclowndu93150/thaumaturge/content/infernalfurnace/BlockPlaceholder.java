@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.AdvancedAlchemicalFurnaceStructure;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.AdvancedFurnaceShapes;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockGolemBuilder;
@@ -7,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.golem.press.GolemPressShapes;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -22,7 +24,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public class BlockPlaceholder extends Block {
+public class BlockPlaceholder extends Block implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     private final boolean visible;
 
     public BlockPlaceholder(Properties properties) {
@@ -137,7 +145,7 @@ public class BlockPlaceholder extends Block {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (state.is(TTBlocks.PLACEHOLDER_IRON_BARS)
                 || state.is(TTBlocks.PLACEHOLDER_ANVIL)
@@ -154,7 +162,7 @@ public class BlockPlaceholder extends Block {
                 }
             }
         }
-        return super.useWithoutItem(state, level, pos, player, hit);
+        return BlockInteractions.super.useWithoutItem(state, level, pos, player, hit);
     }
 
     @Override

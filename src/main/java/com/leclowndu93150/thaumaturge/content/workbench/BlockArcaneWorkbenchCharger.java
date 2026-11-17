@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.workbench;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -19,7 +21,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class BlockArcaneWorkbenchCharger extends Block {
+public class BlockArcaneWorkbenchCharger extends Block implements BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     private static final VoxelShape SHAPE = Shapes.or(
             box(0.0, 0.0, 0.0, 2.0, 11.0, 2.0),
             box(14.0, 0.0, 0.0, 16.0, 11.0, 2.0),
@@ -70,12 +78,12 @@ public class BlockArcaneWorkbenchCharger extends Block {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("workbench_charger"))) {
             return InteractionResult.CONSUME;
         }
         BlockPos host = pos.below();
-        return level.getBlockState(host).useWithoutItem(level, player, hit.withPosition(host));
+        return BlockInteractions.useWithoutItem(level.getBlockState(host), level, player, hit.withPosition(host));
     }
 }

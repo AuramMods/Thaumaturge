@@ -1,13 +1,15 @@
 package com.leclowndu93150.thaumaturge.content.decor.banner;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.content.item.PhialItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +21,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractBannerBlock extends Block implements EntityBlock {
+public abstract class AbstractBannerBlock extends Block implements EntityBlock, BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     private final @Nullable DyeColor dye;
 
     protected AbstractBannerBlock(@Nullable DyeColor dye, Properties properties) {
@@ -37,7 +45,7 @@ public abstract class AbstractBannerBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    public ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,

@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.blocks.LabelTarget;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStreamPort;
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
+import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.essentia.storage.LabelledVesselActions;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -13,7 +15,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +36,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractBlockJar extends BaseEntityBlock
-        implements LabelTarget, IEssentiaStreamPort, IEssentiaJar {
+        implements LabelTarget, IEssentiaStreamPort, IEssentiaJar, BlockInteractions {
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        return BlockInteractions.use(this, state, level, pos, player, hand, hit);
+    }
+
     public static final VoxelShape SHAPE = Shapes.or(Block.box(3, 0, 3, 13, 12, 13), Block.box(5, 12, 5, 11, 14, 11));
 
     private static final double MOUTH_ANCHOR_HEIGHT = 0.8;
@@ -66,13 +73,13 @@ public abstract class AbstractBlockJar extends BaseEntityBlock
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         return interact(level, pos, player, hit, ItemStack.EMPTY);
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(
+    public ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,
