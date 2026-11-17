@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.api.items;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import java.util.Set;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 

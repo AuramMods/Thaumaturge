@@ -6,8 +6,8 @@ import com.mojang.serialization.MapCodec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 public record AirGustParticleOptions(float scale) implements ParticleOptions {
 

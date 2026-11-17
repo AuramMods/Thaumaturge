@@ -1,11 +1,13 @@
 package com.leclowndu93150.thaumaturge.api.golems.seals;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 /**
  * The placement of a seal: the block it is attached to and the face it sits on.
@@ -23,5 +25,5 @@ public record SealPos(BlockPos pos, Direction face) {
 
     /** Stream codec for seal placements. */
     public static final StreamCodec<ByteBuf, SealPos> STREAM_CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, SealPos::pos, Direction.STREAM_CODEC, SealPos::face, SealPos::new);
+            VanillaStreamCodecs.BLOCK_POS, SealPos::pos, VanillaStreamCodecs.DIRECTION, SealPos::face, SealPos::new);
 }

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.network.effect;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 

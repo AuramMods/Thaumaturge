@@ -1,14 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.research.pool;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 public final class AspectPoolData {
@@ -20,7 +22,7 @@ public final class AspectPoolData {
             .apply(instance, AspectPoolData::of));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AspectPoolData> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.map(LinkedHashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.VAR_INT),
+            ByteBufCodecs.map(LinkedHashMap::new, VanillaStreamCodecs.RESOURCE_LOCATION, ByteBufCodecs.VAR_INT),
             d -> d.pool,
             ByteBufCodecs.VAR_INT,
             AspectPoolData::completedNotes,

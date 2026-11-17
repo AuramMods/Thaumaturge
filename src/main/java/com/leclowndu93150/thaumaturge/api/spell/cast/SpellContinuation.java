@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.spell.cast;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -8,8 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 /**
  * The rest of a spell, held by a carrier (projectile, cloud, mine, wall, summon) until it reaches
@@ -38,9 +40,9 @@ public record SpellContinuation(List<SpellNode> nodes, SpellState state, Optiona
             SpellContinuation::nodes,
             SpellState.STREAM_CODEC,
             SpellContinuation::state,
-            ByteBufCodecs.optional(UUIDUtil.STREAM_CODEC),
+            ByteBufCodecs.optional(VanillaStreamCodecs.UUID),
             SpellContinuation::caster,
-            UUIDUtil.STREAM_CODEC,
+            VanillaStreamCodecs.UUID,
             SpellContinuation::castId,
             SpellContinuation::new);
 

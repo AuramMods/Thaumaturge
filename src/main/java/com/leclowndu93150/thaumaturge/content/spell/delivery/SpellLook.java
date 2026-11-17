@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.delivery;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
@@ -16,8 +18,8 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
@@ -31,7 +33,7 @@ public record SpellLook(ResourceLocation fx, int color) {
             .apply(i, SpellLook::new));
 
     public static final StreamCodec<ByteBuf, SpellLook> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC, SpellLook::fx, ByteBufCodecs.INT, SpellLook::color, SpellLook::new);
+            VanillaStreamCodecs.RESOURCE_LOCATION, SpellLook::fx, ByteBufCodecs.INT, SpellLook::color, SpellLook::new);
 
     public static SpellLook downstream(CastContext ctx) {
         return downstream(

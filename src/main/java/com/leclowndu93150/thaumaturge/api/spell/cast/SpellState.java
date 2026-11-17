@@ -1,11 +1,13 @@
 package com.leclowndu93150.thaumaturge.api.spell.cast;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -24,7 +26,7 @@ public record SpellState(Map<ResourceLocation, Float> stats) {
 
     /** Network codec. */
     public static final StreamCodec<ByteBuf, SpellState> STREAM_CODEC = ByteBufCodecs.map(
-                    HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.FLOAT)
+                    HashMap::new, VanillaStreamCodecs.RESOURCE_LOCATION, ByteBufCodecs.FLOAT)
             .map(SpellState::new, state -> new HashMap<>(state.stats()));
 
     /**

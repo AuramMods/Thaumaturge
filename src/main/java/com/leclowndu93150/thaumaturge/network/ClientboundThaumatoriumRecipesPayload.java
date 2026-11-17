@@ -1,11 +1,13 @@
 package com.leclowndu93150.thaumaturge.network;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import java.util.List;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -17,9 +19,9 @@ public record ClientboundThaumatoriumRecipesPayload(int containerId, List<Entry>
 
     public record Entry(ResourceLocation id, ItemStack output, boolean queued, AspectList aspects) {
         public static final StreamCodec<RegistryFriendlyByteBuf, Entry> STREAM_CODEC = StreamCodec.composite(
-                ResourceLocation.STREAM_CODEC,
+                VanillaStreamCodecs.RESOURCE_LOCATION,
                 Entry::id,
-                ItemStack.STREAM_CODEC,
+                VanillaStreamCodecs.ITEM_STACK,
                 Entry::output,
                 ByteBufCodecs.BOOL,
                 Entry::queued,

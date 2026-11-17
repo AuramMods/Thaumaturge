@@ -58,6 +58,19 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 sourceSets {
     backgroundAgent { java.srcDir 'porting/testing/java' }
     backgroundSmoke { java.srcDir 'porting/testing/smoke' }
+    // Compile the actual production codecs in isolation while the other APIs
+    // are ported. They also remain in the full main build and normal test suite.
+    portCodec {
+        java.srcDir 'src/main/java'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
+        compileClasspath += sourceSets.main.compileClasspath
+    }
+    portCodecTest {
+        java.srcDir 'src/test/java'
+        java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
+        compileClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
+        runtimeClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
+    }
 }
 
 repositories {
@@ -96,6 +109,10 @@ dependencies {
     backgroundSmokeRuntimeOnly 'org.lwjgl:lwjgl:3.3.1:natives-macos-arm64'
     backgroundSmokeRuntimeOnly 'org.lwjgl:lwjgl-glfw:3.3.1:natives-macos-arm64'
 
+    portCodecTestImplementation platform('org.junit:junit-bom:5.11.4')
+    portCodecTestImplementation 'org.junit.jupiter:junit-jupiter'
+    portCodecTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
     // Run with -PportIntegrations to exercise optional JEI and Jade integration.
     if (providers.gradleProperty('portIntegrations').isPresent()) {
         runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
@@ -114,12 +131,17 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.compilerArgs.addAll(['-Xmaxerrs', '2000'])
+    options.compilerArgs.addAll(['-Xmaxerrs', providers.gradleProperty('portMaxErrors').getOrElse('2000')])
 }
 
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
     systemProperty 'thaumaturge.testResourceRoot', file('src/main/resources').absolutePath
+}
+
+tasks.register('portCodecTest', Test) {
+    testClassesDirs = sourceSets.portCodecTest.output.classesDirs
+    classpath = sourceSets.portCodecTest.runtimeClasspath
 }
 
 tasks.withType(Jar).configureEach { from('LICENSE', 'CREDITS.md') }

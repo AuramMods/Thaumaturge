@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
@@ -14,9 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -41,11 +43,11 @@ public final class InfusionEnchantmentRecipe implements InfusionJobRecipe {
             StreamCodec.composite(
                     InfusionEnchantment.STREAM_CODEC,
                     r -> r.enchantment,
-                    Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()),
+                    VanillaStreamCodecs.INGREDIENT.apply(ByteBufCodecs.list()),
                     r -> r.components,
                     AspectList.STREAM_CODEC,
                     r -> r.aspects,
-                    Ingredient.CONTENTS_STREAM_CODEC,
+                    VanillaStreamCodecs.INGREDIENT,
                     r -> r.displayCatalyst,
                     ByteBufCodecs.optional(ResearchGate.STREAM_CODEC),
                     r -> r.research,

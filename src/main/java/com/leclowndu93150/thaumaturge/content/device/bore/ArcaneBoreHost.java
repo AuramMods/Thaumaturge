@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device.bore;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;

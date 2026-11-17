@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;

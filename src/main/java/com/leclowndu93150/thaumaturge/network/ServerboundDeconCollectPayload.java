@@ -1,11 +1,13 @@
 package com.leclowndu93150.thaumaturge.network;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
 import com.leclowndu93150.thaumaturge.content.research.decon.MenuDeconstructionTable;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -16,7 +18,7 @@ public record ServerboundDeconCollectPayload(BlockPos pos) implements CustomPack
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundDeconCollectPayload> STREAM_CODEC =
             StreamCodec.composite(
-                    BlockPos.STREAM_CODEC, ServerboundDeconCollectPayload::pos, ServerboundDeconCollectPayload::new);
+                    VanillaStreamCodecs.BLOCK_POS, ServerboundDeconCollectPayload::pos, ServerboundDeconCollectPayload::new);
 
     public static void handle(ServerboundDeconCollectPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {

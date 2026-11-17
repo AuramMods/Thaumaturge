@@ -5,9 +5,9 @@ import com.mojang.serialization.Codec;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 public record InfusionEnchantments(Map<InfusionEnchantment, Integer> levels) {
     public static final InfusionEnchantments EMPTY = new InfusionEnchantments(Map.of());

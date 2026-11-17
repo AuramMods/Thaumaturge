@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.api.labyrinth;
 
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 /**
  * Identifies one labyrinth in the Outer Lands. Ids are assigned in creation order and never reused, so a stale id resolves to nothing rather than to a newer maze.

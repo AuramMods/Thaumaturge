@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
 import com.leclowndu93150.thaumaturge.registry.TTWandParts;
@@ -8,8 +10,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import java.util.function.Supplier;
 import net.minecraft.core.Registry;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 public record WandParts(WandCap cap, WandRod rod, boolean sceptre) {
@@ -33,7 +35,7 @@ public record WandParts(WandCap cap, WandRod rod, boolean sceptre) {
     }
 
     private static <T> StreamCodec<ByteBuf, T> registryStream(Supplier<Registry<T>> registry) {
-        return ResourceLocation.STREAM_CODEC.map(
+        return VanillaStreamCodecs.RESOURCE_LOCATION.map(
                 id -> registry.get().get(id), value -> registry.get().getKey(value));
     }
 

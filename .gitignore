@@ -35,3 +35,6 @@ sources/
 server-taint-test.log
 build-datagen
 /art/
+
+# Runtime logging from isolated test bootstraps
+/logs/

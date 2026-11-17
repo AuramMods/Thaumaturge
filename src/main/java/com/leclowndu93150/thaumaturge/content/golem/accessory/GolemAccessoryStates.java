@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.accessory;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessories;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessory;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryBehavior;
@@ -10,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.connection.ConnectionType;
 
@@ -49,7 +51,7 @@ public record GolemAccessoryStates(List<AccessoryStateSlot<?>> slots) implements
     private static void encode(RegistryFriendlyByteBuf buf, GolemAccessoryStates states) {
         buf.writeVarInt(states.slots.size());
         for (AccessoryStateSlot<?> slot : states.slots) {
-            ResourceLocation.STREAM_CODEC.encode(buf, slot.accessory().id());
+            VanillaStreamCodecs.RESOURCE_LOCATION.encode(buf, slot.accessory().id());
             slot.encode(buf);
         }
     }
@@ -58,7 +60,7 @@ public record GolemAccessoryStates(List<AccessoryStateSlot<?>> slots) implements
         int count = buf.readVarInt();
         List<AccessoryStateSlot<?>> slots = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            ResourceLocation id = ResourceLocation.STREAM_CODEC.decode(buf);
+            ResourceLocation id = VanillaStreamCodecs.RESOURCE_LOCATION.decode(buf);
             GolemAccessory accessory = GolemAccessories.get(id);
             if (accessory == null || accessory.behavior().isEmpty()) {
                 throw new DecoderException("Golem accessory " + id + " has no behaviour to decode its state");

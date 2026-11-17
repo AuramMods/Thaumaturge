@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.api.golems.accessory;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 

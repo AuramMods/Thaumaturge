@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.reliquary;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.util.ByIdMap;
 
 public enum ReliquaryView {

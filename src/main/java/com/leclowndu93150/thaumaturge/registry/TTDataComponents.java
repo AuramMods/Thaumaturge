@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -26,8 +28,8 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Unit;
@@ -57,7 +59,7 @@ public final class TTDataComponents {
             DATA_COMPONENTS.registerComponentType(
                     "aspect_filter",
                     builder -> builder.persistent(LegacyIds.ASPECT_KEY_CODEC)
-                            .networkSynchronized(ResourceKey.streamCodec(IAspect.REGISTRY_KEY)));
+                            .networkSynchronized(VanillaStreamCodecs.resourceKey(IAspect.REGISTRY_KEY)));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CelestialBody>> CELESTIAL_BODY =
             DATA_COMPONENTS.registerComponentType(
@@ -183,7 +185,7 @@ public final class TTDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemStack>> HARNESS_JAR =
             DATA_COMPONENTS.registerComponentType(
                     "harness_jar",
-                    builder -> builder.persistent(ItemStack.CODEC).networkSynchronized(ItemStack.STREAM_CODEC));
+                    builder -> builder.persistent(ItemStack.CODEC).networkSynchronized(VanillaStreamCodecs.ITEM_STACK));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemContainerContents>> POUCH_CONTENTS =
             DATA_COMPONENTS.registerComponentType(
                     "pouch_contents",
@@ -193,12 +195,12 @@ public final class TTDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlobalPos>> MIRROR_LINK =
             DATA_COMPONENTS.registerComponentType(
                     "mirror_link",
-                    builder -> builder.persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC));
+                    builder -> builder.persistent(GlobalPos.CODEC).networkSynchronized(VanillaStreamCodecs.GLOBAL_POS));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlobalPos>> ARCANE_KEY_LINK =
             DATA_COMPONENTS.registerComponentType(
                     "arcane_key_link",
-                    builder -> builder.persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC));
+                    builder -> builder.persistent(GlobalPos.CODEC).networkSynchronized(VanillaStreamCodecs.GLOBAL_POS));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> NOTE_COMPLETE =
             DATA_COMPONENTS.registerComponentType(

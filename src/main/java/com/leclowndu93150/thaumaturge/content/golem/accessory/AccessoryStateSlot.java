@@ -9,8 +9,8 @@ import java.util.Optional;
 import java.util.function.UnaryOperator;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 
 public record AccessoryStateSlot<S>(GolemAccessory accessory, GolemAccessoryBehavior<S> behavior, S state) {

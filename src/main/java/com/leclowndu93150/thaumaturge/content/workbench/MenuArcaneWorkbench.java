@@ -17,7 +17,7 @@ import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

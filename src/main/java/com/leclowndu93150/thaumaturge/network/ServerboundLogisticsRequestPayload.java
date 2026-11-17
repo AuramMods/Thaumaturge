@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.network;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +17,7 @@ public record ServerboundLogisticsRequestPayload(ItemStack stack, int amount) im
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundLogisticsRequestPayload> STREAM_CODEC =
             StreamCodec.composite(
-                    ItemStack.STREAM_CODEC,
+                    VanillaStreamCodecs.ITEM_STACK,
                     ServerboundLogisticsRequestPayload::stack,
                     ByteBufCodecs.VAR_INT,
                     ServerboundLogisticsRequestPayload::amount,

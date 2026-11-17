@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -8,9 +10,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -26,7 +28,7 @@ public record WardFlashParticleOptions(Direction face, float hitX, float hitY, f
 
     public static final StreamCodec<RegistryFriendlyByteBuf, WardFlashParticleOptions> STREAM_CODEC =
             StreamCodec.composite(
-                    Direction.STREAM_CODEC,
+                    VanillaStreamCodecs.DIRECTION,
                     WardFlashParticleOptions::face,
                     ByteBufCodecs.FLOAT,
                     WardFlashParticleOptions::hitX,

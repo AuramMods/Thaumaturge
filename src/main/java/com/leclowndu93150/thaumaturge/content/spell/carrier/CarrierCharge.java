@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.content.spell.delivery.SpellLook;
 import java.util.List;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import org.jspecify.annotations.Nullable;
 

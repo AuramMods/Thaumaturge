@@ -1,14 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.research.share;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPoolData;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.UUID;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 public record ShareBinding(UUID player, String name, AspectPoolData discoveredAspects, PlayerKnowledge knowledge) {
     public static final Codec<ShareBinding> CODEC = RecordCodecBuilder.create(builder -> builder.group(
@@ -22,7 +24,7 @@ public record ShareBinding(UUID player, String name, AspectPoolData discoveredAs
             .apply(builder, ShareBinding::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ShareBinding> STREAM_CODEC = StreamCodec.composite(
-            UUIDUtil.STREAM_CODEC,
+            VanillaStreamCodecs.UUID,
             ShareBinding::player,
             ByteBufCodecs.STRING_UTF8,
             ShareBinding::name,

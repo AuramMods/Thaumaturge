@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectIndex;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
@@ -14,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.core.component.DataComponentPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -183,6 +185,6 @@ public final class AspectIndex implements IAspectIndex {
 
     private record Entry(ResourceLocation itemId, ItemEntry entry) {
         static final StreamCodec<RegistryFriendlyByteBuf, Entry> STREAM_CODEC = StreamCodec.composite(
-                ResourceLocation.STREAM_CODEC, Entry::itemId, ItemEntry.STREAM_CODEC, Entry::entry, Entry::new);
+                VanillaStreamCodecs.RESOURCE_LOCATION, Entry::itemId, ItemEntry.STREAM_CODEC, Entry::entry, Entry::new);
     }
 }

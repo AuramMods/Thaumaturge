@@ -1,14 +1,16 @@
 package com.leclowndu93150.thaumaturge.network;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
 import com.leclowndu93150.thaumaturge.content.research.table.MenuResearchTable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -24,11 +26,11 @@ public record ServerboundTableCombinePayload(
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTableCombinePayload> STREAM_CODEC =
             StreamCodec.composite(
-                    BlockPos.STREAM_CODEC,
+                    VanillaStreamCodecs.BLOCK_POS,
                     ServerboundTableCombinePayload::pos,
-                    ResourceLocation.STREAM_CODEC,
+                    VanillaStreamCodecs.RESOURCE_LOCATION,
                     ServerboundTableCombinePayload::first,
-                    ResourceLocation.STREAM_CODEC,
+                    VanillaStreamCodecs.RESOURCE_LOCATION,
                     ServerboundTableCombinePayload::second,
                     ByteBufCodecs.BOOL,
                     ServerboundTableCombinePayload::bonusFirst,

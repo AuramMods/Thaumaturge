@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.pech;
 import com.leclowndu93150.thaumaturge.content.entity.EntityPech;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.stream.IntStream;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;

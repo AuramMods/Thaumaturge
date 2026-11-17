@@ -1,12 +1,14 @@
 package com.leclowndu93150.thaumaturge.api.wands;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 
@@ -30,7 +32,7 @@ public record WandVis(Map<ResourceKey<IAspect>, Integer> centivis) {
             .xmap(WandVis::new, WandVis::centivis);
 
     public static final StreamCodec<ByteBuf, WandVis> STREAM_CODEC = ByteBufCodecs.map(
-                    LinkedHashMap::new, ResourceKey.streamCodec(IAspect.REGISTRY_KEY), ByteBufCodecs.VAR_INT)
+                    LinkedHashMap::new, VanillaStreamCodecs.resourceKey(IAspect.REGISTRY_KEY), ByteBufCodecs.VAR_INT)
             .map(map -> new WandVis(Map.copyOf(map)), wandVis -> new LinkedHashMap<>(wandVis.centivis));
 
     public WandVis {

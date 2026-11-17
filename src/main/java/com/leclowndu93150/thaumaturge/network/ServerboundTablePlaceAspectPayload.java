@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.network;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.research.note.HexGrid;
@@ -8,9 +10,9 @@ import com.leclowndu93150.thaumaturge.content.research.table.MenuResearchTable;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -24,13 +26,13 @@ public record ServerboundTablePlaceAspectPayload(BlockPos pos, int q, int r, Opt
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTablePlaceAspectPayload> STREAM_CODEC =
             StreamCodec.composite(
-                    BlockPos.STREAM_CODEC,
+                    VanillaStreamCodecs.BLOCK_POS,
                     ServerboundTablePlaceAspectPayload::pos,
                     ByteBufCodecs.VAR_INT,
                     ServerboundTablePlaceAspectPayload::q,
                     ByteBufCodecs.VAR_INT,
                     ServerboundTablePlaceAspectPayload::r,
-                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC),
+                    ByteBufCodecs.optional(VanillaStreamCodecs.RESOURCE_LOCATION),
                     ServerboundTablePlaceAspectPayload::aspect,
                     ServerboundTablePlaceAspectPayload::new);
 

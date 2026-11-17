@@ -1,13 +1,15 @@
 package com.leclowndu93150.thaumaturge.network;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.content.spell.manipulator.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.spell.manipulator.MenuFocalManipulator;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -17,7 +19,7 @@ public record ServerboundSpellDraftPayload(BlockPos pos, String name, Spell spel
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundSpellDraftPayload> STREAM_CODEC =
             StreamCodec.composite(
-                    BlockPos.STREAM_CODEC,
+                    VanillaStreamCodecs.BLOCK_POS,
                     ServerboundSpellDraftPayload::pos,
                     ByteBufCodecs.stringUtf8(BlockEntityFocalManipulator.MAX_NAME_LENGTH),
                     ServerboundSpellDraftPayload::name,

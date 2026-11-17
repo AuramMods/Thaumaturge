@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.spell;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.spell.part.SettingSpec;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
@@ -15,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 
 /**
@@ -168,9 +170,9 @@ public record SpellNode(
 
     private static final class BoundedStreamCodec implements StreamCodec<ByteBuf, SpellNode> {
         private static final StreamCodec<ByteBuf, ResourceKey<SpellPart>> PART =
-                ResourceKey.streamCodec(SpellPart.REGISTRY_KEY);
+                VanillaStreamCodecs.resourceKey(SpellPart.REGISTRY_KEY);
         private static final StreamCodec<ByteBuf, Optional<ResourceKey<IAspect>>> ASPECT =
-                ByteBufCodecs.optional(ResourceKey.streamCodec(IAspect.REGISTRY_KEY));
+                ByteBufCodecs.optional(VanillaStreamCodecs.resourceKey(IAspect.REGISTRY_KEY));
         private static final StreamCodec<ByteBuf, Map<String, Integer>> SETTINGS = ByteBufCodecs.map(
                 HashMap::new, ByteBufCodecs.stringUtf8(MAX_SETTING_KEY), ByteBufCodecs.VAR_INT, MAX_SETTINGS);
 

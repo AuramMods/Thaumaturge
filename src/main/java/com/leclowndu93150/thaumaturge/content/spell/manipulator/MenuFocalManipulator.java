@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

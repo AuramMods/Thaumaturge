@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
 import com.mojang.serialization.Codec;
@@ -14,9 +16,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -38,7 +40,7 @@ public final class ArcaneShapedRecipePattern {
                     (e) -> e.width,
                     ByteBufCodecs.VAR_INT,
                     (e) -> e.height,
-                    ByteBufCodecs.optional(Ingredient.CONTENTS_STREAM_CODEC).apply(ByteBufCodecs.list()),
+                    ByteBufCodecs.optional(VanillaStreamCodecs.INGREDIENT).apply(ByteBufCodecs.list()),
                     (e) -> e.ingredients,
                     ArcaneShapedRecipePattern::createFromNetwork);
 

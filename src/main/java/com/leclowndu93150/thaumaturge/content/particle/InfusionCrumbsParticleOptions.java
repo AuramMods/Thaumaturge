@@ -1,13 +1,15 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 
 public record InfusionCrumbsParticleOptions(
@@ -25,7 +27,7 @@ public record InfusionCrumbsParticleOptions(
     public static final StreamCodec<RegistryFriendlyByteBuf, InfusionCrumbsParticleOptions> STREAM_CODEC =
             StreamCodec.of(
                     (buf, o) -> {
-                        ItemStack.STREAM_CODEC.encode(buf, o.stack());
+                        VanillaStreamCodecs.ITEM_STACK.encode(buf, o.stack());
                         buf.writeDouble(o.tx());
                         buf.writeDouble(o.ty());
                         buf.writeDouble(o.tz());
@@ -34,7 +36,7 @@ public record InfusionCrumbsParticleOptions(
                         buf.writeDouble(o.sz());
                     },
                     buf -> new InfusionCrumbsParticleOptions(
-                            ItemStack.STREAM_CODEC.decode(buf),
+                            VanillaStreamCodecs.ITEM_STACK.decode(buf),
                             buf.readDouble(),
                             buf.readDouble(),
                             buf.readDouble(),

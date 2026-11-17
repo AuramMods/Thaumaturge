@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
@@ -13,9 +15,9 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -41,9 +43,9 @@ public final class InfusionRecipe implements InfusionJobRecipe {
                     : DataResult.success(recipe));
 
     private static final StreamCodec<RegistryFriendlyByteBuf, List<Ingredient>> COMPONENTS_STREAM_CODEC =
-            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list());
+            VanillaStreamCodecs.INGREDIENT.apply(ByteBufCodecs.list());
     private static final StreamCodec<RegistryFriendlyByteBuf, Optional<ItemStack>> RESULT_STREAM_CODEC =
-            ByteBufCodecs.optional(ItemStack.STREAM_CODEC);
+            ByteBufCodecs.optional(VanillaStreamCodecs.ITEM_STACK);
     private static final StreamCodec<RegistryFriendlyByteBuf, Optional<DataComponentPatch>> PATCH_STREAM_CODEC =
             ByteBufCodecs.optional(DataComponentPatch.STREAM_CODEC);
     private static final StreamCodec<RegistryFriendlyByteBuf, Optional<ResearchGate>> RESEARCH_STREAM_CODEC =
@@ -51,7 +53,7 @@ public final class InfusionRecipe implements InfusionJobRecipe {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, InfusionRecipe> STREAM_CODEC = StreamCodec.of(
             (buffer, recipe) -> {
-                Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.catalyst);
+                VanillaStreamCodecs.INGREDIENT.encode(buffer, recipe.catalyst);
                 COMPONENTS_STREAM_CODEC.encode(buffer, recipe.components);
                 AspectList.STREAM_CODEC.encode(buffer, recipe.aspects);
                 ByteBufCodecs.VAR_INT.encode(buffer, recipe.instability);
@@ -60,7 +62,7 @@ public final class InfusionRecipe implements InfusionJobRecipe {
                 RESEARCH_STREAM_CODEC.encode(buffer, recipe.research);
             },
             buffer -> new InfusionRecipe(
-                    Ingredient.CONTENTS_STREAM_CODEC.decode(buffer),
+                    VanillaStreamCodecs.INGREDIENT.decode(buffer),
                     COMPONENTS_STREAM_CODEC.decode(buffer),
                     AspectList.STREAM_CODEC.decode(buffer),
                     ByteBufCodecs.VAR_INT.decode(buffer),

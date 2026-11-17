@@ -1,13 +1,15 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -144,7 +146,7 @@ public sealed interface BlueprintTarget {
                         .apply(i, StackTarget::new));
 
         static final StreamCodec<RegistryFriendlyByteBuf, StackTarget> STREAM_CODEC_INSTANCE =
-                StreamCodec.composite(ItemStack.STREAM_CODEC, StackTarget::stack, StackTarget::new);
+                StreamCodec.composite(VanillaStreamCodecs.ITEM_STACK, StackTarget::stack, StackTarget::new);
 
         @Override
         public Kind kind() {

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
+import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemProperties;
@@ -27,8 +29,8 @@ import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
+import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -98,7 +100,7 @@ public final class GolemProperties implements IGolemProperties {
     }
 
     private static <T> StreamCodec<ByteBuf, T> byId(Supplier<Registry<T>> registry) {
-        return ResourceLocation.STREAM_CODEC.map(
+        return VanillaStreamCodecs.RESOURCE_LOCATION.map(
                 id -> {
                     T value = registry.get().get(id);
                     if (value == null) {
