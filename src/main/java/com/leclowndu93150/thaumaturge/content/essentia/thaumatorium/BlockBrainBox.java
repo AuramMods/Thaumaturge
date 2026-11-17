@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.mojang.serialization.MapCodec;
 import java.util.Map;
@@ -52,7 +54,6 @@ public final class BlockBrainBox extends Block {
         return SHAPES.get(state.getValue(BlockStateProperties.FACING));
     }
 
-    @Override
     protected MapCodec<BlockBrainBox> codec() {
         return CODEC;
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.tube;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -32,7 +34,6 @@ public final class BlockTubeBuffer extends BlockEssentiaTransport implements Blo
         super(properties, TubeGeometry.BUFFER);
     }
 
-    @Override
     protected MapCodec<BlockTubeBuffer> codec() {
         return CODEC;
     }

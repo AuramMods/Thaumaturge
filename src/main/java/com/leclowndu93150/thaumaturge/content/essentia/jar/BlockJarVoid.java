@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +29,6 @@ public final class BlockJarVoid extends AbstractBlockJar {
         return TOP_TEXTURE;
     }
 
-    @Override
     protected MapCodec<BlockJarVoid> codec() {
         return CODEC;
     }

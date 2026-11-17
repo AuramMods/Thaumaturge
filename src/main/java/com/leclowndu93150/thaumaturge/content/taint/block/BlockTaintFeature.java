@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
@@ -87,7 +89,6 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.UP));
     }
 
-    @Override
     public MapCodec<BlockTaintFeature> codec() {
         return CODEC;
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.casters.FocusCaster;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
@@ -41,7 +43,6 @@ public final class BlockJarNode extends Block implements EntityBlock, BlockInter
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockJarNode> codec() {
         return CODEC;
     }

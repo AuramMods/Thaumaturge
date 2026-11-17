@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -55,7 +57,6 @@ public final class BlockEverfullUrn extends BaseEntityBlock implements BlockInte
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockEverfullUrn> codec() {
         return CODEC;
     }

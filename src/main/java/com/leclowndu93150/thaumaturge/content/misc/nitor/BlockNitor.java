@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.misc.nitor;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.propertiesCodec;
+
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -45,7 +47,6 @@ public final class BlockNitor extends BaseEntityBlock {
         return this.dye.getMapColor().col;
     }
 
-    @Override
     protected MapCodec<BlockNitor> codec() {
         return CODEC;
     }

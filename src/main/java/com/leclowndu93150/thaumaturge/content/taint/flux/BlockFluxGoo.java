@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.particle.BubbleParticleOptions;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -37,7 +39,6 @@ public final class BlockFluxGoo extends LiquidBlock implements PhysicalFluxBlock
         super(fluid, properties);
     }
 
-    @Override
     public MapCodec<LiquidBlock> codec() {
         return CODEC;
     }

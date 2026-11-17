@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.table;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -78,7 +80,6 @@ public final class BlockResearchTable extends BaseEntityBlock implements BlockIn
                 stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PART, ResearchTablePart.MAIN));
     }
 
-    @Override
     protected MapCodec<BlockResearchTable> codec() {
         return CODEC;
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -46,7 +48,6 @@ public final class BlockItemGrate extends BaseEntityBlock implements BlockIntera
         registerDefaultState(defaultBlockState().setValue(OPEN, false).setValue(POWERED, false));
     }
 
-    @Override
     protected MapCodec<BlockItemGrate> codec() {
         return CODEC;
     }

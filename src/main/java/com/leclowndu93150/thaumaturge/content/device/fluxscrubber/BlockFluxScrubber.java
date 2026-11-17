@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.fluxscrubber;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -42,7 +44,6 @@ public final class BlockFluxScrubber extends BaseEntityBlock {
         registerDefaultState(stateDefinition.any().setValue(BlockStateProperties.FACING, Direction.DOWN));
     }
 
-    @Override
     protected MapCodec<BlockFluxScrubber> codec() {
         return CODEC;
     }

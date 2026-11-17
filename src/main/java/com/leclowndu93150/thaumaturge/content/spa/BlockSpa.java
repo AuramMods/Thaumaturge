@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spa;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
@@ -36,7 +38,6 @@ public class BlockSpa extends BaseEntityBlock implements BlockInteractions {
         super(properties);
     }
 
-    @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }

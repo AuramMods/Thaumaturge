@@ -31,7 +31,6 @@ public abstract class AbstractTTPlant extends BushBlock {
         super(properties.offsetType(BlockBehaviour.OffsetType.XZ));
     }
 
-    @Override
     protected abstract MapCodec<? extends AbstractTTPlant> codec();
 
     @Override

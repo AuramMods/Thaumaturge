@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.propertiesCodec;
+
 import com.leclowndu93150.thaumaturge.content.particle.BlockRunesParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -52,7 +54,6 @@ public final class BlockPavingStone extends BaseEntityBlock {
         this.barrier = barrier;
     }
 
-    @Override
     protected MapCodec<BlockPavingStone> codec() {
         return CODEC;
     }

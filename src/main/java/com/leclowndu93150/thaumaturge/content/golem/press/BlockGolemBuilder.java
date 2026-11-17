@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.press;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
@@ -49,7 +51,6 @@ public final class BlockGolemBuilder extends BaseEntityBlock implements BlockInt
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    @Override
     protected MapCodec<BlockGolemBuilder> codec() {
         return CODEC;
     }

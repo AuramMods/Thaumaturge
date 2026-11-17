@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.blocks.LabelTarget;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaAccess;
@@ -103,7 +105,6 @@ public class BlockAlembic extends BaseEntityBlock implements LabelTarget, BlockI
         return RenderShape.MODEL;
     }
 
-    @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }

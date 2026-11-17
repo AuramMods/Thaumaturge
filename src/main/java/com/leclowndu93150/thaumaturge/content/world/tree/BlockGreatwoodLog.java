@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.tree;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,7 +25,6 @@ public final class BlockGreatwoodLog extends RotatedPillarBlock {
         registerDefaultState(defaultBlockState().setValue(TrunkCorner.PROPERTY, TrunkCorner.NONE));
     }
 
-    @Override
     public MapCodec<BlockGreatwoodLog> codec() {
         return CODEC;
     }

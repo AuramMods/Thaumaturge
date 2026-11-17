@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.entity.EntityFallingTaint;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
@@ -34,7 +36,6 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
         super(properties);
     }
 
-    @Override
     public MapCodec<BlockTaintCrust> codec() {
         return CODEC;
     }

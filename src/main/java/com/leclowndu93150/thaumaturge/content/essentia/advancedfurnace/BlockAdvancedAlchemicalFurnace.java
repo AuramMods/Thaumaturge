@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
@@ -50,7 +52,6 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock implem
         registerDefaultState(stateDefinition.any().setValue(LIT, false));
     }
 
-    @Override
     protected MapCodec<BlockAdvancedAlchemicalFurnace> codec() {
         return CODEC;
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.FluxImmunityHelper;
@@ -63,7 +65,6 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
         registerDefaultState(stateDefinition.any().setValue(AMOUNT, 1));
     }
 
-    @Override
     protected MapCodec<BlockFluxGas> codec() {
         return CODEC;
     }

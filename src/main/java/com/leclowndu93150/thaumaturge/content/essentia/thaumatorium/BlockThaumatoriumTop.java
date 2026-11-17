@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
@@ -46,7 +48,6 @@ public final class BlockThaumatoriumTop extends BaseEntityBlock implements Block
         return lowered;
     }
 
-    @Override
     protected MapCodec<BlockThaumatoriumTop> codec() {
         return CODEC;
     }

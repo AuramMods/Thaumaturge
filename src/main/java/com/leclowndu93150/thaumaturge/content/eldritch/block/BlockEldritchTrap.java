@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.particle.BlockRunesParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -34,7 +36,6 @@ public final class BlockEldritchTrap extends BaseEntityBlock {
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockEldritchTrap> codec() {
         return CODEC;
     }

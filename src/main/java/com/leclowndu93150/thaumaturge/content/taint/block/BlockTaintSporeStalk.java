@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
@@ -46,7 +48,6 @@ public final class BlockTaintSporeStalk extends Block implements ITaintBlock {
         registerDefaultState(defaultBlockState().setValue(MATURE, false));
     }
 
-    @Override
     public MapCodec<BlockTaintSporeStalk> codec() {
         return CODEC;
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
@@ -17,7 +19,6 @@ public final class BlockTaintRock extends AbstractTaintBlock {
         super(properties);
     }
 
-    @Override
     public MapCodec<BlockTaintRock> codec() {
         return CODEC;
     }

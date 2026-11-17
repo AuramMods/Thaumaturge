@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -18,7 +20,6 @@ public final class BlockLampArcane extends BlockLamp {
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockLampArcane> codec() {
         return CODEC;
     }

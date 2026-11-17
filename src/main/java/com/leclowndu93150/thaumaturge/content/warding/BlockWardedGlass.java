@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -18,7 +20,6 @@ public final class BlockWardedGlass extends TransparentBlock {
         super(properties);
     }
 
-    @Override
     public MapCodec<BlockWardedGlass> codec() {
         return CODEC;
     }

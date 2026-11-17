@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.infusion.AltarStabiliser;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockPedestal;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
@@ -51,7 +53,6 @@ public final class BlockInlay extends Block implements AltarStabiliser {
                 .setValue(WEST, false));
     }
 
-    @Override
     protected MapCodec<BlockInlay> codec() {
         return CODEC;
     }

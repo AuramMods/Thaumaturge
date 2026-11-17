@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.lock;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchSparkFX;
@@ -39,7 +41,6 @@ public final class BlockEldritchLock extends BaseEntityBlock implements BlockInt
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    @Override
     protected MapCodec<BlockEldritchLock> codec() {
         return CODEC;
     }

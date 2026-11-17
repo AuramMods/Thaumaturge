@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.manipulator;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
@@ -36,7 +38,6 @@ public final class BlockFocalManipulator extends BaseEntityBlock implements Bloc
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockFocalManipulator> codec() {
         return CODEC;
     }

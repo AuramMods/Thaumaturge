@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.crystalizer;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -59,7 +61,6 @@ public final class BlockEssentiaCrystalizer extends BaseEntityBlock {
         registerDefaultState(stateDefinition.any().setValue(BlockStateProperties.FACING, Direction.DOWN));
     }
 
-    @Override
     protected MapCodec<BlockEssentiaCrystalizer> codec() {
         return CODEC;
     }

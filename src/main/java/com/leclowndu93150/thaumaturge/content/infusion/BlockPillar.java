@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
@@ -48,7 +50,6 @@ public final class BlockPillar extends HorizontalDirectionalBlock {
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
     }
 
-    @Override
     protected MapCodec<BlockPillar> codec() {
         return CODEC;
     }

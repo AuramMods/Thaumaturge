@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.workbench;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
@@ -51,7 +53,6 @@ public class BlockArcaneWorkbench extends BaseEntityBlock implements BlockIntera
         super(properties);
     }
 
-    @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }

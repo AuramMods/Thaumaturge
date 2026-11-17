@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -40,7 +42,6 @@ public final class BlockDioptra extends BaseEntityBlock implements BlockInteract
         registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.ENABLED, true));
     }
 
-    @Override
     protected MapCodec<BlockDioptra> codec() {
         return CODEC;
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
@@ -58,7 +60,6 @@ public final class BlockRechargePedestal extends BaseEntityBlock implements Bloc
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockRechargePedestal> codec() {
         return CODEC;
     }

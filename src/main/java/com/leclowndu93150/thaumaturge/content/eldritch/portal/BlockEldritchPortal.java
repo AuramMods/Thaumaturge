@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.portal;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -31,7 +33,6 @@ public final class BlockEldritchPortal extends BaseEntityBlock implements Portal
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockEldritchPortal> codec() {
         return CODEC;
     }

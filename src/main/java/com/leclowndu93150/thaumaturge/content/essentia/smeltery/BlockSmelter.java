@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
@@ -65,7 +67,6 @@ public class BlockSmelter extends BaseEntityBlock implements BlockInteractions {
         return RenderShape.MODEL;
     }
 
-    @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -18,7 +20,6 @@ public final class BlockEffectGlimmer extends Block {
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockEffectGlimmer> codec() {
         return CODEC;
     }

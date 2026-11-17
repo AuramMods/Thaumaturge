@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.particle.SparkleParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -61,7 +63,6 @@ public final class BlockJarBrain extends BaseEntityBlock implements BlockInterac
         return RenderShape.MODEL;
     }
 
-    @Override
     protected MapCodec<BlockJarBrain> codec() {
         return CODEC;
     }

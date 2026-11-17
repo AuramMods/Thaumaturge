@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -22,7 +24,6 @@ public class BlockEldritchStructure extends Block {
         registerDefaultState(stateDefinition.any().setValue(SEALED, Boolean.FALSE));
     }
 
-    @Override
     protected MapCodec<? extends BlockEldritchStructure> codec() {
         return CODEC;
     }

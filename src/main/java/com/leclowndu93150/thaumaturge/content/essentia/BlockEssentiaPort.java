@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.propertiesCodec;
+
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStreamPort;
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -72,7 +74,6 @@ public final class BlockEssentiaPort extends BaseEntityBlock implements IEssenti
         return input;
     }
 
-    @Override
     protected MapCodec<BlockEssentiaPort> codec() {
         return CODEC;
     }

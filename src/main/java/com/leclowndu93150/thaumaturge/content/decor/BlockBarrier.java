@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -25,7 +27,6 @@ public final class BlockBarrier extends Block {
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockBarrier> codec() {
         return CODEC;
     }

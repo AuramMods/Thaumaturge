@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
@@ -117,7 +119,6 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
         return FACE_BY_DIRECTION.get(direction);
     }
 
-    @Override
     public MapCodec<BlockTaintFibre> codec() {
         return CODEC;
     }

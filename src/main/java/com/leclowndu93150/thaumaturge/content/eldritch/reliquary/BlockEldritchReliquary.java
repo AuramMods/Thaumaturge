@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.reliquary;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
@@ -62,7 +64,6 @@ public final class BlockEldritchReliquary extends BaseEntityBlock implements Blo
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    @Override
     protected MapCodec<BlockEldritchReliquary> codec() {
         return CODEC;
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.crystal;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -52,7 +54,6 @@ public final class BlockCrystal extends Block {
 
     private static final MapCodec<BlockCrystal> CODEC = simpleCodec(p -> new BlockCrystal(p, null, false));
 
-    @Override
     protected MapCodec<? extends Block> codec() {
         return CODEC;
     }

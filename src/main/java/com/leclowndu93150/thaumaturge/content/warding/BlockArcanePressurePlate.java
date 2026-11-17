@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.mojang.serialization.MapCodec;

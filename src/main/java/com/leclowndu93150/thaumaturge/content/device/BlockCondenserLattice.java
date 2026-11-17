@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.propertiesCodec;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -131,7 +133,6 @@ public final class BlockCondenserLattice extends Block implements BlockInteracti
         return linked;
     }
 
-    @Override
     protected MapCodec<BlockCondenserLattice> codec() {
         return CODEC;
     }

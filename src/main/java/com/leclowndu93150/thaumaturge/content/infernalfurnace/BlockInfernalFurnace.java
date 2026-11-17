@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -144,7 +146,6 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
         return state.setValue(FACING, mirror.mirror(state.getValue(FACING)));
     }
 
-    @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }

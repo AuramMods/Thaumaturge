@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
@@ -54,7 +56,6 @@ public final class BlockNode extends Block implements EntityBlock, BlockInteract
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockNode> codec() {
         return CODEC;
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.bellows;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -49,7 +51,6 @@ public class BlockBellows extends BaseEntityBlock {
                 stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ENABLED, true));
     }
 
-    @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }

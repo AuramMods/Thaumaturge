@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.reservoir;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -35,7 +37,6 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
         registerDefaultState(stateDefinition.any().setValue(BlockStateProperties.FACING, Direction.DOWN));
     }
 
-    @Override
     protected MapCodec<BlockEssentiaReservoir> codec() {
         return CODEC;
     }

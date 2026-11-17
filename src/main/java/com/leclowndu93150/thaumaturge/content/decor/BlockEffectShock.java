@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.particle.SparkParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.MapCodec;
@@ -49,7 +51,6 @@ public final class BlockEffectShock extends Block {
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockEffectShock> codec() {
         return CODEC;
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.MapCodec;
@@ -57,7 +59,6 @@ public final class BlockRedstoneRelay extends DiodeBlock implements EntityBlock,
                 getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(POWERED, false));
     }
 
-    @Override
     public MapCodec<BlockRedstoneRelay> codec() {
         return CODEC;
     }

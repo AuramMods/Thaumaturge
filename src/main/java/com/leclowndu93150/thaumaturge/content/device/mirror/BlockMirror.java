@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.propertiesCodec;
+
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStreamPort;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.Codec;
@@ -60,7 +62,6 @@ public final class BlockMirror extends BaseEntityBlock implements IEssentiaStrea
         return essentia;
     }
 
-    @Override
     protected MapCodec<BlockMirror> codec() {
         return CODEC;
     }

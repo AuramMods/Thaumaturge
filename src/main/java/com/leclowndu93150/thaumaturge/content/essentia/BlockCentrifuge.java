@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -29,7 +31,6 @@ public final class BlockCentrifuge extends BaseEntityBlock {
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockCentrifuge> codec() {
         return CODEC;
     }

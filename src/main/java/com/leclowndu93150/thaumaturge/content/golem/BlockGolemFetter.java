@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -20,7 +22,6 @@ public final class BlockGolemFetter extends Block {
         registerDefaultState(defaultBlockState().setValue(POWERED, false));
     }
 
-    @Override
     protected MapCodec<BlockGolemFetter> codec() {
         return CODEC;
     }

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.crucible;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
@@ -73,7 +75,6 @@ public class BlockCrucible extends BaseEntityBlock implements BlockInteractions 
         super(properties);
     }
 
-    @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }

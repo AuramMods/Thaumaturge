@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
@@ -65,7 +67,6 @@ public final class BlockPedestal extends BaseEntityBlock implements BlockInterac
         }
     }
 
-    @Override
     protected MapCodec<BlockPedestal> codec() {
         return CODEC;
     }

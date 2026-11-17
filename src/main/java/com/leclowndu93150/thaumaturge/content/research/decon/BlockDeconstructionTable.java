@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.decon;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
@@ -57,7 +59,6 @@ public final class BlockDeconstructionTable extends BaseEntityBlock implements B
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockDeconstructionTable> codec() {
         return CODEC;
     }

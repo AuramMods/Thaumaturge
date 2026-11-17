@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
@@ -52,7 +54,6 @@ public final class BlockArcaneDoor extends DoorBlock implements BlockInteraction
         super(ARCANE, properties);
     }
 
-    @Override
     public MapCodec<BlockArcaneDoor> codec() {
         return CODEC;
     }

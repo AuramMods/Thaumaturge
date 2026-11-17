@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -32,7 +34,6 @@ public final class BlockJarCustom extends AbstractBlockJar {
         this.bottomTexture = bottomTexture;
     }
 
-    @Override
     protected MapCodec<BlockJarCustom> codec() {
         return CODEC;
     }

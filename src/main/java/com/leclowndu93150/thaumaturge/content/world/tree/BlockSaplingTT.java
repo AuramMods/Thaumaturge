@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.tree;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.propertiesCodec;
+
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -21,7 +23,6 @@ public final class BlockSaplingTT extends SaplingBlock {
         super(treeGrower, properties);
     }
 
-    @Override
     public MapCodec<? extends BlockSaplingTT> codec() {
         return CODEC;
     }

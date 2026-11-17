@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.manabean;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -65,7 +67,6 @@ public final class BlockManaPod extends BaseEntityBlock {
         registerDefaultState(stateDefinition.any().setValue(AGE, 0).setValue(DYNAMIC_TREE_LIFT, 0));
     }
 
-    @Override
     protected MapCodec<BlockManaPod> codec() {
         return CODEC;
     }

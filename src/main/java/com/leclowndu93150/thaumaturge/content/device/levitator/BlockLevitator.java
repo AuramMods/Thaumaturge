@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.levitator;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -63,7 +65,6 @@ public final class BlockLevitator extends BaseEntityBlock implements BlockIntera
         return shapes;
     }
 
-    @Override
     protected MapCodec<BlockLevitator> codec() {
         return CODEC;
     }

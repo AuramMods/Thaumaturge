@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -27,7 +29,6 @@ public final class BlockNodeTransducer extends Block implements EntityBlock {
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockNodeTransducer> codec() {
         return CODEC;
     }

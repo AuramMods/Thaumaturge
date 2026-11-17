@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -24,7 +26,6 @@ public final class BlockInfusionMatrix extends BaseEntityBlock {
         super(properties);
     }
 
-    @Override
     protected MapCodec<BlockInfusionMatrix> codec() {
         return CODEC;
     }

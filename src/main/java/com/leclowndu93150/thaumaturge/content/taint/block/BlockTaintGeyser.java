@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSwarm;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.mojang.serialization.MapCodec;
@@ -26,7 +28,6 @@ public final class BlockTaintGeyser extends AbstractTaintBlock {
         super(properties);
     }
 
-    @Override
     public MapCodec<BlockTaintGeyser> codec() {
         return CODEC;
     }

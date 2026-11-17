@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -57,7 +59,6 @@ public final class BlockNodeStabilizer extends Block implements EntityBlock {
         this.advanced = advanced;
     }
 
-    @Override
     protected MapCodec<BlockNodeStabilizer> codec() {
         return CODEC;
     }

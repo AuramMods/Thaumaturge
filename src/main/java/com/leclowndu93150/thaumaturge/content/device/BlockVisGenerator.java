@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import java.util.Map;
@@ -52,7 +54,6 @@ public final class BlockVisGenerator extends BaseEntityBlock {
         return SHAPES.get(state.getValue(BlockStateProperties.FACING));
     }
 
-    @Override
     protected MapCodec<BlockVisGenerator> codec() {
         return CODEC;
     }

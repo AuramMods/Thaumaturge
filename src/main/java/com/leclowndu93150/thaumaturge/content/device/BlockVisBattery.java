@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -30,7 +32,6 @@ public final class BlockVisBattery extends Block {
         registerDefaultState(getStateDefinition().any().setValue(CHARGE, 0));
     }
 
-    @Override
     protected MapCodec<BlockVisBattery> codec() {
         return CODEC;
     }

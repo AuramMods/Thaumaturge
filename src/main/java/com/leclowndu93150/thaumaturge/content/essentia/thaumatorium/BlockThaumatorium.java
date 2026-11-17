@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 
+import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
@@ -76,7 +78,6 @@ public final class BlockThaumatorium extends BaseEntityBlock implements BlockInt
         registerDefaultState(getStateDefinition().any().setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH));
     }
 
-    @Override
     protected MapCodec<BlockThaumatorium> codec() {
         return CODEC;
     }
