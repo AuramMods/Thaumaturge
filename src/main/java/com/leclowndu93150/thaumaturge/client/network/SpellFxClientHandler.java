@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.network;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpellFxPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -27,7 +28,7 @@ public final class SpellFxClientHandler {
             return;
         }
         RandomSource random = level.getRandom();
-        int each = Math.clamp(PARTICLE_BUDGET / payload.events().size(), MIN_PER_EVENT, MAX_PER_EVENT);
+        int each = Java17.clamp(PARTICLE_BUDGET / payload.events().size(), MIN_PER_EVENT, MAX_PER_EVENT);
         for (ClientboundSpellFxPayload.Event event : payload.events()) {
             Vec3 at = payload.anchor().add(event.x(), event.y(), event.z());
             Vec3 heading = new Vec3(event.dx(), event.dy(), event.dz());

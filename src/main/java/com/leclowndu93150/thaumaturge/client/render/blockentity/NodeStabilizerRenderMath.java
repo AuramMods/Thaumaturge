@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeStabilizer;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeTransducer;
 import net.minecraft.util.FastColor.ARGB32;
@@ -20,21 +21,21 @@ final class NodeStabilizerRenderMath {
     private NodeStabilizerRenderMath() {}
 
     static float engagement(int count) {
-        return Math.clamp((float) count / BlockEntityNodeStabilizer.MAX_COUNT, 0.0F, 1.0F);
+        return Java17.clamp((float) count / BlockEntityNodeStabilizer.MAX_COUNT, 0.0F, 1.0F);
     }
 
     static float transducerExtension(float count) {
-        return Math.clamp(count / BlockEntityNodeTransducer.CHARGE_TARGET, 0.0F, 1.0F);
+        return Java17.clamp(count / BlockEntityNodeTransducer.CHARGE_TARGET, 0.0F, 1.0F);
     }
 
     static float transducerGlow(float extension) {
-        return TRANSDUCER_GLOW_FLOOR + Math.clamp(extension, 0.0F, 1.0F) * TRANSDUCER_GLOW_RANGE;
+        return TRANSDUCER_GLOW_FLOOR + Java17.clamp(extension, 0.0F, 1.0F) * TRANSDUCER_GLOW_RANGE;
     }
 
     static int glowColor(int tint, float glow, float ticks, int arm) {
         float pulse = GLOW_BASE
                 + GLOW_AMPLITUDE * (float) Math.sin(Math.PI * 2.0 * ticks / GLOW_PERIOD + arm * GLOW_ARM_PHASE);
-        int alpha = Math.round(Math.clamp(glow * pulse, 0.0F, 1.0F) * 255.0F);
+        int alpha = Math.round(Java17.clamp(glow * pulse, 0.0F, 1.0F) * 255.0F);
         return ARGB32.color(alpha, tint);
     }
 

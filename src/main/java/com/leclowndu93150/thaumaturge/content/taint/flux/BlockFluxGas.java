@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
@@ -78,7 +79,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
         return TTBlocks.FLUX_GAS
                 .get()
                 .defaultBlockState()
-                .setValue(AMOUNT, Math.clamp(amount, 1, PhysicalFlux.MAX_QUANTA));
+                .setValue(AMOUNT, Java17.clamp(amount, 1, PhysicalFlux.MAX_QUANTA));
     }
 
     @Override

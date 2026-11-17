@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.delivery;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -50,7 +51,7 @@ public record RayDelivery(double range, boolean reach, Visual visual, float widt
                     ctx.level(), source, origin.position(), origin.direction(), distance, pierce + 1);
             Vec3 end = hits.isEmpty()
                     ? origin.position().add(origin.direction().scale(distance))
-                    : hits.getLast().getLocation();
+                    : Java17.last(hits).getLocation();
             show(ctx, look, origin, end, !hits.isEmpty());
             for (HitResult hit : hits) {
                 out.add(SpellTarget.of(hit, origin.direction()));

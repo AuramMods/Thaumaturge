@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.ThaumicSlime;
@@ -301,7 +302,7 @@ public abstract class FluxGooFluid extends ForgeFlowingFluid {
         return TTBlocks.FLUX_GOO
                 .get()
                 .defaultBlockState()
-                .setValue(LiquidBlock.LEVEL, PhysicalFlux.MAX_QUANTA - Math.clamp(quanta, 1, PhysicalFlux.MAX_QUANTA));
+                .setValue(LiquidBlock.LEVEL, PhysicalFlux.MAX_QUANTA - Java17.clamp(quanta, 1, PhysicalFlux.MAX_QUANTA));
     }
 
     private static void scheduleFluidTick(ServerLevel level, BlockPos pos) {

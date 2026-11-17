@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.damagetype;
 
 import com.leclowndu93150.thaumaturge.api.damagesource.TTDamageTypes;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.world.damagesource.DamageEffects;
 import net.minecraft.world.damagesource.DamageScaling;
 import net.minecraft.world.damagesource.DamageType;
@@ -9,7 +9,7 @@ import net.minecraft.world.damagesource.DamageType;
 public final class TTDamageTypeBootstrap {
     private TTDamageTypeBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<DamageType> context) {
+    public static void bootstrap(BootstapContext<DamageType> context) {
         context.register(
                 TTDamageTypes.ELDRITCH_SPELL,
                 new DamageType(

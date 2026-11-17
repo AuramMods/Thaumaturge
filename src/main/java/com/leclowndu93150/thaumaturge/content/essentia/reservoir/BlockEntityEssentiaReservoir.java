@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.reservoir;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -165,7 +166,7 @@ public final class BlockEntityEssentiaReservoir extends RegistryBlockEntity impl
         if (!isOutlet(face) || contents.isEmpty()) {
             return null;
         }
-        return contents.entries().getFirst();
+        return Java17.first(contents.entries());
     }
 
     private boolean isOutlet(@Nullable Direction face) {
@@ -235,7 +236,7 @@ public final class BlockEntityEssentiaReservoir extends RegistryBlockEntity impl
     @Override
     public int insert(Holder<IAspect> aspect, int amount, Direction face, boolean simulate) {
         int room = isOutlet(face) ? roomFor(aspect, face) : 0;
-        int accepted = Math.clamp(amount, 0, room);
+        int accepted = Java17.clamp(amount, 0, room);
         if (accepted > 0 && !simulate) {
             store(aspect, accepted);
         }

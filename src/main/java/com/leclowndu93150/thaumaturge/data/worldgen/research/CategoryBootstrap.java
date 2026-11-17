@@ -11,7 +11,7 @@ import com.leclowndu93150.thaumaturge.content.research.ResearchCategory;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
@@ -20,7 +20,7 @@ public final class CategoryBootstrap {
 
     private CategoryBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<IResearchCategory> ctx) {
+    public static void bootstrap(BootstapContext<IResearchCategory> ctx) {
         HolderGetter<IAspect> aspects = ctx.lookup(IAspect.REGISTRY_KEY);
 
         register(
@@ -144,7 +144,7 @@ public final class CategoryBootstrap {
     }
 
     private static void register(
-            BootstrapContext<IResearchCategory> ctx,
+            BootstapContext<IResearchCategory> ctx,
             ResourceKey<IResearchCategory> key,
             Optional<ResourceLocation> requiredResearch,
             AspectList formula,

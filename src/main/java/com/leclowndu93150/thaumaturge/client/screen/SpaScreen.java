@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.spa.BlockEntitySpa;
 import com.leclowndu93150.thaumaturge.content.spa.MenuSpa;
@@ -96,7 +97,7 @@ public class SpaScreen extends AbstractTTContainerScreen<MenuSpa> {
             float g = ARGB32.green(tint) / 255.0F;
             float b = ARGB32.blue(tint) / 255.0F;
             float a = ARGB32.alpha(tint) / 255.0F;
-            int fluidHeight = (Math.clamp(amount, 0, BlockEntitySpa.TANK_CAPACITY) * FLUID_HEIGHT
+            int fluidHeight = (Java17.clamp(amount, 0, BlockEntitySpa.TANK_CAPACITY) * FLUID_HEIGHT
                             + BlockEntitySpa.TANK_CAPACITY / 2)
                     / BlockEntitySpa.TANK_CAPACITY;
             for (int remaining = fluidHeight; remaining > 0; ) {

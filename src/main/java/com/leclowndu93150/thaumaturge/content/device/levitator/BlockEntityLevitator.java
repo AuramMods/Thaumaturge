@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.levitator;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
@@ -172,9 +173,9 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
         if (facing == Direction.UP && rider.isShiftKeyDown()) {
             y = y < 0.0 ? y * HOVER_DAMPING : y;
         } else {
-            x = Math.clamp(x + thrust.x * THRUST, -SPEED_CAP, SPEED_CAP);
-            y = Math.clamp(y + thrust.y * THRUST, -SPEED_CAP, SPEED_CAP);
-            z = Math.clamp(z + thrust.z * THRUST, -SPEED_CAP, SPEED_CAP);
+            x = Java17.clamp(x + thrust.x * THRUST, -SPEED_CAP, SPEED_CAP);
+            y = Java17.clamp(y + thrust.y * THRUST, -SPEED_CAP, SPEED_CAP);
+            z = Java17.clamp(z + thrust.z * THRUST, -SPEED_CAP, SPEED_CAP);
             if (facing.getAxis() != Direction.Axis.Y && !rider.onGround()) {
                 y = (y < 0.0 ? y * HOVER_DAMPING : y) + LIFT;
             }

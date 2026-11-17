@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.Direction;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -21,7 +21,7 @@ public final class BlueprintBootstrap {
 
     private BlueprintBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<Blueprint> ctx) {
+    public static void bootstrap(BootstapContext<Blueprint> ctx) {
         register(
                 ctx,
                 "infernal_furnace",
@@ -159,7 +159,7 @@ public final class BlueprintBootstrap {
                 List.of(List.of("   ", " I ", "   "), List.of("A A", "   ", "A A"), List.of("E N", " P ", "S W")));
     }
 
-    private static void register(BootstrapContext<Blueprint> ctx, String name, Blueprint blueprint) {
+    private static void register(BootstapContext<Blueprint> ctx, String name, Blueprint blueprint) {
         ctx.register(ResourceKey.create(Blueprint.REGISTRY_KEY, TTIds.rl(name)), blueprint);
     }
 

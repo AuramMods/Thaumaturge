@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.casters.focal;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public final class SpellPaths {
         if (path.isEmpty()) {
             return change.apply(root);
         }
-        int index = path.getFirst();
+        int index = Java17.first(path);
         List<SpellNode> children = new ArrayList<>(root.children());
         children.set(index, update(children.get(index), path.subList(1, path.size()), change));
         return root.withChildren(children);
@@ -64,7 +65,7 @@ public final class SpellPaths {
             return root;
         }
         List<Integer> parentPath = parent(path);
-        int index = path.getLast();
+        int index = Java17.last(path);
         SpellNode removed = at(root, path);
         return update(root, parentPath, parent -> {
             List<SpellNode> children = new ArrayList<>(parent.children());

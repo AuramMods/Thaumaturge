@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.server.command.admin;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.api.research.CategoryComponents;
@@ -77,7 +78,7 @@ final class KnowledgeSubcommand implements AdminSubcommand {
         }
         Component where = all
                 ? Component.translatable("commands.thaumaturge.knowledge.all_categories")
-                : CategoryComponents.name(categories.getFirst().key());
+                : CategoryComponents.name(Java17.first(categories).key());
         ctx.getSource()
                 .sendSuccess(
                         () -> Component.translatable(

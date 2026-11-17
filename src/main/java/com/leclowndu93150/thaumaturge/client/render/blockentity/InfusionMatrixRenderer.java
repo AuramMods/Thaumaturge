@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.MatrixCubeModel;
@@ -153,7 +154,7 @@ public final class InfusionMatrixRenderer implements BlockEntityRenderer<BlockEn
                     buffers.getBuffer(glowType),
                     LightTexture.FULL_BRIGHT,
                     OverlayTexture.NO_OVERLAY,
-                    ARGB32.color(Math.round(Math.clamp(glowAlpha, 0.0F, 1.0F) * 255.0F), 0xC54CFF));
+                    ARGB32.color(Math.round(Java17.clamp(glowAlpha, 0.0F, 1.0F) * 255.0F), 0xC54CFF));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.effect.instance;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
 import com.leclowndu93150.thaumaturge.content.effect.StreamPathfinder;
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public final class EssentiaStreamInstance extends StreamInstance {
     }
 
     private Vec3 destination() {
-        return this.route.getLast();
+        return Java17.last(this.route);
     }
 
     private boolean finalLeg() {

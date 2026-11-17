@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -45,7 +46,7 @@ public class JarItem extends BlockItem {
     public int getBarWidth(ItemStack stack) {
         EssentiaList contents = ItemData.get(stack, TTDataComponents.ESSENTIA_CONTENTS.get());
         int stored = contents == null ? 0 : contents.totalAmount();
-        return Math.clamp(Math.round((float) stored * BAR_MAX_WIDTH / IEssentiaJar.DEFAULT_CAPACITY), 0, BAR_MAX_WIDTH);
+        return Java17.clamp(Math.round((float) stored * BAR_MAX_WIDTH / IEssentiaJar.DEFAULT_CAPACITY), 0, BAR_MAX_WIDTH);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class JarItem extends BlockItem {
         if (contents == null || contents.isEmpty()) {
             return 0;
         }
-        return contents.contents().entries().getFirst().aspect().value().color();
+        return Java17.first(contents.contents().entries()).aspect().value().color();
     }
 
     @Override
@@ -73,7 +74,7 @@ public class JarItem extends BlockItem {
         }
         ItemStack held = context.getItemInHand();
         AspectList contents = contentsOf(held);
-        if (!contents.isEmpty() && !contents.entries().getFirst().aspect().equals(aspect)) {
+        if (!contents.isEmpty() && !Java17.first(contents.entries()).aspect().equals(aspect)) {
             return super.useOn(context);
         }
         int scoop = Math.min(alembic.amount(), IEssentiaJar.DEFAULT_CAPACITY - contents.totalAmount());

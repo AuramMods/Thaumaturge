@@ -19,7 +19,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +35,7 @@ import net.minecraft.world.level.ItemLike;
 public final class PechTradeBootstrap {
     private PechTradeBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<PechTradeTable> ctx) {
+    public static void bootstrap(BootstapContext<PechTradeTable> ctx) {
         HolderGetter<IAspect> aspects = ctx.lookup(IAspect.REGISTRY_KEY);
         HolderGetter<Enchantment> enchantments = ctx.lookup(Registries.ENCHANTMENT);
 
@@ -106,7 +106,7 @@ public final class PechTradeBootstrap {
         register(ctx, "stalker", stalker);
     }
 
-    private static void register(BootstrapContext<PechTradeTable> ctx, String name, List<PechTrade> trades) {
+    private static void register(BootstapContext<PechTradeTable> ctx, String name, List<PechTrade> trades) {
         ctx.register(ResourceKey.create(PechTradeTable.REGISTRY_KEY, TTIds.rl(name)), new PechTradeTable(trades));
     }
 

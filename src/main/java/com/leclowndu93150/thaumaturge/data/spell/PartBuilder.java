@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.Holder;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -135,7 +135,7 @@ final class PartBuilder {
         return this;
     }
 
-    void register(BootstrapContext<SpellPart> ctx, ResourceKey<SpellPart> key) {
+    void register(BootstapContext<SpellPart> ctx, ResourceKey<SpellPart> key) {
         ctx.register(
                 key,
                 new SpellPart(

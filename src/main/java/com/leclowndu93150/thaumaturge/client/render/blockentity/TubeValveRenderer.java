@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeValve;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -49,7 +50,7 @@ public final class TubeValveRenderer implements BlockEntityRenderer<BlockEntityT
     }
 
     static float sinkOffset(float rotation) {
-        float closed = Math.clamp(rotation / FULL_TURN, 0.0F, 1.0F);
+        float closed = Java17.clamp(rotation / FULL_TURN, 0.0F, 1.0F);
         return -closed * SINK_TRAVEL;
     }
 

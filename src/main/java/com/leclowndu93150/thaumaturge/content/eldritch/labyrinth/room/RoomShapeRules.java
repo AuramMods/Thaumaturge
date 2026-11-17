@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeGeometry;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.RoomSocket;
 import it.unimi.dsi.fastutil.ints.IntArrayFIFOQueue;
@@ -93,7 +94,7 @@ public final class RoomShapeRules {
         int sz = voxels.sizeZ();
         boolean[] seen = new boolean[sx * sy * sz];
         IntArrayFIFOQueue queue = new IntArrayFIFOQueue();
-        RoomSocket first = sockets.getFirst();
+        RoomSocket first = Java17.first(sockets);
         BlockPos start = SocketProfile.planePos(
                 first.cellX(), first.cellZ(), first.side(), SocketProfile.MIN_U, SocketProfile.BOTTOM);
         int startIndex = RoomVoxels.index(start.getX(), start.getY(), start.getZ(), sy, sz);

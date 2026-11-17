@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
@@ -274,7 +275,7 @@ public final class TaintBiomeManager {
         Holder<Biome> get(int quartX, int quartY, int quartZ) {
             int x = quartX - QuartPos.fromSection(chunkPos.x);
             int z = quartZ - QuartPos.fromSection(chunkPos.z);
-            int y = Math.clamp(quartY - minQuartY, 0, quartHeight - 1);
+            int y = Java17.clamp(quartY - minQuartY, 0, quartHeight - 1);
             if (x < 0 || x >= QUARTS_PER_CHUNK || z < 0 || z >= QUARTS_PER_CHUNK) {
                 throw new IllegalArgumentException("Biome resolver asked for a quart outside chunk " + chunkPos);
             }

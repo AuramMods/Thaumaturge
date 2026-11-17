@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -244,7 +245,7 @@ public final class ArcaneShapedRecipePattern {
                             } else if (strings.isEmpty()) {
                                 return DataResult.error(() -> "Invalid pattern: empty pattern not allowed");
                             } else {
-                                int firstLength = strings.getFirst().length();
+                                int firstLength = Java17.first(strings).length();
 
                                 for (String line : strings) {
                                     if (line.length() > ArcaneShapedRecipePattern.maxWidth) {

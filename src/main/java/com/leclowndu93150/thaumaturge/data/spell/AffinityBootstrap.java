@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -44,7 +44,7 @@ public final class AffinityBootstrap {
 
     private AffinityBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<AspectAffinity> ctx) {
+    public static void bootstrap(BootstapContext<AspectAffinity> ctx) {
         register(
                 ctx,
                 TTAspects.IGNIS,
@@ -284,7 +284,7 @@ public final class AffinityBootstrap {
     }
 
     private static void register(
-            BootstrapContext<AspectAffinity> ctx,
+            BootstapContext<AspectAffinity> ctx,
             ResourceKey<IAspect> aspect,
             String fx,
             int complexity,

@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.content.aspect.Aspect;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 
 public final class AspectBootstrap {
@@ -51,7 +51,7 @@ public final class AspectBootstrap {
 
     private AspectBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<IAspect> ctx) {
+    public static void bootstrap(BootstapContext<IAspect> ctx) {
         HolderGetter<IAspect> aspects = ctx.lookup(IAspect.REGISTRY_KEY);
         for (AspectDefinition definition : DEFINITIONS) {
             ctx.register(definition.key(), definition.create(aspects));

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.recipe.builders.workbench;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -58,7 +59,7 @@ public class ArcaneWorkbenchShapedRecipeBuilder
     }
 
     public ArcaneWorkbenchShapedRecipeBuilder pattern(String row) {
-        if (!this.rows.isEmpty() && row.length() != this.rows.getFirst().length()) {
+        if (!this.rows.isEmpty() && row.length() != Java17.first(this.rows).length()) {
             throw new IllegalArgumentException("Pattern must be the same width on every line!");
         } else {
             this.rows.add(row);

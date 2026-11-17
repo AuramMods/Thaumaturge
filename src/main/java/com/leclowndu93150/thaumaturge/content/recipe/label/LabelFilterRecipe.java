@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.label;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
@@ -51,7 +52,7 @@ public final class LabelFilterRecipe extends CustomRecipe {
                 if (aspect != null) return null;
                 IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER);
                 if (essentia == null || essentia.getAspects().isEmpty()) return null;
-                aspect = essentia.getAspects().entries().getFirst().aspect();
+                aspect = Java17.first(essentia.getAspects().entries()).aspect();
             } else if (!stack.isEmpty()) {
                 return null;
             }

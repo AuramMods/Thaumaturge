@@ -76,6 +76,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/state/**'
         java.include 'com/leclowndu93150/thaumaturge/itemdata/**'
         java.include 'com/leclowndu93150/thaumaturge/blockinteraction/**'
+        java.include 'com/leclowndu93150/thaumaturge/compat/Java17*'
         compileClasspath += sourceSets.main.compileClasspath
     }
     portCodecTest {
@@ -89,6 +90,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/state/**'
         java.include 'com/leclowndu93150/thaumaturge/itemdata/**'
         java.include 'com/leclowndu93150/thaumaturge/blockinteraction/**'
+        java.include 'com/leclowndu93150/thaumaturge/compat/Java17*'
         compileClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
         runtimeClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
     }

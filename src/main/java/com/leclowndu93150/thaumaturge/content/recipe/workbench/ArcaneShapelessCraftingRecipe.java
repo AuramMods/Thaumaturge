@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -97,7 +98,7 @@ public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
             return RecipeMatcher.findMatches(nonEmptyItems, this.ingredients) != null;
         } else {
             return input.size() == 1 && this.ingredients.size() == 1
-                    ? this.ingredients.getFirst().test(input.getItem(0))
+                    ? Java17.first(this.ingredients).test(input.getItem(0))
                     : input.stackedContents().canCraft(this, null);
         }
     }

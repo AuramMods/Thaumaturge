@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -77,7 +78,7 @@ public final class PotionSprayerScreen extends AbstractTTContainerScreen<MenuPot
                 CHARGE_OVERLAY_HEIGHT,
                 256,
                 256);
-        int charges = Math.clamp(sprayer.sprayShots(), 0, BlockEntityPotionSprayer.MAX_CHARGES);
+        int charges = Java17.clamp(sprayer.sprayShots(), 0, BlockEntityPotionSprayer.MAX_CHARGES);
         if (charges > 0) {
             int scroll = minecraft.player.tickCount % CHARGE_SCROLL_PERIOD;
             int tint = 0xFF000000 | (sprayer.color() & 0x00FFFFFF);
@@ -117,7 +118,7 @@ public final class PotionSprayerScreen extends AbstractTTContainerScreen<MenuPot
                     256,
                     256,
                     BAR_BACKGROUND_TINT);
-            int filled = Math.clamp(
+            int filled = Java17.clamp(
                     (int) ((float) progress.amountOf(entry.aspect()) / entry.amount() * BAR_HEIGHT), 0, BAR_HEIGHT);
             if (filled > 0) {
                 int tint = 0xFF000000 | (entry.aspect().value().color() & 0x00FFFFFF);

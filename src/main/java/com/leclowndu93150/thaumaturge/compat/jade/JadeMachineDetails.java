@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
@@ -225,6 +226,6 @@ final class JadeMachineDetails {
     }
 
     private static void progress(JadeDetailBuilder data, int value, int maximum) {
-        if (maximum > 0) data.detail("jade.thaumaturge.machine.progress", Math.clamp(value * 100 / maximum, 0, 100));
+        if (maximum > 0) data.detail("jade.thaumaturge.machine.progress", Java17.clamp(value * 100 / maximum, 0, 100));
     }
 }

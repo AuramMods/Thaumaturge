@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
@@ -267,7 +268,7 @@ public class BlockEntityAlembic extends AbstractSyncedBlockEntity
                 .orElse(null);
         filter = TTNbt.read(input, FILTER_KEY, LegacyIds.ASPECT_KEY_CODEC, registries)
                 .orElse(null);
-        amount = Math.clamp(input.getInt(AMOUNT_KEY), 0, CAPACITY);
+        amount = Java17.clamp(input.getInt(AMOUNT_KEY), 0, CAPACITY);
         spout = TTNbt.read(input, FACING_KEY, Direction.CODEC, registries).orElse(Direction.DOWN);
     }
 

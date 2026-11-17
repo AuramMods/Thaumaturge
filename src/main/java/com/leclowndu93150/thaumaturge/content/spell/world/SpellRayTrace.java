@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.world;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -48,7 +49,7 @@ public final class SpellRayTrace {
         Vec3 reach = block.getType() == HitResult.Type.MISS ? to : block.getLocation();
         List<EntityHitResult> entities = entitiesAlong(level, source, from, reach);
         if (!entities.isEmpty()) {
-            return entities.getFirst();
+            return Java17.first(entities);
         }
         return block;
     }

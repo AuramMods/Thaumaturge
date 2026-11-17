@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.golem;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
 import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import com.leclowndu93150.thaumaturge.client.screen.widget.TTLabelButton;
@@ -178,7 +179,7 @@ public final class GolemLogisticsScreen extends AbstractTTContainerScreen<MenuGo
     }
 
     private void adjustCount(int delta) {
-        requestCount = Math.clamp(requestCount + delta, MIN_REQUEST, selectedCount());
+        requestCount = Java17.clamp(requestCount + delta, MIN_REQUEST, selectedCount());
         if (countbar != null) {
             countbar.setValue(requestCount);
         }

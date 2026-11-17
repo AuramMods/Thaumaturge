@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import org.joml.Matrix4f;
 
@@ -25,7 +26,7 @@ final class EldritchOrbRayGeometry {
     private EldritchOrbRayGeometry() {}
 
     static void render(VertexConsumer buffer, Matrix4f matrix, int rayCount, float reach, int coreColor, int tipColor) {
-        int count = Math.clamp(rayCount, 0, MAX_RAYS);
+        int count = Java17.clamp(rayCount, 0, MAX_RAYS);
         if (count == 0 || reach <= 0.0F) {
             return;
         }

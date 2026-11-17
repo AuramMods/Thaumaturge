@@ -5,14 +5,14 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.Room
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.RoomType;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 
 public final class LabyrinthRoomBootstrap {
     private LabyrinthRoomBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<RoomType> context) {
+    public static void bootstrap(BootstapContext<RoomType> context) {
         HolderGetter<StructureProcessorList> processors = context.lookup(Registries.PROCESSOR_LIST);
         for (RoomRecipe recipe : RoomCatalogData.recipes()) {
             context.register(

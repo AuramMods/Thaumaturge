@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import java.util.ArrayList;
@@ -135,7 +136,7 @@ final class SplitConservation {
         if (output.isEmpty() || ingredients.isEmpty()) {
             return Optional.empty();
         }
-        Item input = RecipeAspectDerivation.representativeStack(ingredients.getFirst())
+        Item input = RecipeAspectDerivation.representativeStack(Java17.first(ingredients))
                 .getItem();
         if (input == Items.AIR || input == output.getItem()) {
             return Optional.empty();

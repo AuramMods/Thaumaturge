@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -538,7 +539,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
         if (stages.size() < 2) return false;
 
         IResearchStage previous = stages.get(stages.size() - 2);
-        IResearchStage last = stages.getLast();
+        IResearchStage last = Java17.last(stages);
         return (!previous.requiredResearch().isEmpty()
                         || !previous.obtain().isEmpty()
                         || !previous.craft().isEmpty()

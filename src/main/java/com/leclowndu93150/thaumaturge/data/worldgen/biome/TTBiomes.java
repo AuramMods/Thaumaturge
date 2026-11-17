@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.data.worldgen.placement.MiscOverworldPlacements;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceKey;
@@ -64,7 +64,7 @@ public final class TTBiomes {
         return Mth.hsvToRgb(0.62222224F - shifted * 0.05F, 0.5F + shifted * 0.1F, 1.0F);
     }
 
-    public static void bootstrap(BootstrapContext<Biome> context) {
+    public static void bootstrap(BootstapContext<Biome> context) {
         HolderGetter<PlacedFeature> placed = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.CONFIGURED_CARVER);
         context.register(MAGICAL_FOREST, magicalForest(placed, carvers));

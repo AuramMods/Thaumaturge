@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.casters.focal;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
 import com.leclowndu93150.thaumaturge.api.spell.SpellProblem;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
@@ -351,7 +352,7 @@ public final class SpellCanvas {
     }
 
     private void zoomBy(int steps) {
-        int next = Math.clamp(zoom + steps, 0, ZOOMS.length - 1);
+        int next = Java17.clamp(zoom + steps, 0, ZOOMS.length - 1);
         if (next != zoom) {
             panX = panX * ZOOMS[next] / ZOOMS[zoom];
             panY = panY * ZOOMS[next] / ZOOMS[zoom];

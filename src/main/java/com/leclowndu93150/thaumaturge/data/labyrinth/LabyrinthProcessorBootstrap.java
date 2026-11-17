@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.processor.Clust
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.processor.ExposedSurfaceProcessor;
 import java.util.List;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.block.Blocks;
@@ -46,7 +46,7 @@ public final class LabyrinthProcessorBootstrap {
 
     private LabyrinthProcessorBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<StructureProcessorList> context) {
+    public static void bootstrap(BootstapContext<StructureProcessorList> context) {
         BlockState stone = LabyrinthBlocks.stone();
         BlockState rock = LabyrinthBlocks.rock();
         BlockState crust = LabyrinthBlocks.crust();

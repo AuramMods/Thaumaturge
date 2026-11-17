@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -86,7 +87,7 @@ public final class PhysicalFlux {
     }
 
     private static boolean place(ServerLevel level, BlockPos pos, PhysicalFluxBlock kind, int amount) {
-        int incoming = Math.clamp(amount, 1, MAX_QUANTA);
+        int incoming = Java17.clamp(amount, 1, MAX_QUANTA);
         BlockState existing = level.getBlockState(pos);
         if (existing.getBlock() == kind) {
             int current = kind.fluxAmount(existing);

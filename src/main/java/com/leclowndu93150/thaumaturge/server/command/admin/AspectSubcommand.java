@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.server.command.admin;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.research.ResearchGrants;
@@ -85,7 +86,7 @@ final class AspectSubcommand implements AdminSubcommand {
             if (all) {
                 AspectPools.grantAllForCommand(player, amount);
             } else {
-                AspectPools.grantForCommand(player, aspects.getFirst(), amount);
+                AspectPools.grantForCommand(player, Java17.first(aspects), amount);
             }
         }
         ctx.getSource()
@@ -187,7 +188,7 @@ final class AspectSubcommand implements AdminSubcommand {
     private static Component name(List<Holder.Reference<IAspect>> aspects, boolean all) {
         return all
                 ? Component.translatable("commands.thaumaturge.aspects.every")
-                : AspectComponents.trueName(aspects.getFirst());
+                : AspectComponents.trueName(Java17.first(aspects));
     }
 
     @FunctionalInterface

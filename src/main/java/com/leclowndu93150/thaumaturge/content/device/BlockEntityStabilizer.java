@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
@@ -85,7 +86,7 @@ public final class BlockEntityStabilizer extends AbstractSyncedBlockEntity {
     }
 
     private void changeCharge(int next) {
-        int clamped = Math.clamp(next, 0, MAX_CHARGE);
+        int clamped = Java17.clamp(next, 0, MAX_CHARGE);
         if (clamped == charge) {
             return;
         }
@@ -109,7 +110,7 @@ public final class BlockEntityStabilizer extends AbstractSyncedBlockEntity {
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        charge = Math.clamp(input.getInt(CHARGE_KEY), 0, MAX_CHARGE);
+        charge = Java17.clamp(input.getInt(CHARGE_KEY), 0, MAX_CHARGE);
     }
 
     @Override

@@ -47,7 +47,7 @@ import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -60,7 +60,7 @@ public final class SpellPartBootstrap {
 
     private SpellPartBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<SpellPart> ctx) {
+    public static void bootstrap(BootstapContext<SpellPart> ctx) {
         flows(ctx);
         deliveries(ctx);
         strikes(ctx);
@@ -69,7 +69,7 @@ public final class SpellPartBootstrap {
         boss(ctx);
     }
 
-    private static void flows(BootstrapContext<SpellPart> ctx) {
+    private static void flows(BootstapContext<SpellPart> ctx) {
         PartBuilder.of(new OriginFlow()).glyph("root").hidden().register(ctx, TTSpellParts.ORIGIN);
         PartBuilder.of(new BranchFlow(3, 2))
                 .glyph("split_trajectory")
@@ -101,7 +101,7 @@ public final class SpellPartBootstrap {
                 .register(ctx, TTSpellParts.SIEVE);
     }
 
-    private static void deliveries(BootstrapContext<SpellPart> ctx) {
+    private static void deliveries(BootstapContext<SpellPart> ctx) {
         PartBuilder.of(new RayDelivery(3.0, true, RayDelivery.Visual.FLASH, 0.0F, 1))
                 .glyph("touch")
                 .color(0xE8B4A0)
@@ -234,7 +234,7 @@ public final class SpellPartBootstrap {
                 .register(ctx, TTSpellParts.PLAN);
     }
 
-    private static void strikes(BootstrapContext<SpellPart> ctx) {
+    private static void strikes(BootstapContext<SpellPart> ctx) {
         PartBuilder.of(new AspectStrikeEffect(1.0F))
                 .glyph("fire")
                 .complexity(2)
@@ -296,7 +296,7 @@ public final class SpellPartBootstrap {
                 .register(ctx, TTSpellParts.HEAL);
     }
 
-    private static void effects(BootstrapContext<SpellPart> ctx) {
+    private static void effects(BootstapContext<SpellPart> ctx) {
         PartBuilder.of(new AspectBurstEffect(2.0F, 0.75F))
                 .glyph("burst")
                 .complexity(6)
@@ -380,7 +380,7 @@ public final class SpellPartBootstrap {
                 .register(ctx, TTSpellParts.HARVEST);
     }
 
-    private static void modifiers(BootstrapContext<SpellPart> ctx) {
+    private static void modifiers(BootstapContext<SpellPart> ctx) {
         levelled(change(SpellStats.POWER, StatChange.Operation.MULTIPLY, 1.0F, 0.25F, true), 3.0F)
                 .glyph("potency")
                 .complexity(3)
@@ -497,7 +497,7 @@ public final class SpellPartBootstrap {
                 Optional.empty());
     }
 
-    private static void boss(BootstrapContext<SpellPart> ctx) {
+    private static void boss(BootstapContext<SpellPart> ctx) {
         hierophant(ctx, TTIds.ELDRITCH_CRESCENT, TTEntities.HIEROPHANT_CRESCENT.get());
         hierophant(ctx, TTIds.ELDRITCH_SIGIL, TTEntities.HIEROPHANT_SIGIL.get());
         hierophant(ctx, TTIds.ELDRITCH_NOVA, TTEntities.HIEROPHANT_NOVA.get());
@@ -509,7 +509,7 @@ public final class SpellPartBootstrap {
                 .register(ctx, ResourceKey.create(SpellPart.REGISTRY_KEY, TTIds.ELDRITCH_REND));
     }
 
-    private static void hierophant(BootstrapContext<SpellPart> ctx, ResourceLocation id, EntityType<?> spell) {
+    private static void hierophant(BootstapContext<SpellPart> ctx, ResourceLocation id, EntityType<?> spell) {
         PartBuilder.of(new HierophantDelivery(spell))
                 .glyph("flux")
                 .color(HIDDEN)

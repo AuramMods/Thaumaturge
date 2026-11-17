@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.aura.ClientAuraCache;
@@ -144,7 +145,7 @@ public final class AuraHudOverlay implements LeftHudStack.Gauge {
     }
 
     static float share(float amount) {
-        return Math.clamp(amount / FULL_TUBE_AURA, 0.0F, 1.0F);
+        return Java17.clamp(amount / FULL_TUBE_AURA, 0.0F, 1.0F);
     }
 
     private static void drawBand(

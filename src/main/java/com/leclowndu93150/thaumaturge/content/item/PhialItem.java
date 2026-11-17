@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -56,7 +57,7 @@ public final class PhialItem extends Item {
         }
         return Component.translatable(
                 getDescriptionId() + FILLED_SUFFIX,
-                AspectComponents.name(contents.getFirst().aspect()));
+                AspectComponents.name(Java17.first(contents).aspect()));
     }
 
     @Override
@@ -77,7 +78,7 @@ public final class PhialItem extends Item {
         if (stored.isEmpty()) {
             return interaction.draw(container);
         }
-        return jar ? interaction.store(container, stored.entries().getFirst()) : InteractionResult.PASS;
+        return jar ? interaction.store(container, Java17.first(stored.entries())) : InteractionResult.PASS;
     }
 
     private enum Flow {

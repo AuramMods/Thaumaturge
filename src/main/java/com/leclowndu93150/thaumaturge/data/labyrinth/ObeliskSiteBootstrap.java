@@ -12,7 +12,7 @@ import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.entity.EntityType;
@@ -36,7 +36,7 @@ public final class ObeliskSiteBootstrap {
 
     private ObeliskSiteBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<ObeliskSite> context) {
+    public static void bootstrap(BootstapContext<ObeliskSite> context) {
         Optional<Holder<StructureProcessorList>> weathering = Optional.of(
                 context.lookup(Registries.PROCESSOR_LIST).getOrThrow(LabyrinthProcessorBootstrap.OBELISK_WEATHERING));
         EntityType<?> guardian = TTEntities.ELDRITCH_GUARDIAN.get();

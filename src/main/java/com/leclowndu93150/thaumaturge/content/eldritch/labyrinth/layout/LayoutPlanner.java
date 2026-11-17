@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.layout;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public final class LayoutPlanner {
     }
 
     private static int normalize(int requested) {
-        int clamped = Math.clamp(requested, MIN_SIZE, MAX_SIZE);
+        int clamped = Java17.clamp(requested, MIN_SIZE, MAX_SIZE);
         return (clamped & 1) == 0 ? clamped - 1 : clamped;
     }
 }

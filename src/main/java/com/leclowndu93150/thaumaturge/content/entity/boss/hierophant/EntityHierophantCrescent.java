@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss.hierophant;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -41,7 +42,7 @@ public final class EntityHierophantCrescent extends AbstractHierophantSpell {
     }
 
     public static float radius(float age) {
-        return RADIUS * Math.clamp(age / 4.0F, 0.05F, 1.0F);
+        return RADIUS * Java17.clamp(age / 4.0F, 0.05F, 1.0F);
     }
 
     public Vec3 center(float age) {

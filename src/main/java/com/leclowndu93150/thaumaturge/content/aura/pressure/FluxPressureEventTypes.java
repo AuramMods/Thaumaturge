@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import java.util.List;
 import net.minecraft.util.RandomSource;
 import org.jspecify.annotations.Nullable;
@@ -37,6 +38,6 @@ public final class FluxPressureEventTypes {
                 return event;
             }
         }
-        return ALL.getFirst();
+        return Java17.first(ALL);
     }
 }

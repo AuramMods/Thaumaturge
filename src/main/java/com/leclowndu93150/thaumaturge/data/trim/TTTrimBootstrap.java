@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.Util;
 import net.minecraft.data.models.ItemModelGenerators;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
@@ -41,7 +41,7 @@ public final class TTTrimBootstrap {
 
     private TTTrimBootstrap() {}
 
-    public static void materials(BootstrapContext<TrimMaterial> context) {
+    public static void materials(BootstapContext<TrimMaterial> context) {
         material(context, TTTrimMaterials.BRASS, TTItems.INGOT_BRASS.get(), BRASS_COLOR, BRASS_MODEL_INDEX);
         material(context, TTTrimMaterials.THAUMIUM, TTItems.INGOT_THAUMIUM.get(), THAUMIUM_COLOR, THAUMIUM_MODEL_INDEX);
         material(
@@ -64,13 +64,13 @@ public final class TTTrimBootstrap {
         }
     }
 
-    public static void patterns(BootstrapContext<TrimPattern> context) {
+    public static void patterns(BootstapContext<TrimPattern> context) {
         TrimPatterns.register(context, TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), TTTrimPatterns.ARCANE);
         TrimPatterns.register(context, TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(), TTTrimPatterns.OCCULT);
     }
 
     private static void material(
-            BootstrapContext<TrimMaterial> context,
+            BootstapContext<TrimMaterial> context,
             ResourceKey<TrimMaterial> key,
             Item ingredient,
             int color,

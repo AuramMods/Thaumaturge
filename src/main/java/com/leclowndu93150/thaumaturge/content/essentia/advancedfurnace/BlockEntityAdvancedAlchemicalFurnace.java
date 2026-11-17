@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
@@ -323,7 +324,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
     }
 
     private static int readReserve(CompoundTag stored, String key) {
-        return Math.clamp(stored.getInt(key), 0, MAX_POWER);
+        return Java17.clamp(stored.getInt(key), 0, MAX_POWER);
     }
 
     @Override

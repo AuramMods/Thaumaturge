@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
 
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
@@ -188,7 +189,7 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
                 return cell;
             }
         }
-        return dirtyCandidates.getLast();
+        return Java17.last(dirtyCandidates);
     }
 
     private void sparkle(ServerLevel level) {

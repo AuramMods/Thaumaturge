@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.golems.parts;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -87,7 +88,7 @@ public abstract class GolemPart {
      * @return the first model rendered for this part, or null when it has no visual
      */
     public @Nullable GolemPartModel model() {
-        return models.isEmpty() ? null : models.getFirst();
+        return models.isEmpty() ? null : Java17.first(models);
     }
 
     /**

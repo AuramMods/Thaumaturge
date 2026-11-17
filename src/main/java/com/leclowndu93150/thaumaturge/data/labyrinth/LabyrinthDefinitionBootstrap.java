@@ -18,7 +18,7 @@ import java.util.Optional;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -39,7 +39,7 @@ public final class LabyrinthDefinitionBootstrap {
 
     private LabyrinthDefinitionBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<LabyrinthDefinition> context) {
+    public static void bootstrap(BootstapContext<LabyrinthDefinition> context) {
         HolderGetter<RoomType> rooms = context.lookup(RoomType.REGISTRY_KEY);
         HolderGetter<StructureProcessorList> processors = context.lookup(Registries.PROCESSOR_LIST);
         RoomPools pools = new RoomPools(

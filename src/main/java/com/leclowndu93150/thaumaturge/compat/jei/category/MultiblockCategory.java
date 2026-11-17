@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.recipe.*;
 import com.leclowndu93150.thaumaturge.compat.jei.ThaumaturgeJEIPlugin;
@@ -137,10 +138,9 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
             }
         }
         int index = 0;
-        for (Object2IntMap.Entry<BlueprintSource> entry : inputMap.object2IntEntrySet().stream()
+        for (Object2IntMap.Entry<BlueprintSource> entry : Java17.reversed(inputMap.object2IntEntrySet().stream()
                 .sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
-                .toList()
-                .reversed()) {
+                .toList())) {
             List<ItemStack> stacks = entry.getKey().getRepresentations();
             int count = entry.getIntValue();
             builder.addInputSlot(5 + index * 20, HEIGHT - 20)

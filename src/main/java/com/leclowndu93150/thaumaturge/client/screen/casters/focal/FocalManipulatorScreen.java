@@ -408,7 +408,7 @@ public final class FocalManipulatorScreen extends AbstractContainerScreen<MenuFo
 
     private static SpellSummary withProblem(SpellSummary base, Component message) {
         List<SpellProblem> problems = new ArrayList<>(base.problems());
-        problems.addFirst(SpellProblem.of(message, true));
+        problems.add(0, SpellProblem.of(message, true));
         return new SpellSummary(
                 base.complexity(),
                 base.budget(),

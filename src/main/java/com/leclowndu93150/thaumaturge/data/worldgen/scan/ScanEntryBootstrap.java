@@ -15,7 +15,7 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -28,7 +28,7 @@ import org.jspecify.annotations.Nullable;
 public final class ScanEntryBootstrap {
     private ScanEntryBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<ScanEntry> ctx) {
+    public static void bootstrap(BootstapContext<ScanEntry> ctx) {
         HolderGetter<Block> blockReg = ctx.lookup(Registries.BLOCK);
         HolderGetter<Item> itemReg = ctx.lookup(Registries.ITEM);
         HolderGetter<EntityType<?>> entityReg = ctx.lookup(Registries.ENTITY_TYPE);
@@ -309,7 +309,7 @@ public final class ScanEntryBootstrap {
     }
 
     private static void register(
-            BootstrapContext<ScanEntry> ctx,
+            BootstapContext<ScanEntry> ctx,
             String name,
             String key,
             @Nullable HolderSet<Block> blocks,

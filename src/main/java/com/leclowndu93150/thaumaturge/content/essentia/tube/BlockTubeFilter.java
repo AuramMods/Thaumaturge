@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.tube;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -95,7 +96,7 @@ public final class BlockTubeFilter extends BlockTube implements BlockInteraction
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         ResourceKey<IAspect> key =
-                aspects.entries().getFirst().aspect().unwrapKey().orElse(null);
+                Java17.first(aspects.entries()).aspect().unwrapKey().orElse(null);
         if (key == null) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }

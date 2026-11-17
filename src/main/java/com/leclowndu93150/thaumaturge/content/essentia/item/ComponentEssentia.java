@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.item;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -32,7 +33,7 @@ public record ComponentEssentia<T>(
                 stack,
                 TTDataComponents.CRYSTAL_ASPECT,
                 AspectList::of,
-                aspects -> aspects.entries().getFirst().withAmount(1));
+                aspects -> Java17.first(aspects.entries()).withAmount(1));
     }
 
     @Override

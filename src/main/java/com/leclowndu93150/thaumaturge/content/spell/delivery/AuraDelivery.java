@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.delivery;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -33,7 +34,7 @@ public record AuraDelivery(int maxTargets) implements SpellBehavior {
     @Override
     public void execute(CastContext ctx, List<SpellTarget> incoming) {
         LivingEntity caster = ctx.caster();
-        Vec3 centre = caster != null ? caster.position() : incoming.getFirst().position();
+        Vec3 centre = caster != null ? caster.position() : Java17.first(incoming).position();
         double radius = Math.max(1, ctx.setting(RADIUS)) + ctx.state().get(SpellStats.RADIUS);
         SpellLook look = SpellLook.downstream(ctx);
         for (int point = 0; point < RING_POINTS; point++) {

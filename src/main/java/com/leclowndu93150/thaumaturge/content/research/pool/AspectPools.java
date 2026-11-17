@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.pool;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
@@ -222,7 +223,7 @@ public final class AspectPools {
         sync(player);
         PayloadNetwork.sendToPlayer(
                 player,
-                new ClientboundAspectGainPayload(aspects.getFirst().key().location(), 0));
+                new ClientboundAspectGainPayload(Java17.first(aspects).key().location(), 0));
         player.level()
                 .playSound(
                         null,

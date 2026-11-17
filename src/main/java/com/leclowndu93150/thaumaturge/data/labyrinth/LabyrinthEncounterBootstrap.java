@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import java.util.Optional;
 import net.minecraft.Util;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -36,7 +36,7 @@ public final class LabyrinthEncounterBootstrap {
 
     private LabyrinthEncounterBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<LabyrinthEncounter> context) {
+    public static void bootstrap(BootstapContext<LabyrinthEncounter> context) {
         single(
                 context,
                 WARDEN,
@@ -84,7 +84,7 @@ public final class LabyrinthEncounterBootstrap {
     }
 
     private static void single(
-            BootstrapContext<LabyrinthEncounter> context,
+            BootstapContext<LabyrinthEncounter> context,
             ResourceKey<LabyrinthEncounter> key,
             ResourceKey<LootTable> reward,
             BossEvent.BossBarColor color,

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.tooltip;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -61,7 +62,7 @@ public final class AspectContainerTooltipHandler {
                 1,
                 Component.translatable("tooltip.thaumaturge.aspects.header")
                         .withStyle(style -> style.withColor(TextColor.fromRgb(0xB59ED9))));
-        for (AspectInstance entry : aspects.sortedByAmount().reversed()) {
+        for (AspectInstance entry : Java17.reversed(aspects.sortedByAmount())) {
             Holder<IAspect> aspect = entry.aspect();
             Component named = AspectKnowledgeAccess.isKnown(aspect)
                     ? Component.translatable(

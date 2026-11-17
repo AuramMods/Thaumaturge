@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.sprayer;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -351,7 +352,7 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
                 .orElse(ItemStack.EMPTY);
         needed = TTNbt.read(input, RECIPE_KEY, AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         stored = TTNbt.read(input, PROGRESS_KEY, AspectList.CODEC, registries).orElse(AspectList.EMPTY);
-        charges = Math.clamp(input.getInt(CHARGES_KEY), 0, MAX_CHARGES);
+        charges = Java17.clamp(input.getInt(CHARGES_KEY), 0, MAX_CHARGES);
         color = input.contains(COLOR_KEY) ? input.getInt(COLOR_KEY) : NO_POTION_COLOR;
     }
 

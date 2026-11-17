@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import java.util.Map;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.biome.Biome;
@@ -41,7 +41,7 @@ public final class TTStructureBootstrap {
 
     private TTStructureBootstrap() {}
 
-    public static void bootstrapStructures(BootstrapContext<Structure> context) {
+    public static void bootstrapStructures(BootstapContext<Structure> context) {
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
         context.register(
                 MOUND, new MoundStructure(new Structure.StructureSettings(biomes.getOrThrow(TTBiomeTags.HAS_MOUND))));
@@ -62,7 +62,7 @@ public final class TTStructureBootstrap {
                         sites));
     }
 
-    public static void bootstrapSets(BootstrapContext<StructureSet> context) {
+    public static void bootstrapSets(BootstapContext<StructureSet> context) {
         HolderGetter<Structure> structures = context.lookup(Registries.STRUCTURE);
         context.register(
                 MOUND_SET,

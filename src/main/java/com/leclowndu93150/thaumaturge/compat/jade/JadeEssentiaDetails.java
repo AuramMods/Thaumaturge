@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
@@ -137,7 +138,7 @@ final class JadeEssentiaDetails {
                 tube,
                 filter.isEmpty()
                         ? null
-                        : filter.entries().getFirst().aspect().unwrapKey().orElse(null));
+                        : Java17.first(filter.entries()).aspect().unwrapKey().orElse(null));
     }
 
     static void oneway(BlockEntityTubeOneway tube, JadeDetailBuilder data) {

@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world.OuterLand
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import java.util.OptionalLong;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -20,7 +20,7 @@ public final class OuterLandsBootstrap {
 
     private OuterLandsBootstrap() {}
 
-    public static void bootstrapTypes(BootstrapContext<DimensionType> context) {
+    public static void bootstrapTypes(BootstapContext<DimensionType> context) {
         context.register(
                 OuterLands.DIMENSION_TYPE,
                 new DimensionType(
@@ -42,7 +42,7 @@ public final class OuterLandsBootstrap {
                                 false, false, ConstantInt.of(MONSTER_SPAWN_LIGHT), MONSTER_SPAWN_BLOCK_LIGHT_LIMIT)));
     }
 
-    public static void bootstrapStems(BootstrapContext<LevelStem> context) {
+    public static void bootstrapStems(BootstapContext<LevelStem> context) {
         context.register(
                 OuterLands.STEM,
                 new LevelStem(

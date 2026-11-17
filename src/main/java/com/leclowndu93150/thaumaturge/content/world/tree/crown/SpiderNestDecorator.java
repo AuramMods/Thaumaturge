@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.crown;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -55,7 +56,7 @@ public final class SpiderNestDecorator extends TreeDecorator {
         if (context.logs().isEmpty() || random.nextFloat() >= probability) {
             return;
         }
-        int lowest = context.logs().getFirst().getY();
+        int lowest = Java17.first(context.logs()).getY();
         BlockPos foot = context.logs().stream()
                 .filter(pos -> pos.getY() == lowest)
                 .min(Comparator.comparingInt(Vec3i::getX).thenComparingInt(Vec3i::getZ))

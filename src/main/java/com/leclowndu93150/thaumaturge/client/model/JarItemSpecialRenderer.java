@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -70,6 +71,6 @@ public final class JarItemSpecialRenderer extends BlockEntityWithoutLevelRendere
         if (essentiaList == null || essentiaList.isEmpty()) {
             return null;
         }
-        return essentiaList.contents().entries().getFirst();
+        return Java17.first(essentiaList.contents().entries());
     }
 }

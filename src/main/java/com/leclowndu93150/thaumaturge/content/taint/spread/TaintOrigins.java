@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.spread;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.taint.ITaintOrigin;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
@@ -131,7 +132,7 @@ public final class TaintOrigins {
         }
         List<Entity> found = level.getEntities(
                 (Entity) null, new AABB(anchor).inflate(ENTITY_SEARCH_INFLATE), TaintOrigins::isLiveEntity);
-        return found.isEmpty() ? null : (ITaintOrigin) found.getFirst();
+        return found.isEmpty() ? null : (ITaintOrigin) Java17.first(found);
     }
 
     private static boolean isLiveEntity(Entity entity) {

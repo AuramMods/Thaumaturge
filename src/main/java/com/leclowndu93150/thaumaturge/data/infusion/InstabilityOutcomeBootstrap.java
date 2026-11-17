@@ -11,7 +11,7 @@ import com.leclowndu93150.thaumaturge.content.infusion.instability.WarpEffect;
 import com.leclowndu93150.thaumaturge.content.infusion.instability.ZapEffect;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.List;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.IntProvider;
@@ -32,7 +32,7 @@ public final class InstabilityOutcomeBootstrap {
 
     private InstabilityOutcomeBootstrap() {}
 
-    public static void bootstrap(BootstrapContext<InstabilityOutcome> context) {
+    public static void bootstrap(BootstapContext<InstabilityOutcome> context) {
         register(context, "drop_item", 4, EjectEffect.of(false, EjectAftermath.NONE));
         register(context, "warp", 3, new WarpEffect(PERMANENT_WARP_CHANCE, PERMANENT_WARP, TEMPORARY_WARP));
         register(context, "zap", 3, new ZapEffect(false, ZAP_DAMAGE));
@@ -58,7 +58,7 @@ public final class InstabilityOutcomeBootstrap {
     }
 
     private static void register(
-            BootstrapContext<InstabilityOutcome> context, String name, int weight, InstabilityEffect effect) {
+            BootstapContext<InstabilityOutcome> context, String name, int weight, InstabilityEffect effect) {
         context.register(
                 ResourceKey.create(InstabilityOutcome.REGISTRY_KEY, TTIds.rl(name)),
                 new InstabilityOutcome(weight, effect));
