@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
 import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
@@ -19,7 +21,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.ItemContainerContents;
+import com.leclowndu93150.thaumaturge.itemdata.ItemContents;
 import net.minecraft.world.level.Level;
 
 public final class FocusPouchItem extends Item {
@@ -31,7 +33,7 @@ public final class FocusPouchItem extends Item {
 
     public static NonNullList<ItemStack> getInventory(ItemStack pouch) {
         NonNullList<ItemStack> list = NonNullList.withSize(SIZE, ItemStack.EMPTY);
-        ItemContainerContents contents = pouch.get(TTDataComponents.POUCH_CONTENTS.get());
+        ItemContents contents = ItemData.get(pouch, TTDataComponents.POUCH_CONTENTS.get());
         if (contents != null) {
             contents.copyInto(list);
         }
@@ -39,7 +41,7 @@ public final class FocusPouchItem extends Item {
     }
 
     public static void setInventory(ItemStack pouch, NonNullList<ItemStack> list) {
-        pouch.set(TTDataComponents.POUCH_CONTENTS.get(), ItemContainerContents.fromItems(list));
+        ItemData.set(pouch, TTDataComponents.POUCH_CONTENTS.get(), ItemContents.fromItems(list));
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.storage;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaItemStorage;
@@ -88,7 +90,7 @@ public final class SingleAspectItemStorage implements IEssentiaItemStorage {
     }
 
     private boolean passesFilter(Holder<IAspect> aspect) {
-        ResourceKey<IAspect> filter = stack.get(TTDataComponents.ASPECT_FILTER.get());
+        ResourceKey<IAspect> filter = ItemData.get(stack, TTDataComponents.ASPECT_FILTER.get());
         return filter == null || aspect.is(filter);
     }
 

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.compat.jei;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -71,11 +73,11 @@ public final class AspectJeiSync {
 
     private static @Nullable ResourceLocation gatedAspectOf(ItemStack stack) {
         if (stack.is(TTItems.ESSENTIA_CRYSTAL.get())) {
-            AspectInstance instance = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
+            AspectInstance instance = ItemData.get(stack, TTDataComponents.CRYSTAL_ASPECT.get());
             return instance == null ? null : AspectPools.idOf(instance.aspect());
         }
         if (stack.is(TTItems.PHIAL.get())) {
-            AspectList aspects = stack.get(TTDataComponents.ASPECTS.get());
+            AspectList aspects = ItemData.get(stack, TTDataComponents.ASPECTS.get());
             if (aspects == null || aspects.isEmpty()) {
                 return null;
             }

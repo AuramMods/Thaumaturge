@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -19,7 +21,7 @@ public final class WandVisHelper {
     private WandVisHelper() {}
 
     public static WandParts getParts(ItemStack stack) {
-        WandParts parts = stack.get(TTDataComponents.WAND_PARTS.get());
+        WandParts parts = ItemData.get(stack, TTDataComponents.WAND_PARTS.get());
         return parts != null ? parts : WandParts.starter();
     }
 
@@ -28,7 +30,7 @@ public final class WandVisHelper {
         if (storage != null) {
             return storage.getVis(stack);
         }
-        WandVis vis = stack.get(TTDataComponents.WAND_VIS.get());
+        WandVis vis = ItemData.get(stack, TTDataComponents.WAND_VIS.get());
         return vis != null ? vis : WandVis.EMPTY;
     }
 
@@ -37,7 +39,7 @@ public final class WandVisHelper {
         if (storage != null) {
             storage.setVis(stack, vis);
         } else {
-            stack.set(TTDataComponents.WAND_VIS.get(), vis);
+            ItemData.set(stack, TTDataComponents.WAND_VIS.get(), vis);
         }
     }
 

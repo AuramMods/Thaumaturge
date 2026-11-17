@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -27,8 +29,8 @@ class JarUpgradeTest {
                 ResourceKey.create(IAspect.REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath("thaumaturge", "aer"));
         ItemStack jar = new ItemStack(TTItems.JAR_NORMAL.get(), 3);
         EssentiaList contents = new EssentiaList(AspectList.EMPTY.add(Holder.direct(mock(IAspect.class)), 48));
-        jar.set(TTDataComponents.ESSENTIA_CONTENTS, contents);
-        jar.set(TTDataComponents.ASPECT_FILTER, key);
+        ItemData.set(jar, TTDataComponents.ESSENTIA_CONTENTS, contents);
+        ItemData.set(jar, TTDataComponents.ASPECT_FILTER, key);
         jar.set(DataComponents.CUSTOM_NAME, Component.literal("Air supply"));
         IArcaneCraftingInput input = mock(IArcaneCraftingInput.class);
         when(input.size()).thenReturn(2);
@@ -42,10 +44,10 @@ class JarUpgradeTest {
 
         assertTrue(result.is(TTItems.JAR_VOID));
         assertEquals(1, result.getCount());
-        assertEquals(contents, result.get(TTDataComponents.ESSENTIA_CONTENTS));
-        assertEquals(key, result.get(TTDataComponents.ASPECT_FILTER));
+        assertEquals(contents, ItemData.get(result, TTDataComponents.ESSENTIA_CONTENTS));
+        assertEquals(key, ItemData.get(result, TTDataComponents.ASPECT_FILTER));
         assertEquals(jar.get(DataComponents.CUSTOM_NAME), result.get(DataComponents.CUSTOM_NAME));
         assertEquals(3, jar.getCount());
-        assertNull(template.get(TTDataComponents.ESSENTIA_CONTENTS));
+        assertNull(ItemData.get(template, TTDataComponents.ESSENTIA_CONTENTS));
     }
 }

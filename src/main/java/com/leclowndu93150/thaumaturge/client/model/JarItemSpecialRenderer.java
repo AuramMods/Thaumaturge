@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
 import com.leclowndu93150.thaumaturge.client.render.blockentity.JarRenderer;
@@ -64,7 +66,7 @@ public final class JarItemSpecialRenderer extends BlockEntityWithoutLevelRendere
     }
 
     private static AspectInstance extractContents(ItemStack stack) {
-        var essentiaList = stack.get(TTDataComponents.ESSENTIA_CONTENTS.get());
+        var essentiaList = ItemData.get(stack, TTDataComponents.ESSENTIA_CONTENTS.get());
         if (essentiaList == null || essentiaList.isEmpty()) {
             return null;
         }

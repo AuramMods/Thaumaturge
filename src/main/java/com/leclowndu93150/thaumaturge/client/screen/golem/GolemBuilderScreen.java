@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.screen.golem;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -420,7 +422,7 @@ public final class GolemBuilderScreen extends AbstractTTContainerScreen<MenuGole
     private static ItemStack materialStack(GolemMaterial material) {
         GolemProperties defaults = GolemProperties.createDefault();
         ItemStack stack = new ItemStack(TTItems.GOLEM_PLACER.get());
-        stack.set(
+        ItemData.set(stack,
                 TTDataComponents.GOLEM_PROPERTIES.get(),
                 new GolemProperties(material, defaults.head(), defaults.arms(), defaults.legs(), defaults.addon(), 0));
         return stack;

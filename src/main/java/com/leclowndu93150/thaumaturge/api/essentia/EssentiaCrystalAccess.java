@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.api.essentia;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import java.util.function.Supplier;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentType;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
@@ -21,7 +23,7 @@ import org.jspecify.annotations.Nullable;
  */
 public final class EssentiaCrystalAccess {
     private static Supplier<? extends Item> crystalItem;
-    private static Supplier<DataComponentType<AspectInstance>> aspectComponent;
+    private static Supplier<ItemDataKey<AspectInstance>> aspectComponent;
 
     private EssentiaCrystalAccess() {}
 
@@ -39,7 +41,7 @@ public final class EssentiaCrystalAccess {
             return ItemStack.EMPTY;
         }
         ItemStack stack = new ItemStack(item(), count);
-        stack.set(component(), new AspectInstance(aspect, 1));
+        ItemData.set(stack, component(), new AspectInstance(aspect, 1));
         return stack;
     }
 
@@ -54,7 +56,7 @@ public final class EssentiaCrystalAccess {
         if (!stack.is(item())) {
             return State.NOT_CRYSTAL;
         }
-        AspectInstance configured = stack.get(component());
+        AspectInstance configured = ItemData.get(stack, component());
         if (configured == null) {
             return State.UNCONFIGURED;
         }
@@ -80,7 +82,7 @@ public final class EssentiaCrystalAccess {
      * @throws IllegalStateException when called before the implementation has bound the facade
      */
     public static @Nullable Holder<IAspect> aspect(ItemStack stack) {
-        return isConfigured(stack) ? stack.get(component()).aspect() : null;
+        return isConfigured(stack) ? ItemData.get(stack, component()).aspect() : null;
     }
 
     /**
@@ -91,7 +93,7 @@ public final class EssentiaCrystalAccess {
      * @param component the component holding a crystal's aspect
      * @throws IllegalStateException when already bound
      */
-    public static void bind(Supplier<? extends Item> item, Supplier<DataComponentType<AspectInstance>> component) {
+    public static void bind(Supplier<? extends Item> item, Supplier<ItemDataKey<AspectInstance>> component) {
         if (crystalItem != null) {
             throw new IllegalStateException("EssentiaCrystalAccess already bound");
         }
@@ -106,7 +108,7 @@ public final class EssentiaCrystalAccess {
         return crystalItem.get();
     }
 
-    private static DataComponentType<AspectInstance> component() {
+    private static ItemDataKey<AspectInstance> component() {
         if (aspectComponent == null) {
             throw new IllegalStateException("EssentiaCrystalAccess accessed before binding");
         }

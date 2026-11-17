@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.item;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
@@ -19,7 +21,7 @@ public final class EssentiaCrystalFactory {
 
     public static ItemStack of(Holder<IAspect> aspect, int count) {
         ItemStack stack = new ItemStack(TTItems.ESSENTIA_CRYSTAL.get(), count);
-        stack.set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1));
+        ItemData.set(stack, TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1));
         return stack;
     }
 

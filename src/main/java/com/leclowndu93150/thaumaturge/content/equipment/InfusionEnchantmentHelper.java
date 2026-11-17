@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -17,7 +19,7 @@ public final class InfusionEnchantmentHelper {
     private InfusionEnchantmentHelper() {}
 
     public static InfusionEnchantments get(ItemStack stack) {
-        return stack.getOrDefault(TTDataComponents.INFUSION_ENCHANTMENTS.get(), InfusionEnchantments.EMPTY);
+        return ItemData.getOrDefault(stack, TTDataComponents.INFUSION_ENCHANTMENTS.get(), InfusionEnchantments.EMPTY);
     }
 
     public static int level(ItemStack stack, InfusionEnchantment enchantment) {
@@ -40,7 +42,7 @@ public final class InfusionEnchantmentHelper {
         if (current.level(enchantment) >= level) {
             return;
         }
-        stack.set(TTDataComponents.INFUSION_ENCHANTMENTS.get(), current.with(enchantment, level));
+        ItemData.set(stack, TTDataComponents.INFUSION_ENCHANTMENTS.get(), current.with(enchantment, level));
     }
 
     public static boolean canApply(ItemStack stack, InfusionEnchantment enchantment) {

@@ -1,5 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.equipment.bauble;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataDefaults;
+
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.items.ChargeDisplay;
 import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
@@ -32,12 +36,12 @@ public final class VerdantCharmItem extends Item {
     private static final float FOOD_SATURATION = 0.3F;
 
     public VerdantCharmItem(Properties properties) {
-        super(properties.component(
+        super(ItemDataDefaults.with(properties,
                 TTDataComponents.RECHARGEABLE.get(), new ChargeProfile(MAX_CHARGE, ChargeDisplay.ALWAYS)));
     }
 
     public static int type(ItemStack stack) {
-        return stack.getOrDefault(TTDataComponents.VERDANT_TYPE.get(), TYPE_BASE);
+        return ItemData.getOrDefault(stack, TTDataComponents.VERDANT_TYPE.get(), TYPE_BASE);
     }
 
     public void wornTick(ItemStack stack, LivingEntity wearer) {

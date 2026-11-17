@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -301,7 +303,7 @@ class InfusionEnchantmentRankCapTest {
         ItemStack stack = new ItemStack(Items.IRON_PICKAXE);
         Map<InfusionEnchantment, Integer> levels = new EnumMap<>(InfusionEnchantment.class);
         levels.put(enchantment, level);
-        stack.set(TTDataComponents.INFUSION_ENCHANTMENTS.get(), new InfusionEnchantments(levels));
+        ItemData.set(stack, TTDataComponents.INFUSION_ENCHANTMENTS.get(), new InfusionEnchantments(levels));
         return stack;
     }
 

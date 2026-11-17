@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.press;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -141,7 +143,7 @@ class GolemBuilderCutoffTest {
 
     private ItemStack placer(GolemProperties props, int count) {
         ItemStack stack = new ItemStack(TTItems.GOLEM_PLACER.get(), count);
-        stack.set(TTDataComponents.GOLEM_PROPERTIES.get(), props);
+        ItemData.set(stack, TTDataComponents.GOLEM_PROPERTIES.get(), props);
         return stack;
     }
 
@@ -309,7 +311,7 @@ class GolemBuilderCutoffTest {
         assertEquals(0, builder.totalCost());
         assertEquals(
                 GolemProperties.createDefault(),
-                builder.outputHandler().getStackInSlot(0).get(TTDataComponents.GOLEM_PROPERTIES.get()));
+                ItemData.get(builder.outputHandler().getStackInSlot(0), TTDataComponents.GOLEM_PROPERTIES.get()));
         verify(level).playSound(null, BlockPos.ZERO, TTSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 

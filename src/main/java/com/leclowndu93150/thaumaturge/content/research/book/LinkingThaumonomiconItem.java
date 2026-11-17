@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.book;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.content.research.link.LinkBinding;
 import com.leclowndu93150.thaumaturge.content.research.link.ResearchLinkData;
@@ -29,9 +31,9 @@ public final class LinkingThaumonomiconItem extends Item {
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return InteractionResultHolder.success(stack);
         }
-        LinkBinding binding = stack.get(TTDataComponents.LINK_BINDING.get());
+        LinkBinding binding = ItemData.get(stack, TTDataComponents.LINK_BINDING.get());
         if (binding == null) {
-            stack.set(
+            ItemData.set(stack,
                     TTDataComponents.LINK_BINDING.get(),
                     new LinkBinding(player.getUUID(), player.getGameProfile().getName()));
             player.playSound(TTSounds.WRITE.get(), 1.0F, 1.0F);
@@ -61,7 +63,7 @@ public final class LinkingThaumonomiconItem extends Item {
     @Override
     public void appendHoverText(
             ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        LinkBinding binding = stack.get(TTDataComponents.LINK_BINDING.get());
+        LinkBinding binding = ItemData.get(stack, TTDataComponents.LINK_BINDING.get());
         if (binding != null) {
             tooltip.add(Component.translatable("tooltip.thaumaturge.sharing.bound", binding.name())
                     .withStyle(ChatFormatting.GRAY));

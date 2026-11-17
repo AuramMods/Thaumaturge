@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.model.gear;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,13 +35,13 @@ class FortressAtlasPortTest {
         assertFalse(visor.getChild("goggles").visible);
 
         for (int mask = 0; mask <= 2; mask++) {
-            stack.set(TTDataComponents.FORTRESS_MASK.get(), mask);
+            ItemData.set(stack, TTDataComponents.FORTRESS_MASK.get(), mask);
             model.setupAnim(entity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
             assertMaskVisibility(visor, mask);
             assertFalse(visor.getChild("goggles").visible);
         }
 
-        stack.set(TTDataComponents.GOGGLES_UPGRADE.get(), Unit.INSTANCE);
+        ItemData.set(stack, TTDataComponents.GOGGLES_UPGRADE.get(), Unit.INSTANCE);
         model.setupAnim(entity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
         assertMaskVisibility(visor, 2);
         assertTrue(visor.getChild("goggles").visible);

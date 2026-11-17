@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.wands.assembly;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.api.wands.IWandRodOnAssemble;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
@@ -10,7 +12,7 @@ public final class WandAssemblyHook {
     private WandAssemblyHook() {}
 
     public static ItemStack apply(ItemStack result, IArcaneCraftingInput input) {
-        WandParts parts = result.get(TTDataComponents.WAND_PARTS.get());
+        WandParts parts = ItemData.get(result, TTDataComponents.WAND_PARTS.get());
         if (parts == null) {
             return result;
         }

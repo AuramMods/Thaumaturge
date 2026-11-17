@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.blocks.LabelTarget;
@@ -33,18 +35,18 @@ public final class LabelItem extends Item implements ILabel {
 
     public static ItemStack withAspect(ResourceKey<IAspect> aspect) {
         ItemStack stack = new ItemStack(TTItems.LABEL.get());
-        stack.set(TTDataComponents.ASPECT_FILTER.get(), aspect);
+        ItemData.set(stack, TTDataComponents.ASPECT_FILTER.get(), aspect);
         return stack;
     }
 
     @Override
     public @Nullable ResourceKey<IAspect> getFilteredAspect(ItemStack stack) {
-        return stack.get(TTDataComponents.ASPECT_FILTER.get());
+        return ItemData.get(stack, TTDataComponents.ASPECT_FILTER.get());
     }
 
     @Override
     public Component getName(ItemStack stack) {
-        if (stack.has(TTDataComponents.ASPECT_FILTER.get())) {
+        if (ItemData.has(stack, TTDataComponents.ASPECT_FILTER.get())) {
             return Component.translatable(MARKED_NAME_KEY);
         }
         return super.getName(stack);

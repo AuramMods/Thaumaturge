@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.table;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -136,9 +138,9 @@ public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity im
         ItemStack resource = inventory.getStackInSlot(SLOT_NOTE);
         int amount = Math.max(1, inventory.getStackInSlot(SLOT_NOTE).getCount());
         ItemStack note = resource.copyWithCount(amount);
-        note.set(TTDataComponents.RESEARCH_NOTE.get(), data);
+        ItemData.set(note, TTDataComponents.RESEARCH_NOTE.get(), data);
         if (data.complete()) {
-            note.set(TTDataComponents.NOTE_COMPLETE.get(), true);
+            ItemData.set(note, TTDataComponents.NOTE_COMPLETE.get(), true);
         }
         inventory.setStackInSlot(SLOT_NOTE, note.copyWithCount(amount));
         setChanged();
@@ -299,7 +301,7 @@ public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity im
         ResearchNotes.consumeInk(player, false);
         consumePlayerItem(player, Items.PAPER);
         ItemStack copy = inventory.getStackInSlot(SLOT_NOTE).copyWithCount(1);
-        copy.set(TTDataComponents.RESEARCH_NOTE.get(), data.withCopies(data.copies() + 1));
+        ItemData.set(copy, TTDataComponents.RESEARCH_NOTE.get(), data.withCopies(data.copies() + 1));
         writeNoteData(data.withCopies(data.copies() + 1));
         if (!player.getInventory().add(copy)) {
             player.drop(copy, false);
@@ -414,7 +416,7 @@ public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity im
         public boolean isItemValid(int index, ItemStack resource) {
             return switch (index) {
                 case SLOT_SCRIBE_TOOLS -> resource.is(TTItemTags.SCRIBING_TOOLS);
-                case SLOT_NOTE -> resource.has(TTDataComponents.RESEARCH_NOTE.get());
+                case SLOT_NOTE -> ItemData.has(resource, TTDataComponents.RESEARCH_NOTE.get());
                 default -> false;
             };
         }

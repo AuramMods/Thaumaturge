@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -18,7 +20,7 @@ public final class JarBrainItem extends BlockItem {
     @Override
     public void appendHoverText(
             ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        Integer xp = stack.get(TTDataComponents.STORED_XP.get());
+        Integer xp = ItemData.get(stack, TTDataComponents.STORED_XP.get());
         if (xp != null && xp > 0) {
             tooltip.add(Component.translatable("tooltip.thaumaturge.jar_brain.xp", xp)
                     .withStyle(ChatFormatting.GREEN));

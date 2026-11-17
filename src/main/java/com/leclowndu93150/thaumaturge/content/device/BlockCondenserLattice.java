@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -218,7 +220,7 @@ public final class BlockCondenserLattice extends Block {
             return;
         }
         ItemStack crystal = new ItemStack(TTItems.ESSENTIA_CRYSTAL.get());
-        crystal.set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(vitium, CRYSTAL_AMOUNT));
+        ItemData.set(crystal, TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(vitium, CRYSTAL_AMOUNT));
         Vec3 drop = Vec3.atCenterOf(pos)
                 .add(face.getStepX() / FACE_SHIFT_DIVISOR, 0.0, face.getStepZ() / FACE_SHIFT_DIVISOR);
         level.addFreshEntity(new ItemEntity(level, drop.x, drop.y, drop.z, crystal));

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.items;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -83,8 +85,8 @@ class RechargeAccessTest {
 
     private static ItemStack rechargeableStack(int capacity, int stored) {
         ItemStack stack = new ItemStack(Items.STICK);
-        stack.set(TTDataComponents.RECHARGEABLE.get(), new ChargeProfile(capacity, ChargeDisplay.ALWAYS));
-        stack.set(TTDataComponents.CHARGE.get(), stored);
+        ItemData.set(stack, TTDataComponents.RECHARGEABLE.get(), new ChargeProfile(capacity, ChargeDisplay.ALWAYS));
+        ItemData.set(stack, TTDataComponents.CHARGE.get(), stored);
         return stack;
     }
 }

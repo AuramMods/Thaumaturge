@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -267,12 +269,12 @@ public final class CasterManager {
     }
 
     private static CasterArea area(ItemStack stack) {
-        CasterArea area = stack.get(TTDataComponents.CASTER_AREA.get());
+        CasterArea area = ItemData.get(stack, TTDataComponents.CASTER_AREA.get());
         return area == null ? CasterArea.DEFAULT : area;
     }
 
     private static void setArea(ItemStack stack, CasterArea area) {
-        stack.set(TTDataComponents.CASTER_AREA.get(), area);
+        ItemData.set(stack, TTDataComponents.CASTER_AREA.get(), area);
     }
 
     private static int getAreaSize(ItemStack stack) {

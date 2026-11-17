@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -62,7 +64,7 @@ class PhialItemTest {
         verify(player).setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         ArgumentCaptor<ItemStack> output = ArgumentCaptor.forClass(ItemStack.class);
         verify(inventory).add(output.capture());
-        assertEquals(10, output.getValue().get(TTDataComponents.ASPECTS.get()).totalAmount());
+        assertEquals(10, ItemData.get(output.getValue(), TTDataComponents.ASPECTS.get()).totalAmount());
     }
 
     @Test

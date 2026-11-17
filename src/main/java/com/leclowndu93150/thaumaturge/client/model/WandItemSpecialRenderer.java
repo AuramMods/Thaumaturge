@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
@@ -284,7 +286,7 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
     public static WandArg extract(ItemStack stack) {
         WandParts parts = WandVisHelper.getParts(stack);
         ItemStack focusStack = ItemStack.EMPTY;
-        SocketedFocus template = stack.get(TTDataComponents.SOCKETED_FOCUS.get());
+        SocketedFocus template = ItemData.get(stack, TTDataComponents.SOCKETED_FOCUS.get());
         if (template != null) {
             focusStack = template.focus();
         }

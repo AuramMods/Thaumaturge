@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.client.Minecraft;
@@ -26,7 +28,7 @@ public final class AspectFilterTint implements ItemColor {
         if (tintIndex == 1) {
             return OPAQUE | defaultColor;
         }
-        ResourceKey<IAspect> aspect = stack.get(TTDataComponents.ASPECT_FILTER.get());
+        ResourceKey<IAspect> aspect = ItemData.get(stack, TTDataComponents.ASPECT_FILTER.get());
         ClientLevel level = Minecraft.getInstance().level;
         if (aspect != null && level != null) {
             return level.registryAccess()

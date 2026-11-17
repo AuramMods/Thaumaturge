@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -295,7 +297,7 @@ class LatticeAnchorCutoffTest {
                     ItemStack crystal = (ItemStack) context.arguments().get(4);
                     assertTrue(crystal.is(TTItems.ESSENTIA_CRYSTAL.get()));
                     assertEquals(1, crystal.getCount());
-                    AspectInstance content = crystal.get(TTDataComponents.CRYSTAL_ASPECT.get());
+                    AspectInstance content = ItemData.get(crystal, TTDataComponents.CRYSTAL_ASPECT.get());
                     assertNotNull(content);
                     assertSame(vitium, content.aspect());
                     assertEquals(1, content.amount());

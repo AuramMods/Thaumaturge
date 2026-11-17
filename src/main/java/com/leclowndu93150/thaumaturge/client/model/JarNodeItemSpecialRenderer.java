@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.client.render.NodeAnimation;
 import com.leclowndu93150.thaumaturge.client.render.blockentity.NodeRenderState;
@@ -48,7 +50,7 @@ public final class JarNodeItemSpecialRenderer extends BlockEntityWithoutLevelRen
                         ModelData.EMPTY,
                         null);
 
-        NodeData data = stack.get(TTDataComponents.NODE_DATA.get());
+        NodeData data = ItemData.get(stack, TTDataComponents.NODE_DATA.get());
         if (data == null || data.aspects().isEmpty()) {
             return;
         }

@@ -1,9 +1,11 @@
 package com.leclowndu93150.thaumaturge.api.items;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponentType;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -48,7 +50,7 @@ public final class RechargeAccess {
      * @return the stack's charge profile, or null when the stack is not rechargeable
      */
     public static @Nullable ChargeProfile profile(ItemStack stack) {
-        return stack.isEmpty() ? null : stack.get(BINDING.get().profile());
+        return stack.isEmpty() ? null : ItemData.get(stack, BINDING.get().profile());
     }
 
     /**
@@ -115,7 +117,7 @@ public final class RechargeAccess {
         }
         int drained = Math.round(AuraHelper.drainVis(level, pos, available, false));
         if (drained > 0) {
-            stack.set(BINDING.get().charge(), storedCharge(stack) + drained);
+            ItemData.set(stack, BINDING.get().charge(), storedCharge(stack) + drained);
         }
         return Math.max(NO_CHARGE, drained);
     }
@@ -133,7 +135,7 @@ public final class RechargeAccess {
         if (added <= 0) {
             return NO_CHARGE;
         }
-        stack.set(BINDING.get().charge(), storedCharge(stack) + added);
+        ItemData.set(stack, BINDING.get().charge(), storedCharge(stack) + added);
         return added;
     }
 
@@ -154,7 +156,7 @@ public final class RechargeAccess {
             return false;
         }
         if (cost > 0) {
-            stack.set(BINDING.get().charge(), stored - cost);
+            ItemData.set(stack, BINDING.get().charge(), stored - cost);
         }
         return true;
     }
@@ -192,7 +194,7 @@ public final class RechargeAccess {
     }
 
     private static int storedCharge(ItemStack stack) {
-        return stack.getOrDefault(BINDING.get().charge(), NO_CHARGE);
+        return ItemData.getOrDefault(stack, BINDING.get().charge(), NO_CHARGE);
     }
 
     /**
@@ -204,11 +206,11 @@ public final class RechargeAccess {
         /**
          * @return the {@code thaumaturge:charge} component type
          */
-        DataComponentType<Integer> charge();
+        ItemDataKey<Integer> charge();
 
         /**
          * @return the {@code thaumaturge:rechargeable} component type
          */
-        DataComponentType<ChargeProfile> profile();
+        ItemDataKey<ChargeProfile> profile();
     }
 }

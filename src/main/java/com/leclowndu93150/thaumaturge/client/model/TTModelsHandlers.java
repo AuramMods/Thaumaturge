@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshGeometry;
 import com.leclowndu93150.thaumaturge.client.render.crystal.CrystalUnbakedModel;
@@ -8,7 +10,7 @@ import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.core.component.DataComponentType;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
@@ -61,10 +63,10 @@ public final class TTModelsHandlers {
             ItemProperties.register(
                     TTItems.VERDANT_CHARM.get(),
                     VERDANT_TYPE_PROPERTY_ID,
-                    (stack, level, entity, seed) -> stack.getOrDefault(TTDataComponents.VERDANT_TYPE.get(), 0));
+                    (stack, level, entity, seed) -> ItemData.getOrDefault(stack, TTDataComponents.VERDANT_TYPE.get(), 0));
             ItemProperties.register(
                     TTItems.CELESTIAL_NOTES.get(), CELESTIAL_BODY_PROPERTY_ID, (stack, level, entity, seed) -> {
-                        CelestialBody body = stack.get(TTDataComponents.CELESTIAL_BODY.get());
+                        CelestialBody body = ItemData.get(stack, TTDataComponents.CELESTIAL_BODY.get());
                         return body == null ? 0.0F : body.ordinal();
                     });
         });
@@ -78,7 +80,7 @@ public final class TTModelsHandlers {
                         entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
     }
 
-    private static void registerComponentFlag(Item item, ResourceLocation id, DataComponentType<?> component) {
-        ItemProperties.register(item, id, (stack, level, entity, seed) -> stack.has(component) ? 1.0F : 0.0F);
+    private static void registerComponentFlag(Item item, ResourceLocation id, ItemDataKey<?> component) {
+        ItemProperties.register(item, id, (stack, level, entity, seed) -> ItemData.has(stack, component) ? 1.0F : 0.0F);
     }
 }

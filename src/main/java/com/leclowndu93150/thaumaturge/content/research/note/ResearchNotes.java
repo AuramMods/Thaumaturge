@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.note;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -101,7 +103,7 @@ public final class ResearchNotes {
     }
 
     public static @Nullable ResearchNoteData dataOf(ItemStack stack) {
-        return stack.get(TTDataComponents.RESEARCH_NOTE.get());
+        return ItemData.get(stack, TTDataComponents.RESEARCH_NOTE.get());
     }
 
     public static boolean hasNoteFor(Player player, ResourceLocation learnKey) {
@@ -141,7 +143,7 @@ public final class ResearchNotes {
         ResearchNoteData data =
                 NoteGenerator.generate(entryId, ordinal, anchors, entry.complexity(), player.getRandom());
         ItemStack note = new ItemStack(TTItems.RESEARCH_NOTE.get());
-        note.set(TTDataComponents.RESEARCH_NOTE.get(), data);
+        ItemData.set(note, TTDataComponents.RESEARCH_NOTE.get(), data);
         if (!player.getInventory().add(note)) {
             player.drop(note, false);
         }

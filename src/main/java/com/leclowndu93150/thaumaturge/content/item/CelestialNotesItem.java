@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -29,12 +31,12 @@ public final class CelestialNotesItem extends Item {
 
     public static ItemStack stackOf(CelestialBody body) {
         ItemStack stack = new ItemStack(TTItems.CELESTIAL_NOTES.get());
-        stack.set(TTDataComponents.CELESTIAL_BODY.get(), body);
+        ItemData.set(stack, TTDataComponents.CELESTIAL_BODY.get(), body);
         return stack;
     }
 
     public static CelestialBody bodyOf(ItemStack stack) {
-        return stack.getOrDefault(TTDataComponents.CELESTIAL_BODY.get(), CelestialBody.SUN);
+        return ItemData.getOrDefault(stack, TTDataComponents.CELESTIAL_BODY.get(), CelestialBody.SUN);
     }
 
     @Override

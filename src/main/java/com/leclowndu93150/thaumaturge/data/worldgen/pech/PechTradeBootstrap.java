@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.worldgen.pech;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -112,7 +114,7 @@ public final class PechTradeBootstrap {
 
     private static PechTrade crystal(HolderGetter<IAspect> aspects, int tier, ResourceKey<IAspect> aspect) {
         ItemStack stack = new ItemStack(TTItems.ESSENTIA_CRYSTAL.get());
-        stack.set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspects.getOrThrow(aspect), 1));
+        ItemData.set(stack, TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspects.getOrThrow(aspect), 1));
         return new PechTrade(tier, stack);
     }
 

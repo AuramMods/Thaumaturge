@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.research;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Map;
@@ -8,7 +10,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -56,17 +58,17 @@ public record ResearchRequirement(HolderSet<Item> items, DataComponentPatch comp
     }
 
     private boolean matchesComponents(ItemStack stack) {
-        for (Map.Entry<DataComponentType<?>, Optional<?>> entry : components.entrySet()) {
-            DataComponentType<?> type = entry.getKey();
+        for (Map.Entry<ItemDataKey<?>, Optional<?>> entry : components.entrySet()) {
+            ItemDataKey<?> type = entry.getKey();
             Optional<?> required = entry.getValue();
             if (required.isEmpty()) {
-                if (stack.has(type)) {
+                if (ItemData.has(stack, type)) {
                     return false;
                 }
                 continue;
             }
             Object value = required.get();
-            Object present = stack.get(type);
+            Object present = ItemData.get(stack, type);
             if (value instanceof ItemEnchantments enchantments) {
                 if (!hasAtLeast(enchantments, present)) {
                     return false;

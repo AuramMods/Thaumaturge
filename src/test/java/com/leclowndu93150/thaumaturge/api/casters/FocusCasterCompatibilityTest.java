@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.casters;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -165,7 +167,7 @@ class FocusCasterCompatibilityTest {
         assertEquals(3, wand.getFocusStack(stack).getCount());
         wand.setFocus(stack, ItemStack.EMPTY);
         assertTrue(wand.socketedFocus(stack).isEmpty());
-        assertFalse(stack.has(TTDataComponents.SOCKETED_FOCUS.get()));
+        assertFalse(ItemData.has(stack, TTDataComponents.SOCKETED_FOCUS.get()));
         wand.socketFocus(stack, null);
         assertTrue(wand.socketedFocus(stack).isEmpty());
     }

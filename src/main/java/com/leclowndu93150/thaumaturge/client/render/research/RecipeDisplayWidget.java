@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -621,7 +623,7 @@ public final class RecipeDisplayWidget {
     }
 
     private static boolean isBareCrystal(ItemStack stack) {
-        return stack.is(TTItems.ESSENTIA_CRYSTAL.get()) && stack.get(TTDataComponents.CRYSTAL_ASPECT.get()) == null;
+        return stack.is(TTItems.ESSENTIA_CRYSTAL.get()) && ItemData.get(stack, TTDataComponents.CRYSTAL_ASPECT.get()) == null;
     }
 
     private static List<ItemStack> crystals(IArcaneRecipe arcane) {

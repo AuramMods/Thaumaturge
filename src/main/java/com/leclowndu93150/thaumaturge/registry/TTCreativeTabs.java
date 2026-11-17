@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
@@ -561,13 +563,13 @@ public final class TTCreativeTabs {
 
     private static ItemStack golemPlacer(GolemProperties props) {
         ItemStack stack = new ItemStack(TTItems.GOLEM_PLACER.get());
-        stack.set(TTDataComponents.GOLEM_PROPERTIES.get(), props);
+        ItemData.set(stack, TTDataComponents.GOLEM_PROPERTIES.get(), props);
         return stack;
     }
 
     private static ItemStack verdantVariant(int type) {
         ItemStack stack = new ItemStack(TTItems.VERDANT_CHARM.get());
-        stack.set(TTDataComponents.VERDANT_TYPE.get(), type);
+        ItemData.set(stack, TTDataComponents.VERDANT_TYPE.get(), type);
         return stack;
     }
 

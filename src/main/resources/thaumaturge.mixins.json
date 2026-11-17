@@ -18,7 +18,8 @@
     "world.item.crafting.SmithingTrimRecipeAccessor",
     "world.level.block.FireBlockMixin",
     "world.level.block.entity.AbstractFurnaceBlockEntityAccessor",
-    "world.level.block.piston.PistonBaseBlockMixin"
+    "world.level.block.piston.PistonBaseBlockMixin",
+    "world.item.ItemDataDefaultsMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",

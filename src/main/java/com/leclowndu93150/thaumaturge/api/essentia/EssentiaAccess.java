@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.api.essentia;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponentType;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -25,7 +27,7 @@ import org.jspecify.annotations.Nullable;
  * @since 1.0.0
  */
 public final class EssentiaAccess {
-    private static Supplier<DataComponentType<ResourceKey<IAspect>>> filterComponent;
+    private static Supplier<ItemDataKey<ResourceKey<IAspect>>> filterComponent;
 
     private EssentiaAccess() {}
 
@@ -101,7 +103,7 @@ public final class EssentiaAccess {
      * @since 1.0.0
      */
     public static @Nullable ResourceKey<IAspect> aspectFilter(ItemStack stack) {
-        return stack.get(filterComponent());
+        return ItemData.get(stack, filterComponent());
     }
 
     /**
@@ -117,9 +119,9 @@ public final class EssentiaAccess {
     public static ItemStack withAspectFilter(ItemStack stack, @Nullable ResourceKey<IAspect> aspect) {
         ItemStack copy = stack.copy();
         if (aspect == null) {
-            copy.remove(filterComponent());
+            ItemData.remove(copy, filterComponent());
         } else {
-            copy.set(filterComponent(), aspect);
+            ItemData.set(copy, filterComponent(), aspect);
         }
         return copy;
     }
@@ -132,14 +134,14 @@ public final class EssentiaAccess {
      * @throws IllegalStateException when already bound
      * @since 1.0.0
      */
-    public static void bind(Supplier<DataComponentType<ResourceKey<IAspect>>> component) {
+    public static void bind(Supplier<ItemDataKey<ResourceKey<IAspect>>> component) {
         if (filterComponent != null) {
             throw new IllegalStateException("EssentiaAccess already bound");
         }
         filterComponent = component;
     }
 
-    private static DataComponentType<ResourceKey<IAspect>> filterComponent() {
+    private static ItemDataKey<ResourceKey<IAspect>> filterComponent() {
         if (filterComponent == null) {
             throw new IllegalStateException("EssentiaAccess accessed before binding");
         }

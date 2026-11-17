@@ -8,7 +8,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.lang.reflect.Field;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentType;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 
 class EssentiaCrystalAccessTest {
     private Item crystal;
-    private DataComponentType<AspectInstance> component;
+    private ItemDataKey<AspectInstance> component;
     private Holder<IAspect> aspect;
     private Object savedItem;
     private Object savedComponent;

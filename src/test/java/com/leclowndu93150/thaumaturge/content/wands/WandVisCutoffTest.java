@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -56,7 +58,7 @@ class WandVisCutoffTest {
         WandCap cap = new WandCap(0.5F, Map.of(), 1, TTIds.rl("test_cap"));
         WandRod rod = new WandRod(50, 1, TTIds.rl("test_rod"), null, false, false, false, null, storage);
         ItemStack stack = ItemWand.create(TTItems.WAND.get(), cap, rod, false);
-        stack.set(TTDataComponents.WAND_VIS.get(), WandVis.EMPTY);
+        ItemData.set(stack, TTDataComponents.WAND_VIS.get(), WandVis.EMPTY);
         return stack;
     }
 
@@ -80,7 +82,7 @@ class WandVisCutoffTest {
         TTAspects.PRIMALS.forEach(aspect -> assertEquals(after, storage.charge.amount(aspect)));
         if (simulate) assertSame(before, storage.charge);
         else assertSame(storage.charge, storage.writes.getFirst());
-        assertSame(WandVis.EMPTY, stack.get(TTDataComponents.WAND_VIS.get()));
+        assertSame(WandVis.EMPTY, ItemData.get(stack, TTDataComponents.WAND_VIS.get()));
     }
 
     @ParameterizedTest

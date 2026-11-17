@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.items.AreaPreviewer;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -45,11 +47,11 @@ public final class ElementalShovelItem extends ShovelItem implements AreaPreview
     }
 
     public static int getOrientation(ItemStack stack) {
-        return stack.getOrDefault(TTDataComponents.TOOL_ORIENTATION.get(), MODE_PARALLEL) % MODE_COUNT;
+        return ItemData.getOrDefault(stack, TTDataComponents.TOOL_ORIENTATION.get(), MODE_PARALLEL) % MODE_COUNT;
     }
 
     public static void cycleOrientation(ItemStack stack) {
-        stack.set(TTDataComponents.TOOL_ORIENTATION.get(), (getOrientation(stack) + 1) % MODE_COUNT);
+        ItemData.set(stack, TTDataComponents.TOOL_ORIENTATION.get(), (getOrientation(stack) + 1) % MODE_COUNT);
     }
 
     @Override

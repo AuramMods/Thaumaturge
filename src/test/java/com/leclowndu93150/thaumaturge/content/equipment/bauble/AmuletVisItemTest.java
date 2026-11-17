@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment.bauble;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -34,8 +36,8 @@ class AmuletVisItemTest {
 
     private static ItemStack rechargeableStack(int capacity, int stored) {
         ItemStack stack = new ItemStack(Items.STICK);
-        stack.set(TTDataComponents.RECHARGEABLE.get(), new ChargeProfile(capacity, ChargeDisplay.ALWAYS));
-        stack.set(TTDataComponents.CHARGE.get(), stored);
+        ItemData.set(stack, TTDataComponents.RECHARGEABLE.get(), new ChargeProfile(capacity, ChargeDisplay.ALWAYS));
+        ItemData.set(stack, TTDataComponents.CHARGE.get(), stored);
         return stack;
     }
 }

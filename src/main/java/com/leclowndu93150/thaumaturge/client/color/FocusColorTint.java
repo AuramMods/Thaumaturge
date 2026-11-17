@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.client.casters.FocusColors;
 import com.leclowndu93150.thaumaturge.content.casters.SocketedFocus;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -11,7 +13,7 @@ public final class FocusColorTint implements ItemColor {
 
     @Override
     public int getColor(ItemStack stack, int tintIndex) {
-        SocketedFocus socketed = stack.get(TTDataComponents.SOCKETED_FOCUS.get());
+        SocketedFocus socketed = ItemData.get(stack, TTDataComponents.SOCKETED_FOCUS.get());
         ItemStack focus = socketed != null ? socketed.focus() : stack;
         return OPAQUE | FocusColors.of(focus);
     }

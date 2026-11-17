@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.recipe;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -70,7 +72,7 @@ public final class SalisMundusRecipe extends CustomRecipe {
                 }
                 redstone = true;
             } else {
-                AspectInstance aspect = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
+                AspectInstance aspect = ItemData.get(stack, TTDataComponents.CRYSTAL_ASPECT.get());
                 if (!stack.is(TTItems.ESSENTIA_CRYSTAL.get()) || aspect == null) {
                     return false;
                 }

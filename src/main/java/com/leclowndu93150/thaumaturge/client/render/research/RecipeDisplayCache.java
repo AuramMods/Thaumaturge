@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRecipe;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRunicAugmentRecipe;
@@ -68,7 +70,7 @@ public final class RecipeDisplayCache {
         List<RecipeHolder<?>> pages = new ArrayList<>(5);
         for (int charge = 0; charge < 5; charge++) {
             ItemStack catalyst = catalysts[0].copy();
-            catalyst.set(TTDataComponents.RUNIC_CHARGE.get(), charge);
+            ItemData.set(catalyst, TTDataComponents.RUNIC_CHARGE.get(), charge);
             InfusionRecipe display = new InfusionRecipe(
                     Ingredient.of(catalyst),
                     runic.scaledComponents(catalyst),

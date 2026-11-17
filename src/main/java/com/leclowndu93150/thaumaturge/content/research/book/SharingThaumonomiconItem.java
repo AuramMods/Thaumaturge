@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.book;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
@@ -32,13 +34,13 @@ public final class SharingThaumonomiconItem extends Item {
             return InteractionResultHolder.success(player.getItemInHand(hand));
         }
         ItemStack stack = player.getItemInHand(hand);
-        ShareBinding binding = stack.get(TTDataComponents.SHARE_BINDING.get());
+        ShareBinding binding = ItemData.get(stack, TTDataComponents.SHARE_BINDING.get());
         PlayerResearch know = ResearchManager.of(serverPlayer);
         if (!(know instanceof PlayerKnowledge knowledge))
             return InteractionResultHolder.consume(player.getItemInHand(hand));
         AspectPoolData discoveredAspects = AspectPools.data(player);
         if (binding == null) {
-            stack.set(
+            ItemData.set(stack,
                     TTDataComponents.SHARE_BINDING.get(),
                     new ShareBinding(
                             player.getUUID(),
@@ -67,7 +69,7 @@ public final class SharingThaumonomiconItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> builder, TooltipFlag flag) {
-        ShareBinding binding = stack.get(TTDataComponents.SHARE_BINDING.get());
+        ShareBinding binding = ItemData.get(stack, TTDataComponents.SHARE_BINDING.get());
         if (binding != null) {
             builder.add(Component.translatable("tooltip.thaumaturge.sharing.bound", binding.name())
                     .withStyle(ChatFormatting.GRAY));

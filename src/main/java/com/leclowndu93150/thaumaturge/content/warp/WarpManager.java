@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -80,7 +82,7 @@ public final class WarpManager {
             warp += gear.warp(stack, wearer);
         }
         warp += TrimBonuses.of(stack).warp();
-        warp += stack.getOrDefault(TTDataComponents.STACK_WARP.get(), 0);
+        warp += ItemData.getOrDefault(stack, TTDataComponents.STACK_WARP.get(), 0);
         return warp;
     }
 

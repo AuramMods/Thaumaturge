@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.item.equipment;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataDefaults;
+
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.content.equipment.TTMaterials;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -21,7 +23,7 @@ public final class GogglesItem extends ArmorItem implements IVisDiscountGear {
         super(
                 TTMaterials.ARMOR_GOGGLES,
                 Type.HELMET,
-                properties.component(TTDataComponents.GOGGLES_UPGRADE.get(), Unit.INSTANCE));
+                ItemDataDefaults.with(properties, TTDataComponents.GOGGLES_UPGRADE.get(), Unit.INSTANCE));
     }
 
     @Override

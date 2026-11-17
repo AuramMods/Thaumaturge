@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.item;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
@@ -163,7 +165,7 @@ public final class WandHandRenderer {
     }
 
     private static boolean chargesOnUse(ItemStack wand) {
-        SocketedFocus socketed = wand.get(TTDataComponents.SOCKETED_FOCUS.get());
+        SocketedFocus socketed = ItemData.get(wand, TTDataComponents.SOCKETED_FOCUS.get());
         if (socketed == null) {
             return false;
         }

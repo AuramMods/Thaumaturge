@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.item;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -24,7 +26,7 @@ public final class ItemEssentiaCrystal extends Item {
     }
 
     public static Holder<IAspect> aspectOf(ItemStack stack) {
-        AspectInstance instance = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
+        AspectInstance instance = ItemData.get(stack, TTDataComponents.CRYSTAL_ASPECT.get());
         return instance == null ? null : instance.aspect();
     }
 

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.storage;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +34,7 @@ class LabelledVesselCutoffTest {
     void storedAspectTakesPriorityOverDifferentWrittenFilterWithoutChangingLabel() {
         ItemStack label = LabelItem.withAspect(TTAspects.IGNIS);
         assertEquals(TTAspects.ORDO, LabelledVesselActions.aspectToLabel(label, null, TTAspects.ORDO, 7));
-        assertEquals(TTAspects.IGNIS, label.get(TTDataComponents.ASPECT_FILTER));
+        assertEquals(TTAspects.IGNIS, ItemData.get(label, TTDataComponents.ASPECT_FILTER));
         assertEquals(1, label.getCount());
     }
 
@@ -78,7 +80,7 @@ class LabelledVesselCutoffTest {
         assertEquals(Direction.WEST, jar.facing());
         assertEquals(TTAspects.ORDO, jar.aspectKey());
         assertEquals(7, jar.amount());
-        assertEquals(TTAspects.IGNIS, label.get(TTDataComponents.ASPECT_FILTER));
+        assertEquals(TTAspects.IGNIS, ItemData.get(label, TTDataComponents.ASPECT_FILTER));
         verify(level, atLeastOnce()).sendBlockUpdated(any(), any(), any(), anyInt());
         verify(level).playSound(null, BlockPos.ZERO, TTSounds.PAGE.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
     }

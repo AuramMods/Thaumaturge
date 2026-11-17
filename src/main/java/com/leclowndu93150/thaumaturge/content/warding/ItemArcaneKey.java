@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.content.world.space.BlockForwarding;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -36,7 +38,7 @@ public final class ItemArcaneKey extends Item {
         }
 
         GlobalPos target = GlobalPos.of(level.dimension(), pos);
-        GlobalPos link = stack.get(TTDataComponents.ARCANE_KEY_LINK.get());
+        GlobalPos link = ItemData.get(stack, TTDataComponents.ARCANE_KEY_LINK.get());
         boolean gold = stack.is(com.leclowndu93150.thaumaturge.registry.TTItems.ARCANE_KEY_GOLD.get());
         if (link == null) {
             if (!ArcaneAccess.canBind(server, pos, player, gold)) {
@@ -44,7 +46,7 @@ public final class ItemArcaneKey extends Item {
                 return InteractionResult.FAIL;
             }
             ItemStack boundKey = stack.copyWithCount(1);
-            boundKey.set(TTDataComponents.ARCANE_KEY_LINK.get(), target);
+            ItemData.set(boundKey, TTDataComponents.ARCANE_KEY_LINK.get(), target);
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }

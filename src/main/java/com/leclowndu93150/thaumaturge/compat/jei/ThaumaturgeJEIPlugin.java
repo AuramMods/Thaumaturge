@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.compat.jei;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.google.gson.JsonElement;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
@@ -63,7 +65,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponentType;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -152,11 +154,11 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     private static ItemStack displayNote(ResourceLocation entry, int ordinal, int color, boolean complete) {
         ItemStack stack = new ItemStack(TTItems.RESEARCH_NOTE.get());
-        stack.set(
+        ItemData.set(stack,
                 TTDataComponents.RESEARCH_NOTE.get(),
                 new ResearchNoteData(entry, ordinal, color, complete, 0, List.of()));
         if (complete) {
-            stack.set(TTDataComponents.NOTE_COMPLETE.get(), true);
+            ItemData.set(stack, TTDataComponents.NOTE_COMPLETE.get(), true);
         }
         return stack;
     }
@@ -610,7 +612,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     }
 
     private static String aspectsSubtype(ItemStack stack, UidContext context) {
-        AspectList list = stack.get(TTDataComponents.ASPECTS.get());
+        AspectList list = ItemData.get(stack, TTDataComponents.ASPECTS.get());
         if (list == null || list.isEmpty()) {
             return "";
         }
@@ -618,22 +620,22 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     }
 
     private static String aspectFilterSubtype(ItemStack stack, UidContext context) {
-        var filter = stack.get(TTDataComponents.ASPECT_FILTER.get());
+        var filter = ItemData.get(stack, TTDataComponents.ASPECT_FILTER.get());
         return filter == null ? "" : filter.toString();
     }
 
     private static String crystalAspectSubtype(ItemStack stack, UidContext context) {
-        var crystal = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
+        var crystal = ItemData.get(stack, TTDataComponents.CRYSTAL_ASPECT.get());
         return crystal == null ? "" : crystal.toString();
     }
 
     private static String celestialBodySubtype(ItemStack stack, UidContext context) {
-        var body = stack.get(TTDataComponents.CELESTIAL_BODY.get());
+        var body = ItemData.get(stack, TTDataComponents.CELESTIAL_BODY.get());
         return body == null ? "" : body.toString();
     }
 
     private static String researchNoteSubtype(ItemStack stack, UidContext context) {
-        var note = stack.get(TTDataComponents.RESEARCH_NOTE.get());
+        var note = ItemData.get(stack, TTDataComponents.RESEARCH_NOTE.get());
         return note == null ? "" : note.toString();
     }
 
@@ -642,7 +644,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     }
 
     private static String verdantTypeSubtype(ItemStack stack, UidContext context) {
-        Integer type = stack.get(TTDataComponents.VERDANT_TYPE.get());
+        Integer type = ItemData.get(stack, TTDataComponents.VERDANT_TYPE.get());
         return type == null ? "" : type.toString();
     }
 
@@ -650,8 +652,8 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         return encodedSubtype(stack, TTDataComponents.GOLEM_PROPERTIES.get());
     }
 
-    private static <T> String encodedSubtype(ItemStack stack, DataComponentType<T> type) {
-        T value = stack.get(type);
+    private static <T> String encodedSubtype(ItemStack stack, ItemDataKey<T> type) {
+        T value = ItemData.get(stack, type);
         if (value == null || type.codec() == null) {
             return "";
         }

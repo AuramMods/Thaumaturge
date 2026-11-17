@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataDefaults;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.trim.TTTrimPatterns;
 import com.leclowndu93150.thaumaturge.content.aura.node.CreativeNodePlacerItem;
@@ -941,7 +943,7 @@ public final class TTItems {
     public static final RegistryObject<CelestialNotesItem> CELESTIAL_NOTES = ForgeRegistration.registerItem(ITEMS,
             "celestial_notes",
             properties -> new CelestialNotesItem(
-                    properties.component(TTDataComponents.CELESTIAL_BODY.get(), CelestialBody.SUN)),
+                    ItemDataDefaults.with(properties, TTDataComponents.CELESTIAL_BODY.get(), CelestialBody.SUN)),
             new Item.Properties());
 
     //
@@ -1116,7 +1118,7 @@ public final class TTItems {
             props -> new VoidRobeArmorItem(
                     TTMaterials.ARMOR_VOID_ROBE,
                     ArmorItem.Type.HELMET,
-                    props.component(TTDataComponents.GOGGLES_UPGRADE.get(), Unit.INSTANCE)
+                    ItemDataDefaults.with(props, TTDataComponents.GOGGLES_UPGRADE.get(), Unit.INSTANCE)
                             .durability(ArmorItem.Type.HELMET.getDurability(TTMaterials.DURABILITY_VOID_ROBE))
                             .rarity(Rarity.EPIC)));
     public static final RegistryObject<VoidRobeArmorItem> VOID_ROBE_CHEST = ForgeRegistration.registerItem(ITEMS,

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.items.IChanneledItem;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
@@ -63,8 +65,8 @@ public final class ElementalSwordItem extends SwordItem implements IChanneledIte
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isSecondaryUseActive()) {
-            boolean disabled = !stack.getOrDefault(TTDataComponents.WHIRLWIND_DISABLED.get(), false);
-            stack.set(TTDataComponents.WHIRLWIND_DISABLED.get(), disabled);
+            boolean disabled = !ItemData.getOrDefault(stack, TTDataComponents.WHIRLWIND_DISABLED.get(), false);
+            ItemData.set(stack, TTDataComponents.WHIRLWIND_DISABLED.get(), disabled);
             if (!level.isClientSide()) {
                 TTActionBar.sendPurple(
                         player,
@@ -83,7 +85,7 @@ public final class ElementalSwordItem extends SwordItem implements IChanneledIte
             }
             return InteractionResultHolder.success(stack);
         }
-        if (stack.getOrDefault(TTDataComponents.WHIRLWIND_DISABLED.get(), false)) {
+        if (ItemData.getOrDefault(stack, TTDataComponents.WHIRLWIND_DISABLED.get(), false)) {
             return InteractionResultHolder.pass(stack);
         }
         player.startUsingItem(hand);

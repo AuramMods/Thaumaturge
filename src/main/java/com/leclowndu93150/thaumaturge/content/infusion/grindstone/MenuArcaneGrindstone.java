@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion.grindstone;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantmentHelper;
 import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
@@ -77,7 +79,7 @@ public final class MenuArcaneGrindstone extends AbstractTTMenu {
             return ItemStack.EMPTY;
         }
         ItemStack stripped = input.copy();
-        stripped.remove(TTDataComponents.INFUSION_ENCHANTMENTS.get());
+        ItemData.remove(stripped, TTDataComponents.INFUSION_ENCHANTMENTS.get());
         return stripped;
     }
 

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
 import com.leclowndu93150.thaumaturge.content.world.space.BlockForwarding;
@@ -47,7 +49,7 @@ public final class ItemHandMirror extends Item {
             return InteractionResult.SUCCESS;
         }
         if (level.getBlockEntity(pos) instanceof BlockEntityMirror) {
-            stack.set(TTDataComponents.MIRROR_LINK.get(), GlobalPos.of(level.dimension(), pos));
+            ItemData.set(stack, TTDataComponents.MIRROR_LINK.get(), GlobalPos.of(level.dimension(), pos));
             level.playSound(null, pos, TTSounds.JAR.get(), SoundSource.BLOCKS, 1.0F, 2.0F);
             player.sendSystemMessage(Component.translatable("message.thaumaturge.hand_mirror.linked"));
         }
@@ -60,7 +62,7 @@ public final class ItemHandMirror extends Item {
             return InteractionResultHolder.consume(player.getItemInHand(hand));
         }
         ItemStack stack = player.getItemInHand(hand);
-        GlobalPos link = stack.get(TTDataComponents.MIRROR_LINK.get());
+        GlobalPos link = ItemData.get(stack, TTDataComponents.MIRROR_LINK.get());
         if (link == null || !(player instanceof ServerPlayer serverPlayer)) {
             return InteractionResultHolder.pass(stack);
         }
@@ -69,7 +71,7 @@ public final class ItemHandMirror extends Item {
                 ? null
                 : targetLevel.getBlockEntity(BlockForwarding.follow(targetLevel, link.pos()));
         if (!(target instanceof BlockEntityMirror)) {
-            stack.remove(TTDataComponents.MIRROR_LINK.get());
+            ItemData.remove(stack, TTDataComponents.MIRROR_LINK.get());
             serverPlayer
                     .level()
                     .playSound(
@@ -99,7 +101,7 @@ public final class ItemHandMirror extends Item {
     }
 
     public static boolean transport(ItemStack mirror, ItemStack items, ServerPlayer player) {
-        GlobalPos link = mirror.get(TTDataComponents.MIRROR_LINK.get());
+        GlobalPos link = ItemData.get(mirror, TTDataComponents.MIRROR_LINK.get());
         if (link == null) {
             return false;
         }
@@ -122,7 +124,7 @@ public final class ItemHandMirror extends Item {
             }
             return true;
         }
-        mirror.remove(TTDataComponents.MIRROR_LINK.get());
+        ItemData.remove(mirror, TTDataComponents.MIRROR_LINK.get());
         player.level()
                 .playSound(
                         null,
@@ -139,14 +141,14 @@ public final class ItemHandMirror extends Item {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return stack.has(TTDataComponents.MIRROR_LINK.get());
+        return ItemData.has(stack, TTDataComponents.MIRROR_LINK.get());
     }
 
     @Override
     public void appendHoverText(
             ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
-        GlobalPos link = stack.get(TTDataComponents.MIRROR_LINK.get());
+        GlobalPos link = ItemData.get(stack, TTDataComponents.MIRROR_LINK.get());
         if (link != null) {
             tooltip.add(Component.translatable(
                     "tooltip.thaumaturge.mirror.linked_to",

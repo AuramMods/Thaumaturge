@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -117,7 +119,7 @@ public final class InfusionEnchantmentRecipe implements InfusionJobRecipe {
         }
         if (random.nextInt(WARP_ROLL_BOUND)
                 < InfusionEnchantmentHelper.list(catalyst).size()) {
-            out.set(TTDataComponents.STACK_WARP.get(), out.getOrDefault(TTDataComponents.STACK_WARP.get(), 0) + 1);
+            ItemData.set(out, TTDataComponents.STACK_WARP.get(), ItemData.getOrDefault(out, TTDataComponents.STACK_WARP.get(), 0) + 1);
         }
         InfusionEnchantmentHelper.add(out, enchantment, existing + 1);
         return out;

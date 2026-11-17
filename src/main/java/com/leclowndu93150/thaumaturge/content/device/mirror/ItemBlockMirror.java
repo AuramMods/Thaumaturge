@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
@@ -45,7 +47,7 @@ public final class ItemBlockMirror extends BlockItem {
                 return InteractionResult.SUCCESS;
             }
             ItemStack linkedStack = stack.copyWithCount(1);
-            linkedStack.set(TTDataComponents.MIRROR_LINK.get(), GlobalPos.of(level.dimension(), pos));
+            ItemData.set(linkedStack, TTDataComponents.MIRROR_LINK.get(), GlobalPos.of(level.dimension(), pos));
             level.playSound(null, pos, TTSounds.JAR.get(), SoundSource.BLOCKS, 1.0F, 2.0F);
             if (!player.getInventory().add(linkedStack)) {
                 player.drop(linkedStack, false);
@@ -61,7 +63,7 @@ public final class ItemBlockMirror extends BlockItem {
     public void appendHoverText(
             ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
-        GlobalPos link = stack.get(TTDataComponents.MIRROR_LINK.get());
+        GlobalPos link = ItemData.get(stack, TTDataComponents.MIRROR_LINK.get());
         if (link != null) {
             tooltip.add(Component.translatable(
                     "tooltip.thaumaturge.mirror.linked_to",

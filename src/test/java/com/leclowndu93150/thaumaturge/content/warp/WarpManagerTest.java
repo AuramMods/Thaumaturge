@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,7 +37,7 @@ class WarpManagerTest {
 
         when(stack.isEmpty()).thenReturn(false);
         when(stack.getItem()).thenReturn(item);
-        when(stack.getOrDefault(TTDataComponents.STACK_WARP.get(), 0)).thenReturn(3);
+        when(ItemData.getOrDefault(stack, TTDataComponents.STACK_WARP.get(), 0)).thenReturn(3);
         when(gear.warp(stack, wearer)).thenReturn(2);
 
         assertEquals(5, WarpManager.getFinalWarp(stack, wearer));

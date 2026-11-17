@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
@@ -35,20 +37,20 @@ public class JarItem extends BlockItem {
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        EssentiaList contents = stack.get(TTDataComponents.ESSENTIA_CONTENTS.get());
+        EssentiaList contents = ItemData.get(stack, TTDataComponents.ESSENTIA_CONTENTS.get());
         return contents != null && !contents.isEmpty();
     }
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        EssentiaList contents = stack.get(TTDataComponents.ESSENTIA_CONTENTS.get());
+        EssentiaList contents = ItemData.get(stack, TTDataComponents.ESSENTIA_CONTENTS.get());
         int stored = contents == null ? 0 : contents.totalAmount();
         return Math.clamp(Math.round((float) stored * BAR_MAX_WIDTH / IEssentiaJar.DEFAULT_CAPACITY), 0, BAR_MAX_WIDTH);
     }
 
     @Override
     public int getBarColor(ItemStack stack) {
-        EssentiaList contents = stack.get(TTDataComponents.ESSENTIA_CONTENTS.get());
+        EssentiaList contents = ItemData.get(stack, TTDataComponents.ESSENTIA_CONTENTS.get());
         if (contents == null || contents.isEmpty()) {
             return 0;
         }
@@ -91,13 +93,13 @@ public class JarItem extends BlockItem {
     }
 
     private static AspectList contentsOf(ItemStack stack) {
-        EssentiaList contents = stack.get(TTDataComponents.ESSENTIA_CONTENTS.get());
+        EssentiaList contents = ItemData.get(stack, TTDataComponents.ESSENTIA_CONTENTS.get());
         return contents == null ? AspectList.EMPTY : contents.contents();
     }
 
     private static ItemStack scooped(ItemStack held, AspectList contents, Holder<IAspect> aspect, int scoop) {
         ItemStack result = held.copyWithCount(1);
-        result.set(
+        ItemData.set(result,
                 TTDataComponents.ESSENTIA_CONTENTS.get(),
                 new EssentiaList(contents.add(new AspectInstance(aspect, scoop))));
         return result;

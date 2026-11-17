@@ -1,5 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataDefaults;
+
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.api.items.ChargeDisplay;
@@ -35,18 +39,18 @@ public final class GrappleGunItem extends Item {
     private static final double SIDE_SHIFT = 0.4;
 
     public GrappleGunItem(Properties properties) {
-        super(properties.component(
+        super(ItemDataDefaults.with(properties,
                 TTDataComponents.RECHARGEABLE.get(), new ChargeProfile(MAX_CHARGE, ChargeDisplay.ALWAYS)));
     }
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (level.isClientSide() || !Boolean.TRUE.equals(stack.get(TTDataComponents.GRAPPLE_LOADED))) {
+        if (level.isClientSide() || !Boolean.TRUE.equals(ItemData.get(stack, TTDataComponents.GRAPPLE_LOADED))) {
             return;
         }
         int tracked = AttachmentData.get(entity, TTAttachments.GRAPPLE_ID);
         if (tracked < 0 || !(level.getEntity(tracked) instanceof EntityGrapple grapple) || !grapple.isAlive()) {
-            stack.remove(TTDataComponents.GRAPPLE_LOADED);
+            ItemData.remove(stack, TTDataComponents.GRAPPLE_LOADED);
         }
     }
 
@@ -74,7 +78,7 @@ public final class GrappleGunItem extends Item {
                     player, player.getXRot(), player.getYRot(), LAUNCH_PITCH_OFFSET, LAUNCH_VELOCITY, 0.0F);
             if (level.addFreshEntity(grapple)) {
                 RechargeAccess.spendVis(stack, 1);
-                stack.set(TTDataComponents.GRAPPLE_LOADED, true);
+                ItemData.set(stack, TTDataComponents.GRAPPLE_LOADED, true);
             }
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());

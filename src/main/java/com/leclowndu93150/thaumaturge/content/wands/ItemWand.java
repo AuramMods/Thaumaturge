@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
@@ -77,7 +79,7 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
 
     public static ItemStack create(Item wandItem, WandCap cap, WandRod rod, boolean sceptre) {
         ItemStack stack = new ItemStack(wandItem);
-        stack.set(TTDataComponents.WAND_PARTS.get(), new WandParts(cap, rod, sceptre));
+        ItemData.set(stack, TTDataComponents.WAND_PARTS.get(), new WandParts(cap, rod, sceptre));
         return stack;
     }
 
@@ -135,16 +137,16 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
 
     @Override
     public ItemStack socketedFocus(ItemStack stack) {
-        SocketedFocus template = stack.get(TTDataComponents.SOCKETED_FOCUS.get());
+        SocketedFocus template = ItemData.get(stack, TTDataComponents.SOCKETED_FOCUS.get());
         return template == null ? ItemStack.EMPTY : template.focus().copy();
     }
 
     @Override
     public void socketFocus(ItemStack stack, @Nullable ItemStack focus) {
         if (focus == null || focus.isEmpty()) {
-            stack.remove(TTDataComponents.SOCKETED_FOCUS.get());
+            ItemData.remove(stack, TTDataComponents.SOCKETED_FOCUS.get());
         } else {
-            stack.set(TTDataComponents.SOCKETED_FOCUS.get(), new SocketedFocus(focus.copy()));
+            ItemData.set(stack, TTDataComponents.SOCKETED_FOCUS.get(), new SocketedFocus(focus.copy()));
         }
     }
 
@@ -173,7 +175,7 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
 
     @Override
     public @Nullable BlockState rememberedBlock(ItemStack stack) {
-        return stack.get(TTDataComponents.PICKED_BLOCK.get());
+        return ItemData.get(stack, TTDataComponents.PICKED_BLOCK.get());
     }
 
     private static boolean pickerFocus(ItemStack focusStack, Level level) {
@@ -223,7 +225,7 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
             if (pickerFocus(focusStack, level)) {
                 if (!level.isClientSide()) {
                     if (!state.isAir()) {
-                        stack.set(TTDataComponents.PICKED_BLOCK.get(), state);
+                        ItemData.set(stack, TTDataComponents.PICKED_BLOCK.get(), state);
                     }
                     return InteractionResult.SUCCESS;
                 }

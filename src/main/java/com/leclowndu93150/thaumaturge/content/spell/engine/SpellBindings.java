@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.engine;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.spell.FocusTier;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.spell.SpellSummary;
@@ -22,17 +24,17 @@ public final class SpellBindings implements Spells.Bindings {
         if (focus.isEmpty()) {
             return null;
         }
-        Spell spell = focus.get(TTDataComponents.SPELL.get());
-        return spell != null ? spell : focus.get(TTDataComponents.LEGACY_FOCUS_PACKAGE.get());
+        Spell spell = ItemData.get(focus, TTDataComponents.SPELL.get());
+        return spell != null ? spell : ItemData.get(focus, TTDataComponents.LEGACY_FOCUS_PACKAGE.get());
     }
 
     @Override
     public void setSpell(ItemStack focus, @Nullable Spell spell) {
-        focus.remove(TTDataComponents.LEGACY_FOCUS_PACKAGE.get());
+        ItemData.remove(focus, TTDataComponents.LEGACY_FOCUS_PACKAGE.get());
         if (spell == null) {
-            focus.remove(TTDataComponents.SPELL.get());
+            ItemData.remove(focus, TTDataComponents.SPELL.get());
         } else {
-            focus.set(TTDataComponents.SPELL.get(), spell);
+            ItemData.set(focus, TTDataComponents.SPELL.get(), spell);
         }
     }
 

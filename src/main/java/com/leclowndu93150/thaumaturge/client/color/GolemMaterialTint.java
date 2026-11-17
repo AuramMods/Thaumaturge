@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.client.color.item.ItemColor;
@@ -11,7 +13,7 @@ public final class GolemMaterialTint implements ItemColor {
 
     @Override
     public int getColor(ItemStack stack, int tintIndex) {
-        GolemProperties props = stack.get(TTDataComponents.GOLEM_PROPERTIES.get());
+        GolemProperties props = ItemData.get(stack, TTDataComponents.GOLEM_PROPERTIES.get());
         if (props == null) {
             return DEFAULT;
         }

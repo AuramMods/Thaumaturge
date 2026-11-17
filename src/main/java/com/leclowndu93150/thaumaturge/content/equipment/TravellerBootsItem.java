@@ -1,5 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataDefaults;
+
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.ChargeDisplay;
 import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
@@ -47,7 +51,7 @@ public final class TravellerBootsItem extends ArmorItem {
         super(
                 TTMaterials.ARMOR_TRAVELLER,
                 ArmorItem.Type.BOOTS,
-                properties.component(
+                ItemDataDefaults.with(properties,
                         TTDataComponents.RECHARGEABLE.get(), new ChargeProfile(MAX_CHARGE, ChargeDisplay.ON_CHANGE)));
     }
 
@@ -79,13 +83,13 @@ public final class TravellerBootsItem extends ArmorItem {
             return;
         }
         if (player.tickCount % ENERGY_INTERVAL_TICKS == 0) {
-            int energy = stack.getOrDefault(TTDataComponents.ENERGY.get(), 0);
+            int energy = ItemData.getOrDefault(stack, TTDataComponents.ENERGY.get(), 0);
             if (energy > 0) {
                 energy--;
             } else if (RechargeAccess.spendVis(stack, 1)) {
                 energy = ENERGY_PER_CHARGE;
             }
-            stack.set(TTDataComponents.ENERGY.get(), energy);
+            ItemData.set(stack, TTDataComponents.ENERGY.get(), energy);
         }
         boolean active = isActive(player, stack);
         boolean stepActive = isStepActive(player, stack);

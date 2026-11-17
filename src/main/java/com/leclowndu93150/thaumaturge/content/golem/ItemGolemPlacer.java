@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
@@ -31,14 +33,14 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
     @Override
     public Component getName(ItemStack stack) {
         Component name = super.getName(stack);
-        GolemProperties props = stack.get(TTDataComponents.GOLEM_PROPERTIES.get());
+        GolemProperties props = ItemData.get(stack, TTDataComponents.GOLEM_PROPERTIES.get());
         return props == null ? name : props.name(name);
     }
 
     @Override
     public void appendHoverText(
             ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        GolemProperties props = stack.get(TTDataComponents.GOLEM_PROPERTIES.get());
+        GolemProperties props = ItemData.get(stack, TTDataComponents.GOLEM_PROPERTIES.get());
         if (props == null) {
             return;
         }
@@ -51,7 +53,7 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
             if (props.rank() >= EntityThaumaturgeGolem.MAX_RANK) {
                 tooltip.add(rank);
             } else {
-                int xp = stack.getOrDefault(TTDataComponents.GOLEM_XP.get(), 0);
+                int xp = ItemData.getOrDefault(stack, TTDataComponents.GOLEM_XP.get(), 0);
                 int needed = EntityThaumaturgeGolem.xpForNextRank(props.rank());
                 tooltip.add(Component.translatable(
                         "tooltip.thaumaturge.golem.rank_progress",
@@ -94,11 +96,11 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
         golem.setValidSpawn();
         golem.setOwner(player);
         ItemStack held = context.getItemInHand();
-        GolemProperties props = held.get(TTDataComponents.GOLEM_PROPERTIES.get());
+        GolemProperties props = ItemData.get(held, TTDataComponents.GOLEM_PROPERTIES.get());
         if (props != null) {
             golem.applyBuild(props);
         }
-        golem.setRankXp(held.getOrDefault(TTDataComponents.GOLEM_XP.get(), 0));
+        golem.setRankXp(ItemData.getOrDefault(held, TTDataComponents.GOLEM_XP.get(), 0));
         ForgeEventFactory.finalizeMobSpawn(
                 golem, serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null);
         if (LevelSpaces.isDetached(serverLevel, pos)) {

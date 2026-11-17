@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.golem.CopperGolemRig;
 import com.leclowndu93150.thaumaturge.client.golem.GolemAccessoryRenderTable;
@@ -35,7 +37,7 @@ public final class GolemItemSpecialRenderer extends BlockEntityWithoutLevelRende
             model = new CopperGolemRig(Minecraft.getInstance().getEntityModels().bakeLayer(TTModelLayers.GOLEM));
         }
         GolemRenderState state = new GolemRenderState();
-        state.props = stack.getOrDefault(TTDataComponents.GOLEM_PROPERTIES.get(), GolemProperties.createDefault());
+        state.props = ItemData.getOrDefault(stack, TTDataComponents.GOLEM_PROPERTIES.get(), GolemProperties.createDefault());
         state.lightCoords = light;
         model.setupAnim(state);
         pose.pushPose();

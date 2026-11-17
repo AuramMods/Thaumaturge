@@ -66,6 +66,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/registry/ForgeRegistration.java'
         java.include 'com/leclowndu93150/thaumaturge/network/transport/**'
         java.include 'com/leclowndu93150/thaumaturge/state/**'
+        java.include 'com/leclowndu93150/thaumaturge/itemdata/**'
         compileClasspath += sourceSets.main.compileClasspath
     }
     portCodecTest {
@@ -73,6 +74,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
         java.include 'com/leclowndu93150/thaumaturge/network/transport/**'
         java.include 'com/leclowndu93150/thaumaturge/state/**'
+        java.include 'com/leclowndu93150/thaumaturge/itemdata/**'
         compileClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
         runtimeClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
     }
@@ -148,6 +150,9 @@ tasks.withType(Test).configureEach {
 tasks.register('portCodecTest', Test) {
     testClassesDirs = sourceSets.portCodecTest.output.classesDirs
     classpath = sourceSets.portCodecTest.runtimeClasspath
+    // A failed vanilla bootstrap sets its global flag before throwing. Keep
+    // that partial initialization from making later test classes appear valid.
+    forkEvery = 1
 }
 
 tasks.withType(Jar).configureEach { from('LICENSE', 'CREDITS.md') }

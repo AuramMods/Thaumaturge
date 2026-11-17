@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.server.command;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -478,7 +480,7 @@ public final class TTCommands {
         Holder<IAspect> aspect =
                 player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(key);
         ItemStack jar = new ItemStack(TTItems.JAR_NORMAL.get());
-        jar.set(
+        ItemData.set(jar,
                 TTDataComponents.ESSENTIA_CONTENTS.get(),
                 new EssentiaList(AspectList.of(new AspectInstance(aspect, amount))));
         if (!player.getInventory().add(jar)) {

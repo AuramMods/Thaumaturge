@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.manabean;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
@@ -37,7 +39,7 @@ public final class ItemManaBean extends Item {
     }
 
     public static @Nullable Holder<IAspect> aspectOf(ItemStack stack) {
-        AspectInstance stored = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
+        AspectInstance stored = ItemData.get(stack, TTDataComponents.CRYSTAL_ASPECT.get());
         return stored == null ? null : stored.aspect();
     }
 
@@ -69,7 +71,7 @@ public final class ItemManaBean extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
-        if (level instanceof ServerLevel serverLevel && !stack.has(TTDataComponents.CRYSTAL_ASPECT.get())) {
+        if (level instanceof ServerLevel serverLevel && !ItemData.has(stack, TTDataComponents.CRYSTAL_ASPECT.get())) {
             assignRandomAspect(stack, serverLevel);
         }
     }
@@ -81,7 +83,7 @@ public final class ItemManaBean extends Item {
                 .toList();
         if (!aspects.isEmpty()) {
             Holder<IAspect> aspect = aspects.get(level.getRandom().nextInt(aspects.size()));
-            stack.set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1));
+            ItemData.set(stack, TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1));
         }
     }
 

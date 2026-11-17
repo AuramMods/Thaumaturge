@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.lock;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.labyrinth.MazeId;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -13,12 +15,12 @@ public final class LabyrinthKeys {
 
     public static ItemStack bound(MazeId maze) {
         ItemStack tablet = new ItemStack(TTItems.RUNED_TABLET.get());
-        tablet.set(TTDataComponents.LABYRINTH_KEY.get(), maze);
+        ItemData.set(tablet, TTDataComponents.LABYRINTH_KEY.get(), maze);
         return tablet;
     }
 
     public static Optional<MazeId> boundTo(ItemStack stack) {
-        return Optional.ofNullable(stack.get(TTDataComponents.LABYRINTH_KEY.get()));
+        return Optional.ofNullable(ItemData.get(stack, TTDataComponents.LABYRINTH_KEY.get()));
     }
 
     public static boolean carries(Player player, MazeId maze) {

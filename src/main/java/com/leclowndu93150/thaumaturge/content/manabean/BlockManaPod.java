@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.manabean;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -178,7 +180,7 @@ public final class BlockManaPod extends BaseEntityBlock {
         if (level.getBlockEntity(pos) instanceof BlockEntityManaPod pod) {
             Holder<IAspect> aspect = pod.aspect();
             if (aspect != null) {
-                stack.set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1));
+                ItemData.set(stack, TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1));
             }
         }
         return stack;

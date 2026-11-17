@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -76,7 +78,7 @@ public final class InfusionRunicAugmentRecipe implements InfusionJobRecipe {
     }
 
     public static int charge(ItemStack stack) {
-        return stack.getOrDefault(TTDataComponents.RUNIC_CHARGE.get(), 0);
+        return ItemData.getOrDefault(stack, TTDataComponents.RUNIC_CHARGE.get(), 0);
     }
 
     public static boolean isShieldable(ItemStack stack) {
@@ -137,7 +139,7 @@ public final class InfusionRunicAugmentRecipe implements InfusionJobRecipe {
 
     public ItemStack augmentedResult(ItemStack catalyst) {
         ItemStack out = catalyst.copyWithCount(1);
-        out.set(TTDataComponents.RUNIC_CHARGE.get(), Math.min(MAX_CHARGE, charge(catalyst) + 1));
+        ItemData.set(out, TTDataComponents.RUNIC_CHARGE.get(), Math.min(MAX_CHARGE, charge(catalyst) + 1));
         return out;
     }
 
@@ -176,7 +178,7 @@ public final class InfusionRunicAugmentRecipe implements InfusionJobRecipe {
                 .map(ItemStack::copy)
                 .orElse(ItemStack.EMPTY);
         if (!base.isEmpty()) {
-            base.set(TTDataComponents.RUNIC_CHARGE.get(), 1);
+            ItemData.set(base, TTDataComponents.RUNIC_CHARGE.get(), 1);
         }
         return base;
     }

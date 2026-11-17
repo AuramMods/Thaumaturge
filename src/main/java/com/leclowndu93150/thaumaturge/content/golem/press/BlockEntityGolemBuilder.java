@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.press;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
@@ -248,7 +250,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
 
     private static ItemStack placerFor(GolemProperties design) {
         ItemStack placer = new ItemStack(TTItems.GOLEM_PLACER.get());
-        placer.set(TTDataComponents.GOLEM_PROPERTIES.get(), design);
+        ItemData.set(placer, TTDataComponents.GOLEM_PROPERTIES.get(), design);
         return placer;
     }
 

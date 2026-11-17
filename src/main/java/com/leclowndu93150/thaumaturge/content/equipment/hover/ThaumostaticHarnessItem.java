@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment.hover;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -35,15 +37,15 @@ public final class ThaumostaticHarnessItem extends ArmorItem implements IHoverGe
     }
 
     public static ItemStack getJar(ItemStack harness) {
-        ItemStack jar = harness.get(TTDataComponents.HARNESS_JAR.get());
+        ItemStack jar = ItemData.get(harness, TTDataComponents.HARNESS_JAR.get());
         return jar == null ? ItemStack.EMPTY : jar.copy();
     }
 
     public static void setJar(ItemStack harness, ItemStack jar) {
         if (jar.isEmpty()) {
-            harness.remove(TTDataComponents.HARNESS_JAR.get());
+            ItemData.remove(harness, TTDataComponents.HARNESS_JAR.get());
         } else {
-            harness.set(TTDataComponents.HARNESS_JAR.get(), jar.copy());
+            ItemData.set(harness, TTDataComponents.HARNESS_JAR.get(), jar.copy());
         }
     }
 

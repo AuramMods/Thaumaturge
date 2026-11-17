@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -16,7 +18,7 @@ public final class AspectColorTint implements ItemColor {
         if (tintIndex == 0) {
             return WHITE;
         }
-        AspectList list = stack.get(TTDataComponents.ASPECTS.get());
+        AspectList list = ItemData.get(stack, TTDataComponents.ASPECTS.get());
         if (list == null || list.isEmpty()) {
             return ARGB32.opaque(FALLBACK);
         }

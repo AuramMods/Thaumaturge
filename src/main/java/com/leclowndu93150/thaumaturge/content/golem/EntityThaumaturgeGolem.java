@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
@@ -708,8 +710,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         dropCarried();
         dropAccessories();
         ItemStack placer = new ItemStack(TTItems.GOLEM_PLACER.get());
-        placer.set(TTDataComponents.GOLEM_PROPERTIES.get(), properties());
-        placer.set(TTDataComponents.GOLEM_XP.get(), rankXp);
+        ItemData.set(placer, TTDataComponents.GOLEM_PROPERTIES.get(), properties());
+        ItemData.set(placer, TTDataComponents.GOLEM_XP.get(), rankXp);
         spawnAtLocation(placer, 0.5F);
         discard();
         player.swing(hand, true);

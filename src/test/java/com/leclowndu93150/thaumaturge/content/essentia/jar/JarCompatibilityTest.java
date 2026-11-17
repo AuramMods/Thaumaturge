@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -224,7 +226,7 @@ class JarCompatibilityTest {
         assertEquals(1, dropped.getValue().getCount());
         assertEquals(
                 5,
-                dropped.getValue().get(TTDataComponents.ESSENTIA_CONTENTS.get()).totalAmount());
+                ItemData.get(dropped.getValue(), TTDataComponents.ESSENTIA_CONTENTS.get()).totalAmount());
         verify(player, never()).setItemInHand(any(), any());
         verify(player, never()).drop(any(ItemStack.class), anyBoolean());
     }
