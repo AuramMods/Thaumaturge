@@ -23,7 +23,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentMap;
+import com.leclowndu93150.thaumaturge.itemdata.BlockItemData;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataReader;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
@@ -32,7 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractBlockEntityJar extends AbstractSyncedBlockEntity
-        implements IEssentiaConduit, IAspectSource, SingleAspectEssentiaHost {
+        implements IEssentiaConduit, IAspectSource, SingleAspectEssentiaHost, BlockItemData {
     public static final int CAPACITY = IEssentiaJar.DEFAULT_CAPACITY;
 
     private static final String ASPECT_KEY = "Aspect";
@@ -376,8 +378,7 @@ public abstract class AbstractBlockEntityJar extends AbstractSyncedBlockEntity
     }
 
     @Override
-    public void collectImplicitComponents(DataComponentMap.Builder components) {
-        super.collectImplicitComponents(components);
+    public void collectItemData(ItemDataPatch.Builder components) {
         if (level != null && aspect != null && amount > 0) {
             AspectList held = getContents(level.registryAccess());
             if (!held.isEmpty()) {
@@ -390,11 +391,10 @@ public abstract class AbstractBlockEntityJar extends AbstractSyncedBlockEntity
     }
 
     @Override
-    protected void applyImplicitComponents(DataComponentInput components) {
-        super.applyImplicitComponents(components);
+    public void applyItemData(ItemDataReader components) {
         EssentiaList stored = components.get(TTDataComponents.ESSENTIA_CONTENTS.get());
         if (stored != null && !stored.isEmpty()) {
-            AspectInstance first = stored.contents().entries().getFirst();
+            AspectInstance first = stored.contents().entries().get(0);
             aspect = first.aspect().unwrapKey().orElse(null);
             amount = Math.min(first.amount(), capacity());
         }
@@ -417,7 +417,7 @@ public abstract class AbstractBlockEntityJar extends AbstractSyncedBlockEntity
         if (aspects.isEmpty()) {
             return;
         }
-        AspectInstance first = aspects.entries().getFirst();
+        AspectInstance first = aspects.entries().get(0);
         aspect = first.aspect().unwrapKey().orElse(null);
         amount = Math.min(first.amount(), capacity());
         storage.markChanged();

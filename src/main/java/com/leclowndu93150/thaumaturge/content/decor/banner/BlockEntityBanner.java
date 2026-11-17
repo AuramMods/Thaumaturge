@@ -6,14 +6,16 @@ import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentMap;
+import com.leclowndu93150.thaumaturge.itemdata.BlockItemData;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataReader;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityBanner extends AbstractSyncedBlockEntity {
+public final class BlockEntityBanner extends AbstractSyncedBlockEntity implements BlockItemData {
     private @Nullable ResourceKey<IAspect> aspect;
 
     public BlockEntityBanner(BlockPos pos, BlockState state) {
@@ -47,21 +49,19 @@ public final class BlockEntityBanner extends AbstractSyncedBlockEntity {
     }
 
     @Override
-    public void collectImplicitComponents(DataComponentMap.Builder builder) {
-        super.collectImplicitComponents(builder);
+    public void collectItemData(ItemDataPatch.Builder builder) {
         if (aspect != null) {
             builder.set(TTDataComponents.ASPECT_FILTER.get(), aspect);
         }
     }
 
     @Override
-    public void applyImplicitComponents(DataComponentInput components) {
-        super.applyImplicitComponents(components);
+    public void applyItemData(ItemDataReader components) {
         this.aspect = components.get(TTDataComponents.ASPECT_FILTER.get());
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag output) {
+    public void removeItemDataFromTag(CompoundTag output) {
         output.remove("aspect");
     }
 }

@@ -31,6 +31,14 @@ public final class ItemDataPatch {
 
     public Set<Map.Entry<ItemDataKey<?>, Optional<?>>> entrySet() { return values.entrySet(); }
     public boolean isEmpty() { return values.isEmpty(); }
+    @SuppressWarnings("unchecked")
+    public <T> T get(ItemDataKey<T> key) { return (T) values.getOrDefault(key, Optional.empty()).orElse(null); }
+
+    public ItemDataPatch select(ItemDataSelection selection) {
+        Map<ItemDataKey<?>, Optional<?>> selected = new LinkedHashMap<>();
+        values.forEach((key, value) -> { if (selection.includes(key.id())) selected.put(key, value); });
+        return selected.isEmpty() ? EMPTY : new ItemDataPatch(selected);
+    }
     public static Builder builder() { return new Builder(); }
 
     /** Apply to a private stack first, so a failed field cannot partially change the caller's stack. */

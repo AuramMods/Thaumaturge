@@ -19,7 +19,9 @@
     "world.level.block.FireBlockMixin",
     "world.level.block.entity.AbstractFurnaceBlockEntityAccessor",
     "world.level.block.piston.PistonBaseBlockMixin",
-    "world.item.ItemDataDefaultsMixin"
+    "world.item.ItemDataDefaultsMixin",
+    "world.item.BlockItemDataMixin",
+    "world.level.block.entity.BlockEntityItemDataMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",

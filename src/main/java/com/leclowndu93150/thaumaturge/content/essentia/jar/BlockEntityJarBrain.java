@@ -9,7 +9,9 @@ import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentMap;
+import com.leclowndu93150.thaumaturge.itemdata.BlockItemData;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataReader;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -24,7 +26,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityJarBrain extends AbstractSyncedBlockEntity {
+public final class BlockEntityJarBrain extends AbstractSyncedBlockEntity implements BlockItemData {
     public static final int XP_MAX = 2000;
 
     private static final String XP_KEY = "XP";
@@ -217,16 +219,14 @@ public final class BlockEntityJarBrain extends AbstractSyncedBlockEntity {
     }
 
     @Override
-    public void collectImplicitComponents(DataComponentMap.Builder components) {
-        super.collectImplicitComponents(components);
+    public void collectItemData(ItemDataPatch.Builder components) {
         if (xp > 0) {
             components.set(TTDataComponents.STORED_XP.get(), xp);
         }
     }
 
     @Override
-    protected void applyImplicitComponents(DataComponentInput components) {
-        super.applyImplicitComponents(components);
+    public void applyItemData(ItemDataReader components) {
         Integer stored = components.get(TTDataComponents.STORED_XP.get());
         if (stored != null) {
             setXp(stored);

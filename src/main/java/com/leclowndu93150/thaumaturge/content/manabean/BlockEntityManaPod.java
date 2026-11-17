@@ -21,7 +21,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentMap;
+import com.leclowndu93150.thaumaturge.itemdata.BlockItemData;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataReader;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
@@ -31,7 +33,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
+public final class BlockEntityManaPod extends AbstractSyncedBlockEntity implements BlockItemData {
     public static final int MAX_AGE = 7;
     private static final int BLEND_STAGE = 3;
     private static final int HERBA_ONE_IN = 8;
@@ -216,8 +218,7 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
     }
 
     @Override
-    public void applyImplicitComponents(DataComponentInput components) {
-        super.applyImplicitComponents(components);
+    public void applyItemData(ItemDataReader components) {
         AspectInstance stored = components.get(TTDataComponents.CRYSTAL_ASPECT.get());
         if (stored != null) {
             aspect = stored.aspect().unwrapKey().orElse(null);
@@ -225,8 +226,7 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
     }
 
     @Override
-    public void collectImplicitComponents(DataComponentMap.Builder components) {
-        super.collectImplicitComponents(components);
+    public void collectItemData(ItemDataPatch.Builder components) {
         Holder<IAspect> resolved = aspect();
         if (resolved != null) {
             components.set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(resolved, 1));
@@ -234,7 +234,7 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag output) {
+    public void removeItemDataFromTag(CompoundTag output) {
         output.remove("Aspect");
     }
 }

@@ -8,7 +8,9 @@ import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentMap;
+import com.leclowndu93150.thaumaturge.itemdata.BlockItemData;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataReader;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -19,7 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public abstract class BlockEntityMirrorBase extends AbstractSyncedBlockEntity {
+public abstract class BlockEntityMirrorBase extends AbstractSyncedBlockEntity implements BlockItemData {
     private static final int RETRY_BASE_INTERVAL = 40;
     private static final int RETRY_MAX_INTERVAL = 600;
     private static final int RETRY_BACKOFF = 20;
@@ -228,16 +230,14 @@ public abstract class BlockEntityMirrorBase extends AbstractSyncedBlockEntity {
     }
 
     @Override
-    protected void collectImplicitComponents(DataComponentMap.Builder builder) {
-        super.collectImplicitComponents(builder);
+    public void collectItemData(ItemDataPatch.Builder builder) {
         if (linked && link != null) {
             builder.set(TTDataComponents.MIRROR_LINK.get(), link);
         }
     }
 
     @Override
-    protected void applyImplicitComponents(DataComponentInput components) {
-        super.applyImplicitComponents(components);
+    public void applyItemData(ItemDataReader components) {
         GlobalPos stored = components.get(TTDataComponents.MIRROR_LINK.get());
         if (stored != null) {
             link = stored;

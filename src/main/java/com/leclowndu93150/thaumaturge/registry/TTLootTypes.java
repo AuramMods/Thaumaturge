@@ -26,6 +26,7 @@ public final class TTLootTypes {
     private TTLootTypes() {}
 
     public static void register(IEventBus modBus) {
+        com.leclowndu93150.thaumaturge.itemdata.BlockItemDataLoot.register(modBus);
         CONDITIONS.register(modBus);
         NUMBER_PROVIDERS.register(modBus);
     }

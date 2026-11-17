@@ -72,7 +72,7 @@ public final class BlockNode extends Block implements EntityBlock {
             BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
         ItemStack stack = new ItemStack(TTItems.CREATIVE_NODE_PLACER.get());
         if (level instanceof Level world && level.getBlockEntity(pos) instanceof BlockEntityNode node) {
-            node.saveToItem(stack, world.registryAccess());
+            node.saveToItem(stack);
         }
         return stack;
     }

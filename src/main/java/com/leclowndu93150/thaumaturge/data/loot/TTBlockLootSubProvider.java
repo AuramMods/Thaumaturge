@@ -29,7 +29,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
-import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
+import com.leclowndu93150.thaumaturge.itemdata.CopyItemDataFunction;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
@@ -150,8 +150,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
                                 .setRolls(ConstantValue.exactly(1))
                                 .when(AnyOfCondition.anyOf(grownStages))
                                 .add(LootItem.lootTableItem(TTItems.MANA_BEAN.get())
-                                        .apply(CopyComponentsFunction.copyComponents(
-                                                        CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                        .apply(CopyItemDataFunction.copyBlockEntity()
                                                 .include(TTDataComponents.CRYSTAL_ASPECT.get())))))
                 .withPool(this.applyExplosionCondition(
                         block,
@@ -162,8 +161,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
                                                 .hasProperty(BlockManaPod.AGE, BlockEntityManaPod.MAX_AGE)))
                                 .when(LootItemRandomChanceCondition.randomChance(SECOND_BEAN_CHANCE))
                                 .add(LootItem.lootTableItem(TTItems.MANA_BEAN.get())
-                                        .apply(CopyComponentsFunction.copyComponents(
-                                                        CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                        .apply(CopyItemDataFunction.copyBlockEntity()
                                                 .include(TTDataComponents.CRYSTAL_ASPECT.get())))));
     }
 
@@ -174,8 +172,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
                         LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1))
                                 .add(LootItem.lootTableItem(block)
-                                        .apply(CopyComponentsFunction.copyComponents(
-                                                        CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                        .apply(CopyItemDataFunction.copyBlockEntity()
                                                 .include(TTDataComponents.MIRROR_LINK.get())))));
     }
 
@@ -186,8 +183,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
                         LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1))
                                 .add(LootItem.lootTableItem(item)
-                                        .apply(CopyComponentsFunction.copyComponents(
-                                                CopyComponentsFunction.Source.BLOCK_ENTITY)))));
+                                        .apply(CopyItemDataFunction.copyBlockEntity()))));
     }
 
     private LootTable.Builder lootContainerTable(Block block, int rarity) {
@@ -229,8 +225,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(1))
                                         .add(LootItem.lootTableItem(TTBlocks.JAR_NODE.get())
-                                                .apply(CopyComponentsFunction.copyComponents(
-                                                                CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                                .apply(CopyItemDataFunction.copyBlockEntity()
                                                         .include(TTDataComponents.NODE_DATA.get()))))));
 
         for (RegistryObject<BlockCandleHolder> holder : TTBlocks.CANDLE_HOLDERS.values()) {
@@ -370,8 +365,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
                         LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .add(LootItem.lootTableItem(block)
-                                        .apply(CopyComponentsFunction.copyComponents(
-                                                        CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                        .apply(CopyItemDataFunction.copyBlockEntity()
                                                 .include(TTDataComponents.ESSENTIA_CONTENTS.get())
                                                 .include(TTDataComponents.ASPECT_FILTER.get())))));
     }
