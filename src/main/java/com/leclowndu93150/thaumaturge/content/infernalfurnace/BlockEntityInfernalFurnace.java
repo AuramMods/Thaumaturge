@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
@@ -31,7 +32,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
@@ -389,8 +390,7 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
 
     private Optional<AbstractCookingRecipe> getCookingRecipe(ItemStack input) {
         if (level == null || level.isClientSide()) return Optional.empty();
-        return ((ServerLevel) level)
-                .getRecipeManager()
+        return RecipeAccess.of(((ServerLevel) level).getRecipeManager())
                 .getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(input), level)
                 .map(RecipeHolder::value);
     }

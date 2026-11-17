@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.network.ClientboundAspectIndexPayload;
@@ -74,7 +75,7 @@ public final class AspectIndexEvents {
                 AspectIndexFile.load(server.registryAccess(), fingerprint).orElse(null);
         if (index == null) {
             int itemCount = BuiltInRegistries.ITEM.size();
-            int recipeCount = server.getRecipeManager().getRecipes().size();
+            int recipeCount = RecipeAccess.of(server.getRecipeManager()).getRecipes().size();
             index = AspectIndexBuilder.build(server.getRecipeManager(), server.registryAccess());
             AspectIndexFile.write(index, server.registryAccess(), fingerprint, itemCount, recipeCount);
         }

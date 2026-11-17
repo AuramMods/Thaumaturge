@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.patterncrafter;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.api.items.ItemMatch;
@@ -18,7 +19,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -145,7 +146,7 @@ public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
         }
         CraftingInput craftingInput = CraftingInput.of(3, 3, grid);
         Optional<RecipeHolder<CraftingRecipe>> match =
-                server.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftingInput, server);
+                RecipeAccess.of(server.getRecipeManager()).getRecipeFor(RecipeType.CRAFTING, craftingInput, server);
         if (match.isEmpty()) {
             return null;
         }

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -15,7 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 
 public final class CookingAspectContributor implements IAspectRecipeContributor {
@@ -27,7 +28,7 @@ public final class CookingAspectContributor implements IAspectRecipeContributor 
     public void beginBuild(RecipeManager recipes, HolderLookup.Provider registries) {
         Map<Item, List<Candidate>> map = new HashMap<>();
         int skipped = 0;
-        for (RecipeHolder<?> holder : recipes.getRecipes()) {
+        for (RecipeHolder<?> holder : RecipeAccess.of(recipes).getRecipes()) {
             if (!(holder.value() instanceof AbstractCookingRecipe cooking)) {
                 continue;
             }

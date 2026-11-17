@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction.Fai
 import java.util.List;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import org.junit.jupiter.api.Test;
 
 class InfusionCraftingInspectionTest {

@@ -28,7 +28,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 
 public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<CrucibleRecipe>> {
     public static final RecipeType<RecipeHolder<CrucibleRecipe>> RECIPE_TYPE =

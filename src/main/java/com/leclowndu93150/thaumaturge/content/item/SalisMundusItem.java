@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
@@ -27,7 +28,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
@@ -73,7 +74,7 @@ public final class SalisMundusItem extends Item {
         BlockState clicked = level.getBlockState(pos);
         DustTriggerInput input = new DustTriggerInput(stack, level, pos, clicked);
         Optional<RecipeHolder<DustTrigger>> match =
-                serverLevel.getRecipeManager().getRecipeFor(TTRecipeTypes.DUST_TRIGGER.get(), input, level);
+                RecipeAccess.of(serverLevel.getRecipeManager()).getRecipeFor(TTRecipeTypes.DUST_TRIGGER.get(), input, level);
         if (match.isEmpty()) {
             return InteractionResult.PASS;
         }

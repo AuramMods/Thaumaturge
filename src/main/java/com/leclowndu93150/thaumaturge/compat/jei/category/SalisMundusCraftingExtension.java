@@ -13,7 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 
 public final class SalisMundusCraftingExtension implements ICraftingCategoryExtension<SalisMundusRecipe> {
     public static final SalisMundusCraftingExtension INSTANCE = new SalisMundusCraftingExtension();

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectIndex;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectRecipeContributor;
@@ -13,7 +14,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 
@@ -25,7 +26,7 @@ public final class SmithingAspectContributor implements IAspectRecipeContributor
     @Override
     public void beginBuild(RecipeManager recipes, HolderLookup.Provider registries) {
         Map<Item, List<Candidate>> map = new HashMap<>();
-        for (RecipeHolder<?> holder : recipes.getRecipes()) {
+        for (RecipeHolder<?> holder : RecipeAccess.of(recipes).getRecipes()) {
             if (!(holder.value() instanceof SmithingTransformRecipe recipe)) {
                 continue;
             }

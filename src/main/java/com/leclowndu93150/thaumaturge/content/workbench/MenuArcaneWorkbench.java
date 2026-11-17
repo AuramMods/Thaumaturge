@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.workbench;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -33,7 +34,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import org.jspecify.annotations.Nullable;
 
@@ -269,7 +270,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
     }
 
     private Optional<RecipeHolder<CraftingRecipe>> findVanillaRecipe(ServerLevel level, CraftingInput input) {
-        return level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, level);
+        return RecipeAccess.of(level.getRecipeManager()).getRecipeFor(RecipeType.CRAFTING, input, level);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -40,7 +41,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -124,7 +125,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
         List<CrucibleRecipe> found = new ArrayList<>();
         ItemStack inSlot = catalystStack();
         for (RecipeHolder<CrucibleRecipe> entry :
-                level.getRecipeManager().getAllRecipesFor(TTRecipeTypes.CRUCIBLE.get())) {
+                RecipeAccess.of(level.getRecipeManager()).getAllRecipesFor(TTRecipeTypes.CRUCIBLE.get())) {
             ResourceLocation recipeId = entry.id();
             if (isOffered(entry.value(), recipeId, inSlot, player)) {
                 found.add(entry.value());
@@ -283,7 +284,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
     }
 
     private @Nullable CrucibleRecipe recipe(ServerLevel level, ResourceLocation id) {
-        RecipeHolder<?> holder = level.getRecipeManager().byKey(id).orElse(null);
+        RecipeHolder<?> holder = RecipeAccess.of(level.getRecipeManager()).byKey(id).orElse(null);
         return holder != null && holder.value() instanceof CrucibleRecipe recipe ? recipe : null;
     }
 

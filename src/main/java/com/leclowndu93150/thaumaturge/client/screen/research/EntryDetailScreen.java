@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
@@ -75,7 +76,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -2460,7 +2461,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
         if (minecraft == null || minecraft.level == null) return null;
         HolderLookup.Provider reg = minecraft.level.registryAccess();
         ResourceLocation fallback = null;
-        for (RecipeHolder<?> holder : minecraft.level.getRecipeManager().getRecipes()) {
+        for (RecipeHolder<?> holder : RecipeAccess.of(minecraft.level.getRecipeManager()).getRecipes()) {
             ItemStack result = RecipeDisplayWidget.resultOf(holder.value(), reg);
             if (result.isEmpty() || result.getItem() != item) continue;
             if (holder.id().getNamespace().equals(TTIds.MODID)) {

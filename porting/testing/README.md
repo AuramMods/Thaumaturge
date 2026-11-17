@@ -111,7 +111,14 @@ not create a game window, initialize game audio or start a world server. A
 read-only focus monitor recorded no app changes over 517 samples during a
 successful cycle 020 client-distribution run.
 
-The focused config currently applies only the two entity-tick mixins. The five
-earlier persistence/item mixins compile with the real processor/refmap but are
-not applied here yet. Full gameplay subscriber execution, live worlds,
-rendering, all other mixins and actual distribution installation remain pending.
+Cycle 021 adds nine recipe tests on each distribution (156 server / 163 client),
+using the actual native RecipeManager, matching, remainders, JSON apply and
+serializer network round trips. The runner registers Forge's actual vanilla
+ingredient serializer, normally registered by ForgeMod's recipe-serializer
+event, so native JSON parsing works without full mod construction.
+
+The focused config currently applies the two entity-tick mixins and the recipe
+manager lifetime mixin. The five earlier persistence/item mixins compile with
+the real processor/refmap but are not applied here yet. Full gameplay subscriber
+execution, mod recipe serializers/inputs/IDs, live worlds, rendering, all other
+mixins and actual distribution installation remain pending.

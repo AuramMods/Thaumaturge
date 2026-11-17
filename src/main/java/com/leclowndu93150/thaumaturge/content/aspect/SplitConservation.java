@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -18,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.common.Tags;
 
@@ -40,7 +41,7 @@ final class SplitConservation {
     static SplitConservation scan(RecipeManager recipes, HolderLookup.Provider registries) {
         List<Uniform> uniforms = new ArrayList<>();
         Set<Join> joins = new HashSet<>();
-        for (RecipeHolder<?> holder : recipes.getRecipes()) {
+        for (RecipeHolder<?> holder : RecipeAccess.of(recipes).getRecipes()) {
             if (holder.value() instanceof CraftingRecipe crafting) {
                 uniformOf(crafting, registries).ifPresent(uniform -> {
                     uniforms.add(uniform);

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.workbench;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftingTransaction;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftingTransaction.Failure;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftingTransaction.Result;
@@ -19,7 +20,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import org.jspecify.annotations.Nullable;
 
 public final class ArcaneCraftingTransactions implements ArcaneCraftingTransaction.Bindings {
@@ -135,7 +136,7 @@ public final class ArcaneCraftingTransactions implements ArcaneCraftingTransacti
     private static Match match(ServerLevel level, ServerPlayer player, IArcaneCraftingInput input) {
         RecipeHolder<? extends IArcaneRecipe> locked = null;
         for (RecipeHolder<? extends IArcaneRecipe> holder :
-                level.getRecipeManager().getAllRecipesFor(TTRecipeTypes.ARCANE.get())) {
+                RecipeAccess.of(level.getRecipeManager()).getAllRecipesFor(TTRecipeTypes.ARCANE.get())) {
             if (holder.value().matches(input, level)) {
                 if (holder.value().doesPassGate(player)) {
                     return new Match(holder, Failure.NONE);

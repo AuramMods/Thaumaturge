@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jei;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.google.gson.JsonElement;
@@ -74,6 +75,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import org.jspecify.annotations.Nullable;
@@ -561,7 +563,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
             net.minecraft.world.item.crafting.RecipeType<R> vanillaType,
             @Nullable Predicate<RecipeHolder<R>> filter) {
         List<RecipeHolder<R>> holders =
-                Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(vanillaType);
+                RecipeAccess.of(Minecraft.getInstance().level.getRecipeManager()).getAllRecipesFor(vanillaType);
         if (filter != null) {
             holders = holders.stream().filter(filter).toList();
         }
@@ -575,7 +577,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         }
 
         List<RecipeHolder<SmeltingRecipe>> smeltingRecipes =
-                level.getRecipeManager().getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.SMELTING);
+                RecipeAccess.of(level.getRecipeManager()).getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.SMELTING);
         List<InfernalBonusWrapper> bonuses = registration.getIngredientManager().getAllItemStacks().stream()
                 .map(stack -> infernalFurnaceBonus(level, smeltingRecipes, stack))
                 .filter(Objects::nonNull)

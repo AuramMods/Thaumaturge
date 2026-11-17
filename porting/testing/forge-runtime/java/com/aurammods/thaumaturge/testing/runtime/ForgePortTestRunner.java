@@ -5,6 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
@@ -21,6 +24,9 @@ public final class ForgePortTestRunner {
         Thread.currentThread().setContextClassLoader(ForgePortTestRunner.class.getClassLoader());
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
+        // ForgeMod normally registers this during the recipe-serializer event.
+        // This focused launch performs no mod construction or registry events.
+        CraftingHelper.register(ResourceLocation.withDefaultNamespace("item"), VanillaIngredientSerializer.INSTANCE);
         Path results = Path.of(System.getProperty("thaumaturge.portResults"));
         Files.createDirectories(results);
         var request = LauncherDiscoveryRequestBuilder.request();

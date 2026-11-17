@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -23,7 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 
 public record AspectIndexFingerprint(String digest, Map<String, String> sections) {
     private static final int FORMAT_VERSION = 6;
@@ -58,7 +59,7 @@ public record AspectIndexFingerprint(String digest, Map<String, String> sections
         int unencodable = 0;
         String firstUnencodable = null;
         RuntimeException firstFailure = null;
-        for (RecipeHolder<?> holder : server.getRecipeManager().getRecipes()) {
+        for (RecipeHolder<?> holder : RecipeAccess.of(server.getRecipeManager()).getRecipes()) {
             ResourceLocation id = holder.id();
             String contents;
             try {

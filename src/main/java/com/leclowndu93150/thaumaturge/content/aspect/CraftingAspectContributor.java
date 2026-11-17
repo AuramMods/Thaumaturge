@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -21,7 +22,7 @@ import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 
 public final class CraftingAspectContributor implements IAspectRecipeContributor {
@@ -37,7 +38,7 @@ public final class CraftingAspectContributor implements IAspectRecipeContributor
         magic = registries.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.PRAECANTATIO);
         Map<Item, List<Candidate>> map = new HashMap<>();
         int skipped = 0;
-        for (RecipeHolder<?> holder : recipes.getRecipes()) {
+        for (RecipeHolder<?> holder : RecipeAccess.of(recipes).getRecipes()) {
             Recipe<?> recipe = holder.value();
             try {
                 if (recipe instanceof ArcaneCraftingRecipe arcane) {

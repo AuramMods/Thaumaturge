@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -15,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 
 public final class RecipeDisplayCache {
@@ -32,7 +33,7 @@ public final class RecipeDisplayCache {
             return List.of();
         }
         RecipeManager recipes = mc.level.getRecipeManager();
-        return recipes.byKey(id)
+        return RecipeAccess.of(recipes).byKey(id)
                 .<List<RecipeHolder<?>>>map(holder -> {
                     if (!(holder.value() instanceof InfusionRunicAugmentRecipe runic)) {
                         if (id.getNamespace().equals(TTIds.MODID)
@@ -55,7 +56,7 @@ public final class RecipeDisplayCache {
         List<RecipeHolder<?>> pages = new ArrayList<>(DyeColor.values().length);
         for (DyeColor color : DyeColor.values()) {
             ResourceLocation id = TTIds.rl("nitors/" + color.getName());
-            recipes.byKey(id).ifPresent(pages::add);
+            RecipeAccess.of(recipes).byKey(id).ifPresent(pages::add);
         }
         List<RecipeHolder<?>> result = pages.isEmpty() ? List.of(anchor) : List.copyOf(pages);
         NITOR_PAGES.put(recipes, new NitorPages(anchor, result));
