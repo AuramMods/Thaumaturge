@@ -21,7 +21,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public class EntityGolemOrb extends ThrowableProjectile implements ISidedHurt {
+public class EntityGolemOrb extends ThrowableProjectile implements ISidedHurt, CustomGravity {
     private static final EntityDataAccessor<Boolean> DATA_RED =
             SynchedEntityData.defineId(EntityGolemOrb.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_TARGET =
@@ -83,7 +83,7 @@ public class EntityGolemOrb extends ThrowableProjectile implements ISidedHurt {
     }
 
     @Override
-    protected double getDefaultGravity() {
+    public double customGravity() {
         return 0.0;
     }
 

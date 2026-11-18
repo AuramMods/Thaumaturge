@@ -4,11 +4,21 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import net.minecraft.SharedConstants;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
 import net.minecraftforge.common.crafting.conditions.*;
+import net.minecraftforge.eventbus.api.BusBuilder;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeDeferredRegistriesSetup;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegisterEvent;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
@@ -27,6 +37,7 @@ public final class ForgePortTestRunner {
         Bootstrap.bootStrap();
         // Normal Forge loading starts the global game-event bus after mod construction.
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.start();
+        registerForgeFluidTypes();
         // Forge's registry bake normally assigns block-state wire IDs and
         // initializes the native state caches before worlds/networking start.
         ((net.minecraftforge.registries.ForgeRegistry<?>) net.minecraftforge.registries.ForgeRegistries.BLOCKS).bake();
@@ -66,5 +77,26 @@ public final class ForgePortTestRunner {
                 || result.getContainersAbortedCount() != 0) {
             throw new AssertionError("Forge port tests failed; see " + results);
         }
+    }
+
+    private static void registerForgeFluidTypes() throws Exception {
+        // Native Entity constructors size their fluid caches from Forge's registry.
+        var bus = BusBuilder.builder().build();
+        ForgeDeferredRegistriesSetup.setup(bus);
+        var vanillaFluids = ForgeMod.class.getDeclaredField("VANILLA_FLUID_TYPES");
+        vanillaFluids.setAccessible(true);
+        ((DeferredRegister<?>) vanillaFluids.get(null)).register(bus);
+
+        var created = new NewRegistryEvent();
+        bus.post(created);
+        var fill = NewRegistryEvent.class.getDeclaredMethod("fill");
+        fill.setAccessible(true);
+        fill.invoke(created);
+
+        var registry = (ForgeRegistry<?>) ForgeRegistries.FLUID_TYPES.get();
+        var ctor = RegisterEvent.class.getDeclaredConstructor(ResourceKey.class, ForgeRegistry.class, Registry.class);
+        ctor.setAccessible(true);
+        bus.post(ctor.newInstance(ForgeRegistries.Keys.FLUID_TYPES, registry, null));
+        registry.freeze();
     }
 }

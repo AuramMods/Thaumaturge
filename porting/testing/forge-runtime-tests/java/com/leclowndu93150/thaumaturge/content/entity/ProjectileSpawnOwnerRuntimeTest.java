@@ -5,53 +5,21 @@ import static org.mockito.Mockito.*;
 
 import io.netty.buffer.Unpooled;
 import java.util.UUID;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
-import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeDeferredRegistriesSetup;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.NewRegistryEvent;
-import net.minecraftforge.registries.RegisterEvent;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class ProjectileSpawnOwnerRuntimeTest {
-    @BeforeAll
-    static void bindForgeFluidTypesBeforeConstructingEntities() throws Exception {
-        var bus = BusBuilder.builder().build();
-        ForgeDeferredRegistriesSetup.setup(bus);
-        var vanillaFluids = ForgeMod.class.getDeclaredField("VANILLA_FLUID_TYPES");
-        vanillaFluids.setAccessible(true);
-        ((DeferredRegister<?>) vanillaFluids.get(null)).register(bus);
-
-        var created = new NewRegistryEvent();
-        bus.post(created);
-        var fill = NewRegistryEvent.class.getDeclaredMethod("fill");
-        fill.setAccessible(true);
-        fill.invoke(created);
-
-        var registry = (ForgeRegistry<?>) ForgeRegistries.FLUID_TYPES.get();
-        var ctor = RegisterEvent.class.getDeclaredConstructor(ResourceKey.class, ForgeRegistry.class, Registry.class);
-        ctor.setAccessible(true);
-        bus.post(ctor.newInstance(ForgeRegistries.Keys.FLUID_TYPES, registry, null));
-        registry.freeze();
-    }
-
     @Test
     void forgeSpawnPacketCarriesProjectileOwnerAndFollowingFields() {
         var source = new SpawnProbe(mock(Level.class));

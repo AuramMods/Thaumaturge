@@ -31,7 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
@@ -171,7 +171,7 @@ public final class SpellBat extends Monster implements TraceableEntity, IEntityA
     }
 
     @Override
-    public @Nullable PlayerTeam getTeam() {
+    public @Nullable Team getTeam() {
         LivingEntity master = getOwner();
         return master != null ? master.getTeam() : super.getTeam();
     }

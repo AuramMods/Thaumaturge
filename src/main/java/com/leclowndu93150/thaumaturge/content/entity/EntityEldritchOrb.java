@@ -15,7 +15,7 @@ import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 
-public class EntityEldritchOrb extends ThrowableProjectile {
+public class EntityEldritchOrb extends ThrowableProjectile implements CustomGravity {
     private static final int MAX_LIFE_TICKS = 100;
     private static final double BLAST_RANGE = 2.0;
     private static final float DAMAGE_FACTOR = 0.666F;
@@ -36,7 +36,7 @@ public class EntityEldritchOrb extends ThrowableProjectile {
     protected void defineSynchedData() {}
 
     @Override
-    protected double getDefaultGravity() {
+    public double customGravity() {
         return 0.0;
     }
 

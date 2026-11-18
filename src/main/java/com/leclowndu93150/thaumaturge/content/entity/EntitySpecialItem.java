@@ -4,10 +4,9 @@ import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 
-public final class EntitySpecialItem extends ItemEntity {
+public final class EntitySpecialItem extends ItemEntity implements CustomGravity {
     private static final double TOSS_SPREAD = 0.1;
     private static final double TOSS_LIFT = 0.2;
     private static final double CLIMB_BRAKE = 0.1;
@@ -25,12 +24,12 @@ public final class EntitySpecialItem extends ItemEntity {
     }
 
     @Override
-    protected double getDefaultGravity() {
+    public double customGravity() {
         return Math.max(0.0, getDeltaMovement().y) * CLIMB_BRAKE;
     }
 
     @Override
-    public boolean ignoreExplosion(Explosion explosion) {
+    public boolean ignoreExplosion() {
         return true;
     }
 }

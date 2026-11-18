@@ -26,7 +26,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Team;
 import org.jspecify.annotations.Nullable;
 
 public abstract class EntityOwnedConstruct extends PathfinderMob implements OwnableEntity {
@@ -121,7 +121,7 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
     }
 
     @Override
-    public @Nullable PlayerTeam getTeam() {
+    public @Nullable Team getTeam() {
         LivingEntity master = isOwned() ? getOwner() : null;
         return master != null ? master.getTeam() : super.getTeam();
     }

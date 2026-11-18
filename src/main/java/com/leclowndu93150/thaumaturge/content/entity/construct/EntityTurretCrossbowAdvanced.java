@@ -21,7 +21,7 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Team;
 
 public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     private static final EntityDataAccessor<Byte> FLAGS =
@@ -66,8 +66,8 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
         if (entity == this || !entity.isAlive() || !matchesTargetKind(entity)) {
             return false;
         }
-        PlayerTeam team = getTeam();
-        PlayerTeam targetTeam = entity.getTeam();
+        Team team = getTeam();
+        Team targetTeam = entity.getTeam();
         if (team != null && targetTeam == team && !getTargetFriendly()) {
             return false;
         }

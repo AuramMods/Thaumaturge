@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.carrier;
 
+import com.leclowndu93150.thaumaturge.content.entity.CustomGravity;
 import com.leclowndu93150.thaumaturge.content.entity.ProjectileSpawnOwner;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellStats;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
@@ -31,7 +32,7 @@ import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
-public final class SpellProjectile extends ThrowableProjectile implements IEntityAdditionalSpawnData {
+public final class SpellProjectile extends ThrowableProjectile implements IEntityAdditionalSpawnData, CustomGravity {
     private static final String GRAVITY_KEY = "gravity";
     private static final String SPLASH_KEY = "splash";
     private static final String HOMING_KEY = "homing";
@@ -93,7 +94,7 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
     protected void defineSynchedData() {}
 
     @Override
-    protected double getDefaultGravity() {
+    public double customGravity() {
         return gravity;
     }
 

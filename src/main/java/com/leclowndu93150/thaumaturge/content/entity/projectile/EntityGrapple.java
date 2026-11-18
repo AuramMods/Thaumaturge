@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.projectile;
 
+import com.leclowndu93150.thaumaturge.content.entity.CustomGravity;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
@@ -21,7 +22,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class EntityGrapple extends ThrowableProjectile {
+public final class EntityGrapple extends ThrowableProjectile implements CustomGravity {
     private static final EntityDataAccessor<Boolean> PULLING =
             SynchedEntityData.defineId(EntityGrapple.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> MAIN_HAND =
@@ -63,7 +64,7 @@ public final class EntityGrapple extends ThrowableProjectile {
     }
 
     @Override
-    protected double getDefaultGravity() {
+    public double customGravity() {
         return isPulling() ? PULLING_GRAVITY : FLIGHT_GRAVITY;
     }
 

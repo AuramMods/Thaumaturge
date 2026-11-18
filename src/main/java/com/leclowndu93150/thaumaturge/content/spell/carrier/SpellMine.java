@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.carrier;
 
+import com.leclowndu93150.thaumaturge.content.entity.CustomGravity;
 import com.leclowndu93150.thaumaturge.content.entity.ProjectileSpawnOwner;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
@@ -28,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
 
-public final class SpellMine extends ThrowableProjectile implements IEntityAdditionalSpawnData {
+public final class SpellMine extends ThrowableProjectile implements IEntityAdditionalSpawnData, CustomGravity {
     private static final EntityDataAccessor<Boolean> ARMED =
             SynchedEntityData.defineId(SpellMine.class, EntityDataSerializers.BOOLEAN);
     private static final int LIFESPAN = 1200;
@@ -76,7 +77,7 @@ public final class SpellMine extends ThrowableProjectile implements IEntityAddit
     }
 
     @Override
-    protected double getDefaultGravity() {
+    public double customGravity() {
         return GRAVITY;
     }
 

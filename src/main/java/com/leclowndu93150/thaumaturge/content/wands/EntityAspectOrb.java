@@ -140,11 +140,6 @@ public class EntityAspectOrb extends Entity {
     }
 
     @Override
-    protected double getDefaultGravity() {
-        return GRAVITY;
-    }
-
-    @Override
     protected void doWaterSplashEffect() {}
 
     @Override
@@ -179,8 +174,8 @@ public class EntityAspectOrb extends Entity {
                     movement.x * WATER_DRAG,
                     Math.min(movement.y * WATER_DRAG + WATER_RISE, WATER_MAX_RISE),
                     movement.z * WATER_DRAG);
-        } else {
-            applyGravity();
+        } else if (!isNoGravity()) {
+            setDeltaMovement(movement.add(0.0, -GRAVITY, 0.0));
         }
     }
 
