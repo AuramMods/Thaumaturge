@@ -134,7 +134,7 @@ final class ReliquaryClaims {
     }
 
     private static void roll(ServerLevel level, BlockPos pos, ServerPlayer player, ResourceKey<LootTable> key) {
-        LootTable table = level.getServer().reloadableRegistries().getLootTable(key);
+        LootTable table = level.getServer().getLootData().getLootTable(key.location());
         LootParams params = new LootParams.Builder(level)
                 .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
                 .withParameter(LootContextParams.THIS_ENTITY, player)

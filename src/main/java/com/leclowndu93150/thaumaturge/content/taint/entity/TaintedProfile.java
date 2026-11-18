@@ -1,10 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity;
 
-import com.leclowndu93150.thaumaturge.datamap.DataMaps;
-
-import com.leclowndu93150.thaumaturge.serialization.Codecs;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
-import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
+import com.leclowndu93150.thaumaturge.datamap.DataMapType;
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+import com.leclowndu93150.thaumaturge.registry.TTLootTables;
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -28,7 +29,7 @@ public record TaintedProfile(
         boolean naturalSpawns,
         Optional<ResourceKey<LootTable>> lootTable) {
     public static final Codec<TaintedProfile> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Codecs.optionalFieldOf(Codec.unboundedMap(Attribute.CODEC, Codec.DOUBLE), "attributes", Map.of())
+                    Codecs.optionalFieldOf(Codec.unboundedMap(BuiltInRegistries.ATTRIBUTE.holderByNameCodec(), Codec.DOUBLE), "attributes", Map.of())
                             .forGetter(TaintedProfile::attributes),
                     Codecs.optionalFieldOf(Codec.BOOL, "hunts_villagers", false).forGetter(TaintedProfile::huntsVillagers),
                     Codecs.optionalFieldOf(Codec.BOOL, "hunts_animals", false).forGetter(TaintedProfile::huntsAnimals),
@@ -36,11 +37,14 @@ public record TaintedProfile(
                             .listOf(), "traits", List.of())
                             .forGetter(TaintedProfile::traits),
                     Codecs.optionalFieldOf(Codec.BOOL, "natural_spawns", false).forGetter(TaintedProfile::naturalSpawns),
-                    Codecs.optionalFieldOf(ResourceKey.codec(Registries.LOOT_TABLE), "loot_table")
+                    Codecs.optionalFieldOf(TTLootTables.KEY_CODEC, "loot_table")
                             .forGetter(TaintedProfile::lootTable))
             .apply(instance, TaintedProfile::new));
 
+    public static final DataMapType<EntityType<?>, TaintedProfile> DATA_MAP =
+            DataMapType.builder(TTIds.rl("tainted_profile"), Registries.ENTITY_TYPE, CODEC).build();
+
     public static @Nullable TaintedProfile of(EntityType<?> type) {
-        return DataMaps.get(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type), TTDataMaps.TAINTED_PROFILE);
+        return DataMaps.get(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type), DATA_MAP);
     }
 }

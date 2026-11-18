@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.reliquary;
 
+import com.leclowndu93150.thaumaturge.registry.TTLootTables;
+
 import com.leclowndu93150.thaumaturge.api.labyrinth.MazeId;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -10,7 +12,6 @@ import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -72,7 +73,7 @@ public final class BlockEntityEldritchReliquary extends AbstractSyncedBlockEntit
         super.loadAdditional(input, registries);
         maze = TTNbt.read(input, MAZE, MazeId.CODEC, registries);
         role = TTNbt.read(input, ROLE, ReliquaryRole.CODEC, registries).orElse(ReliquaryRole.CACHE);
-        loot = TTNbt.read(input, LOOT, ResourceKey.codec(Registries.LOOT_TABLE), registries);
+        loot = TTNbt.read(input, LOOT, TTLootTables.KEY_CODEC, registries);
     }
 
     @Override
@@ -81,6 +82,6 @@ public final class BlockEntityEldritchReliquary extends AbstractSyncedBlockEntit
         if (maze.orElse(null) != null) TTNbt.store(output, MAZE, MazeId.CODEC, registries, maze.orElse(null));
         TTNbt.store(output, ROLE, ReliquaryRole.CODEC, registries, role);
         if (loot.orElse(null) != null)
-            TTNbt.store(output, LOOT, ResourceKey.codec(Registries.LOOT_TABLE), registries, loot.orElse(null));
+            TTNbt.store(output, LOOT, TTLootTables.KEY_CODEC, registries, loot.orElse(null));
     }
 }

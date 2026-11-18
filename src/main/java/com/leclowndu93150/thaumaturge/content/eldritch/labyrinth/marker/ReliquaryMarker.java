@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker;
 
+import com.leclowndu93150.thaumaturge.registry.TTLootTables;
+
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarker;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthMarkerType;
@@ -14,7 +16,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.storage.loot.LootTable;
 
@@ -22,7 +23,7 @@ public record ReliquaryMarker(Direction facing, Optional<ResourceKey<LootTable>>
     public static final MapCodec<ReliquaryMarker> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     Codecs.optionalFieldOf(RoomSocket.HORIZONTAL, "facing", Direction.NORTH)
                             .forGetter(ReliquaryMarker::facing),
-                    Codecs.optionalFieldOf(ResourceKey.codec(Registries.LOOT_TABLE), "loot")
+                    Codecs.optionalFieldOf(TTLootTables.KEY_CODEC, "loot")
                             .forGetter(ReliquaryMarker::loot))
             .apply(instance, ReliquaryMarker::new));
 

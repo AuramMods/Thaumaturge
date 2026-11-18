@@ -1,11 +1,18 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import net.minecraft.core.registries.Registries;
+import com.mojang.serialization.Codec;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 public final class TTLootTables {
+    /** The source key space for data references. Forge loads these tables by location. */
+    public static final ResourceKey<Registry<LootTable>> REGISTRY_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.withDefaultNamespace("loot_table"));
+    public static final Codec<ResourceKey<LootTable>> KEY_CODEC = ResourceKey.codec(REGISTRY_KEY);
+
     public static final ResourceKey<LootTable> LOOT_BAG_COMMON = key("gameplay/loot_bag_common");
     public static final ResourceKey<LootTable> LOOT_BAG_UNCOMMON = key("gameplay/loot_bag_uncommon");
     public static final ResourceKey<LootTable> LOOT_BAG_RARE = key("gameplay/loot_bag_rare");
@@ -42,7 +49,7 @@ public final class TTLootTables {
     public static final ResourceKey<LootTable> LABYRINTH_PRIMORDIAL_PEARL = key("labyrinth/primordial_pearl");
 
     private static ResourceKey<LootTable> key(String path) {
-        return ResourceKey.create(Registries.LOOT_TABLE, TTIds.rl(path));
+        return ResourceKey.create(REGISTRY_KEY, TTIds.rl(path));
     }
 
     private TTLootTables() {}

@@ -470,7 +470,7 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
         if (level() instanceof ServerLevel server) {
             if (deathTime >= DEATH_BURST_TICK && rewardPending) {
                 rewardPending = false;
-                LootTable table = server.getServer().reloadableRegistries().getLootTable(getLootTable());
+                LootTable table = server.getServer().getLootData().getLootTable(getLootTable());
                 LootParams params = new LootParams.Builder(server)
                         .withParameter(LootContextParams.THIS_ENTITY, this)
                         .withParameter(LootContextParams.ORIGIN, position())

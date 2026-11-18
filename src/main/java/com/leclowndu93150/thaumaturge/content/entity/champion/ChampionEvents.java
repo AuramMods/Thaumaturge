@@ -130,14 +130,14 @@ public final class ChampionEvents {
                 .withParameter(LootContextParams.ORIGIN, entity.position())
                 .withParameter(LootContextParams.DAMAGE_SOURCE, event.getSource())
                 .withOptionalParameter(
-                        LootContextParams.ATTACKING_ENTITY, event.getSource().getEntity())
+                        LootContextParams.KILLER_ENTITY, event.getSource().getEntity())
                 .withOptionalParameter(
-                        LootContextParams.DIRECT_ATTACKING_ENTITY,
+                        LootContextParams.DIRECT_KILLER_ENTITY,
                         event.getSource().getDirectEntity());
         params.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, killer).withLuck(killer.getLuck());
         server.getServer()
-                .reloadableRegistries()
-                .getLootTable(TTLootTables.CHAMPION_BAG)
+                .getLootData()
+                .getLootTable(TTLootTables.CHAMPION_BAG.location())
                 .getRandomItems(
                         params.create(LootContextParamSets.ENTITY),
                         entity.getLootTableSeed(),

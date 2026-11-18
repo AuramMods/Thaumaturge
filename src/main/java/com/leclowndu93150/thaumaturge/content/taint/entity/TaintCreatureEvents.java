@@ -113,15 +113,15 @@ public final class TaintCreatureEvents {
         }
         event.getDrops().clear();
         LootTable table = level.getServer()
-                .reloadableRegistries()
-                .getLootTable(profile.lootTable().get());
+                .getLootData()
+                .getLootTable(profile.lootTable().orElseThrow().location());
         DamageSource source = event.getSource();
         LootParams.Builder params = new LootParams.Builder(level)
                 .withParameter(LootContextParams.THIS_ENTITY, entity)
                 .withParameter(LootContextParams.ORIGIN, entity.position())
                 .withParameter(LootContextParams.DAMAGE_SOURCE, source)
-                .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, source.getEntity())
-                .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, source.getDirectEntity());
+                .withOptionalParameter(LootContextParams.KILLER_ENTITY, source.getEntity())
+                .withOptionalParameter(LootContextParams.DIRECT_KILLER_ENTITY, source.getDirectEntity());
         if (event.isRecentlyHit() && entity.getKillCredit() instanceof Player player) {
             params = params.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
                     .withLuck(player.getLuck());

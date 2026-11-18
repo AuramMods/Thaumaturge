@@ -40,9 +40,7 @@ public final class TTDataMaps {
             .synced(TrimMaterialBonus.CODEC, false)
             .build();
 
-    public static final DataMapType<EntityType<?>, TaintedProfile> TAINTED_PROFILE = DataMapType.builder(
-                    TTIds.rl("tainted_profile"), Registries.ENTITY_TYPE, TaintedProfile.CODEC)
-            .build();
+    public static final DataMapType<EntityType<?>, TaintedProfile> TAINTED_PROFILE = TaintedProfile.DATA_MAP;
 
     private TTDataMaps() {}
 

@@ -38,7 +38,7 @@ public final class LootBagItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (level instanceof ServerLevel server) {
-            LootTable table = server.getServer().reloadableRegistries().getLootTable(lootTable);
+            LootTable table = server.getServer().getLootData().getLootTable(lootTable.location());
             LootParams params = new LootParams.Builder(server)
                     .withParameter(LootContextParams.ORIGIN, player.position())
                     .create(LootContextParamSets.CHEST);

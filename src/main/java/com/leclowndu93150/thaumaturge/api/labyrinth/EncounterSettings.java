@@ -1,11 +1,12 @@
 package com.leclowndu93150.thaumaturge.api.labyrinth;
 
+import com.leclowndu93150.thaumaturge.registry.TTLootTables;
+
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceKey;
@@ -45,7 +46,7 @@ public record EncounterSettings(
                     ComponentSerialization.CODEC.fieldOf("name").forGetter(EncounterSettings::name),
                     ComponentSerialization.CODEC.fieldOf("announcement").forGetter(EncounterSettings::announcement),
                     Codecs.optionalFieldOf(ResourceLocation.CODEC, "arena").forGetter(EncounterSettings::arena),
-                    ResourceKey.codec(Registries.LOOT_TABLE).fieldOf("reward").forGetter(EncounterSettings::reward),
+                    TTLootTables.KEY_CODEC.fieldOf("reward").forGetter(EncounterSettings::reward),
                     Codecs.optionalFieldOf(EncounterScaling.CODEC, "scaling", EncounterScaling.DEFAULT)
                             .forGetter(EncounterSettings::scaling),
                     Codecs.optionalFieldOf(ExtraCodecs.NON_NEGATIVE_INT, "victory_delay", DEFAULT_VICTORY_DELAY)
