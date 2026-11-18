@@ -1,17 +1,17 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 public record CurlyWispParticleOptions(int color, float alpha, float scale, int delay, int seed)
-        implements ParticleOptions {
+        implements TTParticleOptions {
 
     public static final MapCodec<CurlyWispParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     Codec.INT.fieldOf("color").forGetter(CurlyWispParticleOptions::color),
@@ -36,7 +36,7 @@ public record CurlyWispParticleOptions(int color, float alpha, float scale, int 
                     CurlyWispParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<CurlyWispParticleOptions> getType() {
         return TTParticles.CURLY_WISP.get();
     }
 }

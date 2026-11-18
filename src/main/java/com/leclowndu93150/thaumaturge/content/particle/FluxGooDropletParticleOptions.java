@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
-public record FluxGooDropletParticleOptions(int color, float alpha, int lifetime) implements ParticleOptions {
+public record FluxGooDropletParticleOptions(int color, float alpha, int lifetime) implements TTParticleOptions {
     public static final MapCodec<FluxGooDropletParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     Codec.INT.fieldOf("color").forGetter(FluxGooDropletParticleOptions::color),
                     Codec.FLOAT.fieldOf("alpha").forGetter(FluxGooDropletParticleOptions::alpha),
@@ -28,7 +28,7 @@ public record FluxGooDropletParticleOptions(int color, float alpha, int lifetime
                     FluxGooDropletParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<FluxGooDropletParticleOptions> getType() {
         return TTParticles.FLUX_GOO_DROPLET.get();
     }
 }

@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.particle;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.core.particles.ColorParticleOption;
+import com.leclowndu93150.thaumaturge.content.particle.TTColorParticleOptions;
 import net.minecraft.util.RandomSource;
 
 public final class FlashParticle extends TTParticle {
@@ -13,7 +13,7 @@ public final class FlashParticle extends TTParticle {
     private final float startSize;
 
     private FlashParticle(
-            ClientLevel level, double x, double y, double z, ColorParticleOption options, ParticleSheet sheet) {
+            ClientLevel level, double x, double y, double z, TTColorParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sheet);
         setColor(options.getRed(), options.getGreen(), options.getBlue());
         this.lifetime = BASE_LIFETIME + this.random.nextInt(5);
@@ -29,12 +29,12 @@ public final class FlashParticle extends TTParticle {
         this.quadSize = this.startSize * (1.0F - t);
     }
 
-    public static final class Provider implements ParticleProvider<ColorParticleOption> {
+    public static final class Provider implements ParticleProvider<TTColorParticleOptions> {
         private static final ParticleSheet SHEET = TTParticleSheets.sheet("flash");
 
         @Override
         public Particle createParticle(
-                ColorParticleOption options,
+                TTColorParticleOptions options,
                 ClientLevel level,
                 double x,
                 double y,

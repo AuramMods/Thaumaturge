@@ -1,18 +1,18 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 public record ShieldSparkParticleOptions(int color, float alpha, float scale, int age, int delay, boolean additive)
-        implements ParticleOptions {
+        implements TTParticleOptions {
 
     public static final MapCodec<ShieldSparkParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     Codec.INT.fieldOf("color").forGetter(ShieldSparkParticleOptions::color),
@@ -40,7 +40,7 @@ public record ShieldSparkParticleOptions(int color, float alpha, float scale, in
                     ShieldSparkParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<ShieldSparkParticleOptions> getType() {
         return TTParticles.SHIELD_SPARK.get();
     }
 }

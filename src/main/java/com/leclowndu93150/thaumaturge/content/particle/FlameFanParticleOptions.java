@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
-public record FlameFanParticleOptions(float scale, float lift, float alpha) implements ParticleOptions {
+public record FlameFanParticleOptions(float scale, float lift, float alpha) implements TTParticleOptions {
 
     public static final MapCodec<FlameFanParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     Codec.FLOAT.fieldOf("scale").forGetter(FlameFanParticleOptions::scale),
@@ -29,7 +29,7 @@ public record FlameFanParticleOptions(float scale, float lift, float alpha) impl
                     FlameFanParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<FlameFanParticleOptions> getType() {
         return TTParticles.FLAME_FAN.get();
     }
 }

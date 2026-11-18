@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
-public record GolemEmoteParticleOptions(int color, int icon, int age, float scale) implements ParticleOptions {
+public record GolemEmoteParticleOptions(int color, int icon, int age, float scale) implements TTParticleOptions {
 
     public static final int ICON_HEART = 0;
     public static final int ICON_STAY = 1;
@@ -38,7 +38,7 @@ public record GolemEmoteParticleOptions(int color, int icon, int age, float scal
                     GolemEmoteParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<GolemEmoteParticleOptions> getType() {
         return TTParticles.GOLEM_EMOTE.get();
     }
 }

@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public record BoreDebrisParticleOptions(
         BlockState state, int targetEntityId, double tx, double ty, double tz, double sx, double sy, double sz)
-        implements ParticleOptions {
+        implements TTParticleOptions {
     public static final int NO_ENTITY = -1;
     private static final Codec<BlockState> BLOCK_STATE_CODEC =
             Codecs.withAlternative(BlockState.CODEC, BuiltInRegistries.BLOCK.byNameCodec(), Block::defaultBlockState);
@@ -58,7 +58,7 @@ public record BoreDebrisParticleOptions(
     }
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<BoreDebrisParticleOptions> getType() {
         return TTParticles.BORE_DEBRIS.get();
     }
 }

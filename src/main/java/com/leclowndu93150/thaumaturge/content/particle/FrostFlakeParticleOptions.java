@@ -1,15 +1,15 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
-public record FrostFlakeParticleOptions(float scale) implements ParticleOptions {
+public record FrostFlakeParticleOptions(float scale) implements TTParticleOptions {
 
     public static final MapCodec<FrostFlakeParticleOptions> CODEC = Codec.FLOAT
             .xmap(FrostFlakeParticleOptions::new, FrostFlakeParticleOptions::scale)
@@ -19,7 +19,7 @@ public record FrostFlakeParticleOptions(float scale) implements ParticleOptions 
             ByteBufCodecs.FLOAT.map(FrostFlakeParticleOptions::new, FrostFlakeParticleOptions::scale);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<FrostFlakeParticleOptions> getType() {
         return TTParticles.FROST_FLAKE.get();
     }
 }

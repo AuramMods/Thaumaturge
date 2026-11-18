@@ -1,18 +1,18 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 public record WispyMoteParticleOptions(int color, int age, float gravity, int targetEntityId, boolean emissive)
-        implements ParticleOptions {
+        implements TTParticleOptions {
 
     public static final int NO_ENTITY = -1;
 
@@ -43,7 +43,7 @@ public record WispyMoteParticleOptions(int color, int age, float gravity, int ta
                     WispyMoteParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<WispyMoteParticleOptions> getType() {
         return TTParticles.WISPY_MOTE.get();
     }
 }

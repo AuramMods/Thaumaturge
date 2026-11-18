@@ -30,6 +30,7 @@ import com.leclowndu93150.thaumaturge.content.particle.SmokeSpiralParticleOption
 import com.leclowndu93150.thaumaturge.content.particle.SparkParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.SparkleParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.StabilizerRuneParticleOptions;
+import com.leclowndu93150.thaumaturge.content.particle.TTColorParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.TaintSwarmParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
@@ -39,8 +40,6 @@ import com.leclowndu93150.thaumaturge.content.particle.WispFlameParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.WispParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.WispyMoteParticleOptions;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.core.particles.ColorParticleOption;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
@@ -54,48 +53,48 @@ public final class TTParticles {
     public static final DeferredRegister<ParticleType<?>> PARTICLES =
             DeferredRegister.create(Registries.PARTICLE_TYPE, TTIds.MODID);
 
-    public static final RegistryObject<ParticleType<SparkleParticleOptions>> SPARKLE =
+    public static final RegistryObject<TTParticleType<SparkleParticleOptions>> SPARKLE =
             register("sparkle", SparkleParticleOptions.CODEC, SparkleParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<WispyMoteParticleOptions>> WISPY_MOTE =
+    public static final RegistryObject<TTParticleType<WispyMoteParticleOptions>> WISPY_MOTE =
             register("wispy_mote", WispyMoteParticleOptions.CODEC, WispyMoteParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<CurlyWispParticleOptions>> CURLY_WISP =
+    public static final RegistryObject<TTParticleType<CurlyWispParticleOptions>> CURLY_WISP =
             register("curly_wisp", CurlyWispParticleOptions.CODEC, CurlyWispParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<WispFlameParticleOptions>> WISP_FLAME =
+    public static final RegistryObject<TTParticleType<WispFlameParticleOptions>> WISP_FLAME =
             register("wisp_flame", WispFlameParticleOptions.CODEC, WispFlameParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<TaintFumeParticleOptions>> TAINT_FUME =
+    public static final RegistryObject<TTParticleType<TaintFumeParticleOptions>> TAINT_FUME =
             register("taint_fume", TaintFumeParticleOptions.CODEC, TaintFumeParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<TaintSwarmParticleOptions>> TAINT_SWARM =
+    public static final RegistryObject<TTParticleType<TaintSwarmParticleOptions>> TAINT_SWARM =
             register("taint_swarm", TaintSwarmParticleOptions.CODEC, TaintSwarmParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<LightningFlashParticleOptions>> LIGHTNING_FLASH =
+    public static final RegistryObject<TTParticleType<LightningFlashParticleOptions>> LIGHTNING_FLASH =
             register(
                     "lightning_flash", LightningFlashParticleOptions.CODEC, LightningFlashParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<StabilizerRuneParticleOptions>> STABILIZER_RUNE =
+    public static final RegistryObject<TTParticleType<StabilizerRuneParticleOptions>> STABILIZER_RUNE =
             register(
                     "stabilizer_rune", StabilizerRuneParticleOptions.CODEC, StabilizerRuneParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<BubbleParticleOptions>> BUBBLE =
+    public static final RegistryObject<TTParticleType<BubbleParticleOptions>> BUBBLE =
             register("bubble", BubbleParticleOptions.CODEC, BubbleParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<SlimyBubbleParticleOptions>> SLIMY_BUBBLE =
+    public static final RegistryObject<TTParticleType<SlimyBubbleParticleOptions>> SLIMY_BUBBLE =
             register("slimy_bubble", SlimyBubbleParticleOptions.CODEC, SlimyBubbleParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<SparkParticleOptions>> SPARK =
+    public static final RegistryObject<TTParticleType<SparkParticleOptions>> SPARK =
             register("spark", SparkParticleOptions.CODEC, SparkParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<BurstParticleOptions>> BURST =
+    public static final RegistryObject<TTParticleType<BurstParticleOptions>> BURST =
             register("burst", BurstParticleOptions.CODEC, BurstParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<ScanGlyphParticleOptions>> SCAN_GLYPH =
+    public static final RegistryObject<TTParticleType<ScanGlyphParticleOptions>> SCAN_GLYPH =
             register("scan_glyph", ScanGlyphParticleOptions.CODEC, ScanGlyphParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<SlashParticleOptions>> SLASH =
+    public static final RegistryObject<TTParticleType<SlashParticleOptions>> SLASH =
             register("slash", SlashParticleOptions.CODEC, SlashParticleOptions.STREAM_CODEC);
 
     public static final RegistryObject<TTColorParticleType> PUFF = color("puff");
@@ -112,77 +111,77 @@ public final class TTParticles {
     public static final RegistryObject<SimpleParticleType> PECH_CURSE = simple("pech_curse");
     public static final RegistryObject<SimpleParticleType> CRIMSON_SMOKE = simple("crimson_smoke");
 
-    public static final RegistryObject<ParticleType<FireMoteParticleOptions>> FIRE_MOTE =
+    public static final RegistryObject<TTParticleType<FireMoteParticleOptions>> FIRE_MOTE =
             register("fire_mote", FireMoteParticleOptions.CODEC, FireMoteParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<NitorCoreParticleOptions>> NITOR_CORE =
+    public static final RegistryObject<TTParticleType<NitorCoreParticleOptions>> NITOR_CORE =
             register("nitor_core", NitorCoreParticleOptions.CODEC, NitorCoreParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<VentParticleOptions>> VENT =
+    public static final RegistryObject<TTParticleType<VentParticleOptions>> VENT =
             register("vent", VentParticleOptions.CODEC, VentParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<BlockRunesParticleOptions>> BLOCK_RUNES =
+    public static final RegistryObject<TTParticleType<BlockRunesParticleOptions>> BLOCK_RUNES =
             register("block_runes", BlockRunesParticleOptions.CODEC, BlockRunesParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<SmokeSpiralParticleOptions>> SMOKE_SPIRAL =
+    public static final RegistryObject<TTParticleType<SmokeSpiralParticleOptions>> SMOKE_SPIRAL =
             register("smoke_spiral", SmokeSpiralParticleOptions.CODEC, SmokeSpiralParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<VisSparkleParticleOptions>> VIS_SPARKLE =
+    public static final RegistryObject<TTParticleType<VisSparkleParticleOptions>> VIS_SPARKLE =
             register("vis_sparkle", VisSparkleParticleOptions.CODEC, VisSparkleParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<WispParticleOptions>> WISP =
+    public static final RegistryObject<TTParticleType<WispParticleOptions>> WISP =
             register("wisp", WispParticleOptions.CODEC, WispParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<BoltParticleOptions>> BOLT =
+    public static final RegistryObject<TTParticleType<BoltParticleOptions>> BOLT =
             register("bolt", BoltParticleOptions.CODEC, BoltParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<BoreDebrisParticleOptions>> BORE_DEBRIS =
+    public static final RegistryObject<TTParticleType<BoreDebrisParticleOptions>> BORE_DEBRIS =
             register("bore_debris", BoreDebrisParticleOptions.CODEC, BoreDebrisParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<InfusionCrumbsParticleOptions>> INFUSION_CRUMBS =
+    public static final RegistryObject<TTParticleType<InfusionCrumbsParticleOptions>> INFUSION_CRUMBS =
             register(
                     "infusion_crumbs", InfusionCrumbsParticleOptions.CODEC, InfusionCrumbsParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<BoreSparkleParticleOptions>> BORE_SPARKLE =
+    public static final RegistryObject<TTParticleType<BoreSparkleParticleOptions>> BORE_SPARKLE =
             register("bore_sparkle", BoreSparkleParticleOptions.CODEC, BoreSparkleParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<EssentiaDropParticleOptions>> ESSENTIA_DROP =
+    public static final RegistryObject<TTParticleType<EssentiaDropParticleOptions>> ESSENTIA_DROP =
             register("essentia_drop", EssentiaDropParticleOptions.CODEC, EssentiaDropParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<FluxGooDropletParticleOptions>> FLUX_GOO_DROPLET =
+    public static final RegistryObject<TTParticleType<FluxGooDropletParticleOptions>> FLUX_GOO_DROPLET =
             register(
                     "flux_goo_droplet",
                     FluxGooDropletParticleOptions.CODEC,
                     FluxGooDropletParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<ShieldSparkParticleOptions>> SHIELD_SPARK =
+    public static final RegistryObject<TTParticleType<ShieldSparkParticleOptions>> SHIELD_SPARK =
             register("shield_spark", ShieldSparkParticleOptions.CODEC, ShieldSparkParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<WardFlashParticleOptions>> WARD_FLASH =
+    public static final RegistryObject<TTParticleType<WardFlashParticleOptions>> WARD_FLASH =
             register("ward_flash", WardFlashParticleOptions.CODEC, WardFlashParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<FlameFanParticleOptions>> FLAME_FAN =
+    public static final RegistryObject<TTParticleType<FlameFanParticleOptions>> FLAME_FAN =
             register("flame_fan", FlameFanParticleOptions.CODEC, FlameFanParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<CrackShardParticleOptions>> CRACK_SHARD =
+    public static final RegistryObject<TTParticleType<CrackShardParticleOptions>> CRACK_SHARD =
             register("crack_shard", CrackShardParticleOptions.CODEC, CrackShardParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<AirGustParticleOptions>> AIR_GUST =
+    public static final RegistryObject<TTParticleType<AirGustParticleOptions>> AIR_GUST =
             register("air_gust", AirGustParticleOptions.CODEC, AirGustParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<EarthPebbleParticleOptions>> EARTH_PEBBLE =
+    public static final RegistryObject<TTParticleType<EarthPebbleParticleOptions>> EARTH_PEBBLE =
             register("earth_pebble", EarthPebbleParticleOptions.CODEC, EarthPebbleParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<FrostFlakeParticleOptions>> FROST_FLAKE =
+    public static final RegistryObject<TTParticleType<FrostFlakeParticleOptions>> FROST_FLAKE =
             register("frost_flake", FrostFlakeParticleOptions.CODEC, FrostFlakeParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<FluxSwirlParticleOptions>> FLUX_SWIRL =
+    public static final RegistryObject<TTParticleType<FluxSwirlParticleOptions>> FLUX_SWIRL =
             register("flux_swirl", FluxSwirlParticleOptions.CODEC, FluxSwirlParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<RiftShardParticleOptions>> RIFT_SHARD =
+    public static final RegistryObject<TTParticleType<RiftShardParticleOptions>> RIFT_SHARD =
             register("rift_shard", RiftShardParticleOptions.CODEC, RiftShardParticleOptions.STREAM_CODEC);
 
-    public static final RegistryObject<ParticleType<GolemEmoteParticleOptions>> GOLEM_EMOTE =
+    public static final RegistryObject<TTParticleType<GolemEmoteParticleOptions>> GOLEM_EMOTE =
             register("golem_emote", GolemEmoteParticleOptions.CODEC, GolemEmoteParticleOptions.STREAM_CODEC);
 
     public static final RegistryObject<SimpleParticleType> CURSE_SMOKE = simple("curse_smoke");
@@ -193,7 +192,7 @@ public final class TTParticles {
 
     private TTParticles() {}
 
-    private static <T extends ParticleOptions> RegistryObject<ParticleType<T>> register(
+    private static <T extends TTParticleOptions> RegistryObject<TTParticleType<T>> register(
             String name, MapCodec<T> codec, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) {
         return PARTICLES.register(name, () -> new TTParticleType<>(codec, streamCodec));
     }
@@ -206,13 +205,13 @@ public final class TTParticles {
         return PARTICLES.register(name, () -> new SimpleParticleType(false));
     }
 
-    public static ColorParticleOption colorOf(RegistryObject<TTColorParticleType> type, int color) {
-        return ColorParticleOption.create(type.get(), color);
+    public static TTColorParticleOptions colorOf(RegistryObject<TTColorParticleType> type, int color) {
+        return new TTColorParticleOptions(type.get(), color);
     }
 
-    public static ColorParticleOption colorOf(
+    public static TTColorParticleOptions colorOf(
             RegistryObject<TTColorParticleType> type, float r, float g, float b) {
-        return ColorParticleOption.create(type.get(), r, g, b);
+        return TTColorParticleOptions.create(type.get(), r, g, b);
     }
 
     public static void register(IEventBus modBus) {

@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
-public record LightningFlashParticleOptions(int color, float alpha, float scale) implements ParticleOptions {
+public record LightningFlashParticleOptions(int color, float alpha, float scale) implements TTParticleOptions {
 
     public static final MapCodec<LightningFlashParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     Codec.INT.fieldOf("color").forGetter(LightningFlashParticleOptions::color),
@@ -29,7 +29,7 @@ public record LightningFlashParticleOptions(int color, float alpha, float scale)
                     LightningFlashParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<LightningFlashParticleOptions> getType() {
         return TTParticles.LIGHTNING_FLASH.get();
     }
 }

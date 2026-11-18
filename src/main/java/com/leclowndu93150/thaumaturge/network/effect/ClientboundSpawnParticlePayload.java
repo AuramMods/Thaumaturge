@@ -1,11 +1,13 @@
 package com.leclowndu93150.thaumaturge.network.effect;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
+import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import com.leclowndu93150.thaumaturge.network.transport.ModPayload;
+import io.netty.handler.codec.DecoderException;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 
 public record ClientboundSpawnParticlePayload(
@@ -17,7 +19,8 @@ public record ClientboundSpawnParticlePayload(
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundSpawnParticlePayload> STREAM_CODEC =
             StreamCodec.of(
                     (buf, p) -> {
-                        ParticleTypes.STREAM_CODEC.encode(buf, p.options());
+                        buf.writeId(BuiltInRegistries.PARTICLE_TYPE, p.options().getType());
+                        p.options().writeToNetwork(buf);
                         buf.writeDouble(p.x());
                         buf.writeDouble(p.y());
                         buf.writeDouble(p.z());
@@ -26,13 +29,20 @@ public record ClientboundSpawnParticlePayload(
                         buf.writeDouble(p.vz());
                     },
                     buf -> new ClientboundSpawnParticlePayload(
-                            ParticleTypes.STREAM_CODEC.decode(buf),
+                            readOptions(buf.readById(BuiltInRegistries.PARTICLE_TYPE), buf),
                             buf.readDouble(),
                             buf.readDouble(),
                             buf.readDouble(),
                             buf.readDouble(),
                             buf.readDouble(),
                             buf.readDouble()));
+
+    private static <T extends ParticleOptions> T readOptions(ParticleType<T> type, RegistryFriendlyByteBuf buffer) {
+        if (type == null) {
+            throw new DecoderException("Unknown particle type");
+        }
+        return type.getDeserializer().fromNetwork(type, buffer);
+    }
 
     public ClientboundSpawnParticlePayload(ParticleOptions options, double x, double y, double z) {
         this(options, x, y, z, 0.0, 0.0, 0.0);

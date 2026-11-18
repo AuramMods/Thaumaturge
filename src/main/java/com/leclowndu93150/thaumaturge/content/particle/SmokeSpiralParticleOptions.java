@@ -1,17 +1,17 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 public record SmokeSpiralParticleOptions(float radius, int start, int minY, float r, float g, float b)
-        implements ParticleOptions {
+        implements TTParticleOptions {
 
     public static final MapCodec<SmokeSpiralParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     Codec.FLOAT.fieldOf("radius").forGetter(SmokeSpiralParticleOptions::radius),
@@ -39,7 +39,7 @@ public record SmokeSpiralParticleOptions(float radius, int start, int minY, floa
                     SmokeSpiralParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<SmokeSpiralParticleOptions> getType() {
         return TTParticles.SMOKE_SPIRAL.get();
     }
 }

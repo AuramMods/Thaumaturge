@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
-public record VisSparkleParticleOptions(double tx, double ty, double tz, int color) implements ParticleOptions {
+public record VisSparkleParticleOptions(double tx, double ty, double tz, int color) implements TTParticleOptions {
     public static final int DEFAULT_COLOR = -1;
 
     public VisSparkleParticleOptions(double tx, double ty, double tz) {
@@ -36,7 +36,7 @@ public record VisSparkleParticleOptions(double tx, double ty, double tz, int col
             buf -> new VisSparkleParticleOptions(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readInt()));
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<VisSparkleParticleOptions> getType() {
         return TTParticles.VIS_SPARKLE.get();
     }
 }

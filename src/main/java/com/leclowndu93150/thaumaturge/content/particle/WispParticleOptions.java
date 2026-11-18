@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
-public record WispParticleOptions(int entityId) implements ParticleOptions {
+public record WispParticleOptions(int entityId) implements TTParticleOptions {
     public static final int NO_ENTITY = -1;
 
     public static final MapCodec<WispParticleOptions> CODEC = RecordCodecBuilder.mapCodec(
@@ -21,7 +21,7 @@ public record WispParticleOptions(int entityId) implements ParticleOptions {
             StreamCodec.composite(ByteBufCodecs.VAR_INT, WispParticleOptions::entityId, WispParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<WispParticleOptions> getType() {
         return TTParticles.WISP.get();
     }
 }

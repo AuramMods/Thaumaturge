@@ -2,21 +2,21 @@ package com.leclowndu93150.thaumaturge.content.particle;
 
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public record WardFlashParticleOptions(Direction face, float hitX, float hitY, float hitZ) implements ParticleOptions {
+public record WardFlashParticleOptions(Direction face, float hitX, float hitY, float hitZ) implements TTParticleOptions {
     private static final float CENTRE = 0.5F;
 
     public static final MapCodec<WardFlashParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
@@ -60,7 +60,7 @@ public record WardFlashParticleOptions(Direction face, float hitX, float hitY, f
     }
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<WardFlashParticleOptions> getType() {
         return TTParticles.WARD_FLASH.get();
     }
 }

@@ -1,17 +1,17 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 public record BoltParticleOptions(
         double targetX, double targetY, double targetZ, float r, float g, float b, float width)
-        implements ParticleOptions {
+        implements TTParticleOptions {
     public static final MapCodec<BoltParticleOptions> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     Codec.DOUBLE.fieldOf("target_x").forGetter(BoltParticleOptions::targetX),
                     Codec.DOUBLE.fieldOf("target_y").forGetter(BoltParticleOptions::targetY),
@@ -42,7 +42,7 @@ public record BoltParticleOptions(
                     buf.readFloat()));
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<BoltParticleOptions> getType() {
         return TTParticles.BOLT.get();
     }
 }

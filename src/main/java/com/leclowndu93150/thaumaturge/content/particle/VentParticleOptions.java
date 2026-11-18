@@ -1,17 +1,17 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 public record VentParticleOptions(double vx, double vy, double vz, int color, float scale, boolean variant)
-        implements ParticleOptions {
+        implements TTParticleOptions {
 
     public static final MapCodec<VentParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     Codec.DOUBLE.fieldOf("vx").forGetter(VentParticleOptions::vx),
@@ -38,7 +38,7 @@ public record VentParticleOptions(double vx, double vy, double vz, int color, fl
             VentParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<VentParticleOptions> getType() {
         return TTParticles.VENT.get();
     }
 }

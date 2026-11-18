@@ -4,7 +4,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.core.particles.ColorParticleOption;
+import com.leclowndu93150.thaumaturge.content.particle.TTColorParticleOptions;
 import net.minecraft.util.RandomSource;
 
 public final class LeafMoteParticle extends TTParticle {
@@ -20,7 +20,7 @@ public final class LeafMoteParticle extends TTParticle {
             double vx,
             double vy,
             double vz,
-            ColorParticleOption options,
+            TTColorParticleOptions options,
             ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(options.getRed(), options.getGreen(), options.getBlue());
@@ -39,12 +39,12 @@ public final class LeafMoteParticle extends TTParticle {
         return TTParticleLayers.translucent(this.sheet);
     }
 
-    public static final class Provider implements ParticleProvider<ColorParticleOption> {
+    public static final class Provider implements ParticleProvider<TTColorParticleOptions> {
         private static final ParticleSheet SHEET = TTParticleSheets.sheet("leaf_mote");
 
         @Override
         public Particle createParticle(
-                ColorParticleOption options,
+                TTColorParticleOptions options,
                 ClientLevel level,
                 double x,
                 double y,

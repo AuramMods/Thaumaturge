@@ -1,17 +1,17 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 public record BubbleParticleOptions(int color, float alpha, float scale, int age, float buoyancy, boolean droplet)
-        implements ParticleOptions {
+        implements TTParticleOptions {
 
     public static final MapCodec<BubbleParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     Codec.INT.fieldOf("color").forGetter(BubbleParticleOptions::color),
@@ -39,7 +39,7 @@ public record BubbleParticleOptions(int color, float alpha, float scale, int age
                     BubbleParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<BubbleParticleOptions> getType() {
         return TTParticles.BUBBLE.get();
     }
 }

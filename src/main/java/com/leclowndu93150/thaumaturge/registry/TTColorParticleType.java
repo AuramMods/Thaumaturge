@@ -1,24 +1,9 @@
 package com.leclowndu93150.thaumaturge.registry;
 
-import com.mojang.serialization.MapCodec;
-import net.minecraft.core.particles.ColorParticleOption;
-import net.minecraft.core.particles.ParticleType;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
-import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
+import com.leclowndu93150.thaumaturge.content.particle.TTColorParticleOptions;
 
-public final class TTColorParticleType extends ParticleType<ColorParticleOption> {
-
+public final class TTColorParticleType extends TTParticleType<TTColorParticleOptions> {
     public TTColorParticleType() {
-        super(false);
-    }
-
-    @Override
-    public MapCodec<ColorParticleOption> codec() {
-        return ColorParticleOption.codec(this);
-    }
-
-    @Override
-    public StreamCodec<? super RegistryFriendlyByteBuf, ColorParticleOption> streamCodec() {
-        return ColorParticleOption.streamCodec(this);
+        super(TTColorParticleOptions::codec, TTColorParticleOptions::streamCodec);
     }
 }

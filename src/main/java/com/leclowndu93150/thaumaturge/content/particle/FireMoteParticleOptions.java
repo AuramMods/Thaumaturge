@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
 public record FireMoteParticleOptions(
         double vx, double vy, double vz, float r, float g, float b, float alpha, float scale, boolean translucent)
-        implements ParticleOptions {
+        implements TTParticleOptions {
 
     public static final MapCodec<FireMoteParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     com.mojang.serialization.Codec.DOUBLE.fieldOf("vx").forGetter(FireMoteParticleOptions::vx),
@@ -50,7 +50,7 @@ public record FireMoteParticleOptions(
                     buf.readBoolean()));
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<FireMoteParticleOptions> getType() {
         return TTParticles.FIRE_MOTE.get();
     }
 }

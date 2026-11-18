@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 
-public record FluxSwirlParticleOptions(int color, float scale, float endScale) implements ParticleOptions {
+public record FluxSwirlParticleOptions(int color, float scale, float endScale) implements TTParticleOptions {
 
     public static final MapCodec<FluxSwirlParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     Codec.INT.fieldOf("color").forGetter(FluxSwirlParticleOptions::color),
@@ -29,7 +29,7 @@ public record FluxSwirlParticleOptions(int color, float scale, float endScale) i
                     FluxSwirlParticleOptions::new);
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<FluxSwirlParticleOptions> getType() {
         return TTParticles.FLUX_SWIRL.get();
     }
 }

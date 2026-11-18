@@ -4,18 +4,18 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
 
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
+import com.leclowndu93150.thaumaturge.registry.TTParticleOptions;
+import com.leclowndu93150.thaumaturge.registry.TTParticleType;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 
 public record InfusionCrumbsParticleOptions(
-        ItemStack stack, double tx, double ty, double tz, double sx, double sy, double sz) implements ParticleOptions {
+        ItemStack stack, double tx, double ty, double tz, double sx, double sy, double sz) implements TTParticleOptions {
     public static final MapCodec<InfusionCrumbsParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     ItemStackCodecs.CODEC.fieldOf("item").forGetter(InfusionCrumbsParticleOptions::stack),
                     Codec.DOUBLE.fieldOf("tx").forGetter(InfusionCrumbsParticleOptions::tx),
@@ -47,7 +47,7 @@ public record InfusionCrumbsParticleOptions(
                             buf.readDouble()));
 
     @Override
-    public ParticleType<?> getType() {
+    public TTParticleType<InfusionCrumbsParticleOptions> getType() {
         return TTParticles.INFUSION_CRUMBS.get();
     }
 }
