@@ -2,7 +2,6 @@ package com.leclowndu93150.thaumaturge.client.particle;
 
 import com.leclowndu93150.thaumaturge.content.particle.FluxGooDropletParticleOptions;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.BreakingItemParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
@@ -10,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jspecify.annotations.Nullable;
 
-public final class FluxGooDropletParticle extends BreakingItemParticle {
+public final class FluxGooDropletParticle extends TTBreakingItemParticle {
     private static final int SKEWED_LIFETIME_BASE = 50;
     private static final int SKEWED_LIFETIME_EXTRA = 550;
     private static final int SKEW_POWER = 4;
@@ -29,7 +28,10 @@ public final class FluxGooDropletParticle extends BreakingItemParticle {
             int color,
             float alpha,
             int lifetime) {
-        super(level, x, y, z, xa, ya, za, stack);
+        super(level, x, y, z, stack);
+        this.xd = this.xd * 0.1F + xa;
+        this.yd = this.yd * 0.1F + ya;
+        this.zd = this.zd * 0.1F + za;
         this.baseAlpha = alpha;
         this.alpha = alpha;
         this.lifetime = lifetime;

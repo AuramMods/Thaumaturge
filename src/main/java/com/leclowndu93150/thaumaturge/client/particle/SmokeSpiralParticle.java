@@ -10,7 +10,6 @@ import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public final class SmokeSpiralParticle extends TTParticle {
     private static final int LIFETIME_BASE = 20;
@@ -74,28 +73,7 @@ public final class SmokeSpiralParticle extends TTParticle {
         int color = ARGB32.colorFromFloat(this.alpha, this.rCol, this.gCol, this.bCol);
         int light = getLightColor(partialTick);
         float size = getQuadSize(partialTick);
-        emitVertex(buffer, rotation, px, py, pz, 1.0F, -1.0F, size, getU1(), getV1(), color, light);
-        emitVertex(buffer, rotation, px, py, pz, 1.0F, 1.0F, size, getU1(), getV0(), color, light);
-        emitVertex(buffer, rotation, px, py, pz, -1.0F, 1.0F, size, getU0(), getV0(), color, light);
-        emitVertex(buffer, rotation, px, py, pz, -1.0F, -1.0F, size, getU0(), getV1(), color, light);
-    }
-
-    private static void emitVertex(
-            VertexConsumer buffer,
-            Quaternionf rotation,
-            float x,
-            float y,
-            float z,
-            float cornerX,
-            float cornerY,
-            float size,
-            float u,
-            float v,
-            int color,
-            int light) {
-        Vector3f pos =
-                new Vector3f(cornerX, cornerY, 0.0F).rotate(rotation).mul(size).add(x, y, z);
-        buffer.addVertex(pos.x(), pos.y(), pos.z()).setUv(u, v).setColor(color).setLight(light);
+        ParticleQuads.draw(buffer, rotation, px, py, pz, size, getU0(), getU1(), getV0(), getV1(), color, light);
     }
 
     public static final class Provider implements ParticleProvider<SmokeSpiralParticleOptions> {

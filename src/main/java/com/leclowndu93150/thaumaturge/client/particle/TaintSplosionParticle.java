@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.particle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.BreakingItemParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -10,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
-public final class TaintSplosionParticle extends BreakingItemParticle {
+public final class TaintSplosionParticle extends TTBreakingItemParticle {
     private static final float FAINT_RED = 0.6F;
     private static final float FAINT_GREEN = 0.0F;
     private static final float FAINT_BLUE = 0.3F;

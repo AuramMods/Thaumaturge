@@ -7,12 +7,11 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
-public final class WispParticle extends SingleQuadParticle {
+public final class WispParticle extends TTQuadParticle {
     private static final float BASE_ALPHA = 0.2F;
     private static final float MAX_DIST_SQ = 1024.0F;
     private static final float SCALE_MULTIPLIER = 0.4F;

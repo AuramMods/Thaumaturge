@@ -5,10 +5,9 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.util.Mth;
 
-public final class NitorCoreParticle extends SingleQuadParticle {
+public final class NitorCoreParticle extends TTQuadParticle {
     private static final float QUAD_RADIUS = 0.1F;
     private static final int LIFETIME = 10;
     private static final float PULSE_DEVIATION = 0.12F;

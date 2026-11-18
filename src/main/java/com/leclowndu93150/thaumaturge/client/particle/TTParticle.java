@@ -2,13 +2,12 @@ package com.leclowndu93150.thaumaturge.client.particle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
 
-public abstract class TTParticle extends SingleQuadParticle {
+public abstract class TTParticle extends TTQuadParticle {
     private static final float SPIN_UNIT = (float) (2.0 * Math.PI * Math.PI / 180.0);
     private static final float WIND_STRENGTH = 0.1F;
     private static final float WIND_ANGLE_JITTER = 0.17F;

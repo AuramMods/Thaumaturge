@@ -60,22 +60,22 @@ public final class InfusionCrumbsParticle extends SeekerParticle {
 
     @Override
     protected float getU0() {
-        return this.sprite.getU((this.patchU + WINDOW_FRACTION * 4.0F) / 4.0F);
+        return this.sprite.getU((this.patchU / 4.0F + WINDOW_FRACTION) * ParticleQuads.SPRITE_UV_RANGE);
     }
 
     @Override
     protected float getU1() {
-        return this.sprite.getU(this.patchU / 4.0F);
+        return this.sprite.getU(this.patchU / 4.0F * ParticleQuads.SPRITE_UV_RANGE);
     }
 
     @Override
     protected float getV0() {
-        return this.sprite.getV(this.patchV / 4.0F);
+        return this.sprite.getV(this.patchV / 4.0F * ParticleQuads.SPRITE_UV_RANGE);
     }
 
     @Override
     protected float getV1() {
-        return this.sprite.getV((this.patchV + WINDOW_FRACTION * 4.0F) / 4.0F);
+        return this.sprite.getV((this.patchV / 4.0F + WINDOW_FRACTION) * ParticleQuads.SPRITE_UV_RANGE);
     }
 
     public static final class Provider implements ParticleProvider<InfusionCrumbsParticleOptions> {

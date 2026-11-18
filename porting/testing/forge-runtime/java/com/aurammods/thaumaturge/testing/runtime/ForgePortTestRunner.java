@@ -1,10 +1,12 @@
 package com.aurammods.thaumaturge.testing.runtime;
 
 import com.leclowndu93150.thaumaturge.registry.TTAttributes;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import net.minecraft.SharedConstants;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -47,6 +49,7 @@ public final class ForgePortTestRunner {
         // Normal Forge loading starts the global game-event bus after mod construction.
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.start();
         registerForgeEntityPrerequisites();
+        registerParticles();
         // Forge's registry bake normally assigns block-state wire IDs and
         // initializes the native state caches before worlds/networking start.
         ((net.minecraftforge.registries.ForgeRegistry<?>) net.minecraftforge.registries.ForgeRegistries.BLOCKS).bake();
@@ -118,6 +121,22 @@ public final class ForgePortTestRunner {
             bus.post(ctor.newInstance(ForgeRegistries.Keys.ATTRIBUTES, attributes, BuiltInRegistries.ATTRIBUTE));
         } finally {
             if (locked) attributes.freeze();
+        }
+    }
+
+    private static void registerParticles() throws Exception {
+        TTParticles.register(MOD_BUS);
+        var forge = (ForgeRegistry<?>) ForgeRegistries.PARTICLE_TYPES;
+        var vanilla = (MappedRegistry<?>) BuiltInRegistries.PARTICLE_TYPE;
+        var constructor = RegisterEvent.class.getDeclaredConstructor(ResourceKey.class, ForgeRegistry.class, Registry.class);
+        constructor.setAccessible(true);
+        forge.unfreeze();
+        vanilla.unfreeze();
+        try {
+            MOD_BUS.post(constructor.newInstance(ForgeRegistries.Keys.PARTICLE_TYPES, forge, vanilla));
+        } finally {
+            forge.freeze();
+            vanilla.freeze();
         }
     }
 }

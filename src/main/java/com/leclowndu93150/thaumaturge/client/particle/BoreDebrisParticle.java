@@ -56,22 +56,22 @@ public final class BoreDebrisParticle extends SeekerParticle {
 
     @Override
     protected float getU0() {
-        return this.sprite.getU((this.patchU + 1.0F) / WINDOW_STEPS);
+        return this.sprite.getU((this.patchU + 1.0F) / WINDOW_STEPS * ParticleQuads.SPRITE_UV_RANGE);
     }
 
     @Override
     protected float getU1() {
-        return this.sprite.getU(this.patchU / WINDOW_STEPS);
+        return this.sprite.getU(this.patchU / WINDOW_STEPS * ParticleQuads.SPRITE_UV_RANGE);
     }
 
     @Override
     protected float getV0() {
-        return this.sprite.getV(this.patchV / WINDOW_STEPS);
+        return this.sprite.getV(this.patchV / WINDOW_STEPS * ParticleQuads.SPRITE_UV_RANGE);
     }
 
     @Override
     protected float getV1() {
-        return this.sprite.getV((this.patchV + 1.0F) / WINDOW_STEPS);
+        return this.sprite.getV((this.patchV + 1.0F) / WINDOW_STEPS * ParticleQuads.SPRITE_UV_RANGE);
     }
 
     public static final class Provider implements ParticleProvider<BoreDebrisParticleOptions> {

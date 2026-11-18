@@ -463,14 +463,14 @@ final class ParticleBehaviorPortTest {
         when(camera.rotation()).thenReturn(new Quaternionf());
         List<Vec3> vertices = new ArrayList<>();
         VertexConsumer buffer = mock(VertexConsumer.class, invocation -> {
-            if (invocation.getMethod().getName().equals("addVertex") && invocation.getArguments().length == 3) {
+            if (invocation.getMethod().getName().equals("vertex") && invocation.getArguments().length == 3) {
                 Object[] arguments = invocation.getArguments();
                 vertices.add(new Vec3(
-                        ((Float) arguments[0]).floatValue(),
-                        ((Float) arguments[1]).floatValue(),
-                        ((Float) arguments[2]).floatValue()));
+                        ((Double) arguments[0]).doubleValue(),
+                        ((Double) arguments[1]).doubleValue(),
+                        ((Double) arguments[2]).doubleValue()));
             }
-            return invocation.getMock();
+            return invocation.getMethod().getReturnType() == void.class ? null : invocation.getMock();
         });
         float partialTick = 0.5F;
         bolt.render(buffer, camera, partialTick);

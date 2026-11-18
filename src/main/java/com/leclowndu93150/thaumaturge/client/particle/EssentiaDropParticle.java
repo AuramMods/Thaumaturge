@@ -5,11 +5,10 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.SingleQuadParticle;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.RandomSource;
 
-public final class EssentiaDropParticle extends SingleQuadParticle {
+public final class EssentiaDropParticle extends TTQuadParticle {
     private final ParticleSheet sheet;
     private final float baseAlpha;
     private final float baseScale;

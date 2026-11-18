@@ -21,6 +21,12 @@ sourceSets {
     }
 }
 
+tasks.named('compilePortClientTestJava', JavaCompile) {
+    source fileTree('src/test/java') {
+        include 'com/leclowndu93150/thaumaturge/client/particle/*Test.java'
+    }
+}
+
 dependencies {
     portRuntimeImplementation platform('org.junit:junit-bom:5.11.4')
     portRuntimeImplementation 'org.junit.platform:junit-platform-launcher'

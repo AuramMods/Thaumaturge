@@ -11,7 +11,6 @@ import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public final class BoltParticle extends TTParticle {
     private static final int FRAME_COUNT = 16;
@@ -68,7 +67,7 @@ public final class BoltParticle extends TTParticle {
         for (int section = 1; section <= this.shape.sections(); section++) {
             for (int bead = 1; bead <= BEADS_PER_SECTION; bead++) {
                 float fraction = (float) bead / BEADS_PER_SECTION;
-                emitQuad(
+                ParticleQuads.draw(
                         buffer,
                         rotation,
                         (float) (beadCoordinate(section, fraction, 0, amplitude) - cam.x()),
@@ -90,43 +89,6 @@ public final class BoltParticle extends TTParticle {
                 fraction,
                 this.shape.coordinate(section - 1, axis, amplitude),
                 this.shape.coordinate(section, axis, amplitude));
-    }
-
-    private static void emitQuad(
-            VertexConsumer buffer,
-            Quaternionf rotation,
-            float x,
-            float y,
-            float z,
-            float size,
-            float u0,
-            float u1,
-            float v0,
-            float v1,
-            int color,
-            int light) {
-        emitVertex(buffer, rotation, x, y, z, 1.0F, -1.0F, size, u1, v1, color, light);
-        emitVertex(buffer, rotation, x, y, z, 1.0F, 1.0F, size, u1, v0, color, light);
-        emitVertex(buffer, rotation, x, y, z, -1.0F, 1.0F, size, u0, v0, color, light);
-        emitVertex(buffer, rotation, x, y, z, -1.0F, -1.0F, size, u0, v1, color, light);
-    }
-
-    private static void emitVertex(
-            VertexConsumer buffer,
-            Quaternionf rotation,
-            float x,
-            float y,
-            float z,
-            float cornerX,
-            float cornerY,
-            float size,
-            float u,
-            float v,
-            int color,
-            int light) {
-        Vector3f pos =
-                new Vector3f(cornerX, cornerY, 0.0F).rotate(rotation).mul(size).add(x, y, z);
-        buffer.addVertex(pos.x(), pos.y(), pos.z()).setUv(u, v).setColor(color).setLight(light);
     }
 
     @Override

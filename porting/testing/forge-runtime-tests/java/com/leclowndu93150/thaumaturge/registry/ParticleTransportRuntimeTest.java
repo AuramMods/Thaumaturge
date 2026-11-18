@@ -22,8 +22,6 @@ import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.core.Direction;
-import net.minecraft.core.MappedRegistry;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
@@ -32,37 +30,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraftforge.eventbus.api.BusBuilder;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class ParticleTransportRuntimeTest {
-    @BeforeAll
-    static void registerParticles() throws Exception {
-        var bus = BusBuilder.builder().build();
-        TTParticles.register(bus);
-        var forge = (ForgeRegistry<?>) ForgeRegistries.PARTICLE_TYPES;
-        var vanilla = (MappedRegistry<?>) BuiltInRegistries.PARTICLE_TYPE;
-        var constructor = RegisterEvent.class.getDeclaredConstructor(ResourceKey.class, ForgeRegistry.class, Registry.class);
-        constructor.setAccessible(true);
-        forge.unfreeze();
-        vanilla.unfreeze();
-        try {
-            bus.post(constructor.newInstance(ForgeRegistries.Keys.PARTICLE_TYPES, forge, vanilla));
-        } finally {
-            forge.freeze();
-            vanilla.freeze();
-        }
-    }
-
     @Test
     void everyDeferredParticleIsVisibleInTheNativeCommandAndPacketRegistry() {
         var registered = TTParticles.PARTICLES.getEntries();
