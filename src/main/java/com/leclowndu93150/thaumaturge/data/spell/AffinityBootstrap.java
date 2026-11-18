@@ -77,7 +77,7 @@ public final class AffinityBootstrap {
                 "gust",
                 0,
                 "focus_elemental",
-                TTSounds.WIND,
+                sound(TTSounds.WIND.get()),
                 List.of(new KnockbackAction(0.6F, 0.25F, 0.35F, false)),
                 List.of(new WindBurstAction(1.0F, 0.4F, 3.0F)),
                 List.of(
@@ -198,7 +198,7 @@ public final class AffinityBootstrap {
                 "spark",
                 2,
                 "focus_bolt",
-                TTSounds.ZAP,
+                sound(TTSounds.ZAP.get()),
                 List.of(new DamageAction(DamageTypes.LIGHTNING_BOLT, 4.0F, 1.8F, 1.0F, false)),
                 List.of(new PlaceBlockAction(TTBlocks.EFFECT_SHOCK.get().defaultBlockState(), 0.6F, true)),
                 List.of(effect(EffectCodecs.holder(MobEffects.DAMAGE_BOOST), 5, 5, 0.0F, 0.4F, 1)));
@@ -252,7 +252,7 @@ public final class AffinityBootstrap {
                 "gust",
                 1,
                 "focus_elemental",
-                TTSounds.WIND,
+                sound(TTSounds.WIND.get()),
                 List.of(effect(EffectCodecs.holder(MobEffects.LEVITATION), 1, 1, 0.0F, 0.4F, 2)),
                 List.of(),
                 List.of(effect(EffectCodecs.holder(MobEffects.SLOW_FALLING), 10, 10, 0.0F, 0.0F, 0)));

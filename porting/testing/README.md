@@ -262,3 +262,9 @@ Five groups also execute through native Forge, bringing focused totals to
 279 server / 287 client. This proves pixel math; visual rendering and the full
 client still need acceptance. Reference-only logging dependencies do not enter
 the Forge game classpath.
+
+
+Cycle 039 checks named and direct sound holder codecs and native vanilla sound
+packet parameters without opening a sound engine or audio device. Focused totals
+are 282 server / 290 client; actual spell/equipment execution and full-client
+sound resource validation remain pending under the silent test profiles.

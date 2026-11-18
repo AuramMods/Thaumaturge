@@ -169,7 +169,7 @@ public final class InfusionEnchantmentEvents {
                 event.getPos().getX() + 0.5,
                 event.getPos().getY() + 0.5,
                 event.getPos().getZ() + 0.5,
-                SoundEvents.NOTE_BLOCK_BASEDRUM,
+                SoundEvents.NOTE_BLOCK_BASEDRUM.value(),
                 SoundSource.BLOCKS,
                 0.4F,
                 pitch);

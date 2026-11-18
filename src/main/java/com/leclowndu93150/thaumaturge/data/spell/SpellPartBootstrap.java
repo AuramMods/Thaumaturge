@@ -115,7 +115,7 @@ public final class SpellPartBootstrap {
                 .complexity(5)
                 .aspect(TTAspects.POTENTIA)
                 .research("focus_bolt")
-                .sound(TTSounds.ZAP)
+                .sound(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TTSounds.ZAP.get()))
                 .register(ctx, TTSpellParts.BOLT);
         PartBuilder.of(new RayDelivery(16.0, false, RayDelivery.Visual.BEAM, 0.0F, 6))
                 .glyph("beam")
@@ -159,7 +159,7 @@ public final class SpellPartBootstrap {
                 .aspect(TTAspects.POTENTIA)
                 .research("focus_beam")
                 .setting("jumps", 1, 4, 1, 2, 2.0F)
-                .sound(TTSounds.ZAP)
+                .sound(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(TTSounds.ZAP.get()))
                 .register(ctx, TTSpellParts.CHAIN);
         PartBuilder.of(new AuraDelivery(16))
                 .glyph("sprite")

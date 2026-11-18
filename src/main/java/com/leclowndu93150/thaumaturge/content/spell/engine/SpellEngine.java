@@ -131,7 +131,7 @@ public final class SpellEngine {
                     caster.getX(),
                     caster.getEyeY(),
                     caster.getZ(),
-                    sound,
+                    sound.value(),
                     SoundSource.PLAYERS,
                     CAST_SOUND_VOLUME,
                     1.0F + (level.getRandom().nextFloat() - 0.5F) * CAST_SOUND_PITCH_SPREAD);

@@ -6,7 +6,6 @@ import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.content.equipment.TTMaterials;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
-import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
@@ -32,7 +31,7 @@ public final class GogglesItem extends ArmorItem implements IVisDiscountGear {
     }
 
     @Override
-    public Holder<SoundEvent> getEquipSound() {
+    public SoundEvent getEquipSound() {
         return SoundEvents.ARMOR_EQUIP_LEATHER;
     }
 
