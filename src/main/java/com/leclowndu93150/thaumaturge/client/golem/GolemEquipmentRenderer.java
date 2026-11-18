@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.world.item.DyeColor;
 
 public final class GolemEquipmentRenderer {

@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.taint.overlay.pattern;
 import com.mojang.blaze3d.platform.NativeImage;
 import java.util.Arrays;
 import net.minecraft.util.FastColor;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;

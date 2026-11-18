@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import org.jspecify.annotations.Nullable;
 
 public final class MindSpiderRenderer extends MobRenderer<EntityMindSpider, SpiderModel<EntityMindSpider>> {

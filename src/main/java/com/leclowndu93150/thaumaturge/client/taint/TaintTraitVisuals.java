@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.client.trait.MobTraitVisuals;
 import com.leclowndu93150.thaumaturge.content.particle.FluxSwirlParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;

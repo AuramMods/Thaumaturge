@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.render.blockentity;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeStabilizer;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeTransducer;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 
 final class NodeStabilizerRenderMath {
     static final float ARM_SLIDE = 0.37F;

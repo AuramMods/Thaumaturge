@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
 import com.leclowndu93150.thaumaturge.content.particle.SparkParticleOptions;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 

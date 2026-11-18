@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.entity.projectile;
 
 import com.leclowndu93150.thaumaturge.content.particle.FireMoteParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOptions;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;

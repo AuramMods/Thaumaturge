@@ -15,7 +15,7 @@ import com.leclowndu93150.thaumaturge.content.particle.WispyMoteParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;

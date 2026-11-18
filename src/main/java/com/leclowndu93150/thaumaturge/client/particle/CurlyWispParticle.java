@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.content.particle.CurlyWispParticleOptions;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.RandomSource;
 
 public final class CurlyWispParticle extends TTParticle {

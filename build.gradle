@@ -91,6 +91,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/itemdata/**'
         java.include 'com/leclowndu93150/thaumaturge/blockinteraction/**'
         java.include 'com/leclowndu93150/thaumaturge/compat/Java17*'
+        java.include 'com/leclowndu93150/thaumaturge/compat/Colors*'
         java.include 'com/leclowndu93150/thaumaturge/TTIds.java'
         java.include 'com/leclowndu93150/thaumaturge/client/aura/ClientAuraCache.java'
         java.include 'com/leclowndu93150/thaumaturge/event/tick/**'
@@ -116,6 +117,7 @@ sourceSets {
         resources.include 'com/leclowndu93150/thaumaturge/serialization/dfu8-reference.json'
         resources.include 'com/leclowndu93150/thaumaturge/serialization/strict-map-1.21.1-reference.json'
         resources.include 'com/leclowndu93150/thaumaturge/serialization/effect-details-1.21.1-reference.json'
+        resources.include 'com/leclowndu93150/thaumaturge/compat/colors-1.21.1-reference.json'
         java.include 'com/leclowndu93150/thaumaturge/serialization/stream/**'
         java.include 'com/leclowndu93150/thaumaturge/serialization/RegistryContext*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/ClientRegistryContext*'
@@ -123,11 +125,13 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/serialization/BlockCodecs*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/Codecs*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/CodecReferenceProbe.java'
+        java.include 'com/leclowndu93150/thaumaturge/compat/ColorReferenceProbe.java'
         java.include 'com/leclowndu93150/thaumaturge/network/transport/**'
         java.include 'com/leclowndu93150/thaumaturge/state/**'
         java.include 'com/leclowndu93150/thaumaturge/itemdata/**'
         java.include 'com/leclowndu93150/thaumaturge/blockinteraction/**'
         java.include 'com/leclowndu93150/thaumaturge/compat/Java17*'
+        java.include 'com/leclowndu93150/thaumaturge/compat/Colors*'
         java.include 'com/leclowndu93150/thaumaturge/client/aura/ClientAuraCacheTest.java'
         compileClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
         runtimeClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
@@ -204,6 +208,8 @@ dependencies {
     portDfuReferenceRuntimeOnly 'org.joml:joml:1.10.5'
     portDfuReferenceRuntimeOnly 'org.apache.commons:commons-lang3:3.14.0'
     portDfuReferenceRuntimeOnly 'com.mojang:authlib:6.0.54'
+    portDfuReferenceRuntimeOnly 'com.mojang:logging:1.2.7'
+    portDfuReferenceRuntimeOnly 'org.slf4j:slf4j-api:2.0.9'
 
     // Run with -PportIntegrations to exercise optional JEI and Jade integration.
     if (providers.gradleProperty('portIntegrations').isPresent()) {
@@ -348,3 +354,13 @@ tasks.matching { it.name == 'runClient' }.configureEach {
 tasks.matching { it.name in ['runServer', 'runGameTestServer'] }.configureEach { dependsOn prepareTestServers }
 
 apply from: 'porting/testing/forge-tests.gradle'
+
+
+tasks.register('generateColorReference', JavaExec) {
+    dependsOn tasks.named('portDfuReferenceClasses')
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    classpath = sourceSets.portDfuReference.runtimeClasspath + files(providers.gradleProperty('portReferenceMinecraftJar')
+            .orElse('build/port-evidence/cycle-011/reference-1.21.1/client.jar'))
+    mainClass = 'com.leclowndu93150.thaumaturge.compat.ColorReferenceProbe'
+    args file('src/test/resources/com/leclowndu93150/thaumaturge/compat/colors-1.21.1-reference.json').absolutePath
+}

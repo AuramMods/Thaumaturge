@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.api.distmarker.Dist;

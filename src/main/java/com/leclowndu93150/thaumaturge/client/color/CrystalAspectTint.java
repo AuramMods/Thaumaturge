@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.client.color.item.ItemColor;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.world.item.ItemStack;
 
 public final class CrystalAspectTint implements ItemColor {

@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.content.particle.BoltParticleOptions;
 import com.leclowndu93150.thaumaturge.network.ClientboundWispZapPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.world.entity.Entity;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 

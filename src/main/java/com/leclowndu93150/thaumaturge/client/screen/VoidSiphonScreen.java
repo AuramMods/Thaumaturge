@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.content.device.MenuVoidSiphon;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.world.entity.player.Inventory;
 
 public final class VoidSiphonScreen extends AbstractTTContainerScreen<MenuVoidSiphon> {

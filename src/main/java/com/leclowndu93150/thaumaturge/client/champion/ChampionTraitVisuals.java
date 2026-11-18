@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.content.particle.SparkParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.WispFlameParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
-import net.minecraft.util.FastColor.ARGB32;
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;

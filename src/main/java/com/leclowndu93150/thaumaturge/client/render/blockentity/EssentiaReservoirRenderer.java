@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.compat.Colors;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
@@ -9,7 +10,6 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 
 /** Renders the reservoir's aspect-cycling mixed essentia volume. */
@@ -65,7 +65,7 @@ public final class EssentiaReservoirRenderer implements BlockEntityRenderer<Bloc
                 .value()
                 .color();
         int to = entries.get(index).aspect().value().color();
-        return FastColor.ARGB32.color(FLUID_ALPHA, FastColor.ARGB32.lerp(cycle - step, from, to));
+        return Colors.ARGB32.color(FLUID_ALPHA, Colors.ARGB32.lerp(cycle - step, from, to));
     }
 
     static int fluidLight(int light) {
