@@ -300,9 +300,10 @@ public final class TubeMesh {
             float blue,
             float alpha,
             int light) {
-        consumer.addVertex(matrix, (float) ring[offset], (float) ring[offset + 1], (float) ring[offset + 2])
-                .setUv(u, v)
-                .setColor(red, green, blue, alpha)
-                .setLight(light);
+        consumer.vertex(matrix, (float) ring[offset], (float) ring[offset + 1], (float) ring[offset + 2])
+                .uv(u, v)
+                .color(red, green, blue, alpha)
+                .uv2(light)
+                .endVertex();
     }
 }

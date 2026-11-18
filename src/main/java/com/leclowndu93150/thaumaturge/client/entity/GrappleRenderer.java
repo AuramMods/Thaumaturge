@@ -104,25 +104,29 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple> {
             float v1,
             int glowTint) {
         glowBuffer
-                .addVertex(glowMat, -half, -half, 0.0F)
-                .setUv(u0, v1)
-                .setColor(glowTint)
-                .setLight(EMISSIVE_LIGHT);
+                .vertex(glowMat, -half, -half, 0.0F)
+                .uv(u0, v1)
+                .color(glowTint)
+                .uv2(EMISSIVE_LIGHT)
+                .endVertex();
         glowBuffer
-                .addVertex(glowMat, half, -half, 0.0F)
-                .setUv(u1, v1)
-                .setColor(glowTint)
-                .setLight(EMISSIVE_LIGHT);
+                .vertex(glowMat, half, -half, 0.0F)
+                .uv(u1, v1)
+                .color(glowTint)
+                .uv2(EMISSIVE_LIGHT)
+                .endVertex();
         glowBuffer
-                .addVertex(glowMat, half, half, 0.0F)
-                .setUv(u1, v0)
-                .setColor(glowTint)
-                .setLight(EMISSIVE_LIGHT);
+                .vertex(glowMat, half, half, 0.0F)
+                .uv(u1, v0)
+                .color(glowTint)
+                .uv2(EMISSIVE_LIGHT)
+                .endVertex();
         glowBuffer
-                .addVertex(glowMat, -half, half, 0.0F)
-                .setUv(u0, v0)
-                .setColor(glowTint)
-                .setLight(EMISSIVE_LIGHT);
+                .vertex(glowMat, -half, half, 0.0F)
+                .uv(u0, v0)
+                .color(glowTint)
+                .uv2(EMISSIVE_LIGHT)
+                .endVertex();
     }
 
     @Override
@@ -148,10 +152,11 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple> {
     }
 
     private static void addRopeVertex(VertexConsumer buffer, Matrix4f mat, Vector3f pos, float u, float v, int light) {
-        buffer.addVertex(mat, pos.x(), pos.y(), pos.z())
-                .setUv(u, v)
-                .setColor(-1)
-                .setLight(light);
+        buffer.vertex(mat, pos.x(), pos.y(), pos.z())
+                .uv(u, v)
+                .color(-1)
+                .uv2(light)
+                .endVertex();
     }
 
     static Vector3f[] buildRings(List<Vec3> points) {

@@ -77,22 +77,26 @@ public final class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, Arca
             float v0 = -1.0F + uvOffset + (float) strip / BEAM_STRIPS;
             float v1 = (float) BEAM_LENGTH + v0;
             Matrix4f mat = poseStack.last().pose();
-            buffer.addVertex(mat, 0.0F, 0.0F, -(float) BEAM_LENGTH)
-                    .setUv(1.0F, v1)
-                    .setColor(BEAM_TINT)
-                    .setLight(BEAM_LIGHT);
-            buffer.addVertex(mat, -BEAM_RADIUS, 0.0F, 0.0F)
-                    .setUv(1.0F, v0)
-                    .setColor(BEAM_TINT)
-                    .setLight(BEAM_LIGHT);
-            buffer.addVertex(mat, BEAM_RADIUS, 0.0F, 0.0F)
-                    .setUv(0.0F, v0)
-                    .setColor(BEAM_TINT)
-                    .setLight(BEAM_LIGHT);
-            buffer.addVertex(mat, 0.0F, 0.0F, -(float) BEAM_LENGTH)
-                    .setUv(0.0F, v1)
-                    .setColor(BEAM_TINT)
-                    .setLight(BEAM_LIGHT);
+            buffer.vertex(mat, 0.0F, 0.0F, -(float) BEAM_LENGTH)
+                    .uv(1.0F, v1)
+                    .color(BEAM_TINT)
+                    .uv2(BEAM_LIGHT)
+                    .endVertex();
+            buffer.vertex(mat, -BEAM_RADIUS, 0.0F, 0.0F)
+                    .uv(1.0F, v0)
+                    .color(BEAM_TINT)
+                    .uv2(BEAM_LIGHT)
+                    .endVertex();
+            buffer.vertex(mat, BEAM_RADIUS, 0.0F, 0.0F)
+                    .uv(0.0F, v0)
+                    .color(BEAM_TINT)
+                    .uv2(BEAM_LIGHT)
+                    .endVertex();
+            buffer.vertex(mat, 0.0F, 0.0F, -(float) BEAM_LENGTH)
+                    .uv(0.0F, v1)
+                    .color(BEAM_TINT)
+                    .uv2(BEAM_LIGHT)
+                    .endVertex();
         }
         poseStack.popPose();
         poseStack.pushPose();
@@ -111,18 +115,22 @@ public final class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, Arca
         float v1 = v0 + frameSize;
         VertexConsumer buffer = buffers.getBuffer(BeamRenderType.NODE_TYPE);
         Matrix4f matrix = poseStack.last().pose();
-        buffer.addVertex(matrix, -TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u1, v1)
-                .setColor(TIP_FLARE_TINT);
-        buffer.addVertex(matrix, -TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u1, v0)
-                .setColor(TIP_FLARE_TINT);
-        buffer.addVertex(matrix, TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u0, v0)
-                .setColor(TIP_FLARE_TINT);
-        buffer.addVertex(matrix, TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u0, v1)
-                .setColor(TIP_FLARE_TINT);
+        buffer.vertex(matrix, -TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
+                .uv(u1, v1)
+                .color(TIP_FLARE_TINT)
+                .endVertex();
+        buffer.vertex(matrix, -TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
+                .uv(u1, v0)
+                .color(TIP_FLARE_TINT)
+                .endVertex();
+        buffer.vertex(matrix, TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
+                .uv(u0, v0)
+                .color(TIP_FLARE_TINT)
+                .endVertex();
+        buffer.vertex(matrix, TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
+                .uv(u0, v1)
+                .color(TIP_FLARE_TINT)
+                .endVertex();
     }
 
     @Override

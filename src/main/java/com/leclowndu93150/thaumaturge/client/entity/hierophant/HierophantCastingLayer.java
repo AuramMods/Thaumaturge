@@ -95,9 +95,10 @@ public final class HierophantCastingLayer extends RenderLayer<EntityEldritchHier
     }
 
     private static void vertex(VertexConsumer buffer, Matrix4f matrix, Vector3f point, float u, float v) {
-        buffer.addVertex(matrix, point.x, point.y, point.z)
-                .setUv(u, v)
-                .setColor(ARC_COLOR)
-                .setLight(FULL_LIGHT);
+        buffer.vertex(matrix, point.x, point.y, point.z)
+                .uv(u, v)
+                .color(ARC_COLOR)
+                .uv2(FULL_LIGHT)
+                .endVertex();
     }
 }

@@ -189,16 +189,16 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
         Minecraft.getInstance().gameRenderer.getMainCamera().rotation().normalize(cameraRot);
         poseStack.mulPose(cameraRot);
         Matrix4f matrix = poseStack.last().pose();
-        node.addVertex(matrix, -halfSize, -halfSize, 0.0F).setColor(color).setUv(u1, v1);
-        node.addVertex(matrix, -halfSize, halfSize, 0.0F).setColor(color).setUv(u1, v0);
-        node.addVertex(matrix, halfSize, halfSize, 0.0F).setColor(color).setUv(u0, v0);
-        node.addVertex(matrix, halfSize, -halfSize, 0.0F).setColor(color).setUv(u0, v1);
+        node.vertex(matrix, -halfSize, -halfSize, 0.0F).uv(u1, v1).color(color).endVertex();
+        node.vertex(matrix, -halfSize, halfSize, 0.0F).uv(u1, v0).color(color).endVertex();
+        node.vertex(matrix, halfSize, halfSize, 0.0F).uv(u0, v0).color(color).endVertex();
+        node.vertex(matrix, halfSize, -halfSize, 0.0F).uv(u0, v1).color(color).endVertex();
         poseStack.popPose();
     }
 
     private static void beamVertex(
             VertexConsumer consumer, Matrix4f mat, double x, double y, double z, float u, float v, int color) {
-        consumer.addVertex(mat, (float) x, (float) y, (float) z).setColor(color).setUv(u, v);
+        consumer.vertex(mat, (float) x, (float) y, (float) z).uv(u, v).color(color).endVertex();
     }
 
     private static void renderArc(
@@ -278,7 +278,7 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
 
     private static void vertex(
             VertexConsumer consumer, Matrix4f mat, double x, double y, double z, float u, float v, int color) {
-        consumer.addVertex(mat, (float) x, (float) y, (float) z).setColor(color).setUv(u, v);
+        consumer.vertex(mat, (float) x, (float) y, (float) z).uv(u, v).color(color).endVertex();
     }
 
     private static void renderBolt(

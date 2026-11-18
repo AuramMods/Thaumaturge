@@ -47,9 +47,9 @@ public final class EldritchPortalSurface {
             float x4,
             float y4,
             float z4) {
-        buffer.addVertex(pose, x1, y1, z1);
-        buffer.addVertex(pose, x2, y2, z2);
-        buffer.addVertex(pose, x3, y3, z3);
-        buffer.addVertex(pose, x4, y4, z4);
+        buffer.vertex(pose.pose(), x1, y1, z1).endVertex();
+        buffer.vertex(pose.pose(), x2, y2, z2).endVertex();
+        buffer.vertex(pose.pose(), x3, y3, z3).endVertex();
+        buffer.vertex(pose.pose(), x4, y4, z4).endVertex();
     }
 }

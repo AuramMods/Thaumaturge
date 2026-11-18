@@ -231,7 +231,7 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
             float green,
             float blue,
             float alpha) {
-        buffer.addVertex(pose, x, y, z).setUv(u, v).setColor(red, green, blue, alpha);
+        buffer.vertex(pose.pose(), x, y, z).uv(u, v).color(red, green, blue, alpha).endVertex();
     }
 
     @Override

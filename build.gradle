@@ -199,6 +199,8 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/client/space/**'
         java.include 'com/leclowndu93150/thaumaturge/client/render/aspect/ParticleTextures.java'
         java.include 'com/leclowndu93150/thaumaturge/client/render/TTRenderTypes.java'
+        java.include 'com/leclowndu93150/thaumaturge/client/effect/geometry/TubeMesh.java'
+        java.include 'com/leclowndu93150/thaumaturge/client/entity/EldritchOrbRayGeometry.java'
         java.include 'com/leclowndu93150/thaumaturge/client/render/TTShaders.java'
         java.include 'com/leclowndu93150/thaumaturge/client/warding/WardRenderType.java'
         java.include 'com/leclowndu93150/thaumaturge/client/effect/rendertype/VoidStreamRenderType.java'

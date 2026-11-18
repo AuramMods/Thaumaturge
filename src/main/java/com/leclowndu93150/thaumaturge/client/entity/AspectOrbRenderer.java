@@ -70,22 +70,26 @@ public final class AspectOrbRenderer extends EntityRenderer<EntityAspectOrb> {
     }
 
     private static void writeOrb(VertexConsumer buffer, Matrix4f mat, float u0, float u1, int tint) {
-        buffer.addVertex(mat, -HALF, -Y_OFFSET, 0.0F)
-                .setUv(u0, StripUv.V1)
-                .setColor(tint)
-                .setLight(EMISSIVE_LIGHT);
-        buffer.addVertex(mat, HALF, -Y_OFFSET, 0.0F)
-                .setUv(u1, StripUv.V1)
-                .setColor(tint)
-                .setLight(EMISSIVE_LIGHT);
-        buffer.addVertex(mat, HALF, 1.0F - Y_OFFSET, 0.0F)
-                .setUv(u1, StripUv.V0)
-                .setColor(tint)
-                .setLight(EMISSIVE_LIGHT);
-        buffer.addVertex(mat, -HALF, 1.0F - Y_OFFSET, 0.0F)
-                .setUv(u0, StripUv.V0)
-                .setColor(tint)
-                .setLight(EMISSIVE_LIGHT);
+        buffer.vertex(mat, -HALF, -Y_OFFSET, 0.0F)
+                .uv(u0, StripUv.V1)
+                .color(tint)
+                .uv2(EMISSIVE_LIGHT)
+                .endVertex();
+        buffer.vertex(mat, HALF, -Y_OFFSET, 0.0F)
+                .uv(u1, StripUv.V1)
+                .color(tint)
+                .uv2(EMISSIVE_LIGHT)
+                .endVertex();
+        buffer.vertex(mat, HALF, 1.0F - Y_OFFSET, 0.0F)
+                .uv(u1, StripUv.V0)
+                .color(tint)
+                .uv2(EMISSIVE_LIGHT)
+                .endVertex();
+        buffer.vertex(mat, -HALF, 1.0F - Y_OFFSET, 0.0F)
+                .uv(u0, StripUv.V0)
+                .color(tint)
+                .uv2(EMISSIVE_LIGHT)
+                .endVertex();
     }
 
     @Override

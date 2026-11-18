@@ -112,19 +112,22 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
             float wz = side.z * BEAM_HALF_WIDTH;
             float v0 = -1.0F + scroll + quad * QUAD_SCROLL_STEP;
             float v1 = length + v0;
-            buffer.addVertex(pose, -wx, -wy, -wz)
-                    .setUv(1.0F, v1)
-                    .setColor(color)
-                    .setLight(LIGHT);
-            buffer.addVertex(pose, sx - wx, sy - wy, sz - wz)
-                    .setUv(1.0F, v0)
-                    .setColor(color)
-                    .setLight(LIGHT);
-            buffer.addVertex(pose, sx + wx, sy + wy, sz + wz)
-                    .setUv(0.0F, v0)
-                    .setColor(color)
-                    .setLight(LIGHT);
-            buffer.addVertex(pose, wx, wy, wz).setUv(0.0F, v1).setColor(color).setLight(LIGHT);
+            buffer.vertex(pose.pose(), -wx, -wy, -wz)
+                    .uv(1.0F, v1)
+                    .color(color)
+                    .uv2(LIGHT)
+                    .endVertex();
+            buffer.vertex(pose.pose(), sx - wx, sy - wy, sz - wz)
+                    .uv(1.0F, v0)
+                    .color(color)
+                    .uv2(LIGHT)
+                    .endVertex();
+            buffer.vertex(pose.pose(), sx + wx, sy + wy, sz + wz)
+                    .uv(0.0F, v0)
+                    .color(color)
+                    .uv2(LIGHT)
+                    .endVertex();
+            buffer.vertex(pose.pose(), wx, wy, wz).uv(0.0F, v1).color(color).uv2(LIGHT).endVertex();
         }
     }
 
@@ -137,10 +140,10 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
         poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
         PoseStack.Pose pose = poseStack.last();
         VertexConsumer buffer = buffers.getBuffer(VisRelayBeamRenderTypes.FLARE);
-        buffer.addVertex(pose, -half, -half, 0.0F).setUv(u1, v1).setColor(color).setLight(LIGHT);
-        buffer.addVertex(pose, -half, half, 0.0F).setUv(u1, v0).setColor(color).setLight(LIGHT);
-        buffer.addVertex(pose, half, half, 0.0F).setUv(u0, v0).setColor(color).setLight(LIGHT);
-        buffer.addVertex(pose, half, -half, 0.0F).setUv(u0, v1).setColor(color).setLight(LIGHT);
+        buffer.vertex(pose.pose(), -half, -half, 0.0F).uv(u1, v1).color(color).uv2(LIGHT).endVertex();
+        buffer.vertex(pose.pose(), -half, half, 0.0F).uv(u1, v0).color(color).uv2(LIGHT).endVertex();
+        buffer.vertex(pose.pose(), half, half, 0.0F).uv(u0, v0).color(color).uv2(LIGHT).endVertex();
+        buffer.vertex(pose.pose(), half, -half, 0.0F).uv(u0, v1).color(color).uv2(LIGHT).endVertex();
         poseStack.popPose();
     }
 

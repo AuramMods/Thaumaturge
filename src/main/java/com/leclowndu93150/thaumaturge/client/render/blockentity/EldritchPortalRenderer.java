@@ -62,10 +62,10 @@ public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEn
         poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
         VertexConsumer buffer = buffers.getBuffer(type);
         Matrix4f mat = poseStack.last().pose();
-        buffer.addVertex(mat, -sx, -sy, 0.0F).setUv(u1, 0.0F).setColor(-1).setLight(LIGHT);
-        buffer.addVertex(mat, -sx, sy, 0.0F).setUv(u1, 1.0F).setColor(-1).setLight(LIGHT);
-        buffer.addVertex(mat, sx, sy, 0.0F).setUv(u0, 1.0F).setColor(-1).setLight(LIGHT);
-        buffer.addVertex(mat, sx, -sy, 0.0F).setUv(u0, 0.0F).setColor(-1).setLight(LIGHT);
+        buffer.vertex(mat, -sx, -sy, 0.0F).uv(u1, 0.0F).color(-1).uv2(LIGHT).endVertex();
+        buffer.vertex(mat, -sx, sy, 0.0F).uv(u1, 1.0F).color(-1).uv2(LIGHT).endVertex();
+        buffer.vertex(mat, sx, sy, 0.0F).uv(u0, 1.0F).color(-1).uv2(LIGHT).endVertex();
+        buffer.vertex(mat, sx, -sy, 0.0F).uv(u0, 0.0F).color(-1).uv2(LIGHT).endVertex();
     }
 
     @Override

@@ -105,22 +105,26 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
         poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
         PoseStack.Pose pose = poseStack.last();
         VertexConsumer buffer = buffers.getBuffer(BUBBLE);
-        buffer.addVertex(pose, -BUBBLE_HALF, -BUBBLE_HALF, 0.0F)
-                .setUv(0.0F, 1.0F)
-                .setColor(color)
-                .setLight(BUBBLE_LIGHT);
-        buffer.addVertex(pose, BUBBLE_HALF, -BUBBLE_HALF, 0.0F)
-                .setUv(1.0F, 1.0F)
-                .setColor(color)
-                .setLight(BUBBLE_LIGHT);
-        buffer.addVertex(pose, BUBBLE_HALF, BUBBLE_HALF, 0.0F)
-                .setUv(1.0F, 0.0F)
-                .setColor(color)
-                .setLight(BUBBLE_LIGHT);
-        buffer.addVertex(pose, -BUBBLE_HALF, BUBBLE_HALF, 0.0F)
-                .setUv(0.0F, 0.0F)
-                .setColor(color)
-                .setLight(BUBBLE_LIGHT);
+        buffer.vertex(pose.pose(), -BUBBLE_HALF, -BUBBLE_HALF, 0.0F)
+                .uv(0.0F, 1.0F)
+                .color(color)
+                .uv2(BUBBLE_LIGHT)
+                .endVertex();
+        buffer.vertex(pose.pose(), BUBBLE_HALF, -BUBBLE_HALF, 0.0F)
+                .uv(1.0F, 1.0F)
+                .color(color)
+                .uv2(BUBBLE_LIGHT)
+                .endVertex();
+        buffer.vertex(pose.pose(), BUBBLE_HALF, BUBBLE_HALF, 0.0F)
+                .uv(1.0F, 0.0F)
+                .color(color)
+                .uv2(BUBBLE_LIGHT)
+                .endVertex();
+        buffer.vertex(pose.pose(), -BUBBLE_HALF, BUBBLE_HALF, 0.0F)
+                .uv(0.0F, 0.0F)
+                .color(color)
+                .uv2(BUBBLE_LIGHT)
+                .endVertex();
         poseStack.popPose();
     }
 

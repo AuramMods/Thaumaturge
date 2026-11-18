@@ -156,22 +156,26 @@ public final class DeconstructionTableRenderer implements BlockEntityRenderer<Bl
     private static void writeGlow(VertexConsumer buffer, Matrix4f matrix, int tint) {
         float u0 = StripUv.u0(GLOW_FRAME, ParticleTextures.ORB_GLOW_FRAMES);
         float u1 = StripUv.u1(GLOW_FRAME, ParticleTextures.ORB_GLOW_FRAMES);
-        buffer.addVertex(matrix, -GLOW_HALF, -GLOW_HALF, 0.0F)
-                .setUv(u0, StripUv.V1)
-                .setColor(tint)
-                .setLight(LightTexture.FULL_BRIGHT);
-        buffer.addVertex(matrix, GLOW_HALF, -GLOW_HALF, 0.0F)
-                .setUv(u1, StripUv.V1)
-                .setColor(tint)
-                .setLight(LightTexture.FULL_BRIGHT);
-        buffer.addVertex(matrix, GLOW_HALF, GLOW_HALF, 0.0F)
-                .setUv(u1, StripUv.V0)
-                .setColor(tint)
-                .setLight(LightTexture.FULL_BRIGHT);
-        buffer.addVertex(matrix, -GLOW_HALF, GLOW_HALF, 0.0F)
-                .setUv(u0, StripUv.V0)
-                .setColor(tint)
-                .setLight(LightTexture.FULL_BRIGHT);
+        buffer.vertex(matrix, -GLOW_HALF, -GLOW_HALF, 0.0F)
+                .uv(u0, StripUv.V1)
+                .color(tint)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .endVertex();
+        buffer.vertex(matrix, GLOW_HALF, -GLOW_HALF, 0.0F)
+                .uv(u1, StripUv.V1)
+                .color(tint)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .endVertex();
+        buffer.vertex(matrix, GLOW_HALF, GLOW_HALF, 0.0F)
+                .uv(u1, StripUv.V0)
+                .color(tint)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .endVertex();
+        buffer.vertex(matrix, -GLOW_HALF, GLOW_HALF, 0.0F)
+                .uv(u0, StripUv.V0)
+                .color(tint)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .endVertex();
     }
 
     private static @Nullable Holder<IAspect> resolveAspect(BlockEntityDeconstructionTable table) {

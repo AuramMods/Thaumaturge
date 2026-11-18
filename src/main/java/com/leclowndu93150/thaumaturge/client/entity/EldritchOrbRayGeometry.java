@@ -35,11 +35,13 @@ final class EldritchOrbRayGeometry {
             for (int corner = 0; corner < CORNERS_PER_TIP; corner++) {
                 int from = base + corner * COMPONENTS;
                 int to = base + (corner + 1) % CORNERS_PER_TIP * COMPONENTS;
-                buffer.addVertex(matrix, 0.0F, 0.0F, 0.0F).setColor(coreColor);
-                buffer.addVertex(matrix, TIPS[to] * reach, TIPS[to + 1] * reach, TIPS[to + 2] * reach)
-                        .setColor(tipColor);
-                buffer.addVertex(matrix, TIPS[from] * reach, TIPS[from + 1] * reach, TIPS[from + 2] * reach)
-                        .setColor(tipColor);
+                buffer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(coreColor).endVertex();
+                buffer.vertex(matrix, TIPS[to] * reach, TIPS[to + 1] * reach, TIPS[to + 2] * reach)
+                        .color(tipColor)
+                        .endVertex();
+                buffer.vertex(matrix, TIPS[from] * reach, TIPS[from + 1] * reach, TIPS[from + 2] * reach)
+                        .color(tipColor)
+                        .endVertex();
             }
         }
     }

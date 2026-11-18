@@ -108,22 +108,26 @@ public final class BoreDrillFx {
     }
 
     private static void addBeamVertices(VertexConsumer buffer, Matrix4f matrix, float v0, float v1) {
-        buffer.addVertex(matrix, 0.0F, 0.0F, -(float) BEAM_LENGTH)
-                .setUv(1.0F, v1)
-                .setColor(BEAM_TINT)
-                .setLight(BEAM_LIGHT);
-        buffer.addVertex(matrix, -BEAM_RADIUS, 0.0F, 0.0F)
-                .setUv(1.0F, v0)
-                .setColor(BEAM_TINT)
-                .setLight(BEAM_LIGHT);
-        buffer.addVertex(matrix, BEAM_RADIUS, 0.0F, 0.0F)
-                .setUv(0.0F, v0)
-                .setColor(BEAM_TINT)
-                .setLight(BEAM_LIGHT);
-        buffer.addVertex(matrix, 0.0F, 0.0F, -(float) BEAM_LENGTH)
-                .setUv(0.0F, v1)
-                .setColor(BEAM_TINT)
-                .setLight(BEAM_LIGHT);
+        buffer.vertex(matrix, 0.0F, 0.0F, -(float) BEAM_LENGTH)
+                .uv(1.0F, v1)
+                .color(BEAM_TINT)
+                .uv2(BEAM_LIGHT)
+                .endVertex();
+        buffer.vertex(matrix, -BEAM_RADIUS, 0.0F, 0.0F)
+                .uv(1.0F, v0)
+                .color(BEAM_TINT)
+                .uv2(BEAM_LIGHT)
+                .endVertex();
+        buffer.vertex(matrix, BEAM_RADIUS, 0.0F, 0.0F)
+                .uv(0.0F, v0)
+                .color(BEAM_TINT)
+                .uv2(BEAM_LIGHT)
+                .endVertex();
+        buffer.vertex(matrix, 0.0F, 0.0F, -(float) BEAM_LENGTH)
+                .uv(0.0F, v1)
+                .color(BEAM_TINT)
+                .uv2(BEAM_LIGHT)
+                .endVertex();
     }
 
     private static void renderTipFlare(int tipFrame, PoseStack poseStack, MultiBufferSource buffers) {
@@ -138,17 +142,21 @@ public final class BoreDrillFx {
 
     private static void addTipFlareVertices(
             VertexConsumer buffer, Matrix4f matrix, float u0, float v0, float u1, float v1) {
-        buffer.addVertex(matrix, -TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u1, v1)
-                .setColor(TIP_FLARE_TINT);
-        buffer.addVertex(matrix, -TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u1, v0)
-                .setColor(TIP_FLARE_TINT);
-        buffer.addVertex(matrix, TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u0, v0)
-                .setColor(TIP_FLARE_TINT);
-        buffer.addVertex(matrix, TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u0, v1)
-                .setColor(TIP_FLARE_TINT);
+        buffer.vertex(matrix, -TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
+                .uv(u1, v1)
+                .color(TIP_FLARE_TINT)
+                .endVertex();
+        buffer.vertex(matrix, -TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
+                .uv(u1, v0)
+                .color(TIP_FLARE_TINT)
+                .endVertex();
+        buffer.vertex(matrix, TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
+                .uv(u0, v0)
+                .color(TIP_FLARE_TINT)
+                .endVertex();
+        buffer.vertex(matrix, TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
+                .uv(u0, v1)
+                .color(TIP_FLARE_TINT)
+                .endVertex();
     }
 }

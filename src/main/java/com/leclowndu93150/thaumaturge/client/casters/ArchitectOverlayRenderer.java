@@ -259,10 +259,10 @@ public final class ArchitectOverlayRenderer {
     private static void drawQuad(PoseStack poseStack, VertexConsumer buffer, float r, float g, float b, float alpha) {
         int color = ARGB32.colorFromFloat(alpha, Math.min(r, 1.0F), Math.min(g, 1.0F), Math.min(b, 1.0F));
         PoseStack.Pose pose = poseStack.last();
-        buffer.addVertex(pose, -HALF, HALF, 0.0F).setUv(1.0F, 1.0F).setColor(color);
-        buffer.addVertex(pose, HALF, HALF, 0.0F).setUv(1.0F, 0.0F).setColor(color);
-        buffer.addVertex(pose, HALF, -HALF, 0.0F).setUv(0.0F, 0.0F).setColor(color);
-        buffer.addVertex(pose, -HALF, -HALF, 0.0F).setUv(0.0F, 1.0F).setColor(color);
+        buffer.vertex(pose.pose(), -HALF, HALF, 0.0F).uv(1.0F, 1.0F).color(color).endVertex();
+        buffer.vertex(pose.pose(), HALF, HALF, 0.0F).uv(1.0F, 0.0F).color(color).endVertex();
+        buffer.vertex(pose.pose(), HALF, -HALF, 0.0F).uv(0.0F, 0.0F).color(color).endVertex();
+        buffer.vertex(pose.pose(), -HALF, -HALF, 0.0F).uv(0.0F, 1.0F).color(color).endVertex();
     }
 
     static final class PreviewCache {

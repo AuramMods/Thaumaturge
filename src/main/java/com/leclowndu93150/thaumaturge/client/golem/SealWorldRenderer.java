@@ -7,7 +7,7 @@ import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.golem.seals.ClientSealHolder;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -43,7 +43,7 @@ public final class SealWorldRenderer {
     private static final float CORNER_ALPHA = 0.7F;
     private static final RenderType ICON_TYPE = TTRenderTypes.translucentTextured(InventoryMenu.BLOCK_ATLAS);
     private static final MultiBufferSource.BufferSource SEAL_BUFFERS =
-            MultiBufferSource.immediate(new ByteBufferBuilder(RenderType.TRANSIENT_BUFFER_SIZE));
+            MultiBufferSource.immediate(new BufferBuilder(RenderType.TRANSIENT_BUFFER_SIZE));
 
     private static final Direction[][] ROT_FACES = {
         {Direction.DOWN, Direction.NORTH, Direction.WEST},
@@ -228,9 +228,9 @@ public final class SealWorldRenderer {
     private static void drawQuad(
             PoseStack poseStack, VertexConsumer buffer, float half, int color, float u0, float v0, float u1, float v1) {
         PoseStack.Pose pose = poseStack.last();
-        buffer.addVertex(pose, -half, half, 0.0F).setUv(u1, v1).setColor(color);
-        buffer.addVertex(pose, half, half, 0.0F).setUv(u1, v0).setColor(color);
-        buffer.addVertex(pose, half, -half, 0.0F).setUv(u0, v0).setColor(color);
-        buffer.addVertex(pose, -half, -half, 0.0F).setUv(u0, v1).setColor(color);
+        buffer.vertex(pose.pose(), -half, half, 0.0F).uv(u1, v1).color(color).endVertex();
+        buffer.vertex(pose.pose(), half, half, 0.0F).uv(u1, v0).color(color).endVertex();
+        buffer.vertex(pose.pose(), half, -half, 0.0F).uv(u0, v0).color(color).endVertex();
+        buffer.vertex(pose.pose(), -half, -half, 0.0F).uv(u0, v1).color(color).endVertex();
     }
 }

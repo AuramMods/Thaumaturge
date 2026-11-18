@@ -149,10 +149,10 @@ public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift> {
 
     private static void addVertex(
             VertexConsumer buffer, Matrix4f pose, FluxRiftGeometry.Tube tube, int point, int side, float scale) {
-        buffer.addVertex(
+        buffer.vertex(
                 pose,
                 tube.vertexX(point, side, scale),
                 tube.vertexY(point, side, scale),
-                tube.vertexZ(point, side, scale));
+                tube.vertexZ(point, side, scale)).endVertex();
     }
 }

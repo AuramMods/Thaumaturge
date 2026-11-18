@@ -88,9 +88,9 @@ public final class WispRenderer extends EntityRenderer<WispEntity> {
                 alpha, ARGB32.red(color) / 255.0F, ARGB32.green(color) / 255.0F, ARGB32.blue(color) / 255.0F);
         VertexConsumer buffer = buffers.getBuffer(type);
         Matrix4f mat = poseStack.last().pose();
-        buffer.addVertex(mat, -half, -half, 0.0F).setUv(u1, v1).setColor(tint).setLight(LEGACY_LIGHT);
-        buffer.addVertex(mat, -half, half, 0.0F).setUv(u1, v0).setColor(tint).setLight(LEGACY_LIGHT);
-        buffer.addVertex(mat, half, half, 0.0F).setUv(u0, v0).setColor(tint).setLight(LEGACY_LIGHT);
-        buffer.addVertex(mat, half, -half, 0.0F).setUv(u0, v1).setColor(tint).setLight(LEGACY_LIGHT);
+        buffer.vertex(mat, -half, -half, 0.0F).uv(u1, v1).color(tint).uv2(LEGACY_LIGHT).endVertex();
+        buffer.vertex(mat, -half, half, 0.0F).uv(u1, v0).color(tint).uv2(LEGACY_LIGHT).endVertex();
+        buffer.vertex(mat, half, half, 0.0F).uv(u0, v0).color(tint).uv2(LEGACY_LIGHT).endVertex();
+        buffer.vertex(mat, half, -half, 0.0F).uv(u0, v1).color(tint).uv2(LEGACY_LIGHT).endVertex();
     }
 }

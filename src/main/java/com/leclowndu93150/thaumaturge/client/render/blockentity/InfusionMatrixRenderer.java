@@ -216,19 +216,21 @@ public final class InfusionMatrixRenderer implements BlockEntityRenderer<BlockEn
                 int from = base + corner * HALO_AXES;
                 int to = base + (corner + 1) % HALO_SPIKE_CORNERS * HALO_AXES;
                 Matrix4f matrix = poseStack.last().pose();
-                buffer.addVertex(matrix, 0.0F, 0.0F, 0.0F).setColor(coreColor);
-                buffer.addVertex(
+                buffer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(coreColor).endVertex();
+                buffer.vertex(
                                 matrix,
                                 HALO_SPIKES[to] * reach,
                                 HALO_SPIKES[to + 1] * reach,
                                 HALO_SPIKES[to + 2] * reach)
-                        .setColor(tipColor);
-                buffer.addVertex(
+                        .color(tipColor)
+                        .endVertex();
+                buffer.vertex(
                                 matrix,
                                 HALO_SPIKES[from] * reach,
                                 HALO_SPIKES[from + 1] * reach,
                                 HALO_SPIKES[from + 2] * reach)
-                        .setColor(tipColor);
+                        .color(tipColor)
+                        .endVertex();
             }
         }
         poseStack.popPose();

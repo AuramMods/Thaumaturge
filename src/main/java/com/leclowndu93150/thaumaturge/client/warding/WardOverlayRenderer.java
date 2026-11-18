@@ -268,7 +268,7 @@ public final class WardOverlayRenderer {
         float x = originX + (uAxis[0] * u + vAxis[0] * v) * SPAN;
         float y = originY + (uAxis[1] * u + vAxis[1] * v) * SPAN;
         float z = originZ + (uAxis[2] * u + vAxis[2] * v) * SPAN;
-        buffer.addVertex(pose, x, y, z).setUv(spriteU, spriteV).setColor(red, green, blue, alpha);
+        buffer.vertex(pose, x, y, z).uv(spriteU, spriteV).color(red, green, blue, alpha).endVertex();
     }
 
     private static float edge(int flag) {

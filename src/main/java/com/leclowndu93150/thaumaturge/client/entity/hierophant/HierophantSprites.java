@@ -70,9 +70,10 @@ public final class HierophantSprites {
     }
 
     private static void vertex(VertexConsumer buffer, Matrix4f matrix, Vector3f point, float u, float v, int color) {
-        buffer.addVertex(matrix, point.x, point.y, point.z)
-                .setUv(u, v)
-                .setColor(color)
-                .setLight(FULL_LIGHT);
+        buffer.vertex(matrix, point.x, point.y, point.z)
+                .uv(u, v)
+                .color(color)
+                .uv2(FULL_LIGHT)
+                .endVertex();
     }
 }

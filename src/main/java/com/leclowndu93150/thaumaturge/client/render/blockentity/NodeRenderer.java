@@ -350,9 +350,9 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
         float u1 = (frame + 1) / (float) GRID;
         float v0 = strip / (float) GRID;
         float v1 = (strip + 1) / (float) GRID;
-        buffer.addVertex(mat, -half, -half, 0.0F).setUv(u1, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
-        buffer.addVertex(mat, -half, half, 0.0F).setUv(u1, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
-        buffer.addVertex(mat, half, half, 0.0F).setUv(u0, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
-        buffer.addVertex(mat, half, -half, 0.0F).setUv(u0, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
+        buffer.vertex(mat, -half, -half, 0.0F).uv(u1, v1).color(tint).uv2(EMISSIVE_LIGHT).endVertex();
+        buffer.vertex(mat, -half, half, 0.0F).uv(u1, v0).color(tint).uv2(EMISSIVE_LIGHT).endVertex();
+        buffer.vertex(mat, half, half, 0.0F).uv(u0, v0).color(tint).uv2(EMISSIVE_LIGHT).endVertex();
+        buffer.vertex(mat, half, -half, 0.0F).uv(u0, v1).color(tint).uv2(EMISSIVE_LIGHT).endVertex();
     }
 }

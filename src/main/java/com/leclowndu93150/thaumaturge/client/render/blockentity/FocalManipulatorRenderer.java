@@ -156,22 +156,26 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     }
 
     private static void writeGlint(VertexConsumer buffer, Matrix4f matrix, float u0, float u1, int tint) {
-        buffer.addVertex(matrix, -GLINT_HALF, -GLINT_HALF, 0.0F)
-                .setUv(u0, StripUv.V1)
-                .setColor(tint)
-                .setLight(LightTexture.FULL_BRIGHT);
-        buffer.addVertex(matrix, GLINT_HALF, -GLINT_HALF, 0.0F)
-                .setUv(u1, StripUv.V1)
-                .setColor(tint)
-                .setLight(LightTexture.FULL_BRIGHT);
-        buffer.addVertex(matrix, GLINT_HALF, GLINT_HALF, 0.0F)
-                .setUv(u1, StripUv.V0)
-                .setColor(tint)
-                .setLight(LightTexture.FULL_BRIGHT);
-        buffer.addVertex(matrix, -GLINT_HALF, GLINT_HALF, 0.0F)
-                .setUv(u0, StripUv.V0)
-                .setColor(tint)
-                .setLight(LightTexture.FULL_BRIGHT);
+        buffer.vertex(matrix, -GLINT_HALF, -GLINT_HALF, 0.0F)
+                .uv(u0, StripUv.V1)
+                .color(tint)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .endVertex();
+        buffer.vertex(matrix, GLINT_HALF, -GLINT_HALF, 0.0F)
+                .uv(u1, StripUv.V1)
+                .color(tint)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .endVertex();
+        buffer.vertex(matrix, GLINT_HALF, GLINT_HALF, 0.0F)
+                .uv(u1, StripUv.V0)
+                .color(tint)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .endVertex();
+        buffer.vertex(matrix, -GLINT_HALF, GLINT_HALF, 0.0F)
+                .uv(u0, StripUv.V0)
+                .color(tint)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .endVertex();
     }
 
     private static void drawBeam(
@@ -210,10 +214,11 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     }
 
     private static void beamVertex(VertexConsumer buffer, Matrix4f matrix, float x, float y, float z, int color) {
-        buffer.addVertex(matrix, x, y, z)
-                .setUv(FLAT_UV, FLAT_UV)
-                .setColor(color)
-                .setLight(LightTexture.FULL_BRIGHT);
+        buffer.vertex(matrix, x, y, z)
+                .uv(FLAT_UV, FLAT_UV)
+                .color(color)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .endVertex();
     }
 
     @Override
