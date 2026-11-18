@@ -316,6 +316,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.triple_meat_treat", "Triple Meat Treat");
         add("attributes.thaumaturge.vis_discount", "Vis Discount");
         add("attribute.name.generic.jump_strength", "Jump Strength");
+        add("attribute.name.generic.max_absorption", "Max Absorption");
         add("subtitles.thaumaturge.jar", "Jar clinks");
         add("subtitles.thaumaturge.zap", "Magic crackles");
         add("subtitles.thaumaturge.creak", "Tube creaks");

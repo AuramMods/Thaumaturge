@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
@@ -29,6 +30,13 @@ public final class RunicShieldingEvents {
         Player entity = event.player;
         if (!entity.isSpectator()) {
             tickShield(entity);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            ShieldRescan.run(player, AttachmentData.get(player, TTAttachments.RUNIC_SHIELD));
         }
     }
 

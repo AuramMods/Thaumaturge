@@ -1,5 +1,6 @@
 package com.aurammods.thaumaturge.testing.runtime;
 
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +15,7 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
 import net.minecraftforge.common.crafting.conditions.*;
 import net.minecraftforge.eventbus.api.BusBuilder;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeDeferredRegistriesSetup;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -30,7 +32,13 @@ import org.junit.platform.reporting.legacy.xml.LegacyXmlReportGeneratingListener
 
 /** Runs the actual focused test classes after real ModLauncher/Forge transformations. */
 public final class ForgePortTestRunner {
+    private static final net.minecraftforge.eventbus.api.IEventBus MOD_BUS = BusBuilder.builder().build();
+
     private ForgePortTestRunner() {}
+
+    public static void postModEvent(Event event) {
+        MOD_BUS.post(event);
+    }
 
     public static void main(String[] args) throws Exception {
         Thread.currentThread().setContextClassLoader(ForgePortTestRunner.class.getClassLoader());
@@ -82,7 +90,7 @@ public final class ForgePortTestRunner {
 
     private static void registerForgeEntityPrerequisites() throws Exception {
         // Native entities require Forge fluid types and default living attributes.
-        var bus = BusBuilder.builder().build();
+        var bus = MOD_BUS;
         ForgeDeferredRegistriesSetup.setup(bus);
         var vanillaFluids = ForgeMod.class.getDeclaredField("VANILLA_FLUID_TYPES");
         vanillaFluids.setAccessible(true);
@@ -90,6 +98,7 @@ public final class ForgePortTestRunner {
         var forgeAttributes = ForgeMod.class.getDeclaredField("ATTRIBUTES");
         forgeAttributes.setAccessible(true);
         ((DeferredRegister<?>) forgeAttributes.get(null)).register(bus);
+        TTAttributes.register(bus);
 
         var created = new NewRegistryEvent();
         bus.post(created);

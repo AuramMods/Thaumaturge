@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.champion.trait;
 
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitModifiers;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ShieldChargeSound;
 import net.minecraft.util.Mth;
@@ -15,8 +16,8 @@ public final class WardedChampionTrait extends AbstractChampionTrait {
     @Override
     protected void championModifiers(LivingEntity mob, MobTraitModifiers modifiers) {
         double ward = ward(mob);
-        if (mob.getAttributeBaseValue(Attributes.MAX_ABSORPTION) < ward) {
-            modifiers.setBase(Attributes.MAX_ABSORPTION, ward);
+        if (mob.getAttributeBaseValue(TTAttributes.MAX_ABSORPTION.get()) < ward) {
+            modifiers.setBase(TTAttributes.MAX_ABSORPTION.get(), ward);
         }
     }
 

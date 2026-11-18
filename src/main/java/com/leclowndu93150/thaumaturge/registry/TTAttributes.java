@@ -38,6 +38,9 @@ public final class TTAttributes {
     public static final RegistryObject<Attribute> JUMP_STRENGTH = VANILLA_ATTRIBUTES.register(
             "generic.jump_strength",
             () -> new RangedAttribute("attribute.name.generic.jump_strength", 0.42F, 0.0, 32.0).setSyncable(true));
+    public static final RegistryObject<Attribute> MAX_ABSORPTION = VANILLA_ATTRIBUTES.register(
+            "generic.max_absorption",
+            () -> new RangedAttribute("attribute.name.generic.max_absorption", 0.0, 0.0, 2048.0).setSyncable(true));
 
     public static final RegistryObject<Attribute> VIS_DISCOUNT = ATTRIBUTES.register(
             "vis_discount",
@@ -97,6 +100,9 @@ public final class TTAttributes {
         event.add(EntityType.PLAYER, VIS_DISCOUNT.get());
         event.add(EntityType.PLAYER, JUMP_STRENGTH.get());
         for (EntityType<? extends LivingEntity> type : event.getTypes()) {
+            if (!event.has(type, MAX_ABSORPTION.get())) {
+                event.add(type, MAX_ABSORPTION.get());
+            }
             if (type != EntityType.PLAYER) {
                 if (!event.has(type, Attributes.ATTACK_DAMAGE)) {
                     event.add(type, Attributes.ATTACK_DAMAGE, DEFAULT_ATTACK_DAMAGE);

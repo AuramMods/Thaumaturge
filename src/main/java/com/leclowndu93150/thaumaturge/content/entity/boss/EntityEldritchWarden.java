@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
@@ -114,7 +115,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
     public static AttributeSupplier.Builder createAttributes() {
         return createBossAttributes()
                 .add(Attributes.MAX_HEALTH, HEALTH)
-                .add(Attributes.MAX_ABSORPTION, WardenShield.capacityFor(HEALTH))
+                .add(TTAttributes.MAX_ABSORPTION.get(), WardenShield.capacityFor(HEALTH))
                 .add(Attributes.MOVEMENT_SPEED, SPEED)
                 .add(Attributes.ATTACK_DAMAGE, STRIKE)
                 .add(Attributes.ARMOR, PLATING);

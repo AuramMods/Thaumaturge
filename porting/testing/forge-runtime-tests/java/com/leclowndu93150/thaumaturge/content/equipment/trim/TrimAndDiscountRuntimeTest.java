@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.equipment.trim;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
+import com.aurammods.thaumaturge.testing.runtime.ForgePortTestRunner;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
@@ -27,7 +28,6 @@ import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -65,11 +65,8 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.eventbus.api.BusBuilder;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -77,7 +74,6 @@ class TrimAndDiscountRuntimeTest {
     private static final ResourceLocation FIXTURE_ID = id("discount_helmet");
     private static final ResourceKey<TrimMaterial> MATERIAL = ResourceKey.create(Registries.TRIM_MATERIAL, id("thaumium"));
     private static final ResourceKey<TrimPattern> PATTERN = ResourceKey.create(Registries.TRIM_PATTERN, id("example"));
-    private static IEventBus modBus;
     private static Item helmet;
 
     private static ResourceLocation id(String path) {
@@ -85,20 +81,7 @@ class TrimAndDiscountRuntimeTest {
     }
 
     @BeforeAll
-    static void registerThroughNativeForge() throws Exception {
-        modBus = BusBuilder.builder().build();
-        TTAttributes.register(modBus);
-        var registry = (ForgeRegistry<?>) ForgeRegistries.ATTRIBUTES;
-        var ctor = RegisterEvent.class.getDeclaredConstructor(ResourceKey.class, ForgeRegistry.class, Registry.class);
-        ctor.setAccessible(true);
-        boolean locked = registry.isLocked();
-        registry.unfreeze();
-        try {
-            modBus.post(ctor.newInstance(ForgeRegistries.Keys.ATTRIBUTES, registry, BuiltInRegistries.ATTRIBUTE));
-        } finally {
-            if (locked) registry.freeze();
-        }
-
+    static void registerThroughNativeForge() {
         var items = (ForgeRegistry<?>) ForgeRegistries.ITEMS;
         var view = (MappedRegistry<?>) BuiltInRegistries.ITEM;
         items.unfreeze();
@@ -199,7 +182,7 @@ class TrimAndDiscountRuntimeTest {
         assertEquals(1.0, attribute.sanitizeValue(1.5));
 
         Map<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> builders = new LinkedHashMap<>();
-        modBus.post(new EntityAttributeModificationEvent(builders));
+        ForgePortTestRunner.postModEvent(new EntityAttributeModificationEvent(builders));
         var player = builders.get(EntityType.PLAYER).build();
         assertTrue(player.hasAttribute(attribute));
 
@@ -240,7 +223,7 @@ class TrimAndDiscountRuntimeTest {
 
         assertEquals(0.42F * ProbePlayer.BLOCK_JUMP_FACTOR, new ProbePlayer().jumpPower());
         Map<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> builders = new LinkedHashMap<>();
-        modBus.post(new EntityAttributeModificationEvent(builders));
+        ForgePortTestRunner.postModEvent(new EntityAttributeModificationEvent(builders));
         var merged = new AttributeSupplier.Builder(DefaultAttributes.getSupplier(EntityType.PLAYER));
         merged.combine(builders.get(EntityType.PLAYER));
 

@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.equipment.runic;
 
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 
 public final class ShieldRescan {
     private static final int NONE = 0;
@@ -28,7 +28,7 @@ public final class ShieldRescan {
     }
 
     private static void syncModifier(ServerPlayer player, int max) {
-        AttributeInstance attribute = player.getAttribute(Attributes.MAX_ABSORPTION);
+        AttributeInstance attribute = player.getAttribute(TTAttributes.MAX_ABSORPTION.get());
         if (attribute == null) {
             return;
         }

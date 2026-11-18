@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
@@ -70,7 +71,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob {
                 .add(Attributes.MOVEMENT_SPEED, 0.28)
                 .add(Attributes.ATTACK_DAMAGE, 7.0)
                 .add(Attributes.ARMOR, 4.0)
-                .add(Attributes.MAX_ABSORPTION, GuardianShield.capacityFor(MAX_HEALTH));
+                .add(TTAttributes.MAX_ABSORPTION.get(), GuardianShield.capacityFor(MAX_HEALTH));
     }
 
     public static boolean checkGuardianSpawnRules(
