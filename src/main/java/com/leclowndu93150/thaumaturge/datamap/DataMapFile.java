@@ -36,7 +36,9 @@ public record DataMapFile<R, T>(boolean replace, List<Addition<R, T>> values, Li
     public static <R, T> DataMapFile<R, T> read(DataMapType<R, T> type, DynamicOps<JsonElement> ops,
             JsonElement input, ICondition.IContext context) {
         if (ops.compressMaps()) throw new JsonParseException("Data maps do not support compressed maps");
-        JsonObject object = GsonHelper.convertToJsonObject(input, "data map");
+        var conditional = conditionalValue(input, context);
+        if (conditional.isEmpty()) return new DataMapFile<>(false, List.of(), List.of());
+        JsonObject object = GsonHelper.convertToJsonObject(conditional.get(), "data map");
         boolean replace = object.has("replace") && read(Codec.BOOL, ops, object.get("replace"));
         JsonObject values = GsonHelper.getAsJsonObject(object, "values");
         var codec = entryCodec(type.codec());

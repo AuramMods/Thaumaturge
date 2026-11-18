@@ -7,7 +7,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.EntityType;
-import net.neoforged.neoforge.common.data.DataMapProvider;
+import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
 
 public final class ChampionWhitelistProvider extends DataMapProvider {
     public ChampionWhitelistProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {

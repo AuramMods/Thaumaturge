@@ -15,7 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
-import net.neoforged.neoforge.common.data.DataMapProvider;
+import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
 
 public final class InfernalBonusProvider extends DataMapProvider {
     public InfernalBonusProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {

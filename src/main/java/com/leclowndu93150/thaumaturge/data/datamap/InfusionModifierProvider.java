@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.neoforged.neoforge.common.data.DataMapProvider;
+import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
 
 public final class InfusionModifierProvider extends DataMapProvider {
     private static final InfusionModifier ANCIENT_PILLARS = new InfusionModifier(-1, -0.1F, -0.1F);

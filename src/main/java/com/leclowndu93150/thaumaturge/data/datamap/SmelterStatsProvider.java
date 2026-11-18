@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.neoforged.neoforge.common.data.DataMapProvider;
+import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
 
 public final class SmelterStatsProvider extends DataMapProvider {
     private static final SmelterStats BASIC = SmelterStats.DEFAULT;

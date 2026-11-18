@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.common.data.DataMapProvider;
+import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
 import net.minecraftforge.registries.RegistryObject;
 
 public final class GolemAccessoryItemProvider extends DataMapProvider {

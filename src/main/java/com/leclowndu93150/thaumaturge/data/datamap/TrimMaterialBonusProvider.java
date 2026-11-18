@@ -7,7 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.armortrim.TrimMaterial;
-import net.neoforged.neoforge.common.data.DataMapProvider;
+import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
 
 public final class TrimMaterialBonusProvider extends DataMapProvider {
     private static final TrimMaterialBonus THAUMIUM = new TrimMaterialBonus(1, 0);

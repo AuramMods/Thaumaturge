@@ -11,7 +11,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.armortrim.TrimMaterial;
-import net.neoforged.neoforge.common.data.DataMapProvider;
+import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
 
 public final class CrystalTrimMaterialProvider extends DataMapProvider {
     public CrystalTrimMaterialProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
