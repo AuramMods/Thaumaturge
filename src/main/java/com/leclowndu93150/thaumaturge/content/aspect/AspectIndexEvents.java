@@ -15,7 +15,7 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
-import net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent;
+import com.leclowndu93150.thaumaturge.datamap.DataMapsUpdatedEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class AspectIndexEvents {

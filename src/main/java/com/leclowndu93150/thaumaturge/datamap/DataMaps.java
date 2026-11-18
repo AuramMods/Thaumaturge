@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.datamap;
 import java.util.Map;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -30,5 +31,10 @@ public final class DataMaps {
             }
         }
         ((RegistryDataMapAccess<R>) registry).thaumaturge$replaceDataMaps(values);
+    }
+
+    /** Release dynamic holder values retained by shared built-in registries when their world closes. */
+    public static void clear(RegistryAccess registries) {
+        registries.registries().forEach(entry -> replace(entry.value(), Map.of()));
     }
 }

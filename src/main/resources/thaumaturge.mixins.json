@@ -34,7 +34,8 @@
     "world.item.ItemStackDataPresenceMixin",
     "registry.MappedRegistryDataMapMixin",
     "registry.HolderReferenceDataMapMixin",
-    "registry.RegistryLookupDataMapMixin"
+    "registry.RegistryLookupDataMapMixin",
+    "server.ServerResourceDataMapsMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",

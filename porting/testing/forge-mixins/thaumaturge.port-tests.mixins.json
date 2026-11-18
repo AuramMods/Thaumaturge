@@ -18,7 +18,8 @@
     "world.item.ItemDataDefaultsMixin",
     "registry.MappedRegistryDataMapMixin",
     "registry.HolderReferenceDataMapMixin",
-    "registry.RegistryLookupDataMapMixin"
+    "registry.RegistryLookupDataMapMixin",
+    "server.ServerResourceDataMapsMixin"
   ],
   "client": [
     "client.multiplayer.ClientLevelEntityTickMixin",

@@ -167,6 +167,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/multiplayer/ClientPacketListenerEffectMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/crafting/RecipeManagerMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/server/ReloadableServerResourcesMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/server/ServerResourceDataMapsMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/network/PacketDecoderRegistryContextMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/resources/RegistryOpsAccessor.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/effect/MobEffectInstanceMixin.java'

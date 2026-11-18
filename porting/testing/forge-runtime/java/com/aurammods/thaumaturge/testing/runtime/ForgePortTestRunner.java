@@ -8,6 +8,7 @@ import net.minecraft.server.Bootstrap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
+import net.minecraftforge.common.crafting.conditions.*;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
@@ -24,12 +25,22 @@ public final class ForgePortTestRunner {
         Thread.currentThread().setContextClassLoader(ForgePortTestRunner.class.getClassLoader());
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
+        // Normal Forge loading starts the global game-event bus after mod construction.
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.start();
         // Forge's registry bake normally assigns block-state wire IDs and
         // initializes the native state caches before worlds/networking start.
         ((net.minecraftforge.registries.ForgeRegistry<?>) net.minecraftforge.registries.ForgeRegistries.BLOCKS).bake();
         // ForgeMod normally registers this during the recipe-serializer event.
         // This focused launch performs no mod construction or registry events.
         CraftingHelper.register(ResourceLocation.withDefaultNamespace("item"), VanillaIngredientSerializer.INSTANCE);
+        CraftingHelper.register(AndCondition.Serializer.INSTANCE);
+        CraftingHelper.register(FalseCondition.Serializer.INSTANCE);
+        CraftingHelper.register(ItemExistsCondition.Serializer.INSTANCE);
+        CraftingHelper.register(ModLoadedCondition.Serializer.INSTANCE);
+        CraftingHelper.register(NotCondition.Serializer.INSTANCE);
+        CraftingHelper.register(OrCondition.Serializer.INSTANCE);
+        CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
+        CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
         Path results = Path.of(System.getProperty("thaumaturge.portResults"));
         Files.createDirectories(results);
         var request = LauncherDiscoveryRequestBuilder.request();
