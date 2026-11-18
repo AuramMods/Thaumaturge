@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.registries.datamaps.DataMapType;
+import com.leclowndu93150.thaumaturge.datamap.DataMapType;
 
 /**
  * The limits a focus item puts on the spell inscribed into it. Attached to focus items through the

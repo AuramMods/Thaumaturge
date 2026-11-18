@@ -79,6 +79,7 @@ public final class Thaumaturge {
         modBus.addListener(com.leclowndu93150.thaumaturge.content.research.scan.ScanBootstrap::onCommonSetup);
         MinecraftForge.EVENT_BUS.addListener(BathSaltsEvents::onItemExpire);
         MinecraftForge.EVENT_BUS.addListener(BathSaltsEvents::onEntityTick);
+        modBus.addListener(com.leclowndu93150.thaumaturge.datamap.DataMaps::onCommonSetup);
         TTFluidTypes.register(modBus);
         TTFluids.register(modBus);
         TTBlocks.register(modBus);

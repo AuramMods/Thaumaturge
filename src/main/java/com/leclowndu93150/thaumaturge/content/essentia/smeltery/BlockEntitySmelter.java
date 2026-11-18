@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -428,7 +430,7 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
     }
 
     private SmelterStats stats() {
-        SmelterStats stats = getBlockState().getBlockHolder().getData(SmelterDataMaps.SMELTER_STATS);
+        SmelterStats stats = DataMaps.get(getBlockState().getBlock().builtInRegistryHolder(), SmelterDataMaps.SMELTER_STATS);
         return stats == null ? SmelterStats.DEFAULT : stats;
     }
 

@@ -1,12 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.registries.datamaps.DataMapType;
+import com.leclowndu93150.thaumaturge.datamap.DataMapType;
 import org.jspecify.annotations.Nullable;
 
 public record MatrixEnvironment(
@@ -66,7 +68,7 @@ public record MatrixEnvironment(
     }
 
     private static @Nullable InfusionModifier modifier(BlockState state, DataMapType<Block, InfusionModifier> map) {
-        return state.getBlockHolder().getData(map);
+        return DataMaps.get(state.getBlock().builtInRegistryHolder(), map);
     }
 
     private static @Nullable Block matchingPillars(Level level, BlockPos matrixPos) {

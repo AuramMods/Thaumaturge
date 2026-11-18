@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.golems.accessory;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -56,7 +58,7 @@ public final class GolemAccessories {
      *         that is not registered
      */
     public static Optional<GolemAccessory> forItem(ItemStack stack) {
-        GolemAccessoryItem entry = stack.getItemHolder().getData(GolemAccessoryItem.DATA_MAP);
+        GolemAccessoryItem entry = DataMaps.get(stack.getItemHolder(), GolemAccessoryItem.DATA_MAP);
         return entry == null ? Optional.empty() : Optional.ofNullable(REGISTRY.get(entry.accessory()));
     }
 

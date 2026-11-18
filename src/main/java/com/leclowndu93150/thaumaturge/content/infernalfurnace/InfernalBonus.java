@@ -23,9 +23,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.registries.datamaps.AdvancedDataMapType;
-import net.neoforged.neoforge.registries.datamaps.DataMapValueRemover;
-import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
+import com.leclowndu93150.thaumaturge.datamap.DataMapType;
+import com.leclowndu93150.thaumaturge.datamap.DataMapValueRemover;
+import com.leclowndu93150.thaumaturge.datamap.RegisterDataMapTypesEvent;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID)
 public record InfernalBonus(HolderSet<Item> items, IntProvider count, float chance) {
@@ -53,7 +53,7 @@ public record InfernalBonus(HolderSet<Item> items, IntProvider count, float chan
                     Codecs.optionalFieldOf(Codec.floatRange(0, 1), "chance", 1.0f).forGetter(InfernalBonus::chance))
             .apply(instance, InfernalBonus::new));
 
-    public static final AdvancedDataMapType<Item, List<InfernalBonus>, Remover> DATA_MAP = AdvancedDataMapType.builder(
+    public static final DataMapType<Item, List<InfernalBonus>> DATA_MAP = DataMapType.builder(
                     ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "infernal_bonus"),
                     Registries.ITEM,
                     Codecs.list(CODEC, 1, 64))

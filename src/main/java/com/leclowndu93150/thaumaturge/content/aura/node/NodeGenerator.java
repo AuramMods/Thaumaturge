@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -162,7 +164,7 @@ public final class NodeGenerator {
             int specialRarity,
             int baseAura) {
         Holder<Biome> biome = level.getBiome(pos);
-        BiomeAuraModifier auraModifier = biome.getData(TTDataMaps.BIOME_AURA_MODIFIER);
+        BiomeAuraModifier auraModifier = DataMaps.get(biome, TTDataMaps.BIOME_AURA_MODIFIER);
         float biomeStrength = scaleBiomeStrength(baseAura, auraModifier == null ? 1.0F : auraModifier.value());
         HolderLookup.RegistryLookup<IAspect> aspectRegistry = aspectRegistry(level);
         Map<Boolean, List<Holder<IAspect>>> split = aspectRegistry
@@ -278,7 +280,7 @@ public final class NodeGenerator {
 
     private static List<Holder<IAspect>> biomeAspectHolders(
             HolderLookup.RegistryLookup<IAspect> registry, Holder<Biome> biome) {
-        BiomeAspects aspects = biome.getData(TTDataMaps.BIOME_ASPECTS);
+        BiomeAspects aspects = DataMaps.get(biome, TTDataMaps.BIOME_ASPECTS);
         if (aspects == null) {
             return List.of();
         }

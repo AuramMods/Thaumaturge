@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectDataMaps;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -57,7 +59,7 @@ public final class AspectIndexBuilder {
     private static Map<Item, AspectList> collectBase(HolderLookup.Provider registries) {
         Map<Item, AspectList> map = new HashMap<>();
         for (Item item : BuiltInRegistries.ITEM) {
-            AspectList declared = BuiltInRegistries.ITEM.wrapAsHolder(item).getData(AspectDataMaps.BASE_ASPECTS);
+            AspectList declared = DataMaps.get(BuiltInRegistries.ITEM.wrapAsHolder(item), AspectDataMaps.BASE_ASPECTS);
             if (declared != null && !declared.isEmpty()) {
                 AspectList capped = cap(declared.merge(EquipmentAspects.bonusFor(item, registries)), registries);
                 if (!capped.isEmpty()) {

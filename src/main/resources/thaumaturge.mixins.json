@@ -31,7 +31,10 @@
     "resources.RegistryOpsAccessor",
     "world.effect.MobEffectInstanceMixin",
     "forge.TierSortingRegistryMixin",
-    "world.item.ItemStackDataPresenceMixin"
+    "world.item.ItemStackDataPresenceMixin",
+    "registry.MappedRegistryDataMapMixin",
+    "registry.HolderReferenceDataMapMixin",
+    "registry.RegistryLookupDataMapMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",

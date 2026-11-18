@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -41,7 +43,7 @@ public record AspectIndexFingerprint(String digest, Map<String, String> sections
         }
         List<String> base = lines.computeIfAbsent(BASE_ASPECTS, key -> new ArrayList<>());
         for (Item item : BuiltInRegistries.ITEM) {
-            AspectList declared = BuiltInRegistries.ITEM.wrapAsHolder(item).getData(AspectDataMaps.BASE_ASPECTS);
+            AspectList declared = DataMaps.get(BuiltInRegistries.ITEM.wrapAsHolder(item), AspectDataMaps.BASE_ASPECTS);
             if (declared == null || declared.isEmpty()) {
                 continue;
             }

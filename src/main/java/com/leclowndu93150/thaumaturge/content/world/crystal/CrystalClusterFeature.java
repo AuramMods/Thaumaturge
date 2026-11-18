@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.crystal;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.BiomeAspects;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
@@ -100,7 +102,7 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
         if (biome.is(TTBiomes.TAINTED_LANDS) && random.nextBoolean()) {
             return null;
         }
-        BiomeAspects aspects = biome.getData(TTDataMaps.BIOME_ASPECTS);
+        BiomeAspects aspects = DataMaps.get(biome, TTDataMaps.BIOME_ASPECTS);
         if (aspects == null || aspects.aspects().isEmpty()) {
             return null;
         }

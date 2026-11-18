@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment.trim;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.items.trim.TTTrimMaterials;
 import com.leclowndu93150.thaumaturge.content.taint.item.ItemEssentiaCrystal;
@@ -20,7 +22,7 @@ public final class CrystalTrimMaterials {
 
     public static Optional<Holder.Reference<TrimMaterial>> find(HolderLookup.Provider registries, ItemStack stack) {
         Holder<IAspect> aspect = ItemEssentiaCrystal.aspectOf(stack);
-        Holder<TrimMaterial> material = aspect == null ? null : aspect.getData(TTTrimMaterials.CRYSTAL_MATERIAL);
+        Holder<TrimMaterial> material = aspect == null ? null : DataMaps.get(aspect, TTTrimMaterials.CRYSTAL_MATERIAL);
         if (material == null) {
             return Optional.empty();
         }

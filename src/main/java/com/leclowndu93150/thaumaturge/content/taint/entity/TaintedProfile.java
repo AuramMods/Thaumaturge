@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
@@ -39,6 +41,6 @@ public record TaintedProfile(
             .apply(instance, TaintedProfile::new));
 
     public static @Nullable TaintedProfile of(EntityType<?> type) {
-        return BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type).getData(TTDataMaps.TAINTED_PROFILE);
+        return DataMaps.get(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type), TTDataMaps.TAINTED_PROFILE);
     }
 }

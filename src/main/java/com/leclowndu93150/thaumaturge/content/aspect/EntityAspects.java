@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectDataMaps;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IEntityAspectSource;
@@ -26,7 +28,7 @@ public final class EntityAspects {
     }
 
     public static AspectList of(EntityType<?> type) {
-        AspectList aspects = BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type).getData(AspectDataMaps.ENTITY_ASPECTS);
+        AspectList aspects = DataMaps.get(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type), AspectDataMaps.ENTITY_ASPECTS);
         return aspects == null ? AspectList.EMPTY : aspects;
     }
 }

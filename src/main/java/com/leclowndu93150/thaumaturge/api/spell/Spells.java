@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.spell;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.AspectAffinity;
@@ -69,7 +71,7 @@ public final class Spells {
      * @return the tier, empty when the item is not a focus
      */
     public static Optional<FocusTier> tierOf(ItemStack focus) {
-        return Optional.ofNullable(focus.getItemHolder().getData(FocusTier.DATA_MAP));
+        return Optional.ofNullable(DataMaps.get(focus.getItemHolder(), FocusTier.DATA_MAP));
     }
 
     /**

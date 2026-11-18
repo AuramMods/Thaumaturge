@@ -15,7 +15,10 @@
     "world.item.alchemy.PotionBrewingMixAccessor",
     "forge.TierSortingRegistryMixin",
     "world.item.ItemStackDataPresenceMixin",
-    "world.item.ItemDataDefaultsMixin"
+    "world.item.ItemDataDefaultsMixin",
+    "registry.MappedRegistryDataMapMixin",
+    "registry.HolderReferenceDataMapMixin",
+    "registry.RegistryLookupDataMapMixin"
   ],
   "client": [
     "client.multiplayer.ClientLevelEntityTickMixin",

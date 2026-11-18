@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
@@ -329,7 +331,7 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
 
     private ItemStack[] getSmeltingBonus(ItemStack in) {
         if (level == null) return new ItemStack[0];
-        List<InfernalBonus> bonuses = in.getItemHolder().getData(InfernalBonus.DATA_MAP);
+        List<InfernalBonus> bonuses = DataMaps.get(in.getItemHolder(), InfernalBonus.DATA_MAP);
         if (bonuses == null || bonuses.isEmpty()) return new ItemStack[0];
         ArrayList<ItemStack> out = new ArrayList<>();
         for (InfernalBonus bonus : bonuses) {

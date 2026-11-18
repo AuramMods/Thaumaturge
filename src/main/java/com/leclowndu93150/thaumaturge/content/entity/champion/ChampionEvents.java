@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.champion;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
@@ -61,7 +63,7 @@ public final class ChampionEvents {
 
     private static boolean winsRoll(Level level, Monster mob) {
         Integer weight =
-                BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(mob.getType()).getData(ChampionDataMaps.CHAMPION_WHITELIST);
+                DataMaps.get(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(mob.getType()), ChampionDataMaps.CHAMPION_WHITELIST);
         if (weight == null || mob.getAttributeBaseValue(Attributes.MAX_HEALTH) < MIN_CHAMPION_HEALTH) {
             return false;
         }

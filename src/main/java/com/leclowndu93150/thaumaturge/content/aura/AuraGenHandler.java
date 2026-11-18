@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.BiomeAuraModifier;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
@@ -91,7 +93,7 @@ public final class AuraGenHandler {
     }
 
     private static float modifier(Holder<Biome> biome) {
-        BiomeAuraModifier modifier = biome.getData(TTDataMaps.BIOME_AURA_MODIFIER);
+        BiomeAuraModifier modifier = DataMaps.get(biome, TTDataMaps.BIOME_AURA_MODIFIER);
         return modifier == null ? DEFAULT_MODIFIER : modifier.value();
     }
 }

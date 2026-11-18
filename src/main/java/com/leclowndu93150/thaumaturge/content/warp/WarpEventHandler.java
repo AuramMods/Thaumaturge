@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -77,7 +79,7 @@ public final class WarpEventHandler {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get() || !(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        ItemWarp warp = event.getCrafting().getItemHolder().getData(TTDataMaps.ITEM_WARP);
+        ItemWarp warp = DataMaps.get(event.getCrafting().getItemHolder(), TTDataMaps.ITEM_WARP);
         if (warp != null) {
             WarpManager.addWarp(player, warp.amount(), WarpType.NORMAL);
         }

@@ -16,8 +16,8 @@ import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.registries.datamaps.DataMapType;
-import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
+import com.leclowndu93150.thaumaturge.datamap.DataMapType;
+import com.leclowndu93150.thaumaturge.datamap.RegisterDataMapTypesEvent;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID)
 public final class TTDataMaps {

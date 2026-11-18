@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.compat.jei;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
@@ -590,7 +592,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     @Nullable
     private static InfernalBonusWrapper infernalFurnaceBonus(
             ClientLevel level, List<RecipeHolder<SmeltingRecipe>> smeltingRecipes, ItemStack stack) {
-        List<InfernalBonus> bonuses = stack.getItemHolder().getData(InfernalBonus.DATA_MAP);
+        List<InfernalBonus> bonuses = DataMaps.get(stack.getItemHolder(), InfernalBonus.DATA_MAP);
         if (bonuses == null || bonuses.isEmpty()) {
             return null;
         }

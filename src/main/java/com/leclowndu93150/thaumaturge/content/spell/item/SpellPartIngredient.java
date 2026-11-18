@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.item;
 
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.FocusTier;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
@@ -64,7 +66,7 @@ public final class SpellPartIngredient extends AbstractIngredient {
     public ItemStack[] getItems() {
         return BuiltInRegistries.ITEM
                 .holders()
-                .filter(holder -> holder.getData(FocusTier.DATA_MAP) != null)
+                .filter(holder -> DataMaps.get(holder, FocusTier.DATA_MAP) != null)
                 .map(holder -> new ItemStack(holder.value()))
                 .toArray(ItemStack[]::new);
     }

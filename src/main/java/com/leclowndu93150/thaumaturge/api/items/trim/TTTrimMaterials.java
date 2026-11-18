@@ -6,7 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.armortrim.TrimMaterial;
-import net.neoforged.neoforge.registries.datamaps.DataMapType;
+import com.leclowndu93150.thaumaturge.datamap.DataMapType;
 
 /**
  * Public addon API for the armor trim materials Thaumaturge registers.
