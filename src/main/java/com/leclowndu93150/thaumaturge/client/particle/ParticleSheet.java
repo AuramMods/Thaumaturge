@@ -1,10 +1,14 @@
 package com.leclowndu93150.thaumaturge.client.particle;
 
-import com.leclowndu93150.thaumaturge.Thaumaturge;
+import com.leclowndu93150.thaumaturge.mixin.client.renderer.RenderStateShardAccessor;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.logging.LogUtils;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,9 +17,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
+import org.slf4j.Logger;
 
 public final class ParticleSheet {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final int PNG_DIMENSION_OFFSET = 16;
 
     public enum Mode {
@@ -72,22 +79,51 @@ public final class ParticleSheet {
     }
 
     private ParticleRenderType build(Mode mode) {
-        return (tesselator, textureManager) -> {
-            RenderSystem.setShader(GameRenderer::getParticleShader);
-            RenderSystem.setShaderTexture(0, texture);
-            RenderSystem.enableBlend();
-            if (mode.additive) {
-                RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-            } else {
-                RenderSystem.defaultBlendFunc();
+        return new ParticleRenderType() {
+            @Override
+            public void begin(BufferBuilder buffer, TextureManager textures) {
+                RenderSystem.setShader(GameRenderer::getParticleShader);
+                RenderSystem.setShaderTexture(0, texture);
+                RenderSystem.enableBlend();
+                if (mode.additive) {
+                    RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+                } else {
+                    RenderSystem.defaultBlendFunc();
+                }
+                if (mode.depthTest) {
+                    RenderSystem.enableDepthTest();
+                } else {
+                    RenderSystem.disableDepthTest();
+                }
+                RenderSystem.depthMask(mode.depthMask);
+                buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
             }
-            if (mode.depthTest) {
-                RenderSystem.enableDepthTest();
-            } else {
-                RenderSystem.disableDepthTest();
+
+            @Override
+            public void end(Tesselator tesselator) {
+                var rendered = tesselator.getBuilder().endOrDiscardIfEmpty();
+                if (rendered == null) {
+                    return;
+                }
+                if (!Minecraft.useShaderTransparency() || !TTParticleLayers.usesNitorAdditiveBlend(this)) {
+                    BufferUploader.drawWithShader(rendered);
+                    return;
+                }
+
+                // Fabulous composites its particle target with alpha, which dims the world behind Nitor.
+                var target = RenderStateShardAccessor.thaumaturge$particlesTarget();
+                target.clearRenderState();
+                try {
+                    BufferUploader.drawWithShader(rendered);
+                } finally {
+                    target.setupRenderState();
+                }
             }
-            RenderSystem.depthMask(mode.depthMask);
-            return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+
+            @Override
+            public String toString() {
+                return name + "[" + mode + "]";
+            }
         };
     }
 
@@ -107,7 +143,7 @@ public final class ParticleSheet {
             int height = data.readInt();
             return Math.max(1, width / Math.max(1, height));
         } catch (IOException e) {
-            Thaumaturge.LOGGER.error("Cannot read particle sheet {}", texture, e);
+            LOGGER.error("Cannot read particle sheet {}", texture, e);
             return 1;
         }
     }

@@ -41,7 +41,10 @@
   ],
   "client": [
     "client.multiplayer.ClientLevelEntityTickMixin",
-    "client.multiplayer.ClientPacketListenerEffectMixin"
+    "client.multiplayer.ClientPacketListenerEffectMixin",
+    "client.particle.ItemPickupParticleMixin",
+    "client.particle.ParticleEngineMixin",
+    "client.renderer.RenderStateShardAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

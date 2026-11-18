@@ -25,7 +25,7 @@ public final class TTParticleLayers {
         }
 
         // Draw the core first so its visible texels occlude flames behind it.
-        Set<ParticleRenderType> ordered = LinkedHashSet.newLinkedHashSet(layers.size());
+        Set<ParticleRenderType> ordered = new LinkedHashSet<>(layers.size());
         for (ParticleRenderType layer : layers) {
             if (layer == flame) ordered.add(core);
             ordered.add(layer);
