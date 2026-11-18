@@ -47,13 +47,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.minecraft.world.item.armortrim.TrimPattern;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
@@ -74,11 +72,6 @@ class TrimAndDiscountRuntimeTest {
     @BeforeAll
     static void registerThroughNativeForge() throws Exception {
         modBus = BusBuilder.builder().build();
-        // The focused launcher skips mod construction. Bind Forge's own attributes before
-        // EntityAttributeModificationEvent initializes the native DefaultAttributes table.
-        var forgeAttributes = ForgeMod.class.getDeclaredField("ATTRIBUTES");
-        forgeAttributes.setAccessible(true);
-        ((DeferredRegister<?>) forgeAttributes.get(null)).register(modBus);
         TTAttributes.register(modBus);
         var registry = (ForgeRegistry<?>) ForgeRegistries.ATTRIBUTES;
         var ctor = RegisterEvent.class.getDeclaredConstructor(ResourceKey.class, ForgeRegistry.class, Registry.class);

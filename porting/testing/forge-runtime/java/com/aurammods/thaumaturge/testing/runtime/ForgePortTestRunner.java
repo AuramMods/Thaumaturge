@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.resources.ResourceLocation;
@@ -37,12 +38,12 @@ public final class ForgePortTestRunner {
         Bootstrap.bootStrap();
         // Normal Forge loading starts the global game-event bus after mod construction.
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.start();
-        registerForgeFluidTypes();
+        registerForgeEntityPrerequisites();
         // Forge's registry bake normally assigns block-state wire IDs and
         // initializes the native state caches before worlds/networking start.
         ((net.minecraftforge.registries.ForgeRegistry<?>) net.minecraftforge.registries.ForgeRegistries.BLOCKS).bake();
         // ForgeMod normally registers this during the recipe-serializer event.
-        // This focused launch performs no mod construction or registry events.
+        // This focused launch skips mod construction and the recipe registration event.
         CraftingHelper.register(ResourceLocation.withDefaultNamespace("item"), VanillaIngredientSerializer.INSTANCE);
         CraftingHelper.register(AndCondition.Serializer.INSTANCE);
         CraftingHelper.register(FalseCondition.Serializer.INSTANCE);
@@ -79,13 +80,16 @@ public final class ForgePortTestRunner {
         }
     }
 
-    private static void registerForgeFluidTypes() throws Exception {
-        // Native Entity constructors size their fluid caches from Forge's registry.
+    private static void registerForgeEntityPrerequisites() throws Exception {
+        // Native entities require Forge fluid types and default living attributes.
         var bus = BusBuilder.builder().build();
         ForgeDeferredRegistriesSetup.setup(bus);
         var vanillaFluids = ForgeMod.class.getDeclaredField("VANILLA_FLUID_TYPES");
         vanillaFluids.setAccessible(true);
         ((DeferredRegister<?>) vanillaFluids.get(null)).register(bus);
+        var forgeAttributes = ForgeMod.class.getDeclaredField("ATTRIBUTES");
+        forgeAttributes.setAccessible(true);
+        ((DeferredRegister<?>) forgeAttributes.get(null)).register(bus);
 
         var created = new NewRegistryEvent();
         bus.post(created);
@@ -98,5 +102,13 @@ public final class ForgePortTestRunner {
         ctor.setAccessible(true);
         bus.post(ctor.newInstance(ForgeRegistries.Keys.FLUID_TYPES, registry, null));
         registry.freeze();
+        var attributes = (ForgeRegistry<?>) ForgeRegistries.ATTRIBUTES;
+        boolean locked = attributes.isLocked();
+        attributes.unfreeze();
+        try {
+            bus.post(ctor.newInstance(ForgeRegistries.Keys.ATTRIBUTES, attributes, BuiltInRegistries.ATTRIBUTE));
+        } finally {
+            if (locked) attributes.freeze();
+        }
     }
 }

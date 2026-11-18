@@ -51,43 +51,38 @@ public final class TTEntities {
             DeferredRegister.create(Registries.ENTITY_TYPE, TTIds.MODID);
 
     public static final RegistryObject<EntityType<EntityBrainyZombie>> BRAINY_ZOMBIE = register(
-            "brainy_zombie",
+            "brainy_zombie", 1.74F,
             () -> EntityType.Builder.of(EntityBrainyZombie::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
-                    .eyeHeight(1.74F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityBrainyDrowned>> BRAINY_DROWNED = register(
-            "brainy_drowned",
+            "brainy_drowned", 1.74F,
             () -> EntityType.Builder.of(EntityBrainyDrowned::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
-                    .eyeHeight(1.74F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityBrainyHusk>> BRAINY_HUSK = register(
-            "brainy_husk",
+            "brainy_husk", 1.74F,
             () -> EntityType.Builder.of(EntityBrainyHusk::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
-                    .eyeHeight(1.74F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityGiantBrainyZombie>> GIANT_BRAINY_ZOMBIE =
             register(
-                    "giant_brainy_zombie",
+                    "giant_brainy_zombie", 1.74F,
                     () -> EntityType.Builder.of(EntityGiantBrainyZombie::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.95F)
-                            .eyeHeight(1.74F)
                             .clientTrackingRange(8)
                             .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityMindSpider>> MIND_SPIDER = register(
-            "mind_spider",
+            "mind_spider", 0.45F,
             () -> EntityType.Builder.of(EntityMindSpider::new, MobCategory.MONSTER)
                     .sized(0.7F, 0.5F)
-                    .eyeHeight(0.45F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
@@ -107,19 +102,16 @@ public final class TTEntities {
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<ThaumicSlime>> THAUMIC_SLIME = register(
-            "thaumic_slime",
+            "thaumic_slime", 0.325F, 4.0F,
             () -> EntityType.Builder.of(ThaumicSlime::new, MobCategory.MONSTER)
                     .sized(0.52F, 0.52F)
-                    .eyeHeight(0.325F)
-                    .spawnDimensionsScale(4.0F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityTaintCrawler>> TAINT_CRAWLER = register(
-            "taint_crawler",
+            "taint_crawler", 0.1F,
             () -> EntityType.Builder.of(EntityTaintCrawler::new, MobCategory.MONSTER)
                     .sized(0.5F, 0.4F)
-                    .eyeHeight(0.1F)
                     .clientTrackingRange(8));
 
     public static final RegistryObject<EntityType<EntityTaintSeed>> TAINT_SEED = register(
@@ -233,11 +225,10 @@ public final class TTEntities {
                             .updateInterval(3));
 
     public static final RegistryObject<EntityType<Spider>> LEGACY_TAINT_SPIDER = register(
-            "taint_spider",
+            "taint_spider", 0.65F,
             () -> EntityType.Builder.of(Spider::new, MobCategory.MONSTER)
                     .sized(1.4F, 0.9F)
                     .noSummon()
-                    .eyeHeight(0.65F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
     public static final RegistryObject<EntityType<Creeper>> LEGACY_TAINT_CREEPER = register(
@@ -276,10 +267,9 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(3));
     public static final RegistryObject<EntityType<Villager>> LEGACY_TAINT_VILLAGER = register(
-            "taint_villager",
+            "taint_villager", 1.62F,
             () -> EntityType.Builder.<Villager>of((type, level) -> new Villager(type, level), MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
-                    .eyeHeight(1.62F)
                     .noSummon()
                     .clientTrackingRange(8)
                     .updateInterval(3));
@@ -301,18 +291,16 @@ public final class TTEntities {
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntitySpecialItem>> SPECIAL_ITEM = register(
-            "special_item",
+            "special_item", 0.2125F,
             () -> EntityType.Builder.<EntitySpecialItem>of(EntitySpecialItem::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
-                    .eyeHeight(0.2125F)
                     .clientTrackingRange(8)
                     .updateInterval(20));
 
     public static final RegistryObject<EntityType<EntityFollowingItem>> FOLLOWING_ITEM = register(
-            "following_item",
+            "following_item", 0.2125F,
             () -> EntityType.Builder.<EntityFollowingItem>of(EntityFollowingItem::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
-                    .eyeHeight(0.2125F)
                     .clientTrackingRange(8)
                     .updateInterval(20));
 
@@ -331,10 +319,9 @@ public final class TTEntities {
                     .updateInterval(20));
 
     public static final RegistryObject<EntityType<EntityPech>> PECH = register(
-            "pech",
+            "pech", 1.188F,
             () -> EntityType.Builder.of(EntityPech::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.8F)
-                    .eyeHeight(1.188F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
@@ -346,51 +333,45 @@ public final class TTEntities {
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityInhabitedZombie>> INHABITED_ZOMBIE = register(
-            "inhabited_zombie",
+            "inhabited_zombie", 1.74F,
             () -> EntityType.Builder.of(EntityInhabitedZombie::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
-                    .eyeHeight(1.74F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityEldritchGuardian>> ELDRITCH_GUARDIAN = register(
-            "eldritch_guardian",
+            "eldritch_guardian", 2.1F,
             () -> EntityType.Builder.of(EntityEldritchGuardian::new, MobCategory.MONSTER)
                     .sized(0.8F, 2.25F)
-                    .eyeHeight(2.1F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityCultistKnight>> CULTIST_KNIGHT = register(
-            "cultist_knight",
+            "cultist_knight", 1.62F,
             () -> EntityType.Builder.of(EntityCultistKnight::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.8F)
-                    .eyeHeight(1.62F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityCultistCleric>> CULTIST_CLERIC = register(
-            "cultist_cleric",
+            "cultist_cleric", 1.62F,
             () -> EntityType.Builder.of(EntityCultistCleric::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.8F)
-                    .eyeHeight(1.62F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityCultistRanger>> CULTIST_RANGER = register(
-            "cultist_ranger",
+            "cultist_ranger", 1.62F,
             () -> EntityType.Builder.of(EntityCultistRanger::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.8F)
-                    .eyeHeight(1.62F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityCultistRangerCaptain>> CULTIST_RANGER_CAPTAIN =
             register(
-                    "cultist_ranger_captain",
+                    "cultist_ranger_captain", 1.62F,
                     () -> EntityType.Builder.of(EntityCultistRangerCaptain::new, MobCategory.MONSTER)
                             .sized(0.6F, 1.8F)
-                            .eyeHeight(1.62F)
                             .clientTrackingRange(8)
                             .updateInterval(3));
 
@@ -411,19 +392,17 @@ public final class TTEntities {
                             .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityEldritchGolem>> ELDRITCH_GOLEM = register(
-            "eldritch_golem",
+            "eldritch_golem", 3.0F,
             () -> EntityType.Builder.of(EntityEldritchGolem::new, MobCategory.MONSTER)
                     .sized(1.75F, 3.5F)
-                    .eyeHeight(3.0F)
                     .fireImmune()
                     .clientTrackingRange(10)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityEldritchWarden>> ELDRITCH_WARDEN = register(
-            "eldritch_warden",
+            "eldritch_warden", 3.1F,
             () -> EntityType.Builder.of(EntityEldritchWarden::new, MobCategory.MONSTER)
                     .sized(1.5F, 3.5F)
-                    .eyeHeight(3.1F)
                     .clientTrackingRange(10)
                     .updateInterval(3));
 
@@ -465,36 +444,32 @@ public final class TTEntities {
                     .updateInterval(20));
 
     public static final RegistryObject<EntityType<EntityThaumaturgeGolem>> THAUMATURGE_GOLEM = register(
-            "golem",
+            "golem", 0.7F,
             () -> EntityType.Builder.<EntityThaumaturgeGolem>of(EntityThaumaturgeGolem::new, MobCategory.MISC)
                     .sized(0.4F, 0.9F)
-                    .eyeHeight(0.7F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityTurretCrossbow>> TURRET_CROSSBOW = register(
-            "turret_crossbow",
+            "turret_crossbow", 0.825F,
             () -> EntityType.Builder.<EntityTurretCrossbow>of(EntityTurretCrossbow::new, MobCategory.MISC)
                     .sized(0.95F, 1.25F)
-                    .eyeHeight(0.825F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityTurretCrossbowAdvanced>>
             TURRET_CROSSBOW_ADVANCED = register(
-                    "turret_crossbow_advanced",
+                    "turret_crossbow_advanced", 1.0F,
                     () -> EntityType.Builder.<EntityTurretCrossbowAdvanced>of(
                                     EntityTurretCrossbowAdvanced::new, MobCategory.MISC)
                             .sized(0.95F, 1.5F)
-                            .eyeHeight(1.0F)
                             .clientTrackingRange(8)
                             .updateInterval(3));
 
     public static final RegistryObject<EntityType<EntityArcaneBore>> ARCANE_BORE = register(
-            "arcane_bore",
+            "arcane_bore", 0.8125F,
             () -> EntityType.Builder.<EntityArcaneBore>of(EntityArcaneBore::new, MobCategory.MISC)
                     .sized(0.9F, 0.9F)
-                    .eyeHeight(0.8125F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 
@@ -507,10 +482,9 @@ public final class TTEntities {
 
     public static final RegistryObject<EntityType<EntityEldritchHierophant>> ELDRITCH_HIEROPHANT =
             register(
-                    "eldritch_hierophant",
+                    "eldritch_hierophant", 3.55F,
                     () -> EntityType.Builder.of(EntityEldritchHierophant::new, MobCategory.MONSTER)
                             .sized(1.9F, 4.2F)
-                            .eyeHeight(3.55F)
                             .clientTrackingRange(12)
                             .updateInterval(2));
 
@@ -553,6 +527,17 @@ public final class TTEntities {
     private static <T extends Entity> RegistryObject<EntityType<T>> register(
             String name, Supplier<EntityType.Builder<T>> builderSupplier) {
         return ENTITIES.register(name, () -> builderSupplier.get().build(TTIds.MODID + ":" + name));
+    }
+
+    private static <T extends Entity> RegistryObject<EntityType<T>> register(
+            String name, float eyeHeight, Supplier<EntityType.Builder<T>> builderSupplier) {
+        return register(name, eyeHeight, 1.0F, builderSupplier);
+    }
+
+    private static <T extends Entity> RegistryObject<EntityType<T>> register(
+            String name, float eyeHeight, float spawnScale, Supplier<EntityType.Builder<T>> builderSupplier) {
+        return ENTITIES.register(name, () -> EntityGeometry.attach(
+                builderSupplier.get().build(TTIds.MODID + ":" + name), eyeHeight, spawnScale));
     }
 
     public static void register(IEventBus modBus) {
