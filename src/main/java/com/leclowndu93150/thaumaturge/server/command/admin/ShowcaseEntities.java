@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityHiero
 import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityHierophantSigil;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellCloud;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellProjectile;
+import com.leclowndu93150.thaumaturge.event.combat.IncomingDamageEvent;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -25,7 +26,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobDespawnEvent;
 import com.leclowndu93150.thaumaturge.event.tick.EntityTickEvent;
 
@@ -153,7 +153,7 @@ public final class ShowcaseEntities {
     }
 
     @SubscribeEvent
-    public static void onDamage(LivingIncomingDamageEvent event) {
+    public static void onDamage(IncomingDamageEvent event) {
         if (isDisplay(event.getEntity())) {
             event.setCanceled(true);
         }

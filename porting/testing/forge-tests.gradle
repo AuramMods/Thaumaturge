@@ -82,7 +82,10 @@ def runtimeJar = tasks.register('portTestRuntimeJar', Zip) {
             config.properties.each { key, value ->
                 if (key != 'legacyClassPath.file') systemProperty key, config.replace(tokens, value)
             }
-            systemProperty 'legacyClassPath', cp*.absolutePath.join(File.pathSeparator)
+            // Keep the test launch service in Bootstrap's paths and let Forge's
+            // userdev locator discover the embedded library wrappers as mods.
+            def legacy = cp - configurations.jarJar.files
+            systemProperty 'legacyClassPath', legacy*.absolutePath.join(File.pathSeparator)
             systemProperty 'java.awt.headless', 'true'
             systemProperty 'apple.awt.UIElement', 'true'
             systemProperty 'thaumaturge.portTestPaths', runtime.absolutePath
@@ -103,7 +106,8 @@ def runtimeJar = tasks.register('portTestRuntimeJar', Zip) {
             environment.remove('MOD_CLASSES')
             environment 'MCP_MAPPINGS', config.replace(tokens, config.environment['MCP_MAPPINGS'])
             def launch = new ArrayList(config.args.collect { config.replace(tokens, it) })
-            launch[launch.indexOf('--launchTarget') + 1] = "thaumaturgeporttest${side}"
+            // Forge's classpath mod locator is enabled for targets containing "dev".
+            launch[launch.indexOf('--launchTarget') + 1] = "thaumaturgeporttest${side}dev"
             int mixin = launch.indexOf('--mixin.config')
             if (mixin >= 0) { launch.remove(mixin + 1); launch.remove(mixin) }
             launch.addAll(['--mixin.config', 'thaumaturge.port-tests.mixins.json'])

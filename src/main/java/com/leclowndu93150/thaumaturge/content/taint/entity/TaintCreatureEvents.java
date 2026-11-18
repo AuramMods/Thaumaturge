@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity;
 
+import com.leclowndu93150.thaumaturge.event.combat.IncomingDamageEvent;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -30,7 +31,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
 import org.jspecify.annotations.Nullable;
 
@@ -76,7 +76,7 @@ public final class TaintCreatureEvents {
     }
 
     @SubscribeEvent
-    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+    public static void onIncomingDamage(IncomingDamageEvent event) {
         LivingEntity victim = event.getEntity();
         if (!(victim.level() instanceof ServerLevel level)) {
             return;

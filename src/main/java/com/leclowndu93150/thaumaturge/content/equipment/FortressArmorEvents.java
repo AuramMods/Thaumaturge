@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
 import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
+import com.leclowndu93150.thaumaturge.event.combat.IncomingDamageEvent;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class FortressArmorEvents {
@@ -68,7 +68,7 @@ public final class FortressArmorEvents {
     }
 
     @SubscribeEvent
-    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+    public static void onIncomingDamage(IncomingDamageEvent event) {
         if (event.getEntity() instanceof Player victim) {
             absorbSpecialDamage(event, victim);
             angryGhostRetaliation(event, victim);
@@ -76,7 +76,7 @@ public final class FortressArmorEvents {
         sippingFiendLifesteal(event);
     }
 
-    private static void absorbSpecialDamage(LivingIncomingDamageEvent event, Player victim) {
+    private static void absorbSpecialDamage(IncomingDamageEvent event, Player victim) {
         boolean magic = event.getSource().is(DamageTypeTags.WITCH_RESISTANT_TO);
         boolean fire = event.getSource().is(DamageTypeTags.IS_FIRE);
         if (!magic && !fire) {
@@ -106,7 +106,7 @@ public final class FortressArmorEvents {
         }
     }
 
-    private static void angryGhostRetaliation(LivingIncomingDamageEvent event, Player victim) {
+    private static void angryGhostRetaliation(IncomingDamageEvent event, Player victim) {
         if (!(attackerOf(event.getSource()) instanceof LivingEntity attacker)) {
             return;
         }
@@ -118,7 +118,7 @@ public final class FortressArmorEvents {
         }
     }
 
-    private static void sippingFiendLifesteal(LivingIncomingDamageEvent event) {
+    private static void sippingFiendLifesteal(IncomingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof Player leecher)) {
             return;
         }

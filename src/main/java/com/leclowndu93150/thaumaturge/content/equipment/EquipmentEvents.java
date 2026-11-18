@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.event.combat.IncomingDamageEvent;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -10,14 +11,13 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.VanillaGameEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class EquipmentEvents {
     private EquipmentEvents() {}
 
     @SubscribeEvent
-    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+    public static void onIncomingDamage(IncomingDamageEvent event) {
         if (!event.getSource().is(DamageTypeTags.IS_FALL) || !(event.getEntity() instanceof Player player)) {
             return;
         }

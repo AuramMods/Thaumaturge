@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityThaumaturgeBoss;
+import com.leclowndu93150.thaumaturge.event.combat.IncomingDamageEvent;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,7 +30,6 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class ChampionEvents {
@@ -104,7 +104,7 @@ public final class ChampionEvents {
     }
 
     @SubscribeEvent
-    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+    public static void onIncomingDamage(IncomingDamageEvent event) {
         if (!event.getEntity().level().isClientSide()
                 && event.getEntity().getType().is(ThaumaturgeEntityTypeTags.ELDRITCH)) {
             ShieldChargeSound.playIfShielded(event.getEntity());

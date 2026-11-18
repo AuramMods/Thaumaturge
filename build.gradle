@@ -16,6 +16,8 @@ java {
     withJavadocJar()
 }
 
+jarJar.enable()
+
 minecraft {
     mappings channel: 'official', version: minecraft_version
     copyIdeResources = true
@@ -197,6 +199,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/AbsorptionAmountMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/LivingEntityAbsorptionMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/LivingEntityDamagePhaseMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/LivingEntityIncomingDamageMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/player/PlayerDamagePhaseMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/monster/SlimeDimensionsMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/item/ItemEntityGravityMixin.java'
@@ -235,6 +238,11 @@ dependencies {
     compileOnly 'org.jspecify:jspecify:1.0.0'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     portMixinsAnnotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixinextras_version}"))
+    portMixinsAnnotationProcessor "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixinextras_version}")) {
+        jarJar.ranged(it, "[${mixinextras_version},)")
+    }
 
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -337,11 +345,19 @@ tasks.register('generateEffectDetailsReference', JavaExec) {
 
 tasks.withType(Jar).configureEach { from('LICENSE', 'CREDITS.md') }
 jar {
+    archiveClassifier = 'slim'
     manifest.attributes('MixinConfigs': 'thaumaturge.mixins.json',
                         'Implementation-Version': project.version,
                         'Implementation-Title': mod_name)
     exclude 'com/leclowndu93150/thaumaturge/debug/**'
     finalizedBy 'reobfJar'
+}
+
+tasks.named('jarJar') {
+    archiveClassifier = ''
+    manifest.inheritFrom(tasks.named('jar', Jar).get().manifest)
+    exclude 'com/leclowndu93150/thaumaturge/debug/**'
+    finalizedBy 'reobfJarJar'
 }
 
 // Use Zip so MixinGradle does not attach the main mod's mixins/compilation to

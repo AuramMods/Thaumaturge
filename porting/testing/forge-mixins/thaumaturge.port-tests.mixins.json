@@ -18,6 +18,7 @@
     "world.entity.AbsorptionAmountMixin",
     "world.entity.LivingEntityAbsorptionMixin",
     "world.entity.LivingEntityDamagePhaseMixin",
+    "world.entity.LivingEntityIncomingDamageMixin",
     "world.entity.player.PlayerDamagePhaseMixin",
     "world.entity.monster.SlimeDimensionsMixin",
     "world.entity.item.ItemEntityGravityMixin",

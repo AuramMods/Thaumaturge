@@ -2,13 +2,13 @@ package com.leclowndu93150.thaumaturge.content.entity.trait;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
+import com.leclowndu93150.thaumaturge.event.combat.IncomingDamageEvent;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import com.leclowndu93150.thaumaturge.event.tick.EntityTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
@@ -37,7 +37,7 @@ public final class MobTraitEvents {
     }
 
     @SubscribeEvent
-    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+    public static void onIncomingDamage(IncomingDamageEvent event) {
         LivingEntity victim = event.getEntity();
         if (victim.level().isClientSide()) {
             return;

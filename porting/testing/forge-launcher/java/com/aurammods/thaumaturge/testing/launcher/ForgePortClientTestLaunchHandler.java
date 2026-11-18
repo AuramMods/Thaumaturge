@@ -9,7 +9,7 @@ import net.minecraftforge.fml.loading.targets.ForgeClientUserdevLaunchHandler;
 
 /** Client distribution and transformations with the same headless test entry point. */
 public final class ForgePortClientTestLaunchHandler extends ForgeClientUserdevLaunchHandler {
-    @Override public String name() { return "thaumaturgeporttestclient"; }
+    @Override public String name() { return "thaumaturgeporttestclientdev"; }
 
     @Override
     protected void processStreams(String[] classpath, VersionInfo version, Stream.Builder<Path> minecraft,
