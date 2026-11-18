@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 
 final class ShowcaseBuilder {
@@ -128,8 +129,8 @@ final class ShowcaseBuilder {
     }
 
     void build() {
-        removeDisplayEntities();
-        AABB area = AABB.encapsulatingFullBlocks(at(0, 0, -1), at(width - 1, wallRow, clearHeight));
+        AABB area = AABB.of(BoundingBox.fromCorners(at(0, 0, -1), at(width - 1, wallRow, clearHeight)));
+        removeDisplayEntities(area);
         Set<UUID> existing = level.getEntities((Entity) null, area, entity -> true).stream()
                 .map(Entity::getUUID)
                 .collect(Collectors.toSet());
@@ -147,8 +148,7 @@ final class ShowcaseBuilder {
         hangFrames();
     }
 
-    private void removeDisplayEntities() {
-        AABB area = AABB.encapsulatingFullBlocks(at(0, 0, -1), at(width - 1, wallRow, clearHeight));
+    private void removeDisplayEntities(AABB area) {
         for (Entity entity : level.getEntities(
                 (Entity) null, area, entity -> entity instanceof HangingEntity || ShowcaseEntities.isDisplay(entity))) {
             entity.discard();

@@ -19,6 +19,8 @@
     "world.entity.LivingEntityAbsorptionMixin",
     "world.entity.LivingEntityDamagePhaseMixin",
     "world.entity.LivingEntityIncomingDamageMixin",
+    "world.entity.EntityShowcaseProtectionMixin",
+    "world.entity.MobShowcaseProtectionMixin",
     "world.entity.player.PlayerDamagePhaseMixin",
     "world.entity.monster.SlimeDimensionsMixin",
     "world.entity.item.ItemEntityGravityMixin",
