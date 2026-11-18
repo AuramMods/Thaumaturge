@@ -36,6 +36,7 @@ public final class ItemDataKey<T> {
 
     interface NativeAccess<T> {
         T get(ItemStack stack);
+        default T defaultValue(net.minecraft.world.item.Item item) { return null; }
         void set(ItemStack stack, T value);
         void remove(ItemStack stack);
     }

@@ -24,7 +24,7 @@ public final class ItemData {
 
     public static <T> T get(ItemStack stack, ItemDataKey<T> key) {
         if (stack.isEmpty()) return null;
-        if (key.nativeAccess() != null) return key.nativeAccess().get(stack);
+        if (key.nativeAccess() != null) return isRemoved(stack, key.id().toString()) ? null : key.nativeAccess().get(stack);
         return ItemDataValues.get(values(stack), ItemDataDefaults.get(stack.getItem()), key, ItemDataContext.ops());
     }
 
@@ -34,7 +34,7 @@ public final class ItemData {
     }
 
     public static boolean has(ItemStack stack, ItemDataKey<?> key) {
-        if (key.nativeAccess() != null) return !stack.isEmpty() && key.nativeAccess().get(stack) != null;
+        if (key.nativeAccess() != null) return get(stack, key) != null;
         return !stack.isEmpty() && ItemDataValues.has(values(stack), ItemDataDefaults.get(stack.getItem()), key);
     }
 
@@ -45,6 +45,7 @@ public final class ItemData {
         if (key.nativeAccess() != null) {
             key.encode(ItemDataContext.ops(), value);
             key.nativeAccess().set(stack, value);
+            nativeRemoval(stack, key, false);
             return previous;
         }
         CompoundTag values = values(stack);
@@ -58,6 +59,7 @@ public final class ItemData {
         if (stack.isEmpty()) return null;
         T previous = get(stack, key);
         if (key.nativeAccess() != null) {
+            nativeRemoval(stack, key, key.nativeAccess().defaultValue(stack.getItem()) != null);
             key.nativeAccess().remove(stack);
             return previous;
         }
@@ -73,6 +75,57 @@ public final class ItemData {
         if (tag == null || !tag.contains(TAG)) return null;
         if (!tag.contains(TAG, Tag.TAG_COMPOUND)) throw new IllegalArgumentException("Invalid item data compound");
         return tag.getCompound(TAG);
+    }
+
+    /** Reads removal state without initializing schemas during native ItemStack bootstrap. */
+    public static boolean isRemoved(ItemStack stack, String id) {
+        return ItemDataValues.removed(values(stack), id) && !ItemNbt.nativeFieldPresent(stack.getTag(), id);
+    }
+
+    private static void nativeRemoval(ItemStack stack, ItemDataKey<?> key, boolean remove) {
+        CompoundTag old = values(stack);
+        CompoundTag values = old == null ? new CompoundTag() : old.copy();
+        String id = key.id().toString();
+        values.remove(id);
+        if (remove) values.putBoolean("!" + id, true);
+        else values.remove("!" + id);
+        store(stack, values);
+    }
+
+    public static ItemDataPatch snapshot(ItemStack stack) { return snapshot(stack, ItemData::key); }
+
+    /** Capture only changes from item defaults, retaining removals and registry-scoped values. */
+    public static ItemDataPatch snapshot(ItemStack stack, java.util.function.Function<net.minecraft.resources.ResourceLocation, ItemDataKey<?>> lookup) {
+        if (stack.isEmpty()) return ItemDataPatch.EMPTY;
+        var patch = ItemDataPatch.builder();
+        CompoundTag values = values(stack);
+        CompoundTag defaults = ItemDataDefaults.get(stack.getItem());
+        if (values != null) for (String name : values.getAllKeys().stream().sorted().toList()) {
+            boolean removed = name.startsWith("!");
+            String id = removed ? name.substring(1) : name;
+            var key = lookup.apply(new net.minecraft.resources.ResourceLocation(id));
+            if (removed) {
+                ItemDataValues.removed(values, id);
+                if (key.nativeAccess() == null && defaults.contains(id)) patch.remove(key);
+            } else {
+                if (key.nativeAccess() != null) throw new IllegalArgumentException("Native item data must use native storage: " + id);
+                if (!values.get(name).equals(defaults.get(id))) snapshotValue(patch, key, values.get(name));
+            }
+        }
+        for (var key : VanillaItemData.keys()) snapshotNative(patch, stack, key);
+        return patch.build();
+    }
+
+    private static <T> void snapshotValue(ItemDataPatch.Builder patch, ItemDataKey<T> key, Tag value) {
+        patch.set(key, key.decode(ItemDataContext.ops(), value.copy()));
+    }
+
+    private static <T> void snapshotNative(ItemDataPatch.Builder patch, ItemStack stack, ItemDataKey<T> key) {
+        T value = get(stack, key);
+        T baseline = key.nativeAccess().defaultValue(stack.getItem());
+        if (Objects.equals(value, baseline)) return;
+        if (value == null) patch.remove(key);
+        else patch.set(key, value);
     }
 
     private static void store(ItemStack stack, CompoundTag values) {
@@ -95,8 +148,7 @@ public final class ItemData {
 
     public static java.util.Map<String, Tag> comparisonFields(ItemStack stack) {
         var fields = new java.util.LinkedHashMap<>(ItemNbt.fields(stack.getTag(), ItemDataDefaults.get(stack.getItem())));
-        if (stack.getMaxDamage() > 0) fields.putIfAbsent("nbt:Damage", net.minecraft.nbt.IntTag.valueOf(stack.getDamageValue()));
-        PotionData.canonicalFields(stack, fields);
+        VanillaItemData.canonicalFields(stack, fields);
         if (stack.is(net.minecraft.world.item.Items.ENCHANTED_BOOK)
                 && fields.get("nbt:StoredEnchantments") instanceof net.minecraft.nbt.ListTag list && list.isEmpty()) {
             fields.remove("nbt:StoredEnchantments");
@@ -128,8 +180,17 @@ public final class ItemData {
     public static void copyExplicitData(ItemStack source, ItemStack destination) {
         if (source.getTag() == null) return;
         CompoundTag result = destination.getTag() == null ? new CompoundTag() : destination.getTag().copy();
-        ItemNbt.copyExplicit(source.getTag(), result);
-        PotionData.copyExplicit(source.getTag(), result);
-        destination.setTag(result.isEmpty() ? null : result);
+        CompoundTag explicit = source.getTag().copy();
+        VanillaItemData.stripNativeStorage(explicit);
+        ItemNbt.copyExplicit(explicit, result);
+        ItemStack changed = destination.copy();
+        changed.setTag(result.isEmpty() ? null : result);
+        var nativePatch = ItemDataPatch.builder();
+        for (var key : VanillaItemData.keys()) {
+            if (isRemoved(source, key.id().toString())) key.nativeAccess().remove(changed);
+            snapshotNative(nativePatch, source, key);
+        }
+        nativePatch.build().apply(changed);
+        destination.setTag(changed.getTag() == null ? null : changed.getTag().copy());
     }
 }

@@ -146,6 +146,7 @@ sourceSets {
     portMixins {
         java.srcDir 'src/main/java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/ItemDataDefaultsMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/ItemStackDataPresenceMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/BlockItemDataMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/level/block/entity/BlockEntityItemDataMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/level/chunk/LevelChunkRegistryContextMixin.java'

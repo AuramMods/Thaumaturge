@@ -125,6 +125,7 @@ public final class ItemDataPatch {
 
     @Override public boolean equals(Object other) { return other instanceof ItemDataPatch patch && values.equals(patch.values); }
     @Override public int hashCode() { return values.hashCode(); }
+    @Override public String toString() { return values.toString(); }
 
     public static final class Builder {
         private final Map<ItemDataKey<?>, Optional<?>> values = new LinkedHashMap<>();

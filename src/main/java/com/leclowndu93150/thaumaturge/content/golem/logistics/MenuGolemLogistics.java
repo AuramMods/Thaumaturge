@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.logistics;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.api.golems.GolemDispatch;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
@@ -247,7 +248,7 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
                 + KEY_SEPARATOR
                 + BuiltInRegistries.ITEM.getKey(stack.getItem())
                 + KEY_SEPARATOR
-                + stack.getComponentsPatch();
+                + ItemData.snapshot(stack);
     }
 
     @Override

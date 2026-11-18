@@ -38,15 +38,30 @@ public final class ItemNbt {
 
     public static boolean matches(Map<String, Tag> reference, Map<String, Tag> candidate, boolean ignoreDamage, boolean subset) {
         for (var entry : reference.entrySet()) {
-            if (ignoreDamage && entry.getKey().equals("nbt:Damage")) continue;
+            if (ignoreDamage && damageField(entry.getKey())) continue;
             if (!entry.getValue().equals(candidate.get(entry.getKey()))) return false;
         }
         if (subset) return true;
         for (String key : candidate.keySet()) {
-            if (ignoreDamage && key.equals("nbt:Damage")) continue;
+            if (ignoreDamage && damageField(key)) continue;
             if (!reference.containsKey(key)) return false;
         }
         return true;
+    }
+
+    private static boolean damageField(String key) { return key.equals("nbt:Damage") || key.equals("native:minecraft:damage"); }
+
+    /** A later vanilla write takes precedence over an older component-removal marker. */
+    static boolean nativeFieldPresent(CompoundTag tag, String id) {
+        if (tag == null) return false;
+        return switch (id) {
+            case "minecraft:damage" -> tag.contains("Damage", Tag.TAG_ANY_NUMERIC);
+            case "minecraft:custom_name" -> tag.getCompound("display").contains("Name", Tag.TAG_STRING);
+            case "minecraft:enchantments" -> tag.contains("Enchantments", Tag.TAG_LIST);
+            case "minecraft:stored_enchantments" -> tag.contains("StoredEnchantments", Tag.TAG_LIST);
+            case "minecraft:potion_contents" -> tag.contains("Potion") || tag.contains("CustomPotionColor") || tag.contains("CustomPotionEffects");
+            default -> false;
+        };
     }
 
     /** Replace each explicit field; merge the two NBT containers that hold independent fields. */

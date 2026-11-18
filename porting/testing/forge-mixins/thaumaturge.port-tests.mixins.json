@@ -13,7 +13,9 @@
     "world.effect.MobEffectInstanceMixin",
     "world.item.alchemy.PotionBrewingAccessor",
     "world.item.alchemy.PotionBrewingMixAccessor",
-    "forge.TierSortingRegistryMixin"
+    "forge.TierSortingRegistryMixin",
+    "world.item.ItemStackDataPresenceMixin",
+    "world.item.ItemDataDefaultsMixin"
   ],
   "client": [
     "client.multiplayer.ClientLevelEntityTickMixin",

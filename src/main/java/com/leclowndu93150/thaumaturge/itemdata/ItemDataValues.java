@@ -39,7 +39,7 @@ public final class ItemDataValues {
         else values.remove("!" + name);
     }
 
-    private static boolean removed(CompoundTag values, String name) {
+    static boolean removed(CompoundTag values, String name) {
         if (values == null || !values.contains("!" + name)) return false;
         if (!values.contains("!" + name, Tag.TAG_BYTE) || values.getByte("!" + name) != 1 || values.contains(name)) {
             throw new IllegalArgumentException("Invalid item data removal marker for " + name);

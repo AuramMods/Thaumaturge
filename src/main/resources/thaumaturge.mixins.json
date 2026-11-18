@@ -30,7 +30,8 @@
     "network.PacketDecoderRegistryContextMixin",
     "resources.RegistryOpsAccessor",
     "world.effect.MobEffectInstanceMixin",
-    "forge.TierSortingRegistryMixin"
+    "forge.TierSortingRegistryMixin",
+    "world.item.ItemStackDataPresenceMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",
