@@ -22,7 +22,7 @@ public final class AdvancedFurnaceShapes {
             for (int y = -1; y <= 0; y++) {
                 for (int z = -RADIUS; z <= RADIUS; z++) {
                     cursor.setWithOffset(pos, x, y, z);
-                    if (level.getBlockState(cursor).is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE)) {
+                    if (level.getBlockState(cursor).is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())) {
                         return CELLS.get(new BlockPos(-x, -y, -z));
                     }
                 }

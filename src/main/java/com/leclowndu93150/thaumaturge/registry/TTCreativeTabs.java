@@ -150,10 +150,10 @@ public final class TTCreativeTabs {
                         output.accept(TTItems.RAW_CINNABAR.get());
                         output.accept(TTItems.ORE_QUARTZ.get());
                         output.accept(TTItems.DEEPSLATE_ORE_QUARTZ.get());
-                        output.accept(TTItems.AMBER_BLOCK);
-                        output.accept(TTItems.METAL_BRASS_BLOCK);
-                        output.accept(TTItems.METAL_THAUMIUM_BLOCK);
-                        output.accept(TTItems.METAL_VOID_BLOCK);
+                        output.accept(TTItems.AMBER_BLOCK.get());
+                        output.accept(TTItems.METAL_BRASS_BLOCK.get());
+                        output.accept(TTItems.METAL_THAUMIUM_BLOCK.get());
+                        output.accept(TTItems.METAL_VOID_BLOCK.get());
 
                         output.accept(TTItems.QUICKSILVER.get());
                         output.accept(TTItems.AMBER.get());

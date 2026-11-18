@@ -24,6 +24,6 @@ public final class BrainBoxScanner {
     }
 
     private static boolean isBrainBoxFacing(BlockState state, Direction fromMachine) {
-        return state.is(TTBlocks.BRAIN_BOX) && state.getValue(BlockStateProperties.FACING) == fromMachine.getOpposite();
+        return state.is(TTBlocks.BRAIN_BOX.get()) && state.getValue(BlockStateProperties.FACING) == fromMachine.getOpposite();
     }
 }

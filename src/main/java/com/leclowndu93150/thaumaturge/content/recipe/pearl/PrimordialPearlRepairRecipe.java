@@ -54,7 +54,7 @@ public final class PrimordialPearlRepairRecipe extends CustomRecipe {
     }
 
     private static boolean isUsablePearl(ItemStack stack) {
-        return stack.is(TTItems.PRIMORDIAL_PEARL)
+        return stack.is(TTItems.PRIMORDIAL_PEARL.get())
                 && stack.getCount() == 1
                 && stack.getDamageValue() < PrimordialPearlItem.MAX_DAMAGE;
     }

@@ -55,7 +55,7 @@ public abstract class AbstractTaintacle extends AbstractRootedTaint {
     }
 
     private static boolean onTaint(BlockState state) {
-        return state.is(TTBlocks.TAINT_FIBRE) || state.is(TTBlocks.TAINT_SOIL);
+        return state.is(TTBlocks.TAINT_FIBRE.get()) || state.is(TTBlocks.TAINT_SOIL.get());
     }
 
     public static AttributeSupplier.Builder createTaintacleAttributes(double maxHealth, double attackDamage) {

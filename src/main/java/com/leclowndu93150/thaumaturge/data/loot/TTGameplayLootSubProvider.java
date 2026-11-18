@@ -67,18 +67,18 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                 TTLootTables.LOOT_BAG_COMMON,
                 bagTable(TreasureLootPools.COMMON)
                         .withPool(templatePool(
-                                TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE, ARCANE_TEMPLATE_COMMON_BAG_CHANCE)));
+                                TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), ARCANE_TEMPLATE_COMMON_BAG_CHANCE)));
         output.accept(
                 TTLootTables.LOOT_BAG_UNCOMMON,
                 bagTable(TreasureLootPools.UNCOMMON)
                         .withPool(templatePool(
-                                TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE, OCCULT_TEMPLATE_UNCOMMON_BAG_CHANCE)));
+                                TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(), OCCULT_TEMPLATE_UNCOMMON_BAG_CHANCE)));
         output.accept(
                 TTLootTables.LOOT_BAG_RARE,
                 bagTable(TreasureLootPools.RARE)
                         .withPool(lorePool())
                         .withPool(templatePool(
-                                TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE, OCCULT_TEMPLATE_RARE_BAG_CHANCE)));
+                                TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(), OCCULT_TEMPLATE_RARE_BAG_CHANCE)));
 
         output.accept(
                 TTLootTables.TREASURE_COMMON,
@@ -86,13 +86,13 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .add(EmptyLootItem.emptyItem().setWeight(COMMON_EMPTY_WEIGHT))
-                                .add(entry(TTItems.LOOT_BAG_COMMON, 2))
-                                .add(entry(TTItems.QUICKSILVER, 2, 1.0F, 3.0F))
-                                .add(entry(TTItems.AMBER, 2, 1.0F, 3.0F))
-                                .add(entry(TTItems.NUGGET_QUICKSILVER, 2, 2.0F, 6.0F))
-                                .add(entry(TTItems.SALIS_MUNDUS, 1, 1.0F, 2.0F)))
+                                .add(entry(TTItems.LOOT_BAG_COMMON.get(), 2))
+                                .add(entry(TTItems.QUICKSILVER.get(), 2, 1.0F, 3.0F))
+                                .add(entry(TTItems.AMBER.get(), 2, 1.0F, 3.0F))
+                                .add(entry(TTItems.NUGGET_QUICKSILVER.get(), 2, 2.0F, 6.0F))
+                                .add(entry(TTItems.SALIS_MUNDUS.get(), 1, 1.0F, 2.0F)))
                         .withPool(templatePool(
-                                TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE, ARCANE_TEMPLATE_TREASURE_CHANCE)));
+                                TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), ARCANE_TEMPLATE_TREASURE_CHANCE)));
 
         output.accept(
                 TTLootTables.TREASURE_UNCOMMON,
@@ -100,12 +100,12 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .add(EmptyLootItem.emptyItem().setWeight(UNCOMMON_EMPTY_WEIGHT))
-                                .add(entry(TTItems.LOOT_BAG_UNCOMMON, 2))
-                                .add(entry(TTItems.AMULET_MUNDANE, 1))
-                                .add(entry(TTItems.RING_MUNDANE, 1))
-                                .add(entry(TTItems.GIRDLE_MUNDANE, 1))
-                                .add(entry(TTItems.CURIO_ARCANE, 2))
-                                .add(entry(TTItems.CURIO_PRESERVED, 1))));
+                                .add(entry(TTItems.LOOT_BAG_UNCOMMON.get(), 2))
+                                .add(entry(TTItems.AMULET_MUNDANE.get(), 1))
+                                .add(entry(TTItems.RING_MUNDANE.get(), 1))
+                                .add(entry(TTItems.GIRDLE_MUNDANE.get(), 1))
+                                .add(entry(TTItems.CURIO_ARCANE.get(), 2))
+                                .add(entry(TTItems.CURIO_PRESERVED.get(), 1))));
 
         output.accept(
                 TTLootTables.TREASURE_RARE,
@@ -113,18 +113,18 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .add(EmptyLootItem.emptyItem().setWeight(RARE_EMPTY_WEIGHT))
-                                .add(entry(TTItems.LOOT_BAG_RARE, 3))
-                                .add(entry(TTItems.THAUMONOMICON, 1))
-                                .add(entry(TTItems.THAUMIUM_SWORD, 1))
-                                .add(entry(TTItems.THAUMIUM_PICKAXE, 1))
-                                .add(entry(TTItems.THAUMIUM_AXE, 1))
-                                .add(entry(TTItems.THAUMIUM_HOE, 1))
-                                .add(entry(TTItems.AMULET_FANCY, 1))
-                                .add(entry(TTItems.RING_FANCY, 1))
-                                .add(entry(TTItems.GIRDLE_FANCY, 1))
-                                .add(entry(TTItems.RING_APPRENTICE, 1))
-                                .add(entry(TTItems.AMULET_VIS, 1))
-                                .add(entry(TTItems.CURIO_ANCIENT, 2)))
+                                .add(entry(TTItems.LOOT_BAG_RARE.get(), 3))
+                                .add(entry(TTItems.THAUMONOMICON.get(), 1))
+                                .add(entry(TTItems.THAUMIUM_SWORD.get(), 1))
+                                .add(entry(TTItems.THAUMIUM_PICKAXE.get(), 1))
+                                .add(entry(TTItems.THAUMIUM_AXE.get(), 1))
+                                .add(entry(TTItems.THAUMIUM_HOE.get(), 1))
+                                .add(entry(TTItems.AMULET_FANCY.get(), 1))
+                                .add(entry(TTItems.RING_FANCY.get(), 1))
+                                .add(entry(TTItems.GIRDLE_FANCY.get(), 1))
+                                .add(entry(TTItems.RING_APPRENTICE.get(), 1))
+                                .add(entry(TTItems.AMULET_VIS.get(), 1))
+                                .add(entry(TTItems.CURIO_ANCIENT.get(), 2)))
                         .withPool(lorePool()));
 
         output.accept(
@@ -133,7 +133,7 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .add(EmptyLootItem.emptyItem().setWeight(LIBRARY_EMPTY_WEIGHT))
-                                .add(entry(TTItems.CURIO_KNOWLEDGE, 3, 1.0F, 2.0F)))
+                                .add(entry(TTItems.CURIO_KNOWLEDGE.get(), 3, 1.0F, 2.0F)))
                         .withPool(lorePool()));
 
         output.accept(
@@ -142,12 +142,12 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .add(EmptyLootItem.emptyItem().setWeight(SMITH_EMPTY_WEIGHT))
-                                .add(entry(TTItems.QUICKSILVER, 2, 1.0F, 3.0F))));
+                                .add(entry(TTItems.QUICKSILVER.get(), 2, 1.0F, 3.0F))));
 
         output.accept(
                 TTLootTables.LABYRINTH_KEY_ROOM,
                 labyrinthReward(
-                        TTItems.LOOT_BAG_UNCOMMON,
+                        TTItems.LOOT_BAG_UNCOMMON.get(),
                         ConstantValue.exactly(1.0F),
                         TreasureLootPools.UNCOMMON,
                         UniformGenerator.between(KEY_ROOM_POOL_MIN, KEY_ROOM_POOL_MAX),
@@ -162,7 +162,7 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
             output.accept(
                     boss,
                     labyrinthReward(
-                            TTItems.LOOT_BAG_RARE,
+                            TTItems.LOOT_BAG_RARE.get(),
                             UniformGenerator.between(BOSS_BAGS_MIN, BOSS_BAGS_MAX),
                             TreasureLootPools.RARE,
                             UniformGenerator.between(BOSS_POOL_MIN, BOSS_POOL_MAX),

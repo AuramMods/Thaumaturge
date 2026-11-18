@@ -192,13 +192,13 @@ final class ShowcaseBuilder {
                     0);
             BlockState state = blocks.get(i).defaultBlockState();
             // The symmetric altar's explicit pillar states use the authored south-facing layout.
-            if (state.is(TTBlocks.INFUSION_MATRIX) && placeBlueprint("infusion_altar", pos, Direction.SOUTH)) {
+            if (state.is(TTBlocks.INFUSION_MATRIX.get()) && placeBlueprint("infusion_altar", pos, Direction.SOUTH)) {
                 continue;
             }
-            if (state.is(TTBlocks.THAUMATORIUM) && placeBlueprint("thaumatorium", pos, forward.getOpposite())) {
+            if (state.is(TTBlocks.THAUMATORIUM.get()) && placeBlueprint("thaumatorium", pos, forward.getOpposite())) {
                 continue;
             }
-            if (state.is(TTBlocks.ARCANE_WORKBENCH_CHARGER)) {
+            if (state.is(TTBlocks.ARCANE_WORKBENCH_CHARGER.get())) {
                 set(pos, TTBlocks.ARCANE_WORKBENCH.get().defaultBlockState());
                 pos = pos.above();
             }

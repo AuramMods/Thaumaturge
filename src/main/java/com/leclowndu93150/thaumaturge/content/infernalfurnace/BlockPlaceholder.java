@@ -50,26 +50,26 @@ public class BlockPlaceholder extends Block implements BlockInteractions {
                 return furnace;
             }
         }
-        if (state.is(TTBlocks.PLACEHOLDER_IRON_BARS)
-                || state.is(TTBlocks.PLACEHOLDER_ANVIL)
-                || state.is(TTBlocks.PLACEHOLDER_CAULDRON)
-                || state.is(TTBlocks.PLACEHOLDER_TABLE)) {
+        if (state.is(TTBlocks.PLACEHOLDER_IRON_BARS.get())
+                || state.is(TTBlocks.PLACEHOLDER_ANVIL.get())
+                || state.is(TTBlocks.PLACEHOLDER_CAULDRON.get())
+                || state.is(TTBlocks.PLACEHOLDER_TABLE.get())) {
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 0; y++) {
                     for (int z = -1; z <= 1; z++) {
                         BlockPos corePos = pos.offset(x, y, z);
                         BlockState core = level.getBlockState(corePos);
-                        if (core.is(TTBlocks.GOLEM_BUILDER)) {
+                        if (core.is(TTBlocks.GOLEM_BUILDER.get())) {
                             Direction facing = core.getValue(BlockGolemBuilder.FACING);
                             BlockPos offset = pos.subtract(corePos);
                             Direction right = facing.getClockWise();
                             Direction back = facing.getOpposite();
                             BlockPos expected;
-                            if (state.is(TTBlocks.PLACEHOLDER_IRON_BARS)) {
+                            if (state.is(TTBlocks.PLACEHOLDER_IRON_BARS.get())) {
                                 expected = BlockPos.ZERO.above();
-                            } else if (state.is(TTBlocks.PLACEHOLDER_TABLE)) {
+                            } else if (state.is(TTBlocks.PLACEHOLDER_TABLE.get())) {
                                 expected = BlockPos.ZERO.relative(right);
-                            } else if (state.is(TTBlocks.PLACEHOLDER_CAULDRON)) {
+                            } else if (state.is(TTBlocks.PLACEHOLDER_CAULDRON.get())) {
                                 expected = BlockPos.ZERO.relative(back);
                             } else {
                                 expected = BlockPos.ZERO.relative(right).relative(back);
@@ -104,7 +104,7 @@ public class BlockPlaceholder extends Block implements BlockInteractions {
 
     @Override
     public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
-        if ((state.is(TTBlocks.NETHER_BRICKS_PLACEHOLDER) || state.is(TTBlocks.OBSIDIAN_PLACEHOLDER))
+        if ((state.is(TTBlocks.NETHER_BRICKS_PLACEHOLDER.get()) || state.is(TTBlocks.OBSIDIAN_PLACEHOLDER.get()))
                 && !level.isClientSide()) {
             destroyFor:
             for (int x = -1; x <= 1; x++) {
@@ -112,7 +112,7 @@ public class BlockPlaceholder extends Block implements BlockInteractions {
                     for (int z = -1; z <= 1; z++) {
                         BlockPos offsetPos = pos.offset(x, y, z);
                         BlockState offsetState = level.getBlockState(offsetPos);
-                        if (offsetState.is(TTBlocks.INFERNAL_FURNACE)) {
+                        if (offsetState.is(TTBlocks.INFERNAL_FURNACE.get())) {
                             BlockInfernalFurnace.destroyFurnace(level, offsetPos, offsetState, pos);
                             break destroyFor;
                         }
@@ -121,16 +121,16 @@ public class BlockPlaceholder extends Block implements BlockInteractions {
             }
         }
         if (!level.isClientSide()
-                && (state.is(TTBlocks.PLACEHOLDER_IRON_BARS)
-                        || state.is(TTBlocks.PLACEHOLDER_ANVIL)
-                        || state.is(TTBlocks.PLACEHOLDER_CAULDRON)
-                        || state.is(TTBlocks.PLACEHOLDER_TABLE))) {
+                && (state.is(TTBlocks.PLACEHOLDER_IRON_BARS.get())
+                        || state.is(TTBlocks.PLACEHOLDER_ANVIL.get())
+                        || state.is(TTBlocks.PLACEHOLDER_CAULDRON.get())
+                        || state.is(TTBlocks.PLACEHOLDER_TABLE.get()))) {
             restoreGolemPress:
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
                     for (int z = -1; z <= 1; z++) {
                         BlockPos offsetPos = pos.offset(x, y, z);
-                        if (level.getBlockState(offsetPos).is(TTBlocks.GOLEM_BUILDER)) {
+                        if (level.getBlockState(offsetPos).is(TTBlocks.GOLEM_BUILDER.get())) {
                             BlockGolemBuilder.restoreStructure(level, offsetPos, pos);
                             break restoreGolemPress;
                         }
@@ -147,15 +147,15 @@ public class BlockPlaceholder extends Block implements BlockInteractions {
     @Override
     public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (state.is(TTBlocks.PLACEHOLDER_IRON_BARS)
-                || state.is(TTBlocks.PLACEHOLDER_ANVIL)
-                || state.is(TTBlocks.PLACEHOLDER_CAULDRON)
-                || state.is(TTBlocks.PLACEHOLDER_TABLE)) {
+        if (state.is(TTBlocks.PLACEHOLDER_IRON_BARS.get())
+                || state.is(TTBlocks.PLACEHOLDER_ANVIL.get())
+                || state.is(TTBlocks.PLACEHOLDER_CAULDRON.get())
+                || state.is(TTBlocks.PLACEHOLDER_TABLE.get())) {
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
                     for (int z = -1; z <= 1; z++) {
                         BlockPos offsetPos = pos.offset(x, y, z);
-                        if (level.getBlockState(offsetPos).is(TTBlocks.GOLEM_BUILDER)) {
+                        if (level.getBlockState(offsetPos).is(TTBlocks.GOLEM_BUILDER.get())) {
                             return BlockGolemBuilder.openBuilderGui(level, offsetPos, player);
                         }
                     }

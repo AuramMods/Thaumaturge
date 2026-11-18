@@ -100,9 +100,9 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
                         continue;
                     }
                     BlockState bs = level.getBlockState(shellPos);
-                    if (bs.is(TTBlocks.NETHER_BRICKS_PLACEHOLDER)) {
+                    if (bs.is(TTBlocks.NETHER_BRICKS_PLACEHOLDER.get())) {
                         level.setBlock(shellPos, Blocks.NETHER_BRICKS.defaultBlockState(), Block.UPDATE_ALL);
-                    } else if (bs.is(TTBlocks.OBSIDIAN_PLACEHOLDER)) {
+                    } else if (bs.is(TTBlocks.OBSIDIAN_PLACEHOLDER.get())) {
                         level.setBlock(shellPos, Blocks.OBSIDIAN.defaultBlockState(), Block.UPDATE_ALL);
                     }
                 }

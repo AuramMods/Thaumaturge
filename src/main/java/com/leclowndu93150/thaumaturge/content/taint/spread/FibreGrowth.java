@@ -160,7 +160,7 @@ public final class FibreGrowth {
         Direction logSide = null;
         int logCount = 0;
         for (Direction direction : Direction.values()) {
-            if (level.getBlockState(target.relative(direction)).is(TTBlocks.TAINT_LOG)) {
+            if (level.getBlockState(target.relative(direction)).is(TTBlocks.TAINT_LOG.get())) {
                 logCount++;
                 if (random.nextInt(logCount) == 0) {
                     logSide = direction;

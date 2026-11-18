@@ -125,16 +125,16 @@ public final class BlockGolemBuilder extends BaseEntityBlock implements BlockInt
     }
 
     private static @Nullable BlockState counterpart(BlockState placeholder) {
-        if (placeholder.is(TTBlocks.PLACEHOLDER_IRON_BARS)) {
+        if (placeholder.is(TTBlocks.PLACEHOLDER_IRON_BARS.get())) {
             return Blocks.IRON_BARS.defaultBlockState();
         }
-        if (placeholder.is(TTBlocks.PLACEHOLDER_ANVIL)) {
+        if (placeholder.is(TTBlocks.PLACEHOLDER_ANVIL.get())) {
             return Blocks.ANVIL.defaultBlockState();
         }
-        if (placeholder.is(TTBlocks.PLACEHOLDER_CAULDRON)) {
+        if (placeholder.is(TTBlocks.PLACEHOLDER_CAULDRON.get())) {
             return Blocks.CAULDRON.defaultBlockState();
         }
-        if (placeholder.is(TTBlocks.PLACEHOLDER_TABLE)) {
+        if (placeholder.is(TTBlocks.PLACEHOLDER_TABLE.get())) {
             return TTBlocks.TABLE_STONE.get().defaultBlockState();
         }
         return null;

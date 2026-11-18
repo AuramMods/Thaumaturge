@@ -151,36 +151,36 @@ public final class TTRecipeProvider extends RecipeProvider {
         buildWandRecipes();
         buildNodeHusbandryRecipes();
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TTItems.SCRIBING_TOOLS)
-                .requires(TTItems.PHIAL)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TTItems.SCRIBING_TOOLS.get())
+                .requires(TTItems.PHIAL.get())
                 .requires(Tags.Items.DYES_BLACK)
                 .requires(Tags.Items.FEATHERS)
-                .unlockedBy("has", has(TTItems.PHIAL))
+                .unlockedBy("has", has(TTItems.PHIAL.get()))
                 .save(output);
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TTItems.SCRIBING_TOOLS)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TTItems.SCRIBING_TOOLS.get())
                 .requires(Items.GLASS_BOTTLE)
                 .requires(Tags.Items.DYES_BLACK)
                 .requires(Tags.Items.FEATHERS)
                 .unlockedBy("has", has(Tags.Items.GLASS_PANES))
                 .save(output, TTIds.MODID + ":scribing_tools_alt");
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TTItems.LABEL, 4)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TTItems.LABEL.get(), 4)
                 .requires(Tags.Items.DYES_BLACK)
                 .requires(Tags.Items.SLIME_BALLS)
                 .requires(Items.PAPER, 4)
                 .unlockedBy("has", has(Tags.Items.SLIME_BALLS))
                 .save(output);
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TTItems.LABEL)
-                .requires(TTItems.LABEL)
-                .unlockedBy("has", has(TTItems.LABEL))
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TTItems.LABEL.get())
+                .requires(TTItems.LABEL.get())
+                .unlockedBy("has", has(TTItems.LABEL.get()))
                 .save(output, TTIds.MODID + ":label_clear");
 
         SpecialRecipeBuilder.special(category -> LabelFilterRecipe.INSTANCE)
                 .save(output, TTIds.rl("label_filter").toString());
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.JAR_BRACE, 2)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.JAR_BRACE.get(), 2)
                 .pattern("SBS")
                 .pattern("B B")
                 .pattern("SBS")
@@ -198,13 +198,13 @@ public final class TTRecipeProvider extends RecipeProvider {
                     .save(output, TTIds.MODID + ":nitors/" + color.getName());
         }
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TTItems.STONE_ARCANE, 8)
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TTItems.STONE_ARCANE.get(), 8)
                 .pattern("SSS")
                 .pattern("SVS")
                 .pattern("SSS")
                 .define('S', Tags.Items.STONES)
-                .define('V', TTItems.ESSENTIA_CRYSTAL)
-                .unlockedBy("has", has(TTItems.ESSENTIA_CRYSTAL))
+                .define('V', TTItems.ESSENTIA_CRYSTAL.get())
+                .unlockedBy("has", has(TTItems.ESSENTIA_CRYSTAL.get()))
                 .save(output);
 
         TTBlockFamilies.getAllFamilies()
@@ -235,7 +235,7 @@ public final class TTRecipeProvider extends RecipeProvider {
         woodFromLogs(output, TTItems.WOOD_SILVERWOOD.get(), TTItems.LOG_SILVERWOOD.get());
         woodFromLogs(output, TTItems.STRIPPED_WOOD_SILVERWOOD.get(), TTItems.STRIPPED_LOG_SILVERWOOD.get());
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.PHIAL, 8)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.PHIAL.get(), 8)
                 .pattern(" C ")
                 .pattern("P P")
                 .pattern(" P ")
@@ -244,62 +244,62 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(Tags.Items.GLASS_BLOCKS))
                 .save(output);
 
-        oreSmelting(TTItems.QUICKSILVER, TTItemTags.ORES_CINNABAR, 1F, "quicksilver");
-        rawSmelting(TTItems.QUICKSILVER, TTItemTags.RAW_MATERIALS_CINNABAR, 0.7F, "quicksilver", "raw_cinnabar");
-        oreSmelting(TTItems.AMBER, TTItemTags.ORES_AMBER, 1F, "amber");
+        oreSmelting(TTItems.QUICKSILVER.get(), TTItemTags.ORES_CINNABAR, 1F, "quicksilver");
+        rawSmelting(TTItems.QUICKSILVER.get(), TTItemTags.RAW_MATERIALS_CINNABAR, 0.7F, "quicksilver", "raw_cinnabar");
+        oreSmelting(TTItems.AMBER.get(), TTItemTags.ORES_AMBER, 1F, "amber");
         oreSmelting(Items.QUARTZ, Tags.Items.ORES_QUARTZ, 0.2F, "quartz");
 
         block3x3(
-                TTItems.METAL_BRASS_BLOCK,
+                TTItems.METAL_BRASS_BLOCK.get(),
                 TTItemTags.INGOTS_BRASS,
                 TTItems.INGOT_BRASS,
                 TTItemTags.STORAGE_BLOCKS_BRASS);
         block3x3(
-                TTItems.METAL_THAUMIUM_BLOCK,
+                TTItems.METAL_THAUMIUM_BLOCK.get(),
                 TTItemTags.INGOTS_THAUMIUM,
                 TTItems.INGOT_THAUMIUM,
                 TTItemTags.STORAGE_BLOCKS_THAUMIUM);
         block3x3(
-                TTItems.METAL_VOID_BLOCK,
+                TTItems.METAL_VOID_BLOCK.get(),
                 TTItemTags.INGOTS_VOID_METAL,
                 TTItems.INGOT_VOID,
                 TTItemTags.STORAGE_BLOCKS_VOID_METAL);
-        block2x2(TTItems.AMBER_BLOCK, TTItemTags.GEMS_AMBER, TTItems.AMBER, TTItemTags.STORAGE_BLOCKS_AMBER);
+        block2x2(TTItems.AMBER_BLOCK.get(), TTItemTags.GEMS_AMBER, TTItems.AMBER.get(), TTItemTags.STORAGE_BLOCKS_AMBER);
 
-        nuggets3x3(Items.QUARTZ, TTItemTags.NUGGETS_QUARTZ, TTItems.NUGGET_QUARTZ, Tags.Items.GEMS_QUARTZ);
+        nuggets3x3(Items.QUARTZ, TTItemTags.NUGGETS_QUARTZ, TTItems.NUGGET_QUARTZ.get(), Tags.Items.GEMS_QUARTZ);
         nuggets3x3(
-                TTItems.QUICKSILVER,
+                TTItems.QUICKSILVER.get(),
                 TTItemTags.NUGGETS_QUICKSILVER,
                 TTItems.NUGGET_QUICKSILVER,
                 TTItemTags.GEMS_QUICKSILVER);
-        nuggets3x3(TTItems.INGOT_BRASS, TTItemTags.NUGGETS_BRASS, TTItems.NUGGET_BRASS, TTItemTags.INGOTS_BRASS);
+        nuggets3x3(TTItems.INGOT_BRASS.get(), TTItemTags.NUGGETS_BRASS, TTItems.NUGGET_BRASS.get(), TTItemTags.INGOTS_BRASS);
         nuggets3x3(
-                TTItems.INGOT_THAUMIUM,
+                TTItems.INGOT_THAUMIUM.get(),
                 TTItemTags.NUGGETS_THAUMIUM,
                 TTItems.NUGGET_THAUMIUM,
                 TTItemTags.INGOTS_THAUMIUM);
         nuggets3x3(
-                TTItems.INGOT_VOID, TTItemTags.NUGGETS_VOID_METAL, TTItems.NUGGET_VOID, TTItemTags.INGOTS_VOID_METAL);
+                TTItems.INGOT_VOID.get(), TTItemTags.NUGGETS_VOID_METAL, TTItems.NUGGET_VOID.get(), TTItemTags.INGOTS_VOID_METAL);
 
-        plateRecipe(TTItems.PLATE_IRON, Tags.Items.INGOTS_IRON);
-        plateRecipe(TTItems.PLATE_BRASS, TTItemTags.INGOTS_BRASS);
-        plateRecipe(TTItems.PLATE_THAUMIUM, TTItemTags.INGOTS_THAUMIUM);
-        plateRecipe(TTItems.PLATE_VOID, TTItemTags.INGOTS_VOID_METAL);
+        plateRecipe(TTItems.PLATE_IRON.get(), Tags.Items.INGOTS_IRON);
+        plateRecipe(TTItems.PLATE_BRASS.get(), TTItemTags.INGOTS_BRASS);
+        plateRecipe(TTItems.PLATE_THAUMIUM.get(), TTItemTags.INGOTS_THAUMIUM);
+        plateRecipe(TTItems.PLATE_VOID.get(), TTItemTags.INGOTS_VOID_METAL);
 
-        clusterSmelting(Items.IRON_INGOT, TTItems.CLUSTER_IRON, "iron_ingot");
-        clusterSmelting(Items.GOLD_INGOT, TTItems.CLUSTER_GOLD, "gold_ingot");
-        clusterSmelting(Items.COPPER_INGOT, TTItems.CLUSTER_COPPER, "copper_ingot");
-        clusterSmelting(TTItems.QUICKSILVER, TTItems.CLUSTER_CINNABAR, "quicksilver");
-        clusterSmelting(Items.QUARTZ, TTItems.CLUSTER_QUARTZ, "quartz");
+        clusterSmelting(Items.IRON_INGOT, TTItems.CLUSTER_IRON.get(), "iron_ingot");
+        clusterSmelting(Items.GOLD_INGOT, TTItems.CLUSTER_GOLD.get(), "gold_ingot");
+        clusterSmelting(Items.COPPER_INGOT, TTItems.CLUSTER_COPPER.get(), "copper_ingot");
+        clusterSmelting(TTItems.QUICKSILVER.get(), TTItems.CLUSTER_CINNABAR.get(), "quicksilver");
+        clusterSmelting(Items.QUARTZ, TTItems.CLUSTER_QUARTZ.get(), "quartz");
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TTItems.QUICKSILVER)
-                .requires(TTItems.PLANT_SHIMMERLEAF)
-                .unlockedBy("has", has(TTItems.PLANT_SHIMMERLEAF))
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TTItems.QUICKSILVER.get())
+                .requires(TTItems.PLANT_SHIMMERLEAF.get())
+                .unlockedBy("has", has(TTItems.PLANT_SHIMMERLEAF.get()))
                 .save(output, TTIds.MODID + ":quicksilver_from_shimmerleaf");
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.BLAZE_POWDER)
-                .requires(TTItems.PLANT_CINDERPEARL)
-                .unlockedBy("has", has(TTItems.PLANT_CINDERPEARL))
+                .requires(TTItems.PLANT_CINDERPEARL.get())
+                .unlockedBy("has", has(TTItems.PLANT_CINDERPEARL.get()))
                 .save(output, TTIds.MODID + ":blaze_powder_from_cinderpearl");
 
         ShapedRecipeBuilder.shaped(
@@ -378,7 +378,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .component(Ingredient.of(Items.ENDER_EYE))
                 .instability(2)
                 .gate(gate("link_book", 1))
-                .unlockedBy("has", has(TTItems.THAUMONOMICON_SHARING))
+                .unlockedBy("has", has(TTItems.THAUMONOMICON_SHARING.get()))
                 .save(output);
     }
 
@@ -499,10 +499,10 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("WBW")
                 .pattern("GGG")
                 .define('G', Tags.Items.GLASS_BLOCKS)
-                .define('W', TTItems.PLANK_GREATWOOD)
-                .define('B', TTItems.BRAIN)
+                .define('W', TTItems.PLANK_GREATWOOD.get())
+                .define('B', TTItems.BRAIN.get())
                 .gate(wardedArcanaGate)
-                .unlockedBy("has", has(TTItems.BRAIN))
+                .unlockedBy("has", has(TTItems.BRAIN.get()))
                 .save(output);
         arcaneShaped(new ItemStack(TTItems.ARCANE_DOOR.get()), 45)
                 .aspect(TTAspects.AQUA, 20)
@@ -512,11 +512,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("TDT")
                 .pattern("DBD")
                 .pattern("TDT")
-                .define('T', TTItems.INGOT_THAUMIUM)
-                .define('D', TTItems.PLANK_GREATWOOD)
-                .define('B', TTItems.BRAIN)
+                .define('T', TTItems.INGOT_THAUMIUM.get())
+                .define('D', TTItems.PLANK_GREATWOOD.get())
+                .define('B', TTItems.BRAIN.get())
                 .gate(wardedArcanaGate)
-                .unlockedBy("has", has(TTItems.BRAIN))
+                .unlockedBy("has", has(TTItems.BRAIN.get()))
                 .save(output);
         arcaneShaped(new ItemStack(TTItems.ARCANE_PRESSURE_PLATE.get()), 45)
                 .aspect(TTAspects.AQUA, 20)
@@ -525,11 +525,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.IGNIS, 5)
                 .pattern(" B ")
                 .pattern("TDT")
-                .define('T', TTItems.INGOT_THAUMIUM)
-                .define('D', TTItems.PLANK_GREATWOOD)
-                .define('B', TTItems.BRAIN)
+                .define('T', TTItems.INGOT_THAUMIUM.get())
+                .define('D', TTItems.PLANK_GREATWOOD.get())
+                .define('B', TTItems.BRAIN.get())
                 .gate(wardedArcanaGate)
-                .unlockedBy("has", has(TTItems.BRAIN))
+                .unlockedBy("has", has(TTItems.BRAIN.get()))
                 .save(output);
         arcaneShaped(new ItemStack(TTItems.GOLEM_FETTER.get()), 10)
                 .aspect(TTAspects.TERRA, 5)
@@ -537,10 +537,10 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("SSS")
                 .pattern("IRI")
                 .pattern("BBB")
-                .define('S', TTItems.STONE_ARCANE)
+                .define('S', TTItems.STONE_ARCANE.get())
                 .define('I', Items.IRON_INGOT)
                 .define('R', Items.BEACON)
-                .define('B', TTItems.STONE_ARCANE_BRICK)
+                .define('B', TTItems.STONE_ARCANE_BRICK.get())
                 .unlockedBy("has", has(Items.BEACON))
                 .save(output);
         arcaneShaped(new ItemStack(TTItems.ARCANE_KEY_IRON.get(), 2), 10)
@@ -563,14 +563,14 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .gate(wardedArcanaGate)
                 .unlockedBy("has", has(Items.GOLD_INGOT))
                 .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TTItems.TALLOW_BLOCK)
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TTItems.TALLOW_BLOCK.get())
                 .pattern("TTT")
                 .pattern("TTT")
                 .pattern("TTT")
-                .define('T', TTItems.TALLOW)
-                .unlockedBy("has", has(TTItems.TALLOW))
+                .define('T', TTItems.TALLOW.get())
+                .unlockedBy("has", has(TTItems.TALLOW.get()))
                 .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TTItems.ITEM_GRATE)
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TTItems.ITEM_GRATE.get())
                 .pattern("#")
                 .pattern("H")
                 .define('#', Items.IRON_BARS)
@@ -652,7 +652,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TTItemTags.PLANKS_SILVERWOOD))
                 .save(output);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TTItems.TABLE_WOOD)
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TTItems.TABLE_WOOD.get())
                 .pattern("SSS")
                 .pattern("W W")
                 .define('S', ItemTags.WOODEN_SLABS)
@@ -660,7 +660,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(ItemTags.WOODEN_SLABS))
                 .save(output);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TTItems.TABLE_STONE)
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TTItems.TABLE_STONE.get())
                 .pattern("SSS")
                 .pattern("W W")
                 .define('S', Items.STONE_SLAB)
@@ -668,7 +668,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(Items.STONE_SLAB))
                 .save(output);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TTItems.FLESH_BLOCK)
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TTItems.FLESH_BLOCK.get())
                 .pattern("###")
                 .pattern("###")
                 .pattern("###")
@@ -677,8 +677,8 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .save(output);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.ROTTEN_FLESH, 9)
-                .requires(TTItems.FLESH_BLOCK)
-                .unlockedBy("has", has(TTItems.FLESH_BLOCK))
+                .requires(TTItems.FLESH_BLOCK.get())
+                .unlockedBy("has", has(TTItems.FLESH_BLOCK.get()))
                 .save(output, TTIds.MODID + ":rotten_flesh_from_flesh_block");
 
         SingleItemRecipeBuilder.stonecutting(
@@ -694,42 +694,42 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(Tags.Items.OBSIDIANS_NORMAL))
                 .save(output, TTIds.MODID + ":obsidian_totem_from_obsidian_stonecutting");
         SingleItemRecipeBuilder.stonecutting(
-                        Ingredient.of(TTItems.OBSIDIAN_TILE), RecipeCategory.BUILDING_BLOCKS, TTItems.OBSIDIAN_TOTEM)
-                .unlockedBy("has", has(TTItems.OBSIDIAN_TILE))
+                        Ingredient.of(TTItems.OBSIDIAN_TILE.get()), RecipeCategory.BUILDING_BLOCKS, TTItems.OBSIDIAN_TOTEM.get())
+                .unlockedBy("has", has(TTItems.OBSIDIAN_TILE.get()))
                 .save(output, TTIds.MODID + ":obsidian_totem_from_obsidian_tile_stonecutting");
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TTItems.AMBER_BRICK, 4)
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TTItems.AMBER_BRICK.get(), 4)
                 .pattern("##")
                 .pattern("##")
                 .define('#', TTItemTags.STORAGE_BLOCKS_AMBER)
                 .unlockedBy("has", has(TTItemTags.STORAGE_BLOCKS_AMBER))
                 .save(output);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TTItems.AMBER_BLOCK, 4)
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TTItems.AMBER_BLOCK.get(), 4)
                 .pattern("##")
                 .pattern("##")
-                .define('#', TTItems.AMBER_BRICK)
-                .unlockedBy("has", has(TTItems.AMBER_BRICK))
+                .define('#', TTItems.AMBER_BRICK.get())
+                .unlockedBy("has", has(TTItems.AMBER_BRICK.get()))
                 .save(output, TTIds.MODID + ":amber_block_from_brick");
 
         arcaneShaped(new ItemStack(TTItems.PAVING_STONE_BARRIER.get(), 4), 50)
                 .pattern("SAS")
                 .pattern("SBS")
-                .define('S', TTItems.STONE_ARCANE_BRICK)
+                .define('S', TTItems.STONE_ARCANE_BRICK.get())
                 .define('A', crystal(TTAspects.IGNIS))
                 .define('B', crystal(TTAspects.ORDO))
                 .gate(artificeGate)
-                .unlockedBy("has", has(TTItems.STONE_ARCANE_BRICK))
+                .unlockedBy("has", has(TTItems.STONE_ARCANE_BRICK.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.PAVING_STONE_TRAVEL.get(), 4), 50)
                 .pattern("SAS")
                 .pattern("SBS")
-                .define('S', TTItems.STONE_ARCANE_BRICK)
+                .define('S', TTItems.STONE_ARCANE_BRICK.get())
                 .define('A', crystal(TTAspects.AER))
                 .define('B', crystal(TTAspects.TERRA))
                 .gate(artificeGate)
-                .unlockedBy("has", has(TTItems.STONE_ARCANE_BRICK))
+                .unlockedBy("has", has(TTItems.STONE_ARCANE_BRICK.get()))
                 .save(output);
     }
 
@@ -783,25 +783,25 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("BGI")
                 .pattern("WMW")
                 .pattern("S S")
-                .define('G', TTItems.MECHANISM_SIMPLE)
+                .define('G', TTItems.MECHANISM_SIMPLE.get())
                 .define('I', TTItemTags.PLATES_IRON)
                 .define('S', Tags.Items.RODS_WOODEN)
-                .define('M', TTItems.MIND_CLOCKWORK)
+                .define('M', TTItems.MIND_CLOCKWORK.get())
                 .define('B', Tags.Items.TOOLS_BOW)
                 .define('W', TTItemTags.PLANKS_GREATWOOD)
                 .gate(gate("basic_turret"))
-                .unlockedBy("has", has(TTItems.MIND_CLOCKWORK))
+                .unlockedBy("has", has(TTItems.MIND_CLOCKWORK.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.TURRET_ADVANCED.get()), 150)
                 .aspect(TTAspects.AER, 2)
                 .pattern("PMP")
                 .pattern("PTP")
-                .define('T', TTItems.TURRET_BASIC)
+                .define('T', TTItems.TURRET_BASIC.get())
                 .define('P', TTItemTags.PLATES_IRON)
-                .define('M', TTItems.MIND_BIOTHAUMIC)
+                .define('M', TTItems.MIND_BIOTHAUMIC.get())
                 .gate(gate("advanced_turret"))
-                .unlockedBy("has", has(TTItems.MIND_BIOTHAUMIC))
+                .unlockedBy("has", has(TTItems.MIND_BIOTHAUMIC.get()))
                 .save(output);
 
         new InfusionRecipeBuilder(
@@ -824,7 +824,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.MOTUS, 25)
                 .instability(4)
                 .gate(gate("arcane_bore"))
-                .unlockedBy("has", has(TTItems.TURRET_BASIC))
+                .unlockedBy("has", has(TTItems.TURRET_BASIC.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.GRAPPLE_GUN_TIP.get()), 25)
@@ -833,10 +833,10 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("RHR")
                 .pattern("BRB")
                 .define('B', TTItemTags.PLATES_BRASS)
-                .define('R', TTItems.RARE_EARTH)
+                .define('R', TTItems.RARE_EARTH.get())
                 .define('H', Items.TRIPWIRE_HOOK)
                 .gate(gate("grapple_gun"))
-                .unlockedBy("has", has(TTItems.RARE_EARTH))
+                .unlockedBy("has", has(TTItems.RARE_EARTH.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.GRAPPLE_GUN_SPOOL.get()), 25)
@@ -844,11 +844,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("SHS")
                 .pattern("SGS")
                 .pattern("SSS")
-                .define('G', TTItems.MECHANISM_SIMPLE)
+                .define('G', TTItems.MECHANISM_SIMPLE.get())
                 .define('S', Tags.Items.STRINGS)
                 .define('H', Items.TRIPWIRE_HOOK)
                 .gate(gate("grapple_gun"))
-                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE))
+                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.GRAPPLE_GUN.get()), 75)
@@ -859,11 +859,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern(" BW")
                 .define('B', TTItemTags.PLATES_BRASS)
                 .define('I', TTItemTags.PLATES_IRON)
-                .define('T', TTItems.GRAPPLE_GUN_TIP)
+                .define('T', TTItems.GRAPPLE_GUN_TIP.get())
                 .define('W', ItemTags.PLANKS)
-                .define('S', TTItems.GRAPPLE_GUN_SPOOL)
+                .define('S', TTItems.GRAPPLE_GUN_SPOOL.get())
                 .gate(gate("grapple_gun"))
-                .unlockedBy("has", has(TTItems.GRAPPLE_GUN_TIP))
+                .unlockedBy("has", has(TTItems.GRAPPLE_GUN_TIP.get()))
                 .save(output);
     }
 
@@ -875,13 +875,13 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("BRB")
                 .pattern("GTG")
                 .define('I', TTItemTags.PLATES_IRON)
-                .define('S', TTItems.SLAB_ARCANE_STONE)
-                .define('B', TTItems.STONE_ARCANE)
-                .define('R', TTItems.VIS_RESONATOR)
+                .define('S', TTItems.SLAB_ARCANE_STONE.get())
+                .define('B', TTItems.STONE_ARCANE.get())
+                .define('R', TTItems.VIS_RESONATOR.get())
                 .define('G', Tags.Items.INGOTS_GOLD)
-                .define('T', TTItems.TABLE_STONE)
+                .define('T', TTItems.TABLE_STONE.get())
                 .gate(gate("base_auromancy", 1))
-                .unlockedBy("has", has(TTItems.VIS_RESONATOR))
+                .unlockedBy("has", has(TTItems.VIS_RESONATOR.get()))
                 .save(output);
     }
 
@@ -891,40 +891,40 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("S S")
                 .pattern(" N ")
                 .pattern("S S")
-                .define('S', TTItems.STONE_ARCANE_BRICK)
+                .define('S', TTItems.STONE_ARCANE_BRICK.get())
                 .define('N', TTItemTags.NITORS)
                 .gate(gate("infusion", 1))
-                .unlockedBy("has", has(TTItems.STONE_ARCANE_BRICK))
+                .unlockedBy("has", has(TTItems.STONE_ARCANE_BRICK.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.PEDESTAL_ARCANE.get()), 10)
                 .pattern("SSS")
                 .pattern(" B ")
                 .pattern("SSS")
-                .define('S', TTItems.SLAB_ARCANE_STONE)
-                .define('B', TTItems.STONE_ARCANE)
+                .define('S', TTItems.SLAB_ARCANE_STONE.get())
+                .define('B', TTItems.STONE_ARCANE.get())
                 .gate(gate("infusion"))
-                .unlockedBy("has", has(TTItems.STONE_ARCANE))
+                .unlockedBy("has", has(TTItems.STONE_ARCANE.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.PEDESTAL_ANCIENT.get()), 150)
                 .pattern("SSS")
                 .pattern(" B ")
                 .pattern("SSS")
-                .define('S', TTItems.SLAB_ANCIENT)
-                .define('B', TTItems.STONE_ANCIENT)
+                .define('S', TTItems.SLAB_ANCIENT.get())
+                .define('B', TTItems.STONE_ANCIENT.get())
                 .gate(gate("infusion_ancient"))
-                .unlockedBy("has", has(TTItems.STONE_ANCIENT))
+                .unlockedBy("has", has(TTItems.STONE_ANCIENT.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.PEDESTAL_ELDRITCH.get()), 150)
                 .pattern("SSS")
                 .pattern(" B ")
                 .pattern("SSS")
-                .define('S', TTItems.SLAB_ELDRITCH)
-                .define('B', TTItems.STONE_ELDRITCH_TILE)
+                .define('S', TTItems.SLAB_ELDRITCH.get())
+                .define('B', TTItems.STONE_ELDRITCH_TILE.get())
                 .gate(gate("infusion_eldritch"))
-                .unlockedBy("has", has(TTItems.STONE_ELDRITCH_TILE))
+                .unlockedBy("has", has(TTItems.STONE_ELDRITCH_TILE.get()))
                 .save(output);
     }
 
@@ -945,7 +945,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.HERBA, 30)
                 .instability(1)
                 .gate(gate)
-                .unlockedBy("has", has(TTItems.THAUMIUM_AXE))
+                .unlockedBy("has", has(TTItems.THAUMIUM_AXE.get()))
                 .save(output);
         new InfusionRecipeBuilder(
                         registries.lookupOrThrow(IAspect.REGISTRY_KEY),
@@ -963,7 +963,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.SENSUS, 30)
                 .instability(1)
                 .gate(gate)
-                .unlockedBy("has", has(TTItems.THAUMIUM_PICKAXE))
+                .unlockedBy("has", has(TTItems.THAUMIUM_PICKAXE.get()))
                 .save(output);
         new InfusionRecipeBuilder(
                         registries.lookupOrThrow(IAspect.REGISTRY_KEY),
@@ -979,7 +979,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.MOTUS, 30)
                 .instability(1)
                 .gate(gate)
-                .unlockedBy("has", has(TTItems.THAUMIUM_SWORD))
+                .unlockedBy("has", has(TTItems.THAUMIUM_SWORD.get()))
                 .save(output);
         new InfusionRecipeBuilder(
                         registries.lookupOrThrow(IAspect.REGISTRY_KEY),
@@ -994,7 +994,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.FABRICO, 30)
                 .instability(1)
                 .gate(gate)
-                .unlockedBy("has", has(TTItems.THAUMIUM_SHOVEL))
+                .unlockedBy("has", has(TTItems.THAUMIUM_SHOVEL.get()))
                 .save(output);
         new InfusionRecipeBuilder(
                         registries.lookupOrThrow(IAspect.REGISTRY_KEY),
@@ -1010,7 +1010,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.PERDITIO, 30)
                 .instability(1)
                 .gate(gate)
-                .unlockedBy("has", has(TTItems.THAUMIUM_HOE))
+                .unlockedBy("has", has(TTItems.THAUMIUM_HOE.get()))
                 .save(output);
         new InfusionRecipeBuilder(
                         registries.lookupOrThrow(IAspect.REGISTRY_KEY),
@@ -1032,7 +1032,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.DESIDERIUM, 50)
                 .instability(6)
                 .gate(gate("primal_crusher"))
-                .unlockedBy("has", has(TTItems.PRIMORDIAL_PEARL))
+                .unlockedBy("has", has(TTItems.PRIMORDIAL_PEARL.get()))
                 .save(output);
     }
 
@@ -1043,12 +1043,12 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern(" R ")
                 .pattern("DID")
                 .pattern("SSS")
-                .define('R', TTItems.VIS_RESONATOR)
+                .define('R', TTItems.VIS_RESONATOR.get())
                 .define('D', Tags.Items.GEMS_DIAMOND)
                 .define('I', Tags.Items.INGOTS_GOLD)
                 .define('S', Tags.Items.STONES)
                 .gate(gate("recharge_pedestal"))
-                .unlockedBy("has", has(TTItems.VIS_RESONATOR))
+                .unlockedBy("has", has(TTItems.VIS_RESONATOR.get()))
                 .save(output);
     }
 
@@ -1138,7 +1138,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.MOTUS, 16)
                 .instability(6)
                 .gate(gate("thaumostatic_harness"))
-                .unlockedBy("has", has(TTItems.TRAVELLER_BOOTS))
+                .unlockedBy("has", has(TTItems.TRAVELLER_BOOTS.get()))
                 .save(output);
     }
 
@@ -1336,29 +1336,29 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern(" W ")
                 .define('H', Items.HOPPER)
                 .define('W', TTItemTags.PLANKS_GREATWOOD)
-                .define('G', TTItems.MECHANISM_SIMPLE)
-                .define('V', TTItems.VIS_RESONATOR)
+                .define('G', TTItems.MECHANISM_SIMPLE.get())
+                .define('V', TTItems.VIS_RESONATOR.get())
                 .define('C', Tags.Items.PLAYER_WORKSTATIONS_CRAFTING_TABLES)
                 .gate(gate("arcane_pattern_crafter"))
-                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE))
+                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE.get()))
                 .save(output);
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, TTItems.SCRIBING_TOOLS)
-                .requires(TTItems.SCRIBING_TOOLS)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, TTItems.SCRIBING_TOOLS.get())
+                .requires(TTItems.SCRIBING_TOOLS.get())
                 .requires(Tags.Items.DYES_BLACK)
-                .unlockedBy("has", has(TTItems.SCRIBING_TOOLS))
+                .unlockedBy("has", has(TTItems.SCRIBING_TOOLS.get()))
                 .save(output, "thaumaturge:scribing_tools_refill");
 
         arcaneShaped(new ItemStack(TTBlocks.DECONSTRUCTION_TABLE.asItem()), 20)
                 .aspect(TTAspects.PERDITIO, 1)
                 .pattern(" S ")
                 .pattern("ATP")
-                .define('S', TTItems.THAUMOMETER)
+                .define('S', TTItems.THAUMOMETER.get())
                 .define('T', TTBlocks.TABLE_WOOD.asItem())
                 .define('A', Items.GOLDEN_AXE)
                 .define('P', Items.GOLDEN_PICKAXE)
                 .gate(gate("deconstructor"))
-                .unlockedBy("has", has(TTItems.THAUMOMETER))
+                .unlockedBy("has", has(TTItems.THAUMOMETER.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.POTION_SPRAYER.get()), 75)
@@ -1371,9 +1371,9 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('I', TTItemTags.PLATES_IRON)
                 .define('A', Items.BREWING_STAND)
                 .define('D', Items.DISPENSER)
-                .define('C', TTItems.ALCHEMICAL_CONSTRUCT)
+                .define('C', TTItems.ALCHEMICAL_CONSTRUCT.get())
                 .gate(gate("potion_sprayer"))
-                .unlockedBy("has", has(TTItems.ALCHEMICAL_CONSTRUCT))
+                .unlockedBy("has", has(TTItems.ALCHEMICAL_CONSTRUCT.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.SPA.get()), 50)
@@ -1383,11 +1383,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("SPS")
                 .define('Q', Items.QUARTZ_BLOCK)
                 .define('I', Items.IRON_BARS)
-                .define('S', TTItems.STONE_ARCANE)
-                .define('J', TTItems.JAR_NORMAL)
-                .define('P', TTItems.MECHANISM_SIMPLE)
+                .define('S', TTItems.STONE_ARCANE.get())
+                .define('J', TTItems.JAR_NORMAL.get())
+                .define('P', TTItems.MECHANISM_SIMPLE.get())
                 .gate(gate("arcane_spa"))
-                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE))
+                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.FABRIC.get()), 5)
@@ -1425,9 +1425,9 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern(" M ")
                 .define('T', TTItemTags.PLATES_THAUMIUM)
                 .define('Q', Items.PISTON)
-                .define('M', TTItems.MECHANISM_SIMPLE)
+                .define('M', TTItems.MECHANISM_SIMPLE.get())
                 .gate(gate("base_artifice"))
-                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE))
+                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE.get()))
                 .save(output);
 
         arcaneShapeless(new ItemStack(TTItems.MIRRORED_GLASS.get()), 50)
@@ -1494,13 +1494,13 @@ public final class TTRecipeProvider extends RecipeProvider {
                         aspects,
                         RecipeCategory.MISC,
                         new ItemStack(TTItems.BATH_SALTS.get()),
-                        Ingredient.of(TTItems.SALIS_MUNDUS))
+                        Ingredient.of(TTItems.SALIS_MUNDUS.get()))
                 .aspect(TTAspects.COGNITIO, 40)
                 .aspect(TTAspects.AER, 40)
                 .aspect(TTAspects.ORDO, 40)
                 .aspect(TTAspects.VICTUS, 40)
                 .gate(gate("bath_salts"))
-                .unlockedBy("has", has(TTItems.SALIS_MUNDUS))
+                .unlockedBy("has", has(TTItems.SALIS_MUNDUS.get()))
                 .save(output);
 
         new CrucibleRecipeBuilder(
@@ -1516,7 +1516,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(Items.ROTTEN_FLESH))
                 .save(output);
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, TTItems.TRIPLE_MEAT_TREAT)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, TTItems.TRIPLE_MEAT_TREAT.get())
                 .requires(TTItemTags.MEAT_CHUNKS)
                 .requires(TTItemTags.MEAT_CHUNKS)
                 .requires(TTItemTags.MEAT_CHUNKS)
@@ -1531,21 +1531,21 @@ public final class TTRecipeProvider extends RecipeProvider {
         if (row3 != null) {
             builder.pattern(row3);
         }
-        builder.define('I', TTItems.FABRIC)
+        builder.define('I', TTItems.FABRIC.get())
                 .gate(gate("unlock_infusion"))
-                .unlockedBy("has", has(TTItems.FABRIC))
+                .unlockedBy("has", has(TTItems.FABRIC.get()))
                 .save(output);
     }
 
     private void buildCrystalClusterRecipes() {
         HolderLookup<IAspect> aspects = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
-        crystalCluster(aspects, TTItems.CRYSTAL_AER, TTAspects.AER, 0);
-        crystalCluster(aspects, TTItems.CRYSTAL_IGNIS, TTAspects.IGNIS, 0);
-        crystalCluster(aspects, TTItems.CRYSTAL_AQUA, TTAspects.AQUA, 0);
-        crystalCluster(aspects, TTItems.CRYSTAL_TERRA, TTAspects.TERRA, 0);
-        crystalCluster(aspects, TTItems.CRYSTAL_ORDO, TTAspects.ORDO, 0);
-        crystalCluster(aspects, TTItems.CRYSTAL_PERDITIO, TTAspects.PERDITIO, 0);
-        crystalCluster(aspects, TTItems.CRYSTAL_VITIUM, TTAspects.VITIUM, 4);
+        crystalCluster(aspects, TTItems.CRYSTAL_AER.get(), TTAspects.AER, 0);
+        crystalCluster(aspects, TTItems.CRYSTAL_IGNIS.get(), TTAspects.IGNIS, 0);
+        crystalCluster(aspects, TTItems.CRYSTAL_AQUA.get(), TTAspects.AQUA, 0);
+        crystalCluster(aspects, TTItems.CRYSTAL_TERRA.get(), TTAspects.TERRA, 0);
+        crystalCluster(aspects, TTItems.CRYSTAL_ORDO.get(), TTAspects.ORDO, 0);
+        crystalCluster(aspects, TTItems.CRYSTAL_PERDITIO.get(), TTAspects.PERDITIO, 0);
+        crystalCluster(aspects, TTItems.CRYSTAL_VITIUM.get(), TTAspects.VITIUM, 4);
 
         new InfusionRecipeBuilder(
                         aspects,
@@ -1580,7 +1580,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.VITIUM, 50)
                 .instability(8)
                 .gate(gate("rift_closer"))
-                .unlockedBy("has", has(TTItems.MORPHIC_RESONATOR))
+                .unlockedBy("has", has(TTItems.MORPHIC_RESONATOR.get()))
                 .save(output);
     }
 
@@ -1594,7 +1594,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.VINCULUM, 5)
                 .instability(instability)
                 .gate(gate("crystal_farmer"))
-                .unlockedBy("has", has(TTItems.SALIS_MUNDUS))
+                .unlockedBy("has", has(TTItems.SALIS_MUNDUS.get()))
                 .save(output);
     }
 
@@ -1859,14 +1859,14 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TTItems.VOID_SEED.get()))
                 .save(output, TTIds.MODID + ":crucible/void_ingot");
 
-        clusterRecipe(TTItems.CLUSTER_IRON, Tags.Items.RAW_MATERIALS_IRON);
-        clusterRecipe(TTItems.CLUSTER_GOLD, Tags.Items.RAW_MATERIALS_GOLD);
-        clusterRecipe(TTItems.CLUSTER_COPPER, Tags.Items.RAW_MATERIALS_COPPER);
-        clusterRecipe(TTItems.CLUSTER_TIN, TTItemTags.ORES_TIN);
-        clusterRecipe(TTItems.CLUSTER_SILVER, TTItemTags.ORES_SILVER);
-        clusterRecipe(TTItems.CLUSTER_LEAD, TTItemTags.ORES_LEAD);
-        clusterRecipe(TTItems.CLUSTER_CINNABAR, TTItemTags.RAW_MATERIALS_CINNABAR);
-        clusterRecipe(TTItems.CLUSTER_QUARTZ, Tags.Items.ORES_QUARTZ);
+        clusterRecipe(TTItems.CLUSTER_IRON.get(), Tags.Items.RAW_MATERIALS_IRON);
+        clusterRecipe(TTItems.CLUSTER_GOLD.get(), Tags.Items.RAW_MATERIALS_GOLD);
+        clusterRecipe(TTItems.CLUSTER_COPPER.get(), Tags.Items.RAW_MATERIALS_COPPER);
+        clusterRecipe(TTItems.CLUSTER_TIN.get(), TTItemTags.ORES_TIN);
+        clusterRecipe(TTItems.CLUSTER_SILVER.get(), TTItemTags.ORES_SILVER);
+        clusterRecipe(TTItems.CLUSTER_LEAD.get(), TTItemTags.ORES_LEAD);
+        clusterRecipe(TTItems.CLUSTER_CINNABAR.get(), TTItemTags.RAW_MATERIALS_CINNABAR);
+        clusterRecipe(TTItems.CLUSTER_QUARTZ.get(), Tags.Items.ORES_QUARTZ);
 
         transmutationRecipe("iron_nugget", Items.IRON_NUGGET, Tags.Items.NUGGETS_IRON, TTAspects.METALLUM);
         transmutationRecipe(
@@ -1940,11 +1940,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern(" R ")
                 .pattern("P P")
                 .pattern("I I")
-                .define('R', TTItems.VIS_RESONATOR)
+                .define('R', TTItems.VIS_RESONATOR.get())
                 .define('P', TTItemTags.PLANKS_GREATWOOD)
                 .define('I', Tags.Items.INGOTS_IRON)
                 .gate(gate("workbench_charger"))
-                .unlockedBy("has", has(TTItems.VIS_RESONATOR))
+                .unlockedBy("has", has(TTItems.VIS_RESONATOR.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.GOGGLES_REVEALING.get()), 50)
@@ -1953,9 +1953,9 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("MBM")
                 .define('L', Tags.Items.LEATHERS)
                 .define('B', TTItemTags.INGOTS_BRASS)
-                .define('M', TTItems.THAUMOMETER)
+                .define('M', TTItems.THAUMOMETER.get())
                 .gate(gate("unlock_artifice"))
-                .unlockedBy("has", has(TTItems.THAUMOMETER))
+                .unlockedBy("has", has(TTItems.THAUMOMETER.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.ALEMBIC.get()), 50)
@@ -1964,7 +1964,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("PBP")
                 .pattern("GFG")
                 .define('G', TTItemTags.PLANKS_GREATWOOD)
-                .define('F', TTItems.FILTER)
+                .define('F', TTItems.FILTER.get())
                 .define('P', TTItemTags.PLATES_BRASS)
                 .define('B', Tags.Items.BUCKETS_EMPTY)
                 .gate(gate("essentia_smelter"))
@@ -1979,9 +1979,9 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('C', ItemTags.STONE_TOOL_MATERIALS)
                 .define('F', Tags.Items.PLAYER_WORKSTATIONS_FURNACES)
                 .define('P', TTItemTags.PLATES_BRASS)
-                .define('R', TTItems.CRUCIBLE)
+                .define('R', TTItems.CRUCIBLE.get())
                 .gate(gate("essentia_smelter", 1))
-                .unlockedBy("has", has(TTItems.CRUCIBLE))
+                .unlockedBy("has", has(TTItems.CRUCIBLE.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.SMELTER_THAUMIUM.get()), 250)
@@ -1990,11 +1990,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("CFC")
                 .pattern("CCC")
                 .define('C', TTItemTags.PLATES_THAUMIUM)
-                .define('F', TTItems.ALCHEMICAL_CONSTRUCT)
+                .define('F', TTItems.ALCHEMICAL_CONSTRUCT.get())
                 .define('P', TTItemTags.PLATES_BRASS)
-                .define('R', TTItems.SMELTER_BASIC)
+                .define('R', TTItems.SMELTER_BASIC.get())
                 .gate(gate("essentia_smelter_thaumium"))
-                .unlockedBy("has", has(TTItems.SMELTER_BASIC))
+                .unlockedBy("has", has(TTItems.SMELTER_BASIC.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.SMELTER_VOID.get()), 750)
@@ -2003,11 +2003,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("CFC")
                 .pattern("CCC")
                 .define('C', TTItemTags.PLATES_VOID_METAL)
-                .define('F', TTItems.ADVANCED_ALCHEMICAL_CONSTRUCT)
+                .define('F', TTItems.ADVANCED_ALCHEMICAL_CONSTRUCT.get())
                 .define('P', TTItemTags.PLATES_BRASS)
-                .define('R', TTItems.SMELTER_THAUMIUM)
+                .define('R', TTItems.SMELTER_THAUMIUM.get())
                 .gate(gate("essentia_smelter_void"))
-                .unlockedBy("has", has(TTItems.SMELTER_THAUMIUM))
+                .unlockedBy("has", has(TTItems.SMELTER_THAUMIUM.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.JAR_NORMAL.get()), 5)
@@ -2022,9 +2022,9 @@ public final class TTRecipeProvider extends RecipeProvider {
 
         arcaneShapeless(new ItemStack(TTItems.JAR_VOID.get()), 50)
                 .aspect(TTAspects.PERDITIO)
-                .requires(TTItems.JAR_NORMAL)
+                .requires(TTItems.JAR_NORMAL.get())
                 .gate(gate("warded_jars"))
-                .unlockedBy("has", has(TTItems.JAR_NORMAL))
+                .unlockedBy("has", has(TTItems.JAR_NORMAL.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.TUBE.get(), 8), 10)
@@ -2041,45 +2041,45 @@ public final class TTRecipeProvider extends RecipeProvider {
 
         arcaneShapeless(new ItemStack(TTItems.TUBE_RESTRICT.get()), 10)
                 .aspect(TTAspects.TERRA)
-                .requires(TTItems.TUBE)
+                .requires(TTItems.TUBE.get())
                 .requires(Tags.Items.STONES)
                 .gate(gate("tubes"))
-                .unlockedBy("has", has(TTItems.TUBE))
+                .unlockedBy("has", has(TTItems.TUBE.get()))
                 .save(output);
 
         arcaneShapeless(new ItemStack(TTItems.TUBE_ONEWAY.get()), 10)
                 .aspect(TTAspects.AQUA)
-                .requires(TTItems.TUBE)
+                .requires(TTItems.TUBE.get())
                 .requires(Tags.Items.DYES_BLUE)
                 .gate(gate("tubes"))
-                .unlockedBy("has", has(TTItems.TUBE))
+                .unlockedBy("has", has(TTItems.TUBE.get()))
                 .save(output);
 
         arcaneShapeless(new ItemStack(TTItems.TUBE_FILTER.get()), 10)
-                .requires(TTItems.TUBE)
-                .requires(TTItems.FILTER)
+                .requires(TTItems.TUBE.get())
+                .requires(TTItems.FILTER.get())
                 .gate(gate("tubes"))
-                .unlockedBy("has", has(TTItems.TUBE))
+                .unlockedBy("has", has(TTItems.TUBE.get()))
                 .save(output);
 
         arcaneShapeless(new ItemStack(TTItems.TUBE_VALVE.get()), 10)
-                .requires(TTItems.TUBE)
+                .requires(TTItems.TUBE.get())
                 .requires(Items.LEVER)
                 .gate(gate("tubes"))
-                .unlockedBy("has", has(TTItems.TUBE))
+                .unlockedBy("has", has(TTItems.TUBE.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.TUBE_BUFFER.get()), 25)
                 .pattern("PVP")
                 .pattern("TIT")
                 .pattern("PRP")
-                .define('P', TTItems.PHIAL)
-                .define('V', TTItems.TUBE_VALVE)
-                .define('T', TTItems.TUBE)
+                .define('P', TTItems.PHIAL.get())
+                .define('V', TTItems.TUBE_VALVE.get())
+                .define('T', TTItems.TUBE.get())
                 .define('I', TTItemTags.PLATES_IRON)
-                .define('R', TTItems.TUBE_RESTRICT)
+                .define('R', TTItems.TUBE_RESTRICT.get())
                 .gate(gate("tubes"))
-                .unlockedBy("has", has(TTItems.TUBE))
+                .unlockedBy("has", has(TTItems.TUBE.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.SMELTER_AUX.get()), 100)
@@ -2089,13 +2089,13 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("BCB")
                 .pattern("ILI")
                 .define('P', TTItemTags.PLANKS_GREATWOOD)
-                .define('V', TTItems.TUBE_FILTER)
+                .define('V', TTItems.TUBE_FILTER.get())
                 .define('B', TTItemTags.PLATES_BRASS)
                 .define('I', TTItemTags.PLATES_IRON)
-                .define('C', TTItems.ALCHEMICAL_CONSTRUCT)
-                .define('L', TTItems.BELLOWS)
+                .define('C', TTItems.ALCHEMICAL_CONSTRUCT.get())
+                .define('L', TTItems.BELLOWS.get())
                 .gate(gate("improved_smelting"))
-                .unlockedBy("has", has(TTItems.BELLOWS))
+                .unlockedBy("has", has(TTItems.BELLOWS.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.SMELTER_VENT.get()), 150)
@@ -2103,12 +2103,12 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("IBI")
                 .pattern("FCF")
                 .pattern("IBI")
-                .define('F', TTItems.FILTER)
+                .define('F', TTItems.FILTER.get())
                 .define('B', TTItemTags.PLATES_BRASS)
                 .define('I', TTItemTags.PLATES_IRON)
-                .define('C', TTItems.ALCHEMICAL_CONSTRUCT)
+                .define('C', TTItems.ALCHEMICAL_CONSTRUCT.get())
                 .gate(gate("improved_smelting_2"))
-                .unlockedBy("has", has(TTItems.ALCHEMICAL_CONSTRUCT))
+                .unlockedBy("has", has(TTItems.ALCHEMICAL_CONSTRUCT.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.ALCHEMICAL_CONSTRUCT.get(), 2), 75)
@@ -2118,8 +2118,8 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("IAI")
                 .pattern("VPV")
                 .pattern("IAI")
-                .define('A', TTItems.TUBE_VALVE)
-                .define('V', TTItems.TUBE)
+                .define('A', TTItems.TUBE_VALVE.get())
+                .define('V', TTItems.TUBE.get())
                 .define('I', TTItemTags.PLATES_IRON)
                 .define('P', TTItemTags.PLANKS_GREATWOOD)
                 .gate(gate("tubes"))
@@ -2135,11 +2135,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("VAV")
                 .pattern("APA")
                 .pattern("VAV")
-                .define('A', TTItems.ALCHEMICAL_CONSTRUCT)
-                .define('V', TTItems.INGOT_VOID)
-                .define('P', TTItems.PRIMORDIAL_PEARL)
+                .define('A', TTItems.ALCHEMICAL_CONSTRUCT.get())
+                .define('V', TTItems.INGOT_VOID.get())
+                .define('P', TTItems.PRIMORDIAL_PEARL.get())
                 .gate(gate("essentia_smelter_void", 0))
-                .unlockedBy("has", has(TTItems.ALCHEMICAL_CONSTRUCT))
+                .unlockedBy("has", has(TTItems.ALCHEMICAL_CONSTRUCT.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.BELLOWS.get()), 25)
@@ -2159,11 +2159,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern(" B ")
                 .pattern("MQM")
                 .pattern(" B ")
-                .define('B', TTItems.BRAIN)
-                .define('M', TTItems.MIRROR)
+                .define('B', TTItems.BRAIN.get())
+                .define('M', TTItems.MIRROR.get())
                 .define('Q', Items.WRITABLE_BOOK)
                 .gate(gate("share_book", 1))
-                .unlockedBy("has", has(TTItems.BRAIN))
+                .unlockedBy("has", has(TTItems.BRAIN.get()))
                 .save(output);
     }
 
@@ -2243,12 +2243,12 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern(" P ")
                 .pattern("PGP")
                 .pattern("BCB")
-                .define('G', TTItems.MECHANISM_SIMPLE)
+                .define('G', TTItems.MECHANISM_SIMPLE.get())
                 .define('B', TTItemTags.PLATES_BRASS)
                 .define('P', Tags.Items.GLASS_PANES)
                 .define('C', Items.COMPARATOR)
                 .gate(gate("mind_clockwork", 1))
-                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE))
+                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE.get()))
                 .save(output);
 
         new InfusionRecipeBuilder(
@@ -2262,7 +2262,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.MACHINA, 25)
                 .instability(4)
                 .gate(gate("mind_biothaumic"))
-                .unlockedBy("has", has(TTItems.MIND_CLOCKWORK))
+                .unlockedBy("has", has(TTItems.MIND_CLOCKWORK.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.MODULE_VISION.get()), 50)
@@ -2273,9 +2273,9 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('B', Items.GLASS_BOTTLE)
                 .define('E', Items.FERMENTED_SPIDER_EYE)
                 .define('P', TTItemTags.PLATES_BRASS)
-                .define('G', TTItems.MECHANISM_SIMPLE)
+                .define('G', TTItems.MECHANISM_SIMPLE.get())
                 .gate(gate("golem_vision"))
-                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE))
+                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.MODULE_AGGRESSION.get()), 50)
@@ -2286,9 +2286,9 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('R', Tags.Items.GLASS_PANES)
                 .define('T', Items.BLAZE_POWDER)
                 .define('P', TTItemTags.PLATES_BRASS)
-                .define('G', TTItems.MECHANISM_SIMPLE)
+                .define('G', TTItems.MECHANISM_SIMPLE.get())
                 .gate(gate("seal_guard"))
-                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE))
+                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.LEVITATOR.get()), 35)
@@ -2300,9 +2300,9 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('N', TTItemTags.NITORS)
                 .define('W', ItemTags.PLANKS)
                 .define('B', TTItemTags.PLATES_IRON)
-                .define('G', TTItems.MECHANISM_SIMPLE)
+                .define('G', TTItems.MECHANISM_SIMPLE.get())
                 .gate(gate("levitator"))
-                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE))
+                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE.get()))
                 .save(output);
 
         arcaneShapeless(new ItemStack(TTItems.SEAL_BLANK.get(), 3), 20)
@@ -2312,7 +2312,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .requires(Tags.Items.DYES_RED)
                 .requires(TTItemTags.NITORS)
                 .gate(gate("control_seals"))
-                .unlockedBy("has", has(TTItems.TALLOW))
+                .unlockedBy("has", has(TTItems.TALLOW.get()))
                 .save(output);
 
         sealCrucible(
@@ -2414,7 +2414,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.HUMANUS, 10)
                 .instability(0)
                 .gate(gate("seal_harvest"))
-                .unlockedBy("has", has(TTItems.SEAL_BLANK))
+                .unlockedBy("has", has(TTItems.SEAL_BLANK.get()))
                 .save(output);
 
         new InfusionRecipeBuilder(
@@ -2433,7 +2433,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.HUMANUS, 10)
                 .instability(0)
                 .gate(gate("seal_butcher"))
-                .unlockedBy("has", has(TTItems.SEAL_GUARD))
+                .unlockedBy("has", has(TTItems.SEAL_GUARD.get()))
                 .save(output);
 
         new InfusionRecipeBuilder(
@@ -2449,7 +2449,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.HUMANUS, 10)
                 .instability(1)
                 .gate(gate("seal_break"))
-                .unlockedBy("has", has(TTItems.SEAL_BLANK))
+                .unlockedBy("has", has(TTItems.SEAL_BLANK.get()))
                 .save(output);
     }
 
@@ -2486,7 +2486,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.PERMUTATIO, 25)
                 .instability(1)
                 .gate(gate("mirror"))
-                .unlockedBy("has", has(TTItems.MIRRORED_GLASS))
+                .unlockedBy("has", has(TTItems.MIRRORED_GLASS.get()))
                 .save(output);
 
         new InfusionRecipeBuilder(
@@ -2501,7 +2501,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.MOTUS, 50)
                 .instability(5)
                 .gate(gate("mirror_hand"))
-                .unlockedBy("has", has(TTItems.MIRROR))
+                .unlockedBy("has", has(TTItems.MIRROR.get()))
                 .save(output);
 
         new InfusionRecipeBuilder(
@@ -2518,7 +2518,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.PERMUTATIO, 25)
                 .instability(2)
                 .gate(gate("mirror_essentia"))
-                .unlockedBy("has", has(TTItems.MIRRORED_GLASS))
+                .unlockedBy("has", has(TTItems.MIRRORED_GLASS.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.THAUMIUM_SHIELD.get()), 60)
@@ -2546,7 +2546,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.MOTUS, 25)
                 .instability(5)
                 .gate(gate("mirror_shield"))
-                .unlockedBy("has", has(TTItems.MIRRORED_GLASS))
+                .unlockedBy("has", has(TTItems.MIRRORED_GLASS.get()))
                 .save(output);
         new InfusionRecipeBuilder(
                         registries.lookupOrThrow(IAspect.REGISTRY_KEY),
@@ -2563,7 +2563,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.VACUOS, 25)
                 .instability(8)
                 .gate(gate("void_shield"))
-                .unlockedBy("has", has(TTItems.THAUMIUM_SHIELD))
+                .unlockedBy("has", has(TTItems.THAUMIUM_SHIELD.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.MATRIX_SPEED.get()), 500)
@@ -2572,11 +2572,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("SNS")
                 .pattern("NGN")
                 .pattern("SNS")
-                .define('S', TTItems.STONE_ARCANE)
+                .define('S', TTItems.STONE_ARCANE.get())
                 .define('N', TTItemTags.NITORS)
                 .define('G', Tags.Items.STORAGE_BLOCKS_DIAMOND)
                 .gate(gate("infusion_boost"))
-                .unlockedBy("has", has(TTItems.STONE_ARCANE))
+                .unlockedBy("has", has(TTItems.STONE_ARCANE.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.MATRIX_COST.get()), 500)
@@ -2586,11 +2586,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("SAS")
                 .pattern("AGA")
                 .pattern("SAS")
-                .define('S', TTItems.STONE_ARCANE)
-                .define('A', TTItems.ALUMENTUM)
+                .define('S', TTItems.STONE_ARCANE.get())
+                .define('A', TTItems.ALUMENTUM.get())
                 .define('G', Tags.Items.STORAGE_BLOCKS_DIAMOND)
                 .gate(gate("infusion_boost"))
-                .unlockedBy("has", has(TTItems.STONE_ARCANE))
+                .unlockedBy("has", has(TTItems.STONE_ARCANE.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.DIOPTRA.get()), 50)
@@ -2599,12 +2599,12 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("APA")
                 .pattern("IGI")
                 .pattern("AAA")
-                .define('A', TTItems.STONE_ARCANE)
-                .define('P', TTItems.VIS_RESONATOR)
-                .define('G', TTItems.THAUMOMETER)
+                .define('A', TTItems.STONE_ARCANE.get())
+                .define('P', TTItems.VIS_RESONATOR.get())
+                .define('G', TTItems.THAUMOMETER.get())
                 .define('I', TTItemTags.PLATES_IRON)
                 .gate(gate("dioptra"))
-                .unlockedBy("has", has(TTItems.THAUMOMETER))
+                .unlockedBy("has", has(TTItems.THAUMOMETER.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.VIS_BATTERY.get()), 50)
@@ -2617,10 +2617,10 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("SSS")
                 .pattern("SRS")
                 .pattern("SSS")
-                .define('S', TTItems.SLAB_ARCANE_STONE)
-                .define('R', TTItems.VIS_RESONATOR)
+                .define('S', TTItems.SLAB_ARCANE_STONE.get())
+                .define('R', TTItems.VIS_RESONATOR.get())
                 .gate(gate("vis_battery"))
-                .unlockedBy("has", has(TTItems.VIS_RESONATOR))
+                .unlockedBy("has", has(TTItems.VIS_RESONATOR.get()))
                 .save(output);
 
         new InfusionRecipeBuilder(
@@ -2662,7 +2662,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("WRW")
                 .define('W', ItemTags.WOODEN_SLABS)
                 .define('R', Tags.Items.DUSTS_REDSTONE)
-                .define('G', TTItems.MECHANISM_SIMPLE)
+                .define('G', TTItems.MECHANISM_SIMPLE.get())
                 .define('P', TTItemTags.PLATES_BRASS)
                 .gate(gate("arcane_ear"))
                 .unlockedBy("has", has(TTItemTags.PLATES_BRASS))
@@ -2693,12 +2693,12 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern(" T ")
                 .pattern("RCP")
                 .pattern(" T ")
-                .define('T', TTItems.TUBE)
-                .define('P', TTItems.MECHANISM_SIMPLE)
-                .define('R', TTItems.MORPHIC_RESONATOR)
-                .define('C', TTItems.ALCHEMICAL_CONSTRUCT)
+                .define('T', TTItems.TUBE.get())
+                .define('P', TTItems.MECHANISM_SIMPLE.get())
+                .define('R', TTItems.MORPHIC_RESONATOR.get())
+                .define('C', TTItems.ALCHEMICAL_CONSTRUCT.get())
                 .gate(gate("centrifuge"))
-                .unlockedBy("has", has(TTItems.MORPHIC_RESONATOR))
+                .unlockedBy("has", has(TTItems.MORPHIC_RESONATOR.get()))
                 .save(output);
 
         new InfusionRecipeBuilder(
@@ -2763,13 +2763,13 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("WSW")
                 .pattern("EPE")
                 .pattern("WRW")
-                .define('R', TTItems.VIS_RESONATOR)
+                .define('R', TTItems.VIS_RESONATOR.get())
                 .define('E', TTItemTags.NUGGETS_BRASS)
                 .define('S', Tags.Items.DUSTS_REDSTONE)
                 .define('P', Items.PISTON)
                 .define('W', ItemTags.PLANKS)
                 .gate(gate("vis_generator"))
-                .unlockedBy("has", has(TTItems.VIS_RESONATOR))
+                .unlockedBy("has", has(TTItems.VIS_RESONATOR.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.ESSENTIA_INPUT.get()), 100)
@@ -2780,7 +2780,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('I', TTItemTags.PLATES_IRON)
                 .define('B', TTItemTags.PLATES_BRASS)
                 .define('Q', Items.DISPENSER)
-                .define('G', TTItems.ALCHEMICAL_CONSTRUCT)
+                .define('G', TTItems.ALCHEMICAL_CONSTRUCT.get())
                 .gate(gate("essentia_transport"))
                 .unlockedBy("has", has(TTItemTags.PLATES_BRASS))
                 .save(output);
@@ -2793,7 +2793,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('I', TTItemTags.PLATES_IRON)
                 .define('B', TTItemTags.PLATES_BRASS)
                 .define('Q', Items.HOPPER)
-                .define('G', TTItems.ALCHEMICAL_CONSTRUCT)
+                .define('G', TTItems.ALCHEMICAL_CONSTRUCT.get())
                 .gate(gate("essentia_transport"))
                 .unlockedBy("has", has(TTItemTags.PLATES_BRASS))
                 .save(output);
@@ -2807,12 +2807,12 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("WTW")
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('D', Items.DIAMOND_BLOCK)
-                .define('Q', TTItems.SALIS_MUNDUS)
-                .define('C', TTItems.ALCHEMICAL_CONSTRUCT)
+                .define('Q', TTItems.SALIS_MUNDUS.get())
+                .define('C', TTItems.ALCHEMICAL_CONSTRUCT.get())
                 .define('W', ItemTags.PLANKS)
-                .define('T', TTItems.TUBE)
+                .define('T', TTItems.TUBE.get())
                 .gate(gate("essentia_crystalizer"))
-                .unlockedBy("has", has(TTItems.SALIS_MUNDUS))
+                .unlockedBy("has", has(TTItems.SALIS_MUNDUS.get()))
                 .save(output);
 
         new InfusionRecipeBuilder(
@@ -2845,13 +2845,13 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern(" B ")
                 .pattern("GOG")
                 .pattern("STS")
-                .define('B', TTItems.BELLOWS)
+                .define('B', TTItems.BELLOWS.get())
                 .define('G', Items.IRON_BARS)
-                .define('O', TTItems.FILTER)
-                .define('S', TTItems.STONE_ARCANE_BRICK)
-                .define('T', TTItems.TUBE)
+                .define('O', TTItems.FILTER.get())
+                .define('S', TTItems.STONE_ARCANE_BRICK.get())
+                .define('T', TTItems.TUBE.get())
                 .gate(gate("flux_scrubber"))
-                .unlockedBy("has", has(TTItems.BELLOWS))
+                .unlockedBy("has", has(TTItems.BELLOWS.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.BRAIN_BOX.get()), 50)
@@ -2860,11 +2860,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("IAI")
                 .pattern("ABA")
                 .pattern("IAI")
-                .define('B', TTItems.MIND_CLOCKWORK)
+                .define('B', TTItems.MIND_CLOCKWORK.get())
                 .define('A', TTItemTags.GEMS_AMBER)
                 .define('I', TTItemTags.PLATES_IRON)
                 .gate(gate("thaumatorium"))
-                .unlockedBy("has", has(TTItems.MIND_CLOCKWORK))
+                .unlockedBy("has", has(TTItems.MIND_CLOCKWORK.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.CONDENSER.get()), 500)
@@ -2874,13 +2874,13 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("BCB")
                 .pattern("WMW")
                 .pattern("BTB")
-                .define('T', TTItems.TUBE)
-                .define('C', TTItems.MORPHIC_RESONATOR)
+                .define('T', TTItems.TUBE.get())
+                .define('C', TTItems.MORPHIC_RESONATOR.get())
                 .define('W', ItemTags.PLANKS)
-                .define('M', TTItems.MECHANISM_COMPLEX)
+                .define('M', TTItems.MECHANISM_COMPLEX.get())
                 .define('B', TTItemTags.PLATES_BRASS)
                 .gate(gate("flux_cleanup"))
-                .unlockedBy("has", has(TTItems.MORPHIC_RESONATOR))
+                .unlockedBy("has", has(TTItems.MORPHIC_RESONATOR.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.CONDENSER_LATTICE.get()), 100)
@@ -2890,10 +2890,10 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("QFQ")
                 .pattern("QTQ")
                 .define('T', TTItemTags.PLATES_THAUMIUM)
-                .define('F', TTItems.FILTER)
+                .define('F', TTItems.FILTER.get())
                 .define('Q', Tags.Items.GEMS_QUARTZ)
                 .gate(gate("flux_cleanup"))
-                .unlockedBy("has", has(TTItems.FILTER))
+                .unlockedBy("has", has(TTItems.FILTER.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.STABILIZER.get()), 250)
@@ -2904,13 +2904,13 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("BVB")
                 .pattern("IMI")
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
-                .define('S', TTItems.SLAB_ARCANE_STONE)
-                .define('B', TTItems.STONE_ARCANE)
-                .define('M', TTItems.MECHANISM_COMPLEX)
-                .define('V', TTItems.VIS_RESONATOR)
+                .define('S', TTItems.SLAB_ARCANE_STONE.get())
+                .define('B', TTItems.STONE_ARCANE.get())
+                .define('M', TTItems.MECHANISM_COMPLEX.get())
+                .define('V', TTItems.VIS_RESONATOR.get())
                 .define('I', TTItemTags.PLATES_IRON)
                 .gate(gate("infusion_stable"))
-                .unlockedBy("has", has(TTItems.VIS_RESONATOR))
+                .unlockedBy("has", has(TTItems.VIS_RESONATOR.get()))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.REDSTONE_RELAY.get()), 10)
@@ -2918,10 +2918,10 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("TGT")
                 .pattern("SSS")
                 .define('T', Items.REDSTONE_TORCH)
-                .define('G', TTItems.MECHANISM_SIMPLE)
+                .define('G', TTItems.MECHANISM_SIMPLE.get())
                 .define('S', Items.STONE_SLAB)
                 .gate(gate("redstone_relay"))
-                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE))
+                .unlockedBy("has", has(TTItems.MECHANISM_SIMPLE.get()))
                 .save(output);
 
         new InfusionRecipeBuilder(
@@ -2999,7 +2999,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 wandResult(TTWandParts.CAP_IRON.get(), TTWandParts.ROD_WOOD.get(), false));
         output.accept(TTIds.rl("wand/assembly/iron_wood"), starter, null);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.WAND_CAP_IRON)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.WAND_CAP_IRON.get())
                 .pattern("NNN")
                 .pattern("N N")
                 .define('N', Tags.Items.NUGGETS_IRON)
@@ -3202,9 +3202,9 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('5', crystal(TTAspects.ORDO))
                 .define('6', crystal(TTAspects.PERDITIO))
                 .define('I', Tags.Items.INGOTS_GOLD)
-                .define('S', TTItems.SALIS_MUNDUS)
+                .define('S', TTItems.SALIS_MUNDUS.get())
                 .gate(gate("unlock_artifice"))
-                .unlockedBy("has", has(TTItems.SALIS_MUNDUS))
+                .unlockedBy("has", has(TTItems.SALIS_MUNDUS.get()))
                 .save(output, TTIds.MODID + ":wand/part/primal_charm");
     }
 
@@ -3220,7 +3220,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('G', Tags.Items.INGOTS_GOLD)
                 .define('Q', Blocks.QUARTZ_BLOCK)
                 .define('P', Blocks.PISTON)
-                .define('S', TTItems.STONE_ARCANE_BRICK)
+                .define('S', TTItems.STONE_ARCANE_BRICK.get())
                 .define('N', TTItemTags.NITORS)
                 .gate(gate("node_stabilizer"))
                 .unlockedBy("has", has(TTItemTags.NITORS))
@@ -3233,10 +3233,10 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('C', Items.COMPARATOR)
                 .define('I', Tags.Items.INGOTS_IRON)
-                .define('S', TTItems.NODE_STABILIZER)
+                .define('S', TTItems.NODE_STABILIZER.get())
                 .define('A', TTItemTags.NITORS)
                 .gate(gate("node_transducer"))
-                .unlockedBy("has", has(TTItems.NODE_STABILIZER))
+                .unlockedBy("has", has(TTItems.NODE_STABILIZER.get()))
                 .save(output, TTIds.MODID + ":node_transducer");
 
         arcaneShaped(new ItemStack(TTItems.VIS_RELAY.get()), NODE_STABILIZER_VIS)
@@ -3246,7 +3246,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('A', Tags.Items.GEMS_AMETHYST)
                 .define('G', Tags.Items.INGOTS_GOLD)
                 .define('N', TTItemTags.NITORS)
-                .define('S', TTItems.STONE_ARCANE)
+                .define('S', TTItems.STONE_ARCANE.get())
                 .gate(gate("vis_relay"))
                 .unlockedBy("has", has(TTItemTags.NITORS))
                 .save(output, TTIds.MODID + ":vis_relay");
@@ -3298,16 +3298,16 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("  S")
                 .pattern(" G ")
                 .pattern("G  ")
-                .define('S', TTItems.PRIMAL_CHARM)
-                .define('G', rod)
+                .define('S', TTItems.PRIMAL_CHARM.get())
+                .define('G', rod.get())
                 .gate(gate("staves"))
-                .unlockedBy("has", has(TTItems.PRIMAL_CHARM))
+                .unlockedBy("has", has(TTItems.PRIMAL_CHARM.get()))
                 .save(output, TTIds.MODID + ":wand/part/" + core.getId().getPath());
     }
 
     private void buildBaubleRecipes() {
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.AMULET_MUNDANE)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.AMULET_MUNDANE.get())
                 .pattern(" S ")
                 .pattern("S S")
                 .pattern(" I ")
@@ -3315,14 +3315,14 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('I', TTItemTags.INGOTS_BRASS)
                 .unlockedBy("has", has(TTItemTags.INGOTS_BRASS))
                 .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.RING_MUNDANE)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.RING_MUNDANE.get())
                 .pattern("NNN")
                 .pattern("N N")
                 .pattern("NNN")
                 .define('N', TTItemTags.NUGGETS_BRASS)
                 .unlockedBy("has", has(TTItemTags.NUGGETS_BRASS))
                 .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.GIRDLE_MUNDANE)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.GIRDLE_MUNDANE.get())
                 .pattern(" L ")
                 .pattern("L L")
                 .pattern(" I ")
@@ -3330,7 +3330,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('I', TTItemTags.INGOTS_BRASS)
                 .unlockedBy("has", has(TTItemTags.INGOTS_BRASS))
                 .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.AMULET_FANCY)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.AMULET_FANCY.get())
                 .pattern(" S ")
                 .pattern("SGS")
                 .pattern(" I ")
@@ -3339,7 +3339,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('I', Tags.Items.INGOTS_GOLD)
                 .unlockedBy("has", has(Tags.Items.GEMS_DIAMOND))
                 .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.RING_FANCY)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.RING_FANCY.get())
                 .pattern("NGN")
                 .pattern("N N")
                 .pattern("NNN")
@@ -3347,7 +3347,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .define('N', Tags.Items.NUGGETS_GOLD)
                 .unlockedBy("has", has(Tags.Items.GEMS_DIAMOND))
                 .save(output);
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.GIRDLE_FANCY)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.GIRDLE_FANCY.get())
                 .pattern(" L ")
                 .pattern("LGL")
                 .pattern(" I ")
@@ -3361,7 +3361,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("LGL")
                 .pattern("LBL")
                 .pattern("LLL")
-                .define('B', TTItems.GIRDLE_MUNDANE)
+                .define('B', TTItems.GIRDLE_MUNDANE.get())
                 .define('L', Tags.Items.LEATHERS)
                 .define('G', Tags.Items.INGOTS_GOLD)
                 .gate(gate("focus_pouch"))
@@ -3374,10 +3374,10 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .pattern("M N")
                 .pattern("BN ")
                 .define('N', TTItemTags.NUGGETS_BRASS)
-                .define('B', TTItems.BRAIN)
-                .define('M', TTItems.MIRRORED_GLASS)
+                .define('B', TTItems.BRAIN.get())
+                .define('M', TTItems.MIRRORED_GLASS.get())
                 .gate(gate("warp"))
-                .unlockedBy("has", has(TTItems.MIRRORED_GLASS))
+                .unlockedBy("has", has(TTItems.MIRRORED_GLASS.get()))
                 .save(output);
         arcaneShaped(new ItemStack(TTItems.RESONATOR.get()), 50)
                 .pattern("I I")

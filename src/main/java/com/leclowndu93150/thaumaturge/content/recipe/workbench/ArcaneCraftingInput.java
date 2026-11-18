@@ -179,7 +179,7 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
         List<ItemStack> crystals = items.subList(items.size() - 7, items.size() - 1);
         List<AspectInstance> aspects = new ArrayList<>();
         for (ItemStack crystal : crystals) {
-            if (crystal.is(TTItems.ESSENTIA_CRYSTAL) && ItemData.has(crystal, TTDataComponents.CRYSTAL_ASPECT)) {
+            if (crystal.is(TTItems.ESSENTIA_CRYSTAL.get()) && ItemData.has(crystal, TTDataComponents.CRYSTAL_ASPECT)) {
                 Holder<IAspect> aspect =
                         ItemData.get(crystal, TTDataComponents.CRYSTAL_ASPECT.get()).aspect();
                 aspects.add(new AspectInstance(aspect, crystal.getCount()));

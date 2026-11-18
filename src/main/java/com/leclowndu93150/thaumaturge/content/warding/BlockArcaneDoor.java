@@ -112,7 +112,7 @@ public final class BlockArcaneDoor extends DoorBlock implements BlockInteraction
             for (Direction direction : Direction.Plane.HORIZONTAL) {
                 BlockPos platePos = origin.above(height).relative(direction);
                 BlockState plate = level.getBlockState(platePos);
-                if (plate.is(TTBlocks.ARCANE_PRESSURE_PLATE)
+                if (plate.is(TTBlocks.ARCANE_PRESSURE_PLATE.get())
                         && plate.getValue(POWERED)
                         && ArcaneAccess.sharesAccess(level, platePos, origin)) {
                     return true;

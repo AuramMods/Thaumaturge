@@ -111,52 +111,52 @@ public final class InfernalBonusProvider extends DataMapProvider {
         add(
                 b,
                 Items.BEEF,
-                InfernalBonus.builder(TTItems.CHUNK_BEEF).chance(0.33F).build());
+                InfernalBonus.builder(TTItems.CHUNK_BEEF.get()).chance(0.33F).build());
         add(
                 b,
                 Items.CHICKEN,
-                InfernalBonus.builder(TTItems.CHUNK_CHICKEN).chance(0.33F).build());
+                InfernalBonus.builder(TTItems.CHUNK_CHICKEN.get()).chance(0.33F).build());
         add(
                 b,
                 Items.PORKCHOP,
-                InfernalBonus.builder(TTItems.CHUNK_PORK).chance(0.33F).build());
+                InfernalBonus.builder(TTItems.CHUNK_PORK.get()).chance(0.33F).build());
         add(
                 b,
                 Items.COD,
-                InfernalBonus.builder(TTItems.CHUNK_FISH).chance(0.33F).build());
+                InfernalBonus.builder(TTItems.CHUNK_FISH.get()).chance(0.33F).build());
         add(
                 b,
                 Items.SALMON,
-                InfernalBonus.builder(TTItems.CHUNK_FISH).chance(0.33F).build());
+                InfernalBonus.builder(TTItems.CHUNK_FISH.get()).chance(0.33F).build());
         add(
                 b,
                 Items.TROPICAL_FISH,
-                InfernalBonus.builder(TTItems.CHUNK_FISH).chance(0.33F).build());
+                InfernalBonus.builder(TTItems.CHUNK_FISH.get()).chance(0.33F).build());
         add(
                 b,
                 Items.PUFFERFISH,
-                InfernalBonus.builder(TTItems.CHUNK_FISH).chance(0.33F).build());
+                InfernalBonus.builder(TTItems.CHUNK_FISH.get()).chance(0.33F).build());
         add(
                 b,
                 Items.RABBIT,
-                InfernalBonus.builder(TTItems.CHUNK_RABBIT).chance(0.33F).build());
+                InfernalBonus.builder(TTItems.CHUNK_RABBIT.get()).chance(0.33F).build());
         add(
                 b,
                 Items.MUTTON,
-                InfernalBonus.builder(TTItems.CHUNK_MUTTON).chance(0.33F).build());
+                InfernalBonus.builder(TTItems.CHUNK_MUTTON.get()).chance(0.33F).build());
 
         add(
                 b,
                 TTItemTags.RARE_EARTH_CHANCE_HIGH,
-                InfernalBonus.builder(TTItems.RARE_EARTH).chance(0.025F).build());
+                InfernalBonus.builder(TTItems.RARE_EARTH.get()).chance(0.025F).build());
         add(
                 b,
                 TTItemTags.RARE_EARTH_CHANCE_NORMAL,
-                InfernalBonus.builder(TTItems.RARE_EARTH).chance(0.02F).build());
+                InfernalBonus.builder(TTItems.RARE_EARTH.get()).chance(0.02F).build());
         add(
                 b,
                 TTItemTags.RARE_EARTH_CHANCE_LOW,
-                InfernalBonus.builder(TTItems.RARE_EARTH).chance(0.01F).build());
+                InfernalBonus.builder(TTItems.RARE_EARTH.get()).chance(0.01F).build());
     }
 
     @Override

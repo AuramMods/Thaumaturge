@@ -56,10 +56,10 @@ public final class AdvancedAlchemicalFurnaceStructure {
     }
 
     public static boolean isPart(BlockState state) {
-        return state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER)
-                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER)
-                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER)
-                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE);
+        return state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get())
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get());
     }
 
     public static void restore(LevelAccessor level, BlockPos controller) {
@@ -83,7 +83,7 @@ public final class AdvancedAlchemicalFurnaceStructure {
             for (int y = 1 - HEIGHT; y <= 0; y++) {
                 for (int z = -RADIUS; z <= RADIUS; z++) {
                     cursor.setWithOffset(part, x, y, z);
-                    if (level.getBlockState(cursor).is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE)) {
+                    if (level.getBlockState(cursor).is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())) {
                         level.setBlock(
                                 cursor.immutable(), TTBlocks.SMELTER_BASIC.get().defaultBlockState(), Block.UPDATE_ALL);
                         return;
@@ -113,14 +113,14 @@ public final class AdvancedAlchemicalFurnaceStructure {
     }
 
     private static @Nullable BlockState originalOf(BlockState state) {
-        if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER)) {
+        if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())) {
             return TTBlocks.ALEMBIC.get().defaultBlockState();
         }
-        if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER)) {
+        if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())) {
             return TTBlocks.ALCHEMICAL_CONSTRUCT.get().defaultBlockState();
         }
-        if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER)
-                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE)) {
+        if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get())
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())) {
             return TTBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get().defaultBlockState();
         }
         return null;

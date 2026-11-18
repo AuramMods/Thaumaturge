@@ -80,7 +80,7 @@ public final class MenuGolemBuilder extends AbstractTTMenu implements BlockMenu<
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        return quickMoveBetween(index, SLOT_COUNT, stack -> stack.is(TTItems.GOLEM_PLACER));
+        return quickMoveBetween(index, SLOT_COUNT, stack -> stack.is(TTItems.GOLEM_PLACER.get()));
     }
 
     private static final class OutputSlot extends SlotItemHandler {
@@ -90,7 +90,7 @@ public final class MenuGolemBuilder extends AbstractTTMenu implements BlockMenu<
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return stack.is(TTItems.GOLEM_PLACER);
+            return stack.is(TTItems.GOLEM_PLACER.get());
         }
     }
 }

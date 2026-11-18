@@ -42,13 +42,13 @@ public final class LabelFilterRecipe extends CustomRecipe {
         boolean hasLabel = false;
         Holder<IAspect> aspect = null;
         for (ItemStack stack : input.items()) {
-            if (stack.is(TTItems.LABEL)) {
+            if (stack.is(TTItems.LABEL.get())) {
                 if (hasLabel) return null;
                 hasLabel = true;
                 continue;
             }
 
-            if (stack.is(TTItems.PHIAL)) {
+            if (stack.is(TTItems.PHIAL.get())) {
                 if (aspect != null) return null;
                 IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER);
                 if (essentia == null || essentia.getAspects().isEmpty()) return null;
@@ -84,7 +84,7 @@ public final class LabelFilterRecipe extends CustomRecipe {
 
         for (int slot = 0; slot < result.size(); ++slot) {
             ItemStack item = input.getItem(slot);
-            if (item.is(TTItems.PHIAL)) result.set(slot, item.copyWithCount(1));
+            if (item.is(TTItems.PHIAL.get())) result.set(slot, item.copyWithCount(1));
             else result.set(slot, item.hasCraftingRemainingItem() ? item.getCraftingRemainingItem() : ItemStack.EMPTY);
         }
 

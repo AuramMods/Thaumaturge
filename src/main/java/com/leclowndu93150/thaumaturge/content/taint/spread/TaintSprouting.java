@@ -109,7 +109,7 @@ public final class TaintSprouting {
 
     private static boolean isSproutingGround(ServerLevel level, BlockPos ground) {
         BlockState state = level.getBlockState(ground);
-        return (state.is(TTBlocks.TAINT_SOIL) || state.is(TTBlocks.TAINT_ROCK))
+        return (state.is(TTBlocks.TAINT_SOIL.get()) || state.is(TTBlocks.TAINT_ROCK.get()))
                 && level.getBlockState(ground.above()).isAir();
     }
 

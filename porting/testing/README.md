@@ -228,3 +228,10 @@ registered potion route cases. Eight common and two client mixins execute in
 the focused launch, with 264 server / 272 client tests passing. Native brewing
 and route inspection run without worlds, windows or audio; sprayer world
 transactions and aspect costs still require full-mod runtime acceptance.
+
+
+Cycle 034 adds actual DeferredRegister/ForgeRegistration event tests with native
+block/item registry lifecycle, predicates, recipe generation and creative output.
+The fixture thaws and refreezes both native views as Forge's registration phase
+does, then bakes block states. The focused totals are 265 server / 273 client;
+full mod catalog construction and all changed consumer paths remain pending.
