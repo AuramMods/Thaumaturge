@@ -19,21 +19,21 @@ public final class FluxTaintEffect extends MobEffect {
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int tickCount, int amplification) {
+    public boolean isDurationEffectTick(int tickCount, int amplification) {
         int divider = Math.max(1, BASE_INTERVAL >> Math.min(amplification, MAX_AMP_DIVIDER_SHIFT));
         return tickCount % divider == 0;
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity mob, int amplification) {
-        if (!(mob.level() instanceof ServerLevel level)) return true;
+    public void applyEffectTick(LivingEntity mob, int amplification) {
+        if (!(mob.level() instanceof ServerLevel level)) return;
         if (MobTraits.isTainted(mob)) {
             mob.heal(HEAL);
-            return true;
+            return;
         }
         if (!mob.getType().is(EntityTypeTags.UNDEAD)) {
             mob.hurt(TTDamageSources.taint(level), DAMAGE);
         }
-        return true;
+        return;
     }
 }

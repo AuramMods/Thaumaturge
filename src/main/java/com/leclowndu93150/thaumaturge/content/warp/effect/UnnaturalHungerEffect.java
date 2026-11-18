@@ -13,19 +13,19 @@ public final class UnnaturalHungerEffect extends MobEffect {
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int tickCount, int amplification) {
+    public boolean isDurationEffectTick(int tickCount, int amplification) {
         return true;
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity mob, int amplification) {
+    public void applyEffectTick(LivingEntity mob, int amplification) {
         if (mob.level().isClientSide()) {
-            return true;
+            return;
         }
 
         if (mob instanceof Player player) {
             player.causeFoodExhaustion(EXHAUSTION_PER_LEVEL * (amplification + 1));
         }
-        return true;
+        return;
     }
 }

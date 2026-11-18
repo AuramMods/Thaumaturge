@@ -20,13 +20,13 @@ public final class InfectiousVisExhaustEffect extends MobEffect {
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int tickCount, int amplification) {
+    public boolean isDurationEffectTick(int tickCount, int amplification) {
         return tickCount % SPREAD_INTERVAL == 0;
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity mob, int amplification) {
-        if (!(mob.level() instanceof ServerLevel level)) return true;
+    public void applyEffectTick(LivingEntity mob, int amplification) {
+        if (!(mob.level() instanceof ServerLevel level)) return;
         AABB box = mob.getBoundingBox().inflate(SPREAD_RADIUS, SPREAD_RADIUS, SPREAD_RADIUS);
         List<LivingEntity> nearby = level.getEntitiesOfClass(
                 LivingEntity.class,
@@ -41,6 +41,6 @@ public final class InfectiousVisExhaustEffect extends MobEffect {
                         EffectCodecs.instance(TTMobEffects.VIS_EXHAUST, EFFECT_DURATION, 0, false, true, false));
             }
         }
-        return true;
+        return;
     }
 }

@@ -241,3 +241,10 @@ Cycle 035 verifies every vanilla effect constant against actual bound built-in
 holders, Forge delegate keys/values and named-codec round trips. Built-in and
 Forge delegate references can be distinct objects. Focused totals are now
 266 server / 274 client; full effect gameplay and the mod catalog remain pending.
+
+
+Cycle 036 drives actual source custom effect classes through native effect tick
+dispatch, with controlled entity/world services, covering periodic and infinite
+timing, exhaustion, fire/healing branches and marker expiration. Focused totals
+are 273 server / 281 client. These tests do not run a world or prove the wider
+taint/physical-flux dependencies or full mod catalog construction.

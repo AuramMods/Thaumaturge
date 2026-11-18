@@ -11,13 +11,13 @@ public final class VisExhaustEffect extends MobEffect {
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int tickCount, int amplification) {
+    public boolean isDurationEffectTick(int tickCount, int amplification) {
         return false;
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity mob, int amplification) {
-        if (!(mob.level() instanceof ServerLevel level)) return true;
-        return true;
+    public void applyEffectTick(LivingEntity mob, int amplification) {
+        if (!(mob.level() instanceof ServerLevel level)) return;
+        return;
     }
 }

@@ -16,14 +16,14 @@ public final class ThaumarhiaEffect extends MobEffect {
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int tickCount, int amplification) {
+    public boolean isDurationEffectTick(int tickCount, int amplification) {
         return tickCount % TICK_INTERVAL == 0;
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity mob, int amplification) {
+    public void applyEffectTick(LivingEntity mob, int amplification) {
         if (mob.level().isClientSide()) {
-            return true;
+            return;
         }
 
         ServerLevel level = (ServerLevel) mob.level();
@@ -31,6 +31,6 @@ public final class ThaumarhiaEffect extends MobEffect {
         if (level.getRandom().nextInt(GOO_CHANCE) == 0 && level.isEmptyBlock(pos)) {
             PhysicalFlux.placeGoo(level, pos, 1);
         }
-        return true;
+        return;
     }
 }

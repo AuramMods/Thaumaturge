@@ -12,7 +12,7 @@ public final class SunScornedEffect extends MobEffect {
     private static final int TICK_INTERVAL = 40;
     private static final float BURN_BRIGHTNESS = 0.5F;
     private static final float HEAL_BRIGHTNESS = 0.25F;
-    private static final float BURN_SECONDS = 4.0F;
+    private static final int BURN_SECONDS = 4;
     private static final float HEAL_AMOUNT = 1.0F;
 
     public SunScornedEffect() {
@@ -20,14 +20,14 @@ public final class SunScornedEffect extends MobEffect {
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int tickCount, int amplification) {
+    public boolean isDurationEffectTick(int tickCount, int amplification) {
         return tickCount % TICK_INTERVAL == 0;
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity mob, int amplification) {
+    public void applyEffectTick(LivingEntity mob, int amplification) {
         if (mob.level().isClientSide()) {
-            return true;
+            return;
         }
 
         ServerLevel level = (ServerLevel) mob.level();
@@ -37,11 +37,11 @@ public final class SunScornedEffect extends MobEffect {
         if (brightness > BURN_BRIGHTNESS
                 && level.getRandom().nextFloat() * 30.0F < (brightness - 0.4F) * 2.0F
                 && level.canSeeSky(pos)) {
-            mob.igniteForSeconds(BURN_SECONDS);
+            mob.setSecondsOnFire(BURN_SECONDS);
         } else if (brightness < HEAL_BRIGHTNESS && level.getRandom().nextFloat() > brightness * 2.0F) {
             mob.heal(HEAL_AMOUNT);
         }
-        return true;
+        return;
     }
 
     private static float brightness(ServerLevel level, BlockPos pos) {
