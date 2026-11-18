@@ -20,6 +20,7 @@ jarJar.enable()
 
 minecraft {
     mappings channel: 'official', version: minecraft_version
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     copyIdeResources = true
     runs {
         configureEach {
@@ -197,6 +198,11 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/client/particle/**'
         java.include 'com/leclowndu93150/thaumaturge/client/space/**'
         java.include 'com/leclowndu93150/thaumaturge/client/render/aspect/ParticleTextures.java'
+        java.include 'com/leclowndu93150/thaumaturge/client/render/TTRenderTypes.java'
+        java.include 'com/leclowndu93150/thaumaturge/client/render/TTShaders.java'
+        java.include 'com/leclowndu93150/thaumaturge/client/warding/WardRenderType.java'
+        java.include 'com/leclowndu93150/thaumaturge/client/effect/rendertype/VoidStreamRenderType.java'
+        java.include 'com/leclowndu93150/thaumaturge/compat/iris/IrisCompat.java'
         java.include 'com/leclowndu93150/thaumaturge/client/warding/WardClientHandler.java'
         java.include 'com/leclowndu93150/thaumaturge/content/warding/ClientWardHolder.java'
         java.include 'com/leclowndu93150/thaumaturge/network/ClientboundWardChunkPayload.java'
