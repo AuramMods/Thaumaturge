@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -46,14 +48,14 @@ public class BlockEntityPedestal extends AbstractSyncedBlockEntity implements Cl
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         if (!item.isEmpty()) {
-            TTNbt.store(output, "Item", ItemStack.CODEC, registries, item);
+            TTNbt.store(output, "Item", ItemStackCodecs.CODEC, registries, item);
         }
     }
 
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        item = TTNbt.read(input, "Item", ItemStack.CODEC, registries).orElse(ItemStack.EMPTY);
+        item = TTNbt.read(input, "Item", ItemStackCodecs.CODEC, registries).orElse(ItemStack.EMPTY);
     }
 
     @Override

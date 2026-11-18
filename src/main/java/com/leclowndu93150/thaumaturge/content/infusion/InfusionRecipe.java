@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.serialization.IngredientCodecs;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
@@ -34,7 +36,7 @@ public final class InfusionRecipe extends AbstractRecipe<InfusionInput> implemen
                             AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
                             Codecs.optionalFieldOf(Codec.intRange(0, 100), "instability", 0)
                                     .forGetter(r -> r.instability),
-                            Codecs.optionalFieldOf(ItemStack.CODEC, "result").forGetter(r -> r.result),
+                            Codecs.optionalFieldOf(ItemStackCodecs.CODEC, "result").forGetter(r -> r.result),
                             Codecs.optionalFieldOf(ItemDataPatch.CODEC, "catalyst_patch")
                                     .forGetter(r -> r.catalystPatch),
                             Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))

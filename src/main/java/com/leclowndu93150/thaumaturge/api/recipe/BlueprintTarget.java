@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
@@ -142,7 +144,7 @@ public sealed interface BlueprintTarget {
 
     record StackTarget(ItemStack stack) implements BlueprintTarget {
         static final MapCodec<StackTarget> CODEC_INSTANCE = RecordCodecBuilder.mapCodec(
-                i -> i.group(ItemStack.CODEC.fieldOf("stack").forGetter(StackTarget::stack))
+                i -> i.group(ItemStackCodecs.CODEC.fieldOf("stack").forGetter(StackTarget::stack))
                         .apply(i, StackTarget::new));
 
         static final StreamCodec<RegistryFriendlyByteBuf, StackTarget> STREAM_CODEC_INSTANCE =

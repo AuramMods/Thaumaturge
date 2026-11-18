@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.mojang.serialization.Codec;
@@ -14,7 +16,7 @@ public record SocketedFocus(ItemStack focus) {
     }
 
     public static final Codec<SocketedFocus> CODEC = RecordCodecBuilder.create(
-            i -> i.group(ItemStack.CODEC.fieldOf("focus").forGetter(SocketedFocus::focus))
+            i -> i.group(ItemStackCodecs.CODEC.fieldOf("focus").forGetter(SocketedFocus::focus))
                     .apply(i, SocketedFocus::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SocketedFocus> STREAM_CODEC =

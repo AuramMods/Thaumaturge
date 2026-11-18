@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
@@ -38,7 +40,7 @@ import net.minecraftforge.common.util.FakePlayer;
 public final class DustTriggerTagRecipe extends AbstractRecipe<DustTriggerInput> implements DustTrigger {
     public static final MapCodec<DustTriggerTagRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     TagKey.codec(Registries.BLOCK).fieldOf("target_tag").forGetter(r -> r.targetTag),
-                    ItemStack.CODEC.fieldOf("result").forGetter(r -> r.result),
+                    ItemStackCodecs.CODEC.fieldOf("result").forGetter(r -> r.result),
                     Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))
             .apply(i, DustTriggerTagRecipe::new));
 

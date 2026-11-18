@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.recipe.crucible;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.serialization.IngredientCodecs;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
@@ -27,7 +29,7 @@ public class CrucibleRecipe extends AbstractRecipe<CrucibleRecipeInput> implemen
     public static final MapCodec<CrucibleRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     IngredientCodecs.CODEC.fieldOf("catalyst").forGetter(r -> r.catalyst),
                     AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
-                    ItemStack.CODEC.fieldOf("result").forGetter(r -> r.result),
+                    ItemStackCodecs.CODEC.fieldOf("result").forGetter(r -> r.result),
                     Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))
             .apply(i, CrucibleRecipe::new));
 

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
 
@@ -299,7 +301,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
         super.saveAdditional(output, registries);
         TTNbt.store(output, ASPECTS_KEY, AspectList.CODEC, registries, aspects);
         if (!input.isEmpty()) {
-            TTNbt.store(output, INPUT_KEY, ItemStack.CODEC, registries, input);
+            TTNbt.store(output, INPUT_KEY, ItemStackCodecs.CODEC, registries, input);
         }
         output.putInt(HEAT_KEY, heat);
         output.putInt(PERDITIO_KEY, perditio);
@@ -314,7 +316,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
         super.loadAdditional(stored, registries);
         assembled = stored.getBoolean(ASSEMBLED_KEY);
         inputAspects = null;
-        input = TTNbt.read(stored, INPUT_KEY, ItemStack.CODEC, registries).orElse(ItemStack.EMPTY);
+        input = TTNbt.read(stored, INPUT_KEY, ItemStackCodecs.CODEC, registries).orElse(ItemStack.EMPTY);
         aspects = TTNbt.read(stored, ASPECTS_KEY, AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         heat = readReserve(stored, HEAT_KEY);
         perditio = readReserve(stored, PERDITIO_KEY);

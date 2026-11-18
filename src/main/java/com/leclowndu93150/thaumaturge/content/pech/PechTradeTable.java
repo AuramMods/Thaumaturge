@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.pech;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -19,7 +21,7 @@ public record PechTradeTable(List<PechTrade> trades) {
     public record PechTrade(int tier, ItemStack result) {
         public static final Codec<PechTrade> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         Codec.intRange(1, 5).fieldOf("tier").forGetter(PechTrade::tier),
-                        ItemStack.CODEC.fieldOf("result").forGetter(PechTrade::result))
+                        ItemStackCodecs.CODEC.fieldOf("result").forGetter(PechTrade::result))
                 .apply(instance, PechTrade::new));
     }
 }

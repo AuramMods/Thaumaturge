@@ -17,7 +17,7 @@ public final class ItemContents {
     private record Slot(int slot, ItemStack item) {}
     private static final Codec<Slot> SLOT_CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.intRange(0, MAX_SLOTS - 1).fieldOf("slot").forGetter(Slot::slot),
-            ItemStack.CODEC.fieldOf("item").forGetter(Slot::item)).apply(i, Slot::new));
+            ItemStackCodecs.CODEC.fieldOf("item").forGetter(Slot::item)).apply(i, Slot::new));
     public static final Codec<ItemContents> CODEC = SLOT_CODEC.listOf().flatXmap(ItemContents::decode,
             value -> DataResult.success(value.slots()));
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemContents> STREAM_CODEC = ByteBufCodecs.fromCodecWithRegistries(CODEC);

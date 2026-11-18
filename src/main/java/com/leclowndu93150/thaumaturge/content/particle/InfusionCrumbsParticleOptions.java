@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
@@ -15,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 public record InfusionCrumbsParticleOptions(
         ItemStack stack, double tx, double ty, double tz, double sx, double sy, double sz) implements ParticleOptions {
     public static final MapCodec<InfusionCrumbsParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-                    ItemStack.CODEC.fieldOf("item").forGetter(InfusionCrumbsParticleOptions::stack),
+                    ItemStackCodecs.CODEC.fieldOf("item").forGetter(InfusionCrumbsParticleOptions::stack),
                     Codec.DOUBLE.fieldOf("tx").forGetter(InfusionCrumbsParticleOptions::tx),
                     Codec.DOUBLE.fieldOf("ty").forGetter(InfusionCrumbsParticleOptions::ty),
                     Codec.DOUBLE.fieldOf("tz").forGetter(InfusionCrumbsParticleOptions::tz),

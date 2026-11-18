@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.bore;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -218,7 +220,7 @@ public final class BlockEntityArcaneBore extends AbstractSyncedBlockEntity imple
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         if (!tool.isEmpty()) {
-            TTNbt.store(output, "Tool", ItemStack.CODEC, registries, tool);
+            TTNbt.store(output, "Tool", ItemStackCodecs.CODEC, registries, tool);
         }
         output.putFloat("Charge", core.charge());
         writeClientData(output, registries);
@@ -235,7 +237,7 @@ public final class BlockEntityArcaneBore extends AbstractSyncedBlockEntity imple
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        tool = TTNbt.read(input, "Tool", ItemStack.CODEC, registries).orElse(ItemStack.EMPTY);
+        tool = TTNbt.read(input, "Tool", ItemStackCodecs.CODEC, registries).orElse(ItemStack.EMPTY);
         core.setCharge(input.getFloat("Charge"));
         digging = input.getBoolean("Digging");
         digTarget = input.contains("DigTarget") ? BlockPos.of(input.getLong("DigTarget")) : null;

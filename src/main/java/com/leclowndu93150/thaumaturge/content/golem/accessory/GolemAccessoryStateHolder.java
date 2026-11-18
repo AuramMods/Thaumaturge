@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.accessory;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessory;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryBehavior;
@@ -19,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 public final class GolemAccessoryStateHolder {
     private static final String ITEMS_KEY = "items";
     private static final Codec<Map<ResourceLocation, ItemStack>> ITEMS_CODEC =
-            Codec.unboundedMap(ResourceLocation.CODEC, ItemStack.CODEC);
+            Codec.unboundedMap(ResourceLocation.CODEC, ItemStackCodecs.CODEC);
 
     private final IGolemAPI golem;
     private final Map<ResourceLocation, ItemStack> items = new LinkedHashMap<>();

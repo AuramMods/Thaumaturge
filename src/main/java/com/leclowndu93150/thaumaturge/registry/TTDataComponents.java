@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -184,7 +186,7 @@ public final class TTDataComponents {
     public static final Supplier<ItemDataKey<ItemStack>> HARNESS_JAR =
             DATA_COMPONENTS.registerComponentType(
                     "harness_jar",
-                    builder -> builder.persistent(ItemStack.CODEC).networkSynchronized(VanillaStreamCodecs.ITEM_STACK));
+                    builder -> builder.persistent(ItemStackCodecs.CODEC).networkSynchronized(VanillaStreamCodecs.ITEM_STACK));
     public static final Supplier<ItemDataKey<ItemContents>> POUCH_CONTENTS =
             DATA_COMPONENTS.registerComponentType(
                     "pouch_contents",

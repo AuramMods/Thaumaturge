@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals.behavior;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -17,7 +19,7 @@ final class ReplantSite {
                     Codecs.optionalFieldOf(Codec.BYTE, "face", DEFAULT_FACE).forGetter(site ->
                             (byte) site.face.get3DDataValue()),
                     Codecs.optionalFieldOf(Codec.BOOL, "tilled", false).forGetter(site -> site.tilled),
-                    Codecs.optionalFieldOf(ItemStack.OPTIONAL_CODEC, "seed", ItemStack.EMPTY)
+                    Codecs.optionalFieldOf(ItemStackCodecs.OPTIONAL_CODEC, "seed", ItemStack.EMPTY)
                             .forGetter(site -> site.seed))
             .apply(
                     instance,
@@ -31,7 +33,7 @@ final class ReplantSite {
                     Codecs.optionalFieldOf(Codec.BYTE, "taskface", DEFAULT_FACE).forGetter(site ->
                             (byte) site.face.get3DDataValue()),
                     Codecs.optionalFieldOf(Codec.BOOL, "farmland", false).forGetter(site -> site.tilled),
-                    Codecs.optionalFieldOf(ItemStack.OPTIONAL_CODEC, "seed", ItemStack.EMPTY)
+                    Codecs.optionalFieldOf(ItemStackCodecs.OPTIONAL_CODEC, "seed", ItemStack.EMPTY)
                             .forGetter(site -> site.seed))
             .apply(
                     instance,

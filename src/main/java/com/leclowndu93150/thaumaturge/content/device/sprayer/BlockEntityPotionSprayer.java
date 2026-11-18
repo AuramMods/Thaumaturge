@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.sprayer;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
@@ -350,7 +352,7 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        potion = TTNbt.read(input, POTION_KEY, ItemStack.OPTIONAL_CODEC, registries)
+        potion = TTNbt.read(input, POTION_KEY, ItemStackCodecs.OPTIONAL_CODEC, registries)
                 .orElse(ItemStack.EMPTY);
         needed = TTNbt.read(input, RECIPE_KEY, AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         stored = TTNbt.read(input, PROGRESS_KEY, AspectList.CODEC, registries).orElse(AspectList.EMPTY);
@@ -361,7 +363,7 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        if (!potion.isEmpty()) TTNbt.store(output, POTION_KEY, ItemStack.CODEC, registries, potion);
+        if (!potion.isEmpty()) TTNbt.store(output, POTION_KEY, ItemStackCodecs.CODEC, registries, potion);
         TTNbt.store(output, RECIPE_KEY, AspectList.CODEC, registries, needed);
         TTNbt.store(output, PROGRESS_KEY, AspectList.CODEC, registries, stored);
         output.putInt(CHARGES_KEY, charges);

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -15,10 +17,10 @@ import net.minecraft.world.item.ItemStack;
 
 public final class InfusionCraftJob {
     public static final Codec<InfusionCraftJob> CODEC = RecordCodecBuilder.create(i -> i.group(
-                    ItemStack.CODEC.listOf().fieldOf("ingredients").forGetter(j -> j.ingredients),
+                    ItemStackCodecs.CODEC.listOf().fieldOf("ingredients").forGetter(j -> j.ingredients),
                     AspectList.CODEC.fieldOf("essentia").forGetter(j -> j.essentia),
-                    ItemStack.CODEC.fieldOf("result").forGetter(j -> j.result),
-                    ItemStack.CODEC.fieldOf("catalyst").forGetter(j -> j.catalyst),
+                    ItemStackCodecs.CODEC.fieldOf("result").forGetter(j -> j.result),
+                    ItemStackCodecs.CODEC.fieldOf("catalyst").forGetter(j -> j.catalyst),
                     Codec.INT.fieldOf("instability").forGetter(j -> j.instability),
                     Codecs.optionalFieldOf(UUIDUtil.CODEC, "player").forGetter(j -> j.player),
                     Codecs.optionalFieldOf(AspectList.CODEC, "cost", AspectList.EMPTY).forGetter(j -> j.cost))

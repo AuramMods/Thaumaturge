@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
@@ -34,7 +36,7 @@ public class ArcaneShapedCraftingRecipe extends ArcaneCraftingRecipe {
                             .fieldOf("crystals")
                             .forGetter(o -> o.aspects),
                     ArcaneShapedRecipePattern.MAP_CODEC.forGetter((o) -> o.pattern),
-                    ItemStack.CODEC.fieldOf("result").forGetter((o) -> o.result))
+                    ItemStackCodecs.CODEC.fieldOf("result").forGetter((o) -> o.result))
             .apply(i, ArcaneShapedCraftingRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ArcaneShapedCraftingRecipe> STREAM_CODEC =

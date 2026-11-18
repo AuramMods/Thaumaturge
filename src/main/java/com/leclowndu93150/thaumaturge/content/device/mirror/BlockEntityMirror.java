@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
@@ -157,7 +159,7 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         outputStacks = new ArrayList<>(
-                TTNbt.read(input, "Items", ItemStack.CODEC.listOf(), registries).orElse(List.of()));
+                TTNbt.read(input, "Items", ItemStackCodecs.CODEC.listOf(), registries).orElse(List.of()));
         if (input.contains(INBOX_KEY)) {
             inbox.deserializeNBT(input.getCompound(INBOX_KEY));
         }
@@ -168,7 +170,7 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
         super.saveAdditional(output, registries);
         List<ItemStack> filtered =
                 outputStacks.stream().filter(stack -> !stack.isEmpty()).toList();
-        TTNbt.store(output, "Items", ItemStack.CODEC.listOf(), registries, filtered);
+        TTNbt.store(output, "Items", ItemStackCodecs.CODEC.listOf(), registries, filtered);
         output.put(INBOX_KEY, inbox.serializeNBT());
     }
 
