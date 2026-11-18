@@ -3,10 +3,9 @@ package com.leclowndu93150.thaumaturge.content.equipment.trim;
 import com.leclowndu93150.thaumaturge.datamap.DataMaps;
 
 import com.leclowndu93150.thaumaturge.api.items.trim.TrimMaterialBonus;
-import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
-import net.minecraft.core.component.DataComponents;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.armortrim.ArmorTrim;
 
 public final class TrimBonuses {
     private static final TrimMaterialBonus NONE = new TrimMaterialBonus(0, 0);
@@ -14,11 +13,11 @@ public final class TrimBonuses {
     private TrimBonuses() {}
 
     public static TrimMaterialBonus of(ItemStack stack) {
-        ArmorTrim trim = stack.get(DataComponents.TRIM);
+        var trim = ItemData.get(stack, VanillaItemData.TRIM);
         if (trim == null) {
             return NONE;
         }
-        TrimMaterialBonus bonus = DataMaps.get(trim.material(), TTDataMaps.TRIM_MATERIAL_BONUS);
+        TrimMaterialBonus bonus = DataMaps.get(trim.material(), TrimMaterialBonus.DATA_MAP);
         return bonus == null ? NONE : bonus;
     }
 }

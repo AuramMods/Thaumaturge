@@ -80,7 +80,7 @@ public final class GogglesAccess {
         if (player == null) {
             return 0;
         }
-        AttributeInstance attribute = player.getAttribute(BINDING.get().visDiscount());
+        AttributeInstance attribute = player.getAttribute(BINDING.get().visDiscount().value());
         return attribute == null ? 0 : (int) (attribute.getValue() * 100);
     }
 

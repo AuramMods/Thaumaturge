@@ -6,12 +6,10 @@ import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.content.equipment.trim.TrimBonuses;
 import java.util.EnumMap;
 import java.util.Map;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -21,21 +19,23 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.common.PercentageAttribute;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class TTAttributes {
     private static final double DEFAULT_ATTACK_DAMAGE = 2.0;
 
     public static final DeferredRegister<Attribute> ATTRIBUTES =
-            DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, TTIds.MODID);
+            DeferredRegister.create(ForgeRegistries.ATTRIBUTES, TTIds.MODID);
 
-    public static final Holder<Attribute> VIS_DISCOUNT = ATTRIBUTES.register(
+    public static final RegistryObject<Attribute> VIS_DISCOUNT = ATTRIBUTES.register(
             "vis_discount",
-            () -> new PercentageAttribute("attributes.thaumaturge.vis_discount", 0, 0, 1).setSyncable(true));
+            VisDiscountAttribute::new);
 
     private static final float PERCENT = 100.0F;
     private static final Map<EquipmentSlot, ResourceLocation> TRIM_DISCOUNT_IDS = trimDiscountIds();
@@ -50,17 +50,17 @@ public final class TTAttributes {
     @SubscribeEvent
     public static void onItemAttributeModifier(ItemAttributeModifierEvent event) {
         addTrimDiscount(event);
-        if (event.getItemStack().getItem() instanceof IVisDiscountGear gear) {
+        if (event.getItemStack().getItem() instanceof IVisDiscountGear gear
+                && gear.appliesInSlot(event.getItemStack(), event.getSlotType())) {
             float contribution = (float) gear.getVisDiscount(event.getItemStack()) / 100;
             if (contribution != 0) {
                 event.addModifier(
-                        VIS_DISCOUNT,
+                        VIS_DISCOUNT.get(),
                         NamedAttributeModifiers.create(
                                 BuiltInRegistries.ITEM.getKey(
                                         event.getItemStack().getItem()),
                                 contribution,
-                                AttributeModifier.Operation.ADDITION),
-                        gear.getAppliedSlot(event.getItemStack()));
+                                AttributeModifier.Operation.ADDITION));
             }
         }
     }
@@ -69,13 +69,12 @@ public final class TTAttributes {
         ItemStack stack = event.getItemStack();
         int discount = TrimBonuses.of(stack).visDiscount();
         Equipable equipable = Equipable.get(stack);
-        if (discount != 0 && equipable != null) {
+        if (discount != 0 && equipable != null && event.getSlotType() == equipable.getEquipmentSlot()) {
             EquipmentSlot slot = equipable.getEquipmentSlot();
             event.addModifier(
-                    VIS_DISCOUNT,
+                    VIS_DISCOUNT.get(),
                     NamedAttributeModifiers.create(
-                            TRIM_DISCOUNT_IDS.get(slot), discount / PERCENT, AttributeModifier.Operation.ADDITION),
-                    EquipmentSlotGroup.bySlot(slot));
+                            TRIM_DISCOUNT_IDS.get(slot), discount / PERCENT, AttributeModifier.Operation.ADDITION));
         }
     }
 
@@ -88,13 +87,20 @@ public final class TTAttributes {
     }
 
     public static void onAttributesCreated(EntityAttributeModificationEvent event) {
-        event.add(EntityType.PLAYER, VIS_DISCOUNT);
+        event.add(EntityType.PLAYER, VIS_DISCOUNT.get());
         for (EntityType<? extends LivingEntity> type : event.getTypes()) {
             if (type != EntityType.PLAYER) {
                 if (!event.has(type, Attributes.ATTACK_DAMAGE)) {
                     event.add(type, Attributes.ATTACK_DAMAGE, DEFAULT_ATTACK_DAMAGE);
                 }
             }
+        }
+    }
+
+    public static final class VisDiscountAttribute extends RangedAttribute {
+        private VisDiscountAttribute() {
+            super("attributes.thaumaturge.vis_discount", 0, 0, 1);
+            setSyncable(true);
         }
     }
 }

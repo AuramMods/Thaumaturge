@@ -37,6 +37,7 @@
     "registry.RegistryLookupDataMapMixin",
     "server.ServerResourceDataMapsMixin",
     "forge.ForgeFuelDataMapMixin",
+    "world.item.VisDiscountTooltipMixin",
     "world.item.AxeDataMapMixin"
   ],
   "client": [

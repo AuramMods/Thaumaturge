@@ -39,7 +39,7 @@ public final class VoidseerCharmItem extends Item implements IVisDiscountGear, I
     }
 
     public void wornTick(ItemStack stack, LivingEntity wearer) {
-        AttributeInstance attribute = wearer.getAttribute(TTAttributes.VIS_DISCOUNT);
+        AttributeInstance attribute = wearer.getAttribute(TTAttributes.VIS_DISCOUNT.get());
         if (attribute == null) {
             return;
         }
@@ -56,7 +56,7 @@ public final class VoidseerCharmItem extends Item implements IVisDiscountGear, I
     }
 
     public static void clearDiscount(LivingEntity wearer) {
-        AttributeInstance attribute = wearer.getAttribute(TTAttributes.VIS_DISCOUNT);
+        AttributeInstance attribute = wearer.getAttribute(TTAttributes.VIS_DISCOUNT.get());
         if (attribute != null) {
             attribute.removeModifier(NamedAttributeModifiers.id(DISCOUNT_MODIFIER_ID));
         }

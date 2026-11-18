@@ -59,6 +59,7 @@ public final class ItemNbt {
             case "minecraft:custom_name" -> tag.getCompound("display").contains("Name", Tag.TAG_STRING);
             case "minecraft:enchantments" -> tag.contains("Enchantments", Tag.TAG_LIST);
             case "minecraft:stored_enchantments" -> tag.contains("StoredEnchantments", Tag.TAG_LIST);
+            case "minecraft:trim" -> tag.contains(ArmorTrimData.TAG);
             case "minecraft:potion_contents" -> tag.contains("Potion") || tag.contains("CustomPotionColor") || tag.contains("CustomPotionEffects");
             default -> false;
         };

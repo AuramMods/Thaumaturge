@@ -35,10 +35,7 @@ public final class TTDataMaps {
             .synced(ItemWarp.CODEC, false)
             .build();
 
-    public static final DataMapType<TrimMaterial, TrimMaterialBonus> TRIM_MATERIAL_BONUS = DataMapType.builder(
-                    TTIds.rl("trim_bonus"), Registries.TRIM_MATERIAL, TrimMaterialBonus.CODEC)
-            .synced(TrimMaterialBonus.CODEC, false)
-            .build();
+    public static final DataMapType<TrimMaterial, TrimMaterialBonus> TRIM_MATERIAL_BONUS = TrimMaterialBonus.DATA_MAP;
 
     public static final DataMapType<EntityType<?>, TaintedProfile> TAINTED_PROFILE = TaintedProfile.DATA_MAP;
 

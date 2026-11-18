@@ -81,6 +81,12 @@ public final class ItemStackCodecs {
         ItemStack stack = ItemStack.of(saved);
         if (stack.isEmpty()) return DataResult.error(() -> "Cannot load item stack " + value.item());
         try {
+            if (stack.getTag() != null && stack.getTag().contains(ArmorTrimData.TAG)) {
+                if (value.components().entrySet().stream().anyMatch(entry -> entry.getKey() == VanillaItemData.TRIM)) {
+                    return DataResult.error(() -> "Armor trim is present in both components and forge_data");
+                }
+                ArmorTrimData.read(stack);
+            }
             value.components().apply(stack);
             return DataResult.success(stack);
         } catch (IllegalArgumentException ex) {
@@ -94,7 +100,9 @@ public final class ItemStackCodecs {
                 return DataResult.error(() -> "forge_data only accepts native tag/ForgeCaps compounds");
             }
         }
-        CompoundTag tag = data.getCompound("tag");
+        CompoundTag tag = data.getCompound("tag").copy();
+        // Before trim was a typed component, this carrier stored its native tag.
+        tag.remove(ArmorTrimData.TAG);
         CompoundTag residual = tag.copy();
         VanillaItemData.stripNativeStorage(residual);
         if (tag.contains(ItemData.TAG) || !tag.equals(residual)) {

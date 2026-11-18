@@ -218,7 +218,7 @@ public final class ThaumaturgeCuriosCompat {
             float contribution = (float) gear.getVisDiscount(stack) / 100;
             if (contribution != 0) {
                 event.addModifier(
-                        TTAttributes.VIS_DISCOUNT,
+                        TTAttributes.VIS_DISCOUNT.get(),
                         NamedAttributeModifiers.create(
                                 BuiltInRegistries.ITEM.getKey(stack.getItem()),
                                 contribution,

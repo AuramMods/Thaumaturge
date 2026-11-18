@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.items;
 
-import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 
@@ -20,17 +20,10 @@ public interface IVisDiscountGear {
     int getVisDiscount(ItemStack stack);
 
     /**
-     * Returns the group of equipment slots in which the Attribute Modifier should apply.
-     * The equipment slot group is determined by the item's {@link Equipable} slot. If the item
-     * is not equipable, the attribute modifier will apply to any equipment slot.
-     *
-     * @param stack  the worn stack
-     * @return the equipment slot group in which the attribute modifier should apply
+     * Returns whether the vis modifier applies in the requested equipment slot.
+     * Items without an equipable slot apply to every native equipment slot.
      */
-    default EquipmentSlotGroup getAppliedSlot(ItemStack stack) {
-        if (stack.getItem() instanceof Equipable equipable) {
-            return EquipmentSlotGroup.bySlot(equipable.getEquipmentSlot());
-        }
-        return EquipmentSlotGroup.ANY;
+    default boolean appliesInSlot(ItemStack stack, EquipmentSlot slot) {
+        return !(stack.getItem() instanceof Equipable equipable) || slot == equipable.getEquipmentSlot();
     }
 }

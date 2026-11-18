@@ -3,10 +3,10 @@ package com.leclowndu93150.thaumaturge.client.equipment;
 import com.leclowndu93150.thaumaturge.compat.Colors;
 import com.leclowndu93150.thaumaturge.api.items.trim.TTTrimMaterials;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 
 public final class ArmorTrimColors {
@@ -24,7 +24,7 @@ public final class ArmorTrimColors {
     }
 
     public static int of(ItemStack stack) {
-        ArmorTrim trim = stack.get(DataComponents.TRIM);
+        var trim = ItemData.get(stack, VanillaItemData.TRIM);
         return trim == null ? UNTINTED : of(trim.material());
     }
 }
