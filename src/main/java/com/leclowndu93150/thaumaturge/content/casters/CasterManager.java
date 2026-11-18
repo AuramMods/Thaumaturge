@@ -52,8 +52,8 @@ public final class CasterManager {
             return 0.0F;
         }
         int total = GogglesAccess.totalVisDiscount(player);
-        MobEffectInstance exhaust = player.getEffect(TTMobEffects.VIS_EXHAUST);
-        MobEffectInstance infectious = player.getEffect(TTMobEffects.INFECTIOUS_VIS_EXHAUST);
+        MobEffectInstance exhaust = player.getEffect(TTMobEffects.VIS_EXHAUST.get());
+        MobEffectInstance infectious = player.getEffect(TTMobEffects.INFECTIOUS_VIS_EXHAUST.get());
         if (exhaust != null || infectious != null) {
             int level1 = exhaust != null ? exhaust.getAmplifier() : 0;
             int level2 = infectious != null ? infectious.getAmplifier() : 0;

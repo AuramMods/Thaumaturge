@@ -73,12 +73,12 @@ public final class WarpEvents {
             upTo(
                     16,
                     (player, roll) -> applyEffect(
-                            player, TTMobEffects.VIS_EXHAUST, 5000, ampFor(roll.warp()), "warp.thaumaturge.text.1")),
+                            player, EffectCodecs.holder(TTMobEffects.VIS_EXHAUST.get()), 5000, ampFor(roll.warp()), "warp.thaumaturge.text.1")),
             upTo(
                     20,
                     (player, roll) -> applyEffect(
                             player,
-                            TTMobEffects.THAUMARHIA,
+                            EffectCodecs.holder(TTMobEffects.THAUMARHIA.get()),
                             Math.min(32000, 10 * roll.warp()),
                             0,
                             "warp.thaumaturge.text.15")),
@@ -86,7 +86,7 @@ public final class WarpEvents {
                     24,
                     (player, roll) -> applyEffect(
                             player,
-                            TTMobEffects.UNNATURAL_HUNGER,
+                            EffectCodecs.holder(TTMobEffects.UNNATURAL_HUNGER.get()),
                             5000,
                             ampFor(roll.warp()),
                             "warp.thaumaturge.text.2")),
@@ -95,11 +95,11 @@ public final class WarpEvents {
             upTo(
                     36,
                     (player, roll) -> applyEffect(
-                            player, TTMobEffects.BLURRED_VISION, Math.min(32000, 10 * roll.warp()), 0, null)),
+                            player, EffectCodecs.holder(TTMobEffects.BLURRED_VISION.get()), Math.min(32000, 10 * roll.warp()), 0, null)),
             upTo(
                     40,
                     (player, roll) -> applyEffect(
-                            player, TTMobEffects.SUN_SCORNED, 5000, ampFor(roll.warp()), "warp.thaumaturge.text.5")),
+                            player, EffectCodecs.holder(TTMobEffects.SUN_SCORNED.get()), 5000, ampFor(roll.warp()), "warp.thaumaturge.text.5")),
             upTo(
                     44,
                     (player, roll) -> applyEffect(
@@ -108,7 +108,7 @@ public final class WarpEvents {
                     48,
                     (player, roll) -> applyEffect(
                             player,
-                            TTMobEffects.INFECTIOUS_VIS_EXHAUST,
+                            EffectCodecs.holder(TTMobEffects.INFECTIOUS_VIS_EXHAUST.get()),
                             6000,
                             ampFor(roll.warp()),
                             "warp.thaumaturge.text.1")),
@@ -123,7 +123,7 @@ public final class WarpEvents {
             upTo(
                     56,
                     (player, roll) -> applyEffect(
-                            player, TTMobEffects.DEATH_GAZE, 6000, ampFor(roll.warp()), "warp.thaumaturge.text.4")),
+                            player, EffectCodecs.holder(TTMobEffects.DEATH_GAZE.get()), 6000, ampFor(roll.warp()), "warp.thaumaturge.text.4")),
             upTo(60, (player, roll) -> suddenlySpiders(player, roll.warp(), false)),
             message(64, "warp.thaumaturge.text.13"),
             upTo(68, (player, roll) -> spawnMist(player, roll.warp() / 30)),
@@ -136,7 +136,7 @@ public final class WarpEvents {
                     80,
                     (player, roll) -> applyEffect(
                             player,
-                            TTMobEffects.UNNATURAL_HUNGER,
+                            EffectCodecs.holder(TTMobEffects.UNNATURAL_HUNGER.get()),
                             6000,
                             ampFor(roll.warp()),
                             "warp.thaumaturge.text.2")),
@@ -310,7 +310,7 @@ public final class WarpEvents {
     }
 
     public static void checkDeathGaze(ServerPlayer player) {
-        MobEffectInstance gaze = player.getEffect(TTMobEffects.DEATH_GAZE);
+        MobEffectInstance gaze = player.getEffect(TTMobEffects.DEATH_GAZE.get());
         if (gaze == null) {
             return;
         }

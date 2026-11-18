@@ -286,7 +286,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
         int thickness = amount - 1;
         if (serverLevel.getRandom().nextBoolean()) {
             living.addEffect(EffectCodecs.instance(
-                    TTMobEffects.VIS_EXHAUST,
+                    TTMobEffects.VIS_EXHAUST.get(),
                     VIS_EXHAUST_DURATION,
                     thickness / LEVELS_PER_AMPLIFIER,
                     false,
@@ -307,7 +307,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
         return MobTraits.isTainted(living)
                 || living.getType().is(EntityTypeTags.UNDEAD)
                 || FluxImmunityHelper.isImmune(living)
-                || living.hasEffect(TTMobEffects.VIS_EXHAUST)
+                || living.hasEffect(TTMobEffects.VIS_EXHAUST.get())
                 || living.hasEffect(MobEffects.CONFUSION);
     }
 

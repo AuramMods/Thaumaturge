@@ -107,7 +107,7 @@ public final class EntityTaintCrawler extends Monster {
         boolean attacked = super.doHurtTarget(target);
         if (attacked && target instanceof LivingEntity living && this.random.nextFloat() < TAINT_CHANCE) {
             living.addEffect(EffectCodecs.instance(
-                    TTMobEffects.FLUX_TAINT, FLUX_TAINT_BASE_TICKS, TAINT_AMPLIFIER, true, false, false));
+                    TTMobEffects.FLUX_TAINT.get(), FLUX_TAINT_BASE_TICKS, TAINT_AMPLIFIER, true, false, false));
         }
         return attacked;
     }

@@ -22,7 +22,7 @@ public final class FluxTaintExposure {
 
     public static void expose(LivingEntity living, int duration, boolean ambient, boolean particles) {
         living.addEffect(
-                EffectCodecs.instance(TTMobEffects.FLUX_TAINT, duration, AMPLIFIER, ambient, particles, false));
+                EffectCodecs.instance(TTMobEffects.FLUX_TAINT.get(), duration, AMPLIFIER, ambient, particles, false));
     }
 
     public static void exposeQuietly(LivingEntity living) {

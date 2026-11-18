@@ -36,7 +36,7 @@ public final class ExhaustPressureEvent extends AbstractFluxPressureEvent {
                 WarpManager.sendActionBar(player, MESSAGE);
             }
             target.addEffect(EffectCodecs.instance(
-                    TTMobEffects.INFECTIOUS_VIS_EXHAUST, DURATION, AMPLIFIER, false, true, false));
+                    TTMobEffects.INFECTIOUS_VIS_EXHAUST.get(), DURATION, AMPLIFIER, false, true, false));
         }
         return true;
     }

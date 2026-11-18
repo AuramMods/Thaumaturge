@@ -54,8 +54,8 @@ public final class InstabilityOutcomeBootstrap {
 
     private static List<MobEffectInstance> harmEffects() {
         return List.of(
-                EffectCodecs.instance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true),
-                EffectCodecs.instance(TTMobEffects.VIS_EXHAUST, VIS_EXHAUST_TICKS, 0, true, true));
+                EffectCodecs.instance(TTMobEffects.FLUX_TAINT.get(), FLUX_TAINT_TICKS, 0, false, true),
+                EffectCodecs.instance(TTMobEffects.VIS_EXHAUST.get(), VIS_EXHAUST_TICKS, 0, true, true));
     }
 
     private static void register(

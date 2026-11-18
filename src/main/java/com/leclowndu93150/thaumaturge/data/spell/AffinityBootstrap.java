@@ -159,7 +159,7 @@ public final class AffinityBootstrap {
                 sound(SoundEvents.CHORUS_FLOWER_GROW),
                 List.of(
                         new DamageAction(DamageTypes.INDIRECT_MAGIC, 3.0F, 1.0F, 1.0F, false),
-                        new MobEffectAction(TTMobEffects.FLUX_TAINT, 5 * SECOND, 0.0F, 0.0F, 0.0F, 0, 0.1F)),
+                        new MobEffectAction(EffectCodecs.holder(TTMobEffects.FLUX_TAINT.get()), 5 * SECOND, 0.0F, 0.0F, 0.0F, 0, 0.1F)),
                 List.of(new PolluteAction(0.0F, 0.2F, 0.25F)),
                 List.of());
         register(

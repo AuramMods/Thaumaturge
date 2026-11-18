@@ -31,14 +31,14 @@ public final class InfectiousVisExhaustEffect extends MobEffect {
         List<LivingEntity> nearby = level.getEntitiesOfClass(
                 LivingEntity.class,
                 box,
-                target -> target != mob && !target.hasEffect(TTMobEffects.INFECTIOUS_VIS_EXHAUST));
+                target -> target != mob && !target.hasEffect(TTMobEffects.INFECTIOUS_VIS_EXHAUST.get()));
         for (LivingEntity target : nearby) {
             if (amplification > 0) {
                 target.addEffect(EffectCodecs.instance(
-                        TTMobEffects.INFECTIOUS_VIS_EXHAUST, EFFECT_DURATION, amplification - 1, false, true, false));
+                        TTMobEffects.INFECTIOUS_VIS_EXHAUST.get(), EFFECT_DURATION, amplification - 1, false, true, false));
             } else {
                 target.addEffect(
-                        EffectCodecs.instance(TTMobEffects.VIS_EXHAUST, EFFECT_DURATION, 0, false, true, false));
+                        EffectCodecs.instance(TTMobEffects.VIS_EXHAUST.get(), EFFECT_DURATION, 0, false, true, false));
             }
         }
         return;

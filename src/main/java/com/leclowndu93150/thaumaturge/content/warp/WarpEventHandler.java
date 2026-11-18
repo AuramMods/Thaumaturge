@@ -64,10 +64,10 @@ public final class WarpEventHandler {
         if (!ThaumaturgeCommonConfig.WUSS_MODE.get()
                 && player.tickCount > 0
                 && player.tickCount % WARP_CHECK_INTERVAL == 0
-                && !player.hasEffect(TTMobEffects.WARP_WARD)) {
+                && !player.hasEffect(TTMobEffects.WARP_WARD.get())) {
             WarpEvents.checkWarpEvent(player);
         }
-        if (player.tickCount % DEATH_GAZE_INTERVAL == 0 && player.hasEffect(TTMobEffects.DEATH_GAZE)) {
+        if (player.tickCount % DEATH_GAZE_INTERVAL == 0 && player.hasEffect(TTMobEffects.DEATH_GAZE.get())) {
             WarpEvents.checkDeathGaze(player);
         }
     }
@@ -97,16 +97,16 @@ public final class WarpEventHandler {
                 WarpManager.addWarp(player, 1 + player.getRandom().nextInt(3), WarpType.TEMPORARY);
             }
         }
-        MobEffectInstance hunger = player.getEffect(TTMobEffects.UNNATURAL_HUNGER);
+        MobEffectInstance hunger = player.getEffect(TTMobEffects.UNNATURAL_HUNGER.get());
         if (hunger == null || used.get(DataComponents.FOOD) == null) {
             return;
         }
         if (used.is(Items.ROTTEN_FLESH) || used.is(TTItems.BRAIN.get())) {
-            player.removeEffect(TTMobEffects.UNNATURAL_HUNGER);
+            player.removeEffect(TTMobEffects.UNNATURAL_HUNGER.get());
             int amplifier = hunger.getAmplifier() - 1;
             int duration = hunger.getDuration() - HUNGER_CURE_DURATION_STEP;
             if (duration > 0 && amplifier >= 0) {
-                player.addEffect(EffectCodecs.instance(TTMobEffects.UNNATURAL_HUNGER, duration, amplifier, true, true));
+                player.addEffect(EffectCodecs.instance(TTMobEffects.UNNATURAL_HUNGER.get(), duration, amplifier, true, true));
             }
             WarpManager.sendActionBar(player, "warp.thaumaturge.text.hunger.2");
         } else {

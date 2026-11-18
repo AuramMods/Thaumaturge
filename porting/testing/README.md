@@ -248,3 +248,9 @@ dispatch, with controlled entity/world services, covering periodic and infinite
 timing, exhaustion, fire/healing branches and marker expiration. Focused totals
 are 273 server / 281 client. These tests do not run a world or prove the wider
 taint/physical-flux dependencies or full mod catalog construction.
+
+
+Cycle 037 verifies native deferred effect registration and lazy command-style
+supplier maps, including real registry identity and named effect round trips.
+Focused totals are 274 server / 282 client. Full effect catalog and automatic
+command subscriber construction still need full-mod runtime validation.

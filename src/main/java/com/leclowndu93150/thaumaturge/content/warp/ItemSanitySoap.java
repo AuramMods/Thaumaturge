@@ -77,7 +77,7 @@ public class ItemSanitySoap extends Item {
         if (!level.isClientSide() && entity instanceof ServerPlayer player) {
             IPlayerWarp warp = WarpHelper.getWarp(player);
             int amount = 1;
-            if (player.hasEffect(TTMobEffects.WARP_WARD)) {
+            if (player.hasEffect(TTMobEffects.WARP_WARD.get())) {
                 amount++;
             }
             if (level.getBlockState(player.blockPosition()).is(TTBlocks.PURIFYING_FLUID.get())) {

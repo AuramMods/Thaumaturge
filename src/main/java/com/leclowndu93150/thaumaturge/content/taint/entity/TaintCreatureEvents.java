@@ -85,7 +85,7 @@ public final class TaintCreatureEvents {
                 && !victim.getType().is(EntityTypeTags.UNDEAD)
                 && victim.isAlive()
                 && !(victim instanceof EntityOwnedConstruct)
-                && victim.hasEffect(TTMobEffects.FLUX_TAINT)
+                && victim.hasEffect(TTMobEffects.FLUX_TAINT.get())
                 && victim.getRandom().nextBoolean()) {
             TaintInfection.tryInfect(level, victim);
             return;

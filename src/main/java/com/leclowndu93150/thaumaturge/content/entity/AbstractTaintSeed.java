@@ -175,7 +175,7 @@ public abstract class AbstractTaintSeed extends AbstractRootedTaint implements I
         for (LivingEntity target : server.getEntitiesOfClass(
                 LivingEntity.class, this.getBoundingBox().inflate(radius), e -> canAfflict(this, e))) {
             target.addEffect(EffectCodecs.instance(
-                    TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, Math.max(0, getArea() - 1), true, false, false));
+                    TTMobEffects.FLUX_TAINT.get(), FLUX_TAINT_TICKS, Math.max(0, getArea() - 1), true, false, false));
         }
     }
 

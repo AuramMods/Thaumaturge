@@ -99,7 +99,7 @@ public final class FluxLightning {
         }
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, new AABB(strike).inflate(HIT_RADIUS))) {
             target.hurt(level.damageSources().magic(), HIT_DAMAGE);
-            target.addEffect(EffectCodecs.instance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true, false));
+            target.addEffect(EffectCodecs.instance(TTMobEffects.FLUX_TAINT.get(), FLUX_TAINT_TICKS, 0, false, true, false));
         }
     }
 

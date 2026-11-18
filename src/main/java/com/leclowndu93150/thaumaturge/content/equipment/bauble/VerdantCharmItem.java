@@ -58,8 +58,8 @@ public final class VerdantCharmItem extends Item {
             player.removeEffect(MobEffects.POISON);
             return;
         }
-        if (player.getEffect(TTMobEffects.FLUX_TAINT) != null && RechargeAccess.spendVis(stack, FLUX_TAINT_COST)) {
-            player.removeEffect(TTMobEffects.FLUX_TAINT);
+        if (player.getEffect(TTMobEffects.FLUX_TAINT.get()) != null && RechargeAccess.spendVis(stack, FLUX_TAINT_COST)) {
+            player.removeEffect(TTMobEffects.FLUX_TAINT.get());
             return;
         }
         int type = type(stack);

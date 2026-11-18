@@ -38,11 +38,11 @@ public abstract class PurifyingFluid extends ForgeFlowingFluid {
         if (!level.isClientSide()
                 && fs.isSource()
                 && entity instanceof ServerPlayer player
-                && !player.hasEffect(TTMobEffects.WARP_WARD)) {
+                && !player.hasEffect(TTMobEffects.WARP_WARD.get())) {
             int permanent = WarpHelper.getWarp(player).get(WarpType.PERMANENT);
             int div = permanent > 0 ? Math.max(1, (int) Math.sqrt(permanent)) : 1;
             player.addEffect(EffectCodecs.instance(
-                    TTMobEffects.WARP_WARD, Math.min(WARD_MAX_TICKS, WARD_BUDGET_TICKS / div), 0, true, true));
+                    TTMobEffects.WARP_WARD.get(), Math.min(WARD_MAX_TICKS, WARD_BUDGET_TICKS / div), 0, true, true));
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         }
     }

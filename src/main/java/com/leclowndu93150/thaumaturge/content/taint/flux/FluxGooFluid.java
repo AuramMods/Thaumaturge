@@ -341,7 +341,7 @@ public abstract class FluxGooFluid extends ForgeFlowingFluid {
         if (!level.isClientSide() && entity instanceof LivingEntity living) {
             int amp = meta / LEVELS_PER_AMPLIFIER;
             living.addEffect(
-                    EffectCodecs.instance(TTMobEffects.VIS_EXHAUST, VIS_EXHAUST_DURATION, amp, true, true, false));
+                    EffectCodecs.instance(TTMobEffects.VIS_EXHAUST.get(), VIS_EXHAUST_DURATION, amp, true, true, false));
         }
     }
 

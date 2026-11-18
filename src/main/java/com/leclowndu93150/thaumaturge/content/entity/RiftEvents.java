@@ -120,7 +120,7 @@ final class RiftEvents {
         for (LivingEntity living : level.getEntitiesOfClass(
                 LivingEntity.class, rift.getBoundingBox().inflate(PHAGE_RADIUS))) {
             living.addEffect(
-                    EffectCodecs.instance(TTMobEffects.INFECTIOUS_VIS_EXHAUST, PHAGE_DURATION, PHAGE_AMPLIFIER));
+                    EffectCodecs.instance(TTMobEffects.INFECTIOUS_VIS_EXHAUST.get(), PHAGE_DURATION, PHAGE_AMPLIFIER));
             if (living instanceof ServerPlayer player) {
                 WarpManager.sendActionBar(player, NOTICE_MIND);
             }

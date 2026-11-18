@@ -131,7 +131,7 @@ public final class TTCommands {
     private static final String RANDOM = "random";
     private static final String NO_MODIFIER = "none";
 
-    private static final Map<String, Holder<MobEffect>> EFFECTS = new LinkedHashMap<>();
+    private static final Map<String, Supplier<MobEffect>> EFFECTS = new LinkedHashMap<>();
     private static final Map<String, Supplier<? extends EntityType<?>>> ENTITIES = new LinkedHashMap<>();
 
     static {
@@ -235,7 +235,7 @@ public final class TTCommands {
     public static void onRegister(RegisterCommandsEvent event) {
         LiteralArgumentBuilder<CommandSourceStack> effect = admin("effect");
         EFFECTS.forEach((name, holder) ->
-                effect.then(Commands.literal(name).executes(bySource("effect", source -> giveEffect(source, holder)))));
+                effect.then(Commands.literal(name).executes(bySource("effect", source -> giveEffect(source, holder.get())))));
         LiteralArgumentBuilder<CommandSourceStack> entity = admin("entity");
         ENTITIES.forEach((name, type) -> entity.then(Commands.literal(name)
                 .executes(bySource("entity", source -> spawnEntity(source, name, type.get())))));
@@ -695,7 +695,7 @@ public final class TTCommands {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int giveEffect(CommandSourceStack source, Holder<MobEffect> effect) throws CommandSyntaxException {
+    private static int giveEffect(CommandSourceStack source, MobEffect effect) throws CommandSyntaxException {
         source.getPlayerOrException()
                 .addEffect(EffectCodecs.instance(effect, EFFECT_DURATION_TICKS, 0, true, true, true));
         return Command.SINGLE_SUCCESS;

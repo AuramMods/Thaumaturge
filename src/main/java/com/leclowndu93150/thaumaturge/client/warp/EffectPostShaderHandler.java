@@ -49,16 +49,16 @@ public final class EffectPostShaderHandler {
     }
 
     private static @Nullable ResourceLocation desiredShader(LocalPlayer player) {
-        if (player.hasEffect(TTMobEffects.DEATH_GAZE)) {
+        if (player.hasEffect(TTMobEffects.DEATH_GAZE.get())) {
             return DEATH_GAZE_SHADER;
         }
-        if (player.hasEffect(TTMobEffects.BLURRED_VISION)) {
+        if (player.hasEffect(TTMobEffects.BLURRED_VISION.get())) {
             return BLURRED_VISION_SHADER;
         }
-        if (player.hasEffect(TTMobEffects.UNNATURAL_HUNGER)) {
+        if (player.hasEffect(TTMobEffects.UNNATURAL_HUNGER.get())) {
             return UNNATURAL_HUNGER_SHADER;
         }
-        if (player.hasEffect(TTMobEffects.SUN_SCORNED)) {
+        if (player.hasEffect(TTMobEffects.SUN_SCORNED.get())) {
             return SUN_SCORNED_SHADER;
         }
         return null;

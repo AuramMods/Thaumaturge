@@ -129,7 +129,7 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
                 LivingEntity.class,
                 box,
                 e -> !MobTraits.isTainted(e) && !e.getType().is(EntityTypeTags.UNDEAD))) {
-            target.addEffect(EffectCodecs.instance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true));
+            target.addEffect(EffectCodecs.instance(TTMobEffects.FLUX_TAINT.get(), FLUX_TAINT_TICKS, 0, false, true));
         }
     }
 
