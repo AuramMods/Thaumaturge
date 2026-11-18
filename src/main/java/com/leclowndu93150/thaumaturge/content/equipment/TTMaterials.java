@@ -8,13 +8,11 @@ import java.util.function.Supplier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.common.SimpleTier;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -24,31 +22,31 @@ public final class TTMaterials {
     public static final Supplier<net.minecraftforge.registries.IForgeRegistry<ArmorMaterialData>> ARMOR_REGISTRY =
             ARMOR_MATERIALS.makeRegistry(() -> new net.minecraftforge.registries.RegistryBuilder<ArmorMaterialData>().hasTags());
 
-    public static final Tier TOOL_THAUMIUM = new SimpleTier(
-            BlockTags.INCORRECT_FOR_DIAMOND_TOOL, 500, 7.0F, 2.5F, 22, () -> Ingredient.of(TTItemTags.INGOTS_THAUMIUM));
-    public static final Tier TOOL_VOID = new SimpleTier(
-            BlockTags.INCORRECT_FOR_NETHERITE_TOOL,
+    public static final Tier TOOL_THAUMIUM = ToolTierData.register(TTIds.rl("thaumium"), 3,
+            ToolTierData.INCORRECT_FOR_DIAMOND_TOOL, 500, 7.0F, 2.5F, 22, () -> Ingredient.of(TTItemTags.INGOTS_THAUMIUM));
+    public static final Tier TOOL_VOID = ToolTierData.register(TTIds.rl("void"), 4,
+            ToolTierData.INCORRECT_FOR_NETHERITE_TOOL,
             150,
             8.0F,
             3.0F,
             10,
             () -> Ingredient.of(TTItemTags.INGOTS_VOID_METAL));
-    public static final Tier TOOL_ELEMENTAL = new SimpleTier(
-            BlockTags.INCORRECT_FOR_DIAMOND_TOOL,
+    public static final Tier TOOL_ELEMENTAL = ToolTierData.register(TTIds.rl("elemental"), 3,
+            ToolTierData.INCORRECT_FOR_DIAMOND_TOOL,
             1500,
             9.0F,
             3.0F,
             18,
             () -> Ingredient.of(TTItemTags.INGOTS_THAUMIUM));
-    public static final Tier TOOL_PRIMAL_VOID = new SimpleTier(
-            BlockTags.INCORRECT_FOR_NETHERITE_TOOL,
+    public static final Tier TOOL_PRIMAL_VOID = ToolTierData.register(TTIds.rl("primal_void"), 4,
+            ToolTierData.INCORRECT_FOR_NETHERITE_TOOL,
             500,
             8.0F,
             4.0F,
             20,
             () -> Ingredient.of(TTItemTags.INGOTS_VOID_METAL));
-    public static final Tier TOOL_CRIMSON_VOID = new SimpleTier(
-            BlockTags.INCORRECT_FOR_NETHERITE_TOOL,
+    public static final Tier TOOL_CRIMSON_VOID = ToolTierData.register(TTIds.rl("crimson_void"), 4,
+            ToolTierData.INCORRECT_FOR_NETHERITE_TOOL,
             200,
             8.0F,
             3.5F,
@@ -104,7 +102,7 @@ public final class TTMaterials {
             SoundEvents.ARMOR_EQUIP_LEATHER,
             1.0F,
             0.0F,
-            () -> Ingredient.of(Tags.Items.LEATHERS),
+            () -> Ingredient.of(Tags.Items.LEATHER),
             false);
     public static final ArmorMaterialData ARMOR_VOID = register(
             "void",

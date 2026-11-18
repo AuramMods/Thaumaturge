@@ -12,7 +12,8 @@
     "resources.RegistryOpsAccessor",
     "world.effect.MobEffectInstanceMixin",
     "world.item.alchemy.PotionBrewingAccessor",
-    "world.item.alchemy.PotionBrewingMixAccessor"
+    "world.item.alchemy.PotionBrewingMixAccessor",
+    "forge.TierSortingRegistryMixin"
   ],
   "client": [
     "client.multiplayer.ClientLevelEntityTickMixin",

@@ -275,3 +275,11 @@ construction before material binding, stats/attributes, per-item durability,
 repair, layer metadata and damage persistence. Focused totals are 288 server /
 296 client. Full material catalog/tool tiers and multi-layer/tint/trims/rendering
 still require their remaining source and full-mod runtime acceptance.
+
+
+Cycle 041 registers the actual fourteen-entry material catalog and all five
+production tool tiers. Native pickaxe tests cover statistics, mineable categories,
+source blacklist tag changes, vanilla tier preservation and repair tags. The
+fixture computes Forge's real tier order, and a common tier mixin executes in
+both distributions. Focused totals are 293 server / 301 client; world loot,
+combat, complete item construction and equipment visuals remain pending.

@@ -29,7 +29,8 @@
     "server.ReloadableServerResourcesMixin",
     "network.PacketDecoderRegistryContextMixin",
     "resources.RegistryOpsAccessor",
-    "world.effect.MobEffectInstanceMixin"
+    "world.effect.MobEffectInstanceMixin",
+    "forge.TierSortingRegistryMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",

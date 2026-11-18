@@ -26,7 +26,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.registries.RegistryObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -55,13 +54,14 @@ public class ArmorMaterialRuntimeTest {
     @BeforeAll
     static void createTheActualNativeRegistryAndRegisterItemsBeforeMaterialEntries() throws Exception {
         var materials = DeferredRegister.create(ArmorMaterialData.REGISTRY_KEY, ID.getNamespace());
-        var supplier = materials.makeRegistry(() -> new RegistryBuilder<ArmorMaterialData>().hasTags());
+        var supplier = TTMaterials.ARMOR_REGISTRY;
         material = materials.register(ID.getPath(), () -> MATERIAL);
         var items = DeferredRegister.create(ForgeRegistries.ITEMS, ID.getNamespace());
         for (var type : ArmorItem.Type.values()) ITEMS.put(type, items.register(type.getName(),
                 () -> new ArmorItem(MATERIAL, type, new Item.Properties().durability(ArmorTypes.durability(type, 25)))));
         undamageable = items.register("undamageable", () -> new ArmorItem(MATERIAL, ArmorItem.Type.HELMET, new Item.Properties()));
         var bus = BusBuilder.builder().build();
+        TTMaterials.register(bus);
         materials.register(bus);
         items.register(bus);
         var created = new NewRegistryEvent();
@@ -82,6 +82,25 @@ public class ArmorMaterialRuntimeTest {
         materialRegistry.unfreeze();
         try { bus.post(event(ArmorMaterialData.REGISTRY_KEY, materialRegistry, registry)); }
         finally { materialRegistry.freeze(); }
+    }
+
+    @Test
+    void productionCatalogRegistersAllFourteenSourceDefinitionsWithTheirLayerMetadata() throws Exception {
+        int checked = 0;
+        for (var field : TTMaterials.class.getFields()) {
+            if (field.getType() != ArmorMaterialData.class) continue;
+            var data = (ArmorMaterialData) field.get(null);
+            assertSame(data, registry.get(data.id()));
+            assertEquals("thaumaturge", data.id().getNamespace());
+            checked++;
+        }
+        assertEquals(14, checked);
+        assertEquals(0, TTMaterials.ARMOR_GOGGLES.getDefenseForType(ArmorItem.Type.HELMET));
+        assertEquals(3.0F, TTMaterials.ARMOR_FORTRESS.getToughness());
+        var layers = TTMaterials.ARMOR_VOID_ROBE.layers();
+        assertEquals(2, layers.size());
+        assertTrue(layers.get(0).dyeable());
+        assertEquals(new ResourceLocation("thaumaturge", "textures/models/armor/void_robe_layer_1_over.png"), layers.get(0).texture(false));
     }
 
     @Test
