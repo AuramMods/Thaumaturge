@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -134,7 +135,8 @@ public class EntityThaumaturgeBoss extends Monster {
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData data) {
+            @Nullable SpawnGroupData data,
+            @Nullable CompoundTag spawnTag) {
         this.restrictTo(this.blockPosition(), HOME_RADIUS);
         this.generateName();
         this.bossBar.rename();

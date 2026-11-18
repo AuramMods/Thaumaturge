@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.content.entity.loot.MobSpawnEquipment;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -93,11 +95,12 @@ public class EntityInhabitedZombie extends Zombie {
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData groupData) {
+            @Nullable SpawnGroupData groupData,
+            @Nullable CompoundTag spawnTag) {
 
-        this.equip(TTLootTables.EQUIPMENT_INHABITED_ZOMBIE, NO_DROP_OVERRIDES);
+        MobSpawnEquipment.equip(this, TTLootTables.EQUIPMENT_INHABITED_ZOMBIE, NO_DROP_OVERRIDES);
 
-        return super.finalizeSpawn(level, difficulty, reason, groupData);
+        return super.finalizeSpawn(level, difficulty, reason, groupData, spawnTag);
     }
 
     @Override

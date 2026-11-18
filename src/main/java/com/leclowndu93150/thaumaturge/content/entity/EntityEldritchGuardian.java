@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.entity.eldritch.GuardianWispTrail;
 import com.leclowndu93150.thaumaturge.network.ClientboundWarpFXPayload;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -137,8 +138,9 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob {
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData groupData) {
-        SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, groupData);
+            @Nullable SpawnGroupData groupData,
+            @Nullable CompoundTag spawnTag) {
+        SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, groupData, spawnTag);
         GuardianShield.grant(this);
         return data;
     }

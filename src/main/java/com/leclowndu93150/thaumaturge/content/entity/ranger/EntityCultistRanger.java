@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.ranger;
 
+import com.leclowndu93150.thaumaturge.content.entity.loot.MobSpawnEquipment;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
@@ -8,7 +9,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 public class EntityCultistRanger extends AbstractCultistRanger {
@@ -41,7 +41,7 @@ public class EntityCultistRanger extends AbstractCultistRanger {
 
     @Override
     protected void populateDefaultEquipmentEnchantments(
-            ServerLevelAccessor level, RandomSource random, DifficultyInstance difficulty) {
-        this.enchantSpawnedWeapon(level, random, difficulty);
+            RandomSource random, DifficultyInstance difficulty) {
+        MobSpawnEquipment.enchantWeapon(this, random, difficulty);
     }
 }

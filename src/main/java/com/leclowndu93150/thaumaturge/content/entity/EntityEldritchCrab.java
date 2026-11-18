@@ -138,7 +138,8 @@ public class EntityEldritchCrab extends Monster implements ISidedHurt {
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData groupData) {
+            @Nullable SpawnGroupData groupData,
+            @Nullable CompoundTag spawnTag) {
         if (level.getDifficulty() == Difficulty.HARD) {
             this.setHelm(true);
         } else {
@@ -150,7 +151,7 @@ public class EntityEldritchCrab extends Monster implements ISidedHurt {
             var effect = randomGroupEffect(rand);
             this.addEffect(EffectCodecs.instance(effect, MobEffectInstance.INFINITE_DURATION));
         }
-        return super.finalizeSpawn(level, difficulty, reason, groupData);
+        return super.finalizeSpawn(level, difficulty, reason, groupData, spawnTag);
     }
 
     private static Holder<MobEffect> randomGroupEffect(RandomSource rand) {

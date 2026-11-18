@@ -510,7 +510,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType spawnReason,
-            @Nullable SpawnGroupData spawnGroupData) {
+            @Nullable SpawnGroupData spawnGroupData,
+            @Nullable CompoundTag spawnTag) {
         restrictTo(LevelSpaces.localBlock(this), HOME_RANGE);
         updateEntityAttributes();
         return spawnGroupData;

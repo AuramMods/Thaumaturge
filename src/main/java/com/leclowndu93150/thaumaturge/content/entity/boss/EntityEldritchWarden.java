@@ -146,12 +146,13 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData data) {
+            @Nullable SpawnGroupData data,
+            @Nullable CompoundTag spawnTag) {
         spawnTimer = EMERGENCE;
         title = TITLES.roll(random);
         shield.raise();
         ChampionHelper.makeChampion(this, true);
-        return super.finalizeSpawn(level, difficulty, reason, data);
+        return super.finalizeSpawn(level, difficulty, reason, data, spawnTag);
     }
 
     @Override

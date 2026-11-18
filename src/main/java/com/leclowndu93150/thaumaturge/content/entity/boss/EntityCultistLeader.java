@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
+import com.leclowndu93150.thaumaturge.content.entity.loot.MobSpawnEquipment;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultist;
 import com.leclowndu93150.thaumaturge.content.entity.EntityGolemOrb;
@@ -32,8 +33,6 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.providers.VanillaEnchantmentProviders;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
@@ -111,19 +110,15 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData data) {
-        equip(TTLootTables.EQUIPMENT_CULTIST_LEADER, Map.of());
+            @Nullable SpawnGroupData data,
+            @Nullable CompoundTag spawnTag) {
+        MobSpawnEquipment.equip(this, TTLootTables.EQUIPMENT_CULTIST_LEADER, Map.of());
         if (random.nextFloat() < BLADE_ENCHANT_CHANCE * difficulty.getSpecialMultiplier()) {
-            EnchantmentHelper.enchantItemFromProvider(
-                    getMainHandItem(),
-                    level.registryAccess(),
-                    VanillaEnchantmentProviders.MOB_SPAWN_EQUIPMENT,
-                    difficulty,
-                    random);
+            MobSpawnEquipment.enchant(getMainHandItem(), random, difficulty);
         }
         title = TITLES.roll(random);
         ChampionHelper.makeChampion(this, true);
-        return super.finalizeSpawn(level, difficulty, reason, data);
+        return super.finalizeSpawn(level, difficulty, reason, data, spawnTag);
     }
 
     @Override

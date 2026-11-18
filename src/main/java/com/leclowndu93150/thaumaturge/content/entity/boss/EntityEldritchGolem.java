@@ -130,10 +130,11 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements Ranged
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData data) {
+            @Nullable SpawnGroupData data,
+            @Nullable CompoundTag spawnTag) {
         spawnTimer = AWAKENING;
         ChampionHelper.makeChampion(this, true);
-        return super.finalizeSpawn(level, difficulty, reason, data);
+        return super.finalizeSpawn(level, difficulty, reason, data, spawnTag);
     }
 
     @Override

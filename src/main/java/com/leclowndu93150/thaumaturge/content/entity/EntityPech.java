@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.content.entity.loot.MobSpawnEquipment;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.entity.ai.HoldsStill;
@@ -193,7 +194,8 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData groupData) {
+            @Nullable SpawnGroupData groupData,
+            @Nullable CompoundTag spawnTag) {
         RandomSource random = level.getRandom();
         ItemStack held = new ItemStack(PechLoadout.roll(random));
         boolean wand = held.is(TTItems.PECH_WAND.get());
@@ -206,11 +208,11 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
             this.assignVariant(TYPE_STALKER);
         }
         if (!wand && !held.isEmpty()) {
-            this.populateDefaultEquipmentEnchantments(level, random, difficulty);
+            MobSpawnEquipment.enchantLoadout(this, random, difficulty);
         }
         this.setCanPickUpLoot(random.nextFloat() < 0.75F * difficulty.getSpecialMultiplier());
         this.refreshCombatGoal();
-        return super.finalizeSpawn(level, difficulty, reason, groupData);
+        return super.finalizeSpawn(level, difficulty, reason, groupData, spawnTag);
     }
 
     @Override

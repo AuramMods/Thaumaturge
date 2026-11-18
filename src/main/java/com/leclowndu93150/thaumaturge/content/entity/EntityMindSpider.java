@@ -69,8 +69,9 @@ public final class EntityMindSpider extends Spider {
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData groupData) {
-        SpawnGroupData result = super.finalizeSpawn(level, difficulty, reason, groupData);
+            @Nullable SpawnGroupData groupData,
+            @Nullable CompoundTag spawnTag) {
+        SpawnGroupData result = super.finalizeSpawn(level, difficulty, reason, groupData, spawnTag);
         for (Entity passenger : List.copyOf(this.getPassengers())) {
             passenger.stopRiding();
             passenger.discard();

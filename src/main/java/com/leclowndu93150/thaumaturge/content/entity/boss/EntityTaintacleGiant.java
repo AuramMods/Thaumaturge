@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.content.entity.AbstractTaintacle;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.server.command.admin.ShowcaseEntities;
 import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -64,9 +65,10 @@ public class EntityTaintacleGiant extends AbstractTaintacle {
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData data) {
+            @Nullable SpawnGroupData data,
+            @Nullable CompoundTag spawnTag) {
         ChampionHelper.makeChampion(this, true);
-        return super.finalizeSpawn(level, difficulty, reason, data);
+        return super.finalizeSpawn(level, difficulty, reason, data, spawnTag);
     }
 
     @Override

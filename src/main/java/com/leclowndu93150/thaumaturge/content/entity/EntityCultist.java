@@ -1,11 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.content.entity.loot.MobSpawnEquipment;
 import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.CultistSquatGoal;
 import com.leclowndu93150.thaumaturge.content.entity.cloak.CloakTracker;
 import com.leclowndu93150.thaumaturge.content.entity.cloak.CloakWearer;
 import java.util.Map;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -105,16 +107,17 @@ public abstract class EntityCultist extends Monster implements CloakWearer {
 
     @Override
     protected void populateDefaultEquipmentEnchantments(
-            ServerLevelAccessor level, RandomSource random, DifficultyInstance difficulty) {}
+            RandomSource random, DifficultyInstance difficulty) {}
 
     @Override
     public @Nullable SpawnGroupData finalizeSpawn(
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData groupData) {
-        this.equip(equipmentTable(), Map.of());
-        return super.finalizeSpawn(level, difficulty, reason, groupData);
+            @Nullable SpawnGroupData groupData,
+            @Nullable CompoundTag spawnTag) {
+        MobSpawnEquipment.equip(this, equipmentTable(), Map.of());
+        return super.finalizeSpawn(level, difficulty, reason, groupData, spawnTag);
     }
 
     @Override

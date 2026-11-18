@@ -158,8 +158,9 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType reason,
-            @Nullable SpawnGroupData data) {
-        final SpawnGroupData result = super.finalizeSpawn(level, difficulty, reason, data);
+            @Nullable SpawnGroupData data,
+            @Nullable CompoundTag spawnTag) {
+        final SpawnGroupData result = super.finalizeSpawn(level, difficulty, reason, data, spawnTag);
         arenaOrigin = position();
         if (level instanceof ServerLevel server) {
             begin(server, HierophantAction.SUMMON);

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data;
 
+import com.leclowndu93150.thaumaturge.content.entity.loot.MobSpawnEquipment;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthEncounter;
@@ -168,7 +169,7 @@ public final class TTDataGenerators {
                         new LootTableProvider.SubProviderEntry(
                                 TTEntityRewardLootSubProvider::new, LootContextParamSets.ENTITY),
                         new LootTableProvider.SubProviderEntry(
-                                TTEquipmentLootSubProvider::new, LootContextParamSets.EQUIPMENT),
+                                TTEquipmentLootSubProvider::new, MobSpawnEquipment.PARAMETERS),
                         new LootTableProvider.SubProviderEntry(
                                 TTTaintedLootSubProvider::new, LootContextParamSets.ENTITY),
                         new LootTableProvider.SubProviderEntry(

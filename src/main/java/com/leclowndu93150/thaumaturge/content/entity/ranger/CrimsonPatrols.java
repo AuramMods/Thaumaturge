@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.ranger;
 
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
@@ -151,7 +152,10 @@ public final class CrimsonPatrols {
         } else {
             ranger.setPatrolling(true);
         }
-        ranger.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), reason, null);
+        ForgeEventFactory.onFinalizeSpawn(ranger, level, level.getCurrentDifficultyAt(pos), reason, null, null);
+        if (ranger.isSpawnCancelled()) {
+            return false;
+        }
         level.addFreshEntityWithPassengers(ranger);
         return true;
     }

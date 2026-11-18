@@ -38,6 +38,7 @@
     "server.ServerResourceDataMapsMixin",
     "forge.ForgeFuelDataMapMixin",
     "world.item.VisDiscountTooltipMixin",
+    "world.level.loot.LootContextParamSetsMixin",
     "world.item.AxeDataMapMixin"
   ],
   "client": [
