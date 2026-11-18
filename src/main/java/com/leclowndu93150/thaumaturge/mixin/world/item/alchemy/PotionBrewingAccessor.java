@@ -7,6 +7,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(PotionBrewing.class)
 public interface PotionBrewingAccessor {
-    @Accessor("potionMixes")
-    List<?> thaumaturge$getPotionMixes();
+    @Accessor("POTION_MIXES")
+    static List<?> thaumaturge$getPotionMixes() {
+        throw new AssertionError("PotionBrewing accessor mixin was not applied");
+    }
 }

@@ -10,7 +10,9 @@
     "server.ReloadableServerResourcesMixin",
     "network.PacketDecoderRegistryContextMixin",
     "resources.RegistryOpsAccessor",
-    "world.effect.MobEffectInstanceMixin"
+    "world.effect.MobEffectInstanceMixin",
+    "world.item.alchemy.PotionBrewingAccessor",
+    "world.item.alchemy.PotionBrewingMixAccessor"
   ],
   "client": [
     "client.multiplayer.ClientLevelEntityTickMixin",

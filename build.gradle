@@ -142,6 +142,9 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/network/PacketDecoderRegistryContextMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/resources/RegistryOpsAccessor.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/effect/MobEffectInstanceMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/content/device/sprayer/BrewingRoutes.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/alchemy/PotionBrewingAccessor.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/alchemy/PotionBrewingMixAccessor.java'
         compileClasspath += sourceSets.portCodec.output + sourceSets.main.compileClasspath
     }
 }

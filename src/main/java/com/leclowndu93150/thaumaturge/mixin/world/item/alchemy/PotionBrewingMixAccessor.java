@@ -8,11 +8,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(targets = "net.minecraft.world.item.alchemy.PotionBrewing$Mix")
 public interface PotionBrewingMixAccessor {
     @Accessor("from")
-    Holder<?> thaumaturge$getFrom();
+    Holder.Reference<?> thaumaturge$getFrom();
 
     @Accessor("ingredient")
     Ingredient thaumaturge$getIngredient();
 
     @Accessor("to")
-    Holder<?> thaumaturge$getTo();
+    Holder.Reference<?> thaumaturge$getTo();
 }

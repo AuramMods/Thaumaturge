@@ -221,3 +221,10 @@ including actual PotionUtils interoperability, native ItemStack NBT save/load,
 copy/removal/default semantics, component patches, colors and recipe matching.
 The focused totals are 259 server / 267 client. Native parser fixtures supply
 real registry ownership; no actual world potion consumption is claimed.
+
+
+Cycle 033 adds actual native brewing-table and Mix accessor tests plus custom
+registered potion route cases. Eight common and two client mixins execute in
+the focused launch, with 264 server / 272 client tests passing. Native brewing
+and route inspection run without worlds, windows or audio; sprayer world
+transactions and aspect costs still require full-mod runtime acceptance.

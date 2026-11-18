@@ -13,7 +13,7 @@ sourceSets {
     }
     portRuntimeTest {
         java.srcDir 'porting/testing/forge-runtime-tests/java'
-        compileClasspath += sourceSets.portCodecTest.compileClasspath
+        compileClasspath += sourceSets.portCodecTest.compileClasspath + sourceSets.portMixins.output
     }
     portClientTest {
         java.srcDir 'porting/testing/forge-client-tests/java'
