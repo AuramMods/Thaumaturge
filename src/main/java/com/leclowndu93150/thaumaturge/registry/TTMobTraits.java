@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.content.entity.champion.trait.ArmoredChampionTrait;
@@ -56,7 +57,7 @@ public final class TTMobTraits {
             () -> new ModifierChampionTrait(
                     Attributes.ATTACK_DAMAGE, MIGHTY_DAMAGE, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final RegistryObject<EffectChampionTrait> GRIM =
-            TRAITS.register("grim", () -> new EffectChampionTrait(MobEffects.WITHER, GRIM_WITHER_TICKS));
+            TRAITS.register("grim", () -> new EffectChampionTrait(EffectCodecs.holder(MobEffects.WITHER), GRIM_WITHER_TICKS));
     public static final RegistryObject<WardedChampionTrait> WARDED =
             TRAITS.register("warded", WardedChampionTrait::new);
     public static final RegistryObject<WarpChampionTrait> WARP =
@@ -66,9 +67,9 @@ public final class TTMobTraits {
     public static final RegistryObject<FieryChampionTrait> FIERY =
             TRAITS.register("fiery", FieryChampionTrait::new);
     public static final RegistryObject<EffectChampionTrait> SICKLY =
-            TRAITS.register("sickly", () -> new EffectChampionTrait(MobEffects.HUNGER, SICKLY_HUNGER_TICKS));
+            TRAITS.register("sickly", () -> new EffectChampionTrait(EffectCodecs.holder(MobEffects.HUNGER), SICKLY_HUNGER_TICKS));
     public static final RegistryObject<EffectChampionTrait> VENOMOUS =
-            TRAITS.register("venomous", () -> new EffectChampionTrait(MobEffects.POISON, VENOMOUS_POISON_TICKS));
+            TRAITS.register("venomous", () -> new EffectChampionTrait(EffectCodecs.holder(MobEffects.POISON), VENOMOUS_POISON_TICKS));
     public static final RegistryObject<VampiricChampionTrait> VAMPIRIC =
             TRAITS.register("vampiric", VampiricChampionTrait::new);
     public static final RegistryObject<InfestedChampionTrait> INFESTED =
@@ -98,7 +99,7 @@ public final class TTMobTraits {
             TRAITS.register("taint_brewing", MarkerTrait::new);
     public static final RegistryObject<StrikeEffectTrait> LIFTING_STRIKE = TRAITS.register(
             "lifting_strike",
-            () -> new StrikeEffectTrait(MobEffects.LEVITATION, LIFTING_LEVITATION_TICKS, LIFTING_LEVITATION_AMPLIFIER));
+            () -> new StrikeEffectTrait(EffectCodecs.holder(MobEffects.LEVITATION), LIFTING_LEVITATION_TICKS, LIFTING_LEVITATION_AMPLIFIER));
     public static final RegistryObject<TaintacleLureTrait> TAINTACLE_LURE =
             TRAITS.register("taintacle_lure", TaintacleLureTrait::new);
 

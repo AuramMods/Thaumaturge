@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.plant;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.content.particle.WispyMoteParticleOptions;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +48,7 @@ public final class MagicPlantTraits {
             SHIMMERLEAF_GLINT_DRIFT);
 
     public static final Optional<PlantContactEffect> VISHROOM_NAUSEA =
-            Optional.of(new PlantContactEffect(MobEffects.CONFUSION, 200, 5));
+            Optional.of(new PlantContactEffect(EffectCodecs.holder(MobEffects.CONFUSION), 200, 5));
 
     private MagicPlantTraits() {}
 }

@@ -21,9 +21,13 @@ public final class EffectCodecs {
     public static final Codec<MobEffectInstance> CODEC = VALUE_CODEC.flatXmap(
             value -> DataResult.success(fromDetails(value.id.value(), value.details)),
             effect -> {
-                try { return DataResult.success(new Value(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect.getEffect()), details(effect))); }
+                try { return DataResult.success(new Value(holder(effect.getEffect()), details(effect))); }
                 catch (IllegalArgumentException failure) { return DataResult.error(failure::getMessage); }
             });
+
+    public static Holder<MobEffect> holder(MobEffect effect) {
+        return BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect);
+    }
 
     public static EffectDetails details(MobEffectInstance effect) {
         MobEffectInstance hidden = ((EffectInstanceAccess) effect).thaumaturge$hiddenEffect();

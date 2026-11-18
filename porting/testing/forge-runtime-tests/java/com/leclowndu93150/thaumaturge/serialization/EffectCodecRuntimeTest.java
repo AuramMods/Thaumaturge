@@ -23,6 +23,26 @@ import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteB
 import org.junit.jupiter.api.Test;
 
 public class EffectCodecRuntimeTest {
+    @Test
+    void nativeVanillaEffectConstantsRetainTheirActualHoldersAndNamedCodecIds() throws ReflectiveOperationException {
+        int checked = 0;
+        for (var field : MobEffects.class.getFields()) {
+            if (field.getType() != MobEffect.class) continue;
+            var effect = (MobEffect) field.get(null);
+            var holder = EffectCodecs.holder(effect);
+            var forgeHolder = ForgeRegistries.MOB_EFFECTS.getDelegateOrThrow(effect);
+            assertEquals(forgeHolder.unwrapKey(), holder.unwrapKey());
+            assertSame(forgeHolder.value(), holder.value());
+            assertTrue(holder.isBound());
+            var encoded = EffectCodecs.MOB_EFFECT.encodeStart(JsonOps.INSTANCE, holder).result().orElseThrow();
+            assertEquals(BuiltInRegistries.MOB_EFFECT.getKey(effect).toString(), encoded.getAsString());
+            assertSame(holder, EffectCodecs.MOB_EFFECT.parse(JsonOps.INSTANCE, encoded).result().orElseThrow());
+            checked++;
+        }
+        assertEquals(BuiltInRegistries.MOB_EFFECT.keySet().stream()
+                .filter(id -> id.getNamespace().equals("minecraft")).count(), checked);
+    }
+
     private MobEffectInstance parse(String json) {
         return EffectCodecs.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).result().orElseThrow();
     }

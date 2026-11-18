@@ -98,7 +98,7 @@ final class RiftCollapse {
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, reach)) {
             float factor = 1.0F - (float) (living.distanceToSqr(rift) / EFFECT_RADIUS_SQR);
             inflict(living, TTMobEffects.FLUX_TAINT, scaledAmount(factor, profile.taintSeconds()));
-            inflict(living, MobEffects.WEAKNESS, scaledAmount(factor, profile.weaknessSeconds()));
+            inflict(living, EffectCodecs.holder(MobEffects.WEAKNESS), scaledAmount(factor, profile.weaknessSeconds()));
             if (living instanceof ServerPlayer player) {
                 int warp = scaledAmount(factor, profile.warpPoints());
                 if (warp > 0) {

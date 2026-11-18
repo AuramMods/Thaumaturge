@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.spell;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -56,7 +57,7 @@ public final class AffinityBootstrap {
                         new DamageAction(TTDamageTypes.FOCUS_FIRE, 3.0F, 1.0F, 1.0F, false),
                         new IgniteAction(1.0F, 2.0F)),
                 List.of(new PlaceBlockAction(Blocks.FIRE.defaultBlockState(), 0.5F, true)),
-                List.of(effect(MobEffects.FIRE_RESISTANCE, 5, 5, 0.0F, 0.0F, 0)));
+                List.of(effect(EffectCodecs.holder(MobEffects.FIRE_RESISTANCE), 5, 5, 0.0F, 0.0F, 0)));
         register(
                 ctx,
                 TTAspects.GELUM,
@@ -67,7 +68,7 @@ public final class AffinityBootstrap {
                 List.of(
                         new DamageAction(DamageTypes.FREEZE, 3.0F, 1.0F, 1.0F, false),
                         new FreezeAction(0.0F, SECOND),
-                        effect(MobEffects.MOVEMENT_SLOWDOWN, 0, 0.5F, 0.0F, 0.3F, 2)),
+                        effect(EffectCodecs.holder(MobEffects.MOVEMENT_SLOWDOWN), 0, 0.5F, 0.0F, 0.3F, 2)),
                 List.of(new FreezeWaterAction(0.0F, 1.5F, 8.0F)),
                 List.of());
         register(
@@ -80,8 +81,8 @@ public final class AffinityBootstrap {
                 List.of(new KnockbackAction(0.6F, 0.25F, 0.35F, false)),
                 List.of(new WindBurstAction(1.0F, 0.4F, 3.0F)),
                 List.of(
-                        effect(MobEffects.SLOW_FALLING, 5, 5, 0.0F, 0.0F, 0),
-                        effect(MobEffects.JUMP, 5, 5, 0.0F, 0.5F, 2)));
+                        effect(EffectCodecs.holder(MobEffects.SLOW_FALLING), 5, 5, 0.0F, 0.0F, 0),
+                        effect(EffectCodecs.holder(MobEffects.JUMP), 5, 5, 0.0F, 0.5F, 2)));
         register(
                 ctx,
                 TTAspects.TERRA,
@@ -91,7 +92,7 @@ public final class AffinityBootstrap {
                 sound(SoundEvents.DRAGON_FIREBALL_EXPLODE),
                 List.of(new DamageAction(DamageTypes.THROWN, 0.0F, 2.0F, 1.0F, false)),
                 List.of(new ErodeAction(0.0F, 0.08F, 0.1F)),
-                List.of(effect(MobEffects.DAMAGE_RESISTANCE, 5, 5, 0.0F, 0.5F, 2)));
+                List.of(effect(EffectCodecs.holder(MobEffects.DAMAGE_RESISTANCE), 5, 5, 0.0F, 0.5F, 2)));
         register(
                 ctx,
                 TTAspects.AQUA,
@@ -105,8 +106,8 @@ public final class AffinityBootstrap {
                         new KnockbackAction(0.3F, 0.1F, 0.1F, false)),
                 List.of(new ExtinguishAction(1.0F)),
                 List.of(
-                        effect(MobEffects.WATER_BREATHING, 10, 10, 0.0F, 0.0F, 0),
-                        effect(MobEffects.DOLPHINS_GRACE, 3, 3, 0.0F, 0.0F, 0)));
+                        effect(EffectCodecs.holder(MobEffects.WATER_BREATHING), 10, 10, 0.0F, 0.0F, 0),
+                        effect(EffectCodecs.holder(MobEffects.DOLPHINS_GRACE), 3, 3, 0.0F, 0.0F, 0)));
         register(
                 ctx,
                 TTAspects.ORDO,
@@ -116,7 +117,7 @@ public final class AffinityBootstrap {
                 sound(SoundEvents.BEACON_POWER_SELECT),
                 List.of(new DispelAction(1.0F, 0.5F)),
                 List.of(),
-                List.of(effect(MobEffects.ABSORPTION, 10, 6, 0.0F, 0.5F, 3)));
+                List.of(effect(EffectCodecs.holder(MobEffects.ABSORPTION), 10, 6, 0.0F, 0.5F, 3)));
         register(
                 ctx,
                 TTAspects.PERDITIO,
@@ -126,9 +127,9 @@ public final class AffinityBootstrap {
                 sound(SoundEvents.END_GATEWAY_SPAWN),
                 List.of(
                         new DamageAction(DamageTypes.MAGIC, 1.0F, 1.2F, 1.0F, false),
-                        effect(MobEffects.WITHER, 1, 1, 0.0F, 0.25F, 1)),
+                        effect(EffectCodecs.holder(MobEffects.WITHER), 1, 1, 0.0F, 0.25F, 1)),
                 List.of(new ErodeAction(0.3F, 0.15F, 0.15F)),
-                List.of(effect(MobEffects.DIG_SPEED, 10, 10, 0.0F, 0.5F, 2)));
+                List.of(effect(EffectCodecs.holder(MobEffects.DIG_SPEED), 10, 10, 0.0F, 0.5F, 2)));
         register(
                 ctx,
                 TTAspects.VICTUS,
@@ -138,7 +139,7 @@ public final class AffinityBootstrap {
                 sound(SoundEvents.CHORUS_FLOWER_GROW),
                 List.of(new HealAction(1.0F, 1.5F, 1.5F)),
                 List.of(new GrowAction(0.0F, 0.5F)),
-                List.of(effect(MobEffects.REGENERATION, 3, 3, 0.0F, 0.5F, 2)));
+                List.of(effect(EffectCodecs.holder(MobEffects.REGENERATION), 3, 3, 0.0F, 0.5F, 2)));
         register(
                 ctx,
                 TTAspects.MORTUUS,
@@ -178,7 +179,7 @@ public final class AffinityBootstrap {
                 2,
                 "focus_mine",
                 sound(SoundEvents.CHAIN_PLACE),
-                List.of(effect(MobEffects.MOVEMENT_SLOWDOWN, 0, 1, 4.0F, 0.0F, 6)),
+                List.of(effect(EffectCodecs.holder(MobEffects.MOVEMENT_SLOWDOWN), 0, 1, 4.0F, 0.0F, 6)),
                 List.of(),
                 List.of());
         register(
@@ -188,9 +189,9 @@ public final class AffinityBootstrap {
                 0,
                 null,
                 sound(SoundEvents.GRASS_PLACE),
-                List.of(effect(MobEffects.POISON, 2, 1, 0.0F, 0.0F, 1)),
+                List.of(effect(EffectCodecs.holder(MobEffects.POISON), 2, 1, 0.0F, 0.0F, 1)),
                 List.of(new GrowAction(1.0F, 0.5F)),
-                List.of(new MobEffectAction(MobEffects.SATURATION, 1.0F, 0.0F, 0.0F, 1.0F, 4, 1.0F)));
+                List.of(new MobEffectAction(EffectCodecs.holder(MobEffects.SATURATION), 1.0F, 0.0F, 0.0F, 1.0F, 4, 1.0F)));
         register(
                 ctx,
                 TTAspects.POTENTIA,
@@ -200,7 +201,7 @@ public final class AffinityBootstrap {
                 TTSounds.ZAP,
                 List.of(new DamageAction(DamageTypes.LIGHTNING_BOLT, 4.0F, 1.8F, 1.0F, false)),
                 List.of(new PlaceBlockAction(TTBlocks.EFFECT_SHOCK.get().defaultBlockState(), 0.6F, true)),
-                List.of(effect(MobEffects.DAMAGE_BOOST, 5, 5, 0.0F, 0.4F, 1)));
+                List.of(effect(EffectCodecs.holder(MobEffects.DAMAGE_BOOST), 5, 5, 0.0F, 0.4F, 1)));
         register(
                 ctx,
                 TTAspects.LUX,
@@ -209,10 +210,10 @@ public final class AffinityBootstrap {
                 null,
                 sound(SoundEvents.AMETHYST_BLOCK_CHIME),
                 List.of(
-                        effect(MobEffects.GLOWING, 5, 5, 0.0F, 0.0F, 0),
+                        effect(EffectCodecs.holder(MobEffects.GLOWING), 5, 5, 0.0F, 0.0F, 0),
                         new DamageAction(DamageTypes.MAGIC, 0.0F, 0.5F, 4.0F, false)),
                 List.of(),
-                List.of(effect(MobEffects.NIGHT_VISION, 20, 20, 0.0F, 0.0F, 0)));
+                List.of(effect(EffectCodecs.holder(MobEffects.NIGHT_VISION), 20, 20, 0.0F, 0.0F, 0)));
         register(
                 ctx,
                 TTAspects.TENEBRAE,
@@ -221,10 +222,10 @@ public final class AffinityBootstrap {
                 null,
                 sound(SoundEvents.WITHER_SHOOT),
                 List.of(
-                        effect(MobEffects.BLINDNESS, 2, 1, 0.0F, 0.0F, 0),
-                        effect(MobEffects.DARKNESS, 2, 1, 0.0F, 0.0F, 0)),
+                        effect(EffectCodecs.holder(MobEffects.BLINDNESS), 2, 1, 0.0F, 0.0F, 0),
+                        effect(EffectCodecs.holder(MobEffects.DARKNESS), 2, 1, 0.0F, 0.0F, 0)),
                 List.of(),
-                List.of(effect(MobEffects.INVISIBILITY, 5, 5, 0.0F, 0.0F, 0)));
+                List.of(effect(EffectCodecs.holder(MobEffects.INVISIBILITY), 5, 5, 0.0F, 0.0F, 0)));
         register(
                 ctx,
                 TTAspects.MOTUS,
@@ -234,7 +235,7 @@ public final class AffinityBootstrap {
                 SoundEvents.BREEZE_WIND_CHARGE_BURST,
                 List.of(new KnockbackAction(0.4F, 0.3F, 0.1F, false)),
                 List.of(),
-                List.of(effect(MobEffects.MOVEMENT_SPEED, 10, 10, 0.0F, 0.5F, 2)));
+                List.of(effect(EffectCodecs.holder(MobEffects.MOVEMENT_SPEED), 10, 10, 0.0F, 0.5F, 2)));
         register(
                 ctx,
                 TTAspects.VACUOS,
@@ -252,20 +253,20 @@ public final class AffinityBootstrap {
                 1,
                 "focus_elemental",
                 TTSounds.WIND,
-                List.of(effect(MobEffects.LEVITATION, 1, 1, 0.0F, 0.4F, 2)),
+                List.of(effect(EffectCodecs.holder(MobEffects.LEVITATION), 1, 1, 0.0F, 0.4F, 2)),
                 List.of(),
-                List.of(effect(MobEffects.SLOW_FALLING, 10, 10, 0.0F, 0.0F, 0)));
+                List.of(effect(EffectCodecs.holder(MobEffects.SLOW_FALLING), 10, 10, 0.0F, 0.0F, 0)));
     }
 
     private static List<SpellAction> curse() {
         return List.of(
                 new DamageAction(DamageTypes.INDIRECT_MAGIC, 1.0F, 1.0F, 1.0F, false),
-                new MobEffectAction(MobEffects.POISON, 0.0F, SECOND, 0.0F, 0.5F, 3, 1.0F),
-                new MobEffectAction(MobEffects.MOVEMENT_SLOWDOWN, 0.0F, SECOND, 0.0F, 0.5F, 3, 0.85F),
-                new MobEffectAction(MobEffects.WEAKNESS, 0.0F, SECOND, 0.0F, 0.5F, 3, 0.7F),
-                new MobEffectAction(MobEffects.DIG_SLOWDOWN, 0.0F, SECOND * 2, 0.0F, 0.5F, 3, 0.55F),
-                new MobEffectAction(MobEffects.HUNGER, 0.0F, SECOND * 3, 0.0F, 0.5F, 3, 0.4F),
-                new MobEffectAction(MobEffects.UNLUCK, 0.0F, SECOND * 3, 0.0F, 0.5F, 3, 0.25F));
+                new MobEffectAction(EffectCodecs.holder(MobEffects.POISON), 0.0F, SECOND, 0.0F, 0.5F, 3, 1.0F),
+                new MobEffectAction(EffectCodecs.holder(MobEffects.MOVEMENT_SLOWDOWN), 0.0F, SECOND, 0.0F, 0.5F, 3, 0.85F),
+                new MobEffectAction(EffectCodecs.holder(MobEffects.WEAKNESS), 0.0F, SECOND, 0.0F, 0.5F, 3, 0.7F),
+                new MobEffectAction(EffectCodecs.holder(MobEffects.DIG_SLOWDOWN), 0.0F, SECOND * 2, 0.0F, 0.5F, 3, 0.55F),
+                new MobEffectAction(EffectCodecs.holder(MobEffects.HUNGER), 0.0F, SECOND * 3, 0.0F, 0.5F, 3, 0.4F),
+                new MobEffectAction(EffectCodecs.holder(MobEffects.UNLUCK), 0.0F, SECOND * 3, 0.0F, 0.5F, 3, 0.25F));
     }
 
     private static MobEffectAction effect(

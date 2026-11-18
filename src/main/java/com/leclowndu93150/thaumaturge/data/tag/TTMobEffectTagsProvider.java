@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.tag;
 
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.registry.TTEffectTags;
 import java.util.concurrent.CompletableFuture;
@@ -24,29 +25,29 @@ public final class TTMobEffectTagsProvider extends TagsProvider<MobEffect> {
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
         tag(TTEffectTags.MANA_BEAN_EFFECTS)
-                .add(key(MobEffects.MOVEMENT_SPEED))
-                .add(key(MobEffects.MOVEMENT_SLOWDOWN))
-                .add(key(MobEffects.DIG_SPEED))
-                .add(key(MobEffects.DIG_SLOWDOWN))
-                .add(key(MobEffects.DAMAGE_BOOST))
-                .add(key(MobEffects.HEAL))
-                .add(key(MobEffects.HARM))
-                .add(key(MobEffects.JUMP))
-                .add(key(MobEffects.CONFUSION))
-                .add(key(MobEffects.REGENERATION))
-                .add(key(MobEffects.DAMAGE_RESISTANCE))
-                .add(key(MobEffects.FIRE_RESISTANCE))
-                .add(key(MobEffects.WATER_BREATHING))
-                .add(key(MobEffects.INVISIBILITY))
-                .add(key(MobEffects.BLINDNESS))
-                .add(key(MobEffects.NIGHT_VISION))
-                .add(key(MobEffects.HUNGER))
-                .add(key(MobEffects.WEAKNESS))
-                .add(key(MobEffects.POISON))
-                .add(key(MobEffects.WITHER))
-                .add(key(MobEffects.HEALTH_BOOST))
-                .add(key(MobEffects.ABSORPTION))
-                .add(key(MobEffects.SATURATION));
+                .add(key(EffectCodecs.holder(MobEffects.MOVEMENT_SPEED)))
+                .add(key(EffectCodecs.holder(MobEffects.MOVEMENT_SLOWDOWN)))
+                .add(key(EffectCodecs.holder(MobEffects.DIG_SPEED)))
+                .add(key(EffectCodecs.holder(MobEffects.DIG_SLOWDOWN)))
+                .add(key(EffectCodecs.holder(MobEffects.DAMAGE_BOOST)))
+                .add(key(EffectCodecs.holder(MobEffects.HEAL)))
+                .add(key(EffectCodecs.holder(MobEffects.HARM)))
+                .add(key(EffectCodecs.holder(MobEffects.JUMP)))
+                .add(key(EffectCodecs.holder(MobEffects.CONFUSION)))
+                .add(key(EffectCodecs.holder(MobEffects.REGENERATION)))
+                .add(key(EffectCodecs.holder(MobEffects.DAMAGE_RESISTANCE)))
+                .add(key(EffectCodecs.holder(MobEffects.FIRE_RESISTANCE)))
+                .add(key(EffectCodecs.holder(MobEffects.WATER_BREATHING)))
+                .add(key(EffectCodecs.holder(MobEffects.INVISIBILITY)))
+                .add(key(EffectCodecs.holder(MobEffects.BLINDNESS)))
+                .add(key(EffectCodecs.holder(MobEffects.NIGHT_VISION)))
+                .add(key(EffectCodecs.holder(MobEffects.HUNGER)))
+                .add(key(EffectCodecs.holder(MobEffects.WEAKNESS)))
+                .add(key(EffectCodecs.holder(MobEffects.POISON)))
+                .add(key(EffectCodecs.holder(MobEffects.WITHER)))
+                .add(key(EffectCodecs.holder(MobEffects.HEALTH_BOOST)))
+                .add(key(EffectCodecs.holder(MobEffects.ABSORPTION)))
+                .add(key(EffectCodecs.holder(MobEffects.SATURATION)));
     }
 
     private static ResourceKey<MobEffect> key(Holder<MobEffect> effect) {

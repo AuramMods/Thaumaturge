@@ -103,7 +103,7 @@ public final class WarpEvents {
             upTo(
                     44,
                     (player, roll) -> applyEffect(
-                            player, MobEffects.DIG_SLOWDOWN, 1200, ampFor(roll.warp()), "warp.thaumaturge.text.9")),
+                            player, EffectCodecs.holder(MobEffects.DIG_SLOWDOWN), 1200, ampFor(roll.warp()), "warp.thaumaturge.text.9")),
             upTo(
                     48,
                     (player, roll) -> applyEffect(
@@ -116,7 +116,7 @@ public final class WarpEvents {
                     52,
                     (player, roll) -> applyEffect(
                             player,
-                            MobEffects.NIGHT_VISION,
+                            EffectCodecs.holder(MobEffects.NIGHT_VISION),
                             Math.min(40 * roll.warp(), 6000),
                             0,
                             "warp.thaumaturge.text.10")),
@@ -130,7 +130,7 @@ public final class WarpEvents {
             upTo(
                     72,
                     (player, roll) ->
-                            applyEffect(player, MobEffects.BLINDNESS, Math.min(32000, 5 * roll.warp()), 0, null)),
+                            applyEffect(player, EffectCodecs.holder(MobEffects.BLINDNESS), Math.min(32000, 5 * roll.warp()), 0, null)),
             exactly(76, WarpEvents::easeNormalWarp),
             upTo(
                     80,

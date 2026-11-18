@@ -235,3 +235,9 @@ block/item registry lifecycle, predicates, recipe generation and creative output
 The fixture thaws and refreezes both native views as Forge's registration phase
 does, then bakes block states. The focused totals are 265 server / 273 client;
 full mod catalog construction and all changed consumer paths remain pending.
+
+
+Cycle 035 verifies every vanilla effect constant against actual bound built-in
+holders, Forge delegate keys/values and named-codec round trips. Built-in and
+Forge delegate references can be distinct objects. Focused totals are now
+266 server / 274 client; full effect gameplay and the mod catalog remain pending.
