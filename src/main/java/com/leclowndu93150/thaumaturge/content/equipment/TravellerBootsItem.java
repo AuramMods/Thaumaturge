@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataDefaults;
 
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
@@ -38,14 +39,14 @@ public final class TravellerBootsItem extends ArmorItem {
     private static final float BOOSTED_AIR_CONTROL = 0.05F;
     private static final float AIR_CONTROL_BONUS = BOOSTED_AIR_CONTROL - VANILLA_AIR_CONTROL;
     private static final float STEP_HEIGHT_BONUS = 0.5F;
-    private static final AttributeModifier STEP_MODIFIER = new AttributeModifier(
+    private static final AttributeModifier STEP_MODIFIER = NamedAttributeModifiers.create(
             ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "traveller_step"),
             STEP_HEIGHT_BONUS,
-            AttributeModifier.Operation.ADD_VALUE);
-    private static final AttributeModifier JUMP_MODIFIER = new AttributeModifier(
+            AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier JUMP_MODIFIER = NamedAttributeModifiers.create(
             ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "traveller_jump"),
             JUMP_BOOST,
-            AttributeModifier.Operation.ADD_VALUE);
+            AttributeModifier.Operation.ADDITION);
 
     public TravellerBootsItem(Properties properties) {
         super(
@@ -70,8 +71,8 @@ public final class TravellerBootsItem extends ArmorItem {
         }
         AttributeInstance stepHeight = player.getAttribute(Attributes.STEP_HEIGHT);
         AttributeInstance jumpHeight = player.getAttribute(Attributes.JUMP_STRENGTH);
-        if (stepHeight != null) stepHeight.removeModifier(STEP_MODIFIER.id());
-        if (jumpHeight != null) jumpHeight.removeModifier(JUMP_MODIFIER.id());
+        if (stepHeight != null) stepHeight.removeModifier(STEP_MODIFIER.getId());
+        if (jumpHeight != null) jumpHeight.removeModifier(JUMP_MODIFIER.getId());
     }
 
     @Override
@@ -96,17 +97,17 @@ public final class TravellerBootsItem extends ArmorItem {
         AttributeInstance stepHeight = player.getAttribute(Attributes.STEP_HEIGHT);
         AttributeInstance jumpHeight = player.getAttribute(Attributes.JUMP_STRENGTH);
         if (stepHeight != null) {
-            if (stepActive && !stepHeight.hasModifier(STEP_MODIFIER.id())) {
+            if (stepActive && !stepHeight.hasModifier(STEP_MODIFIER)) {
                 stepHeight.addTransientModifier(STEP_MODIFIER);
-            } else if (!stepActive && stepHeight.hasModifier(STEP_MODIFIER.id())) {
-                stepHeight.removeModifier(STEP_MODIFIER.id());
+            } else if (!stepActive && stepHeight.hasModifier(STEP_MODIFIER)) {
+                stepHeight.removeModifier(STEP_MODIFIER.getId());
             }
         }
         if (jumpHeight != null) {
-            if (active && !jumpHeight.hasModifier(JUMP_MODIFIER.id())) {
+            if (active && !jumpHeight.hasModifier(JUMP_MODIFIER)) {
                 jumpHeight.addTransientModifier(JUMP_MODIFIER);
-            } else if (!active && jumpHeight.hasModifier(JUMP_MODIFIER.id())) {
-                jumpHeight.removeModifier(JUMP_MODIFIER.id());
+            } else if (!active && jumpHeight.hasModifier(JUMP_MODIFIER)) {
+                jumpHeight.removeModifier(JUMP_MODIFIER.getId());
             }
         }
     }

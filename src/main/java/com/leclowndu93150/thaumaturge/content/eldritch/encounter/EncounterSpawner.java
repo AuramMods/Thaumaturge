@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.encounter;
 
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -11,7 +12,6 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeRecord;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -63,16 +63,16 @@ final class EncounterSpawner {
         entity.setHealth(fill ? entity.getMaxHealth() : entity.getMaxHealth() * ratio);
     }
 
-    private static void modify(LivingEntity entity, Holder<Attribute> attribute, float amount) {
+    private static void modify(LivingEntity entity, Attribute attribute, float amount) {
         AttributeInstance instance = entity.getAttribute(attribute);
         if (instance == null) {
             return;
         }
         if (amount <= 0.0F) {
-            instance.removeModifier(TTIds.LABYRINTH_SCALING);
+            instance.removeModifier(NamedAttributeModifiers.id(TTIds.LABYRINTH_SCALING));
             return;
         }
-        instance.addOrReplacePermanentModifier(new AttributeModifier(
-                TTIds.LABYRINTH_SCALING, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+        NamedAttributeModifiers.replacePermanent(instance, NamedAttributeModifiers.create(
+                TTIds.LABYRINTH_SCALING, amount, AttributeModifier.Operation.MULTIPLY_TOTAL));
     }
 }

@@ -2,33 +2,21 @@ package com.leclowndu93150.thaumaturge.content.entity.trait;
 
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
-import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitGoals;
-import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitModifiers;
 import com.leclowndu93150.thaumaturge.mixin.world.entity.MobAccessor;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.Brain;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 
 public final class MobTraitEngine {
-    private static final String MODIFIER_ROOT = "trait/";
-    private static final String SEPARATOR = "/";
-
     private MobTraitEngine() {}
 
     public static List<Holder<MobTrait>> traits(LivingEntity mob) {
@@ -65,7 +53,7 @@ public final class MobTraitEngine {
     }
 
     public static void refresh(LivingEntity mob) {
-        refreshModifiers(mob);
+        MobTraitAttributeModifiers.refresh(mob, traits(mob));
         if (mob instanceof PathfinderMob pathfinder) {
             refreshGoals(pathfinder);
         }
@@ -74,40 +62,6 @@ public final class MobTraitEngine {
     public static boolean suppressesNativeAi(LivingEntity mob) {
         MobTraitRuntime runtime = AttachmentData.getExistingDataOrNull(mob, TTAttachments.MOB_TRAIT_RUNTIME);
         return runtime != null && runtime.nativeAiSuppressed();
-    }
-
-    private static void refreshModifiers(LivingEntity mob) {
-        Map<ResourceLocation, Expected> expected = new LinkedHashMap<>();
-        for (Holder<MobTrait> trait : traits(mob)) {
-            trait.value()
-                    .modifiers(
-                            mob,
-                            new ModifierCollector(
-                                    mob, trait.unwrapKey().orElseThrow().location(), expected));
-        }
-        BuiltInRegistries.ATTRIBUTE.holders().forEach(attribute -> {
-            AttributeInstance instance = mob.getAttribute(attribute);
-            if (instance != null) {
-                for (AttributeModifier modifier : List.copyOf(instance.getModifiers())) {
-                    if (isTraitModifier(modifier.id()) && !expected.containsKey(modifier.id())) {
-                        instance.removeModifier(modifier.id());
-                    }
-                }
-            }
-        });
-        for (Expected entry : expected.values()) {
-            AttributeInstance instance = mob.getAttribute(entry.attribute());
-            if (instance != null
-                    && !entry.modifier()
-                            .equals(instance.getModifier(entry.modifier().id()))) {
-                instance.removeModifier(entry.modifier().id());
-                instance.addPermanentModifier(entry.modifier());
-            }
-        }
-    }
-
-    private static boolean isTraitModifier(ResourceLocation id) {
-        return id.getNamespace().equals(TTIds.MODID) && id.getPath().startsWith(MODIFIER_ROOT);
     }
 
     private static void refreshGoals(PathfinderMob mob) {
@@ -153,36 +107,6 @@ public final class MobTraitEngine {
     private static void stopBrain(LivingEntity mob) {
         if (mob.level() instanceof ServerLevel level) {
             ((Brain<LivingEntity>) mob.getBrain()).stopAll(level, mob);
-        }
-    }
-
-    private record Expected(Holder<Attribute> attribute, AttributeModifier modifier) {}
-
-    private static final class ModifierCollector implements MobTraitModifiers {
-        private final LivingEntity mob;
-        private final ResourceLocation trait;
-        private final Map<ResourceLocation, Expected> expected;
-        private int index;
-
-        private ModifierCollector(LivingEntity mob, ResourceLocation trait, Map<ResourceLocation, Expected> expected) {
-            this.mob = mob;
-            this.trait = trait;
-            this.expected = expected;
-        }
-
-        @Override
-        public void add(Holder<Attribute> attribute, double amount, AttributeModifier.Operation operation) {
-            ResourceLocation id =
-                    TTIds.rl(MODIFIER_ROOT + trait.getNamespace() + SEPARATOR + trait.getPath() + SEPARATOR + index++);
-            expected.put(id, new Expected(attribute, new AttributeModifier(id, amount, operation)));
-        }
-
-        @Override
-        public void setBase(Holder<Attribute> attribute, double value) {
-            AttributeInstance instance = mob.getAttribute(attribute);
-            if (instance != null) {
-                add(attribute, value - instance.getBaseValue(), AttributeModifier.Operation.ADD_VALUE);
-            }
         }
     }
 

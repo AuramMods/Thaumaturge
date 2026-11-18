@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.resources.ResourceLocation;
@@ -60,9 +61,9 @@ public final class FortressArmorEvents {
         if (attribute == null) {
             return;
         }
-        attribute.removeModifier(id);
+        attribute.removeModifier(NamedAttributeModifiers.id(id));
         if (amount > 0) {
-            attribute.addTransientModifier(new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_VALUE));
+            attribute.addTransientModifier(NamedAttributeModifiers.create(id, amount, AttributeModifier.Operation.ADDITION));
         }
     }
 

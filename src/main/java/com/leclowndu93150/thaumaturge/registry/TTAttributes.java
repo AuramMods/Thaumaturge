@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.content.equipment.trim.TrimBonuses;
@@ -54,11 +55,11 @@ public final class TTAttributes {
             if (contribution != 0) {
                 event.addModifier(
                         VIS_DISCOUNT,
-                        new AttributeModifier(
+                        NamedAttributeModifiers.create(
                                 BuiltInRegistries.ITEM.getKey(
                                         event.getItemStack().getItem()),
                                 contribution,
-                                AttributeModifier.Operation.ADD_VALUE),
+                                AttributeModifier.Operation.ADDITION),
                         gear.getAppliedSlot(event.getItemStack()));
             }
         }
@@ -72,8 +73,8 @@ public final class TTAttributes {
             EquipmentSlot slot = equipable.getEquipmentSlot();
             event.addModifier(
                     VIS_DISCOUNT,
-                    new AttributeModifier(
-                            TRIM_DISCOUNT_IDS.get(slot), discount / PERCENT, AttributeModifier.Operation.ADD_VALUE),
+                    NamedAttributeModifiers.create(
+                            TRIM_DISCOUNT_IDS.get(slot), discount / PERCENT, AttributeModifier.Operation.ADDITION),
                     EquipmentSlotGroup.bySlot(slot));
         }
     }

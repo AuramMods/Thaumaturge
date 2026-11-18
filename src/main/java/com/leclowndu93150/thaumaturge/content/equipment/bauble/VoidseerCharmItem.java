@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment.bauble;
 
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
@@ -43,21 +44,21 @@ public final class VoidseerCharmItem extends Item implements IVisDiscountGear, I
             return;
         }
         double contribution = discountFor(wearer) / 100.0;
-        AttributeModifier existing = attribute.getModifier(DISCOUNT_MODIFIER_ID);
-        if (existing != null && existing.amount() == contribution) {
+        AttributeModifier existing = attribute.getModifier(NamedAttributeModifiers.id(DISCOUNT_MODIFIER_ID));
+        if (existing != null && existing.getAmount() == contribution) {
             return;
         }
-        attribute.removeModifier(DISCOUNT_MODIFIER_ID);
+        attribute.removeModifier(NamedAttributeModifiers.id(DISCOUNT_MODIFIER_ID));
         if (contribution != 0.0) {
             attribute.addTransientModifier(
-                    new AttributeModifier(DISCOUNT_MODIFIER_ID, contribution, AttributeModifier.Operation.ADD_VALUE));
+                    NamedAttributeModifiers.create(DISCOUNT_MODIFIER_ID, contribution, AttributeModifier.Operation.ADDITION));
         }
     }
 
     public static void clearDiscount(LivingEntity wearer) {
         AttributeInstance attribute = wearer.getAttribute(TTAttributes.VIS_DISCOUNT);
         if (attribute != null) {
-            attribute.removeModifier(DISCOUNT_MODIFIER_ID);
+            attribute.removeModifier(NamedAttributeModifiers.id(DISCOUNT_MODIFIER_ID));
         }
     }
 

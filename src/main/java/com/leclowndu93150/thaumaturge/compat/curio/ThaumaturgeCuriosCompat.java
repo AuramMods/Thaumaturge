@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.curio;
 
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
@@ -218,10 +219,10 @@ public final class ThaumaturgeCuriosCompat {
             if (contribution != 0) {
                 event.addModifier(
                         TTAttributes.VIS_DISCOUNT,
-                        new AttributeModifier(
+                        NamedAttributeModifiers.create(
                                 BuiltInRegistries.ITEM.getKey(stack.getItem()),
                                 contribution,
-                                AttributeModifier.Operation.ADD_VALUE));
+                                AttributeModifier.Operation.ADDITION));
             }
         }
     }

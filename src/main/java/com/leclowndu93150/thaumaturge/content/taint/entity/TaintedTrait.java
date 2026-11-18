@@ -80,8 +80,8 @@ public final class TaintedTrait implements MobTrait {
         }
         TaintedProfile profile = TaintedProfile.of(mob.getType());
         if (profile == null || profile.attributes().isEmpty()) {
-            modifiers.add(Attributes.MAX_HEALTH, TAINTED_HEALTH, AttributeModifier.Operation.ADD_VALUE);
-            modifiers.add(Attributes.ATTACK_DAMAGE, TAINTED_DAMAGE, AttributeModifier.Operation.ADD_VALUE);
+            modifiers.add(Attributes.MAX_HEALTH, TAINTED_HEALTH, AttributeModifier.Operation.ADDITION);
+            modifiers.add(Attributes.ATTACK_DAMAGE, TAINTED_DAMAGE, AttributeModifier.Operation.ADDITION);
             return;
         }
         for (Map.Entry<Holder<Attribute>, Double> entry : profile.attributes().entrySet()) {

@@ -21,8 +21,8 @@ public abstract class AbstractChampionTrait implements MobTrait {
 
     @Override
     public final void modifiers(LivingEntity mob, MobTraitModifiers modifiers) {
-        modifiers.add(Attributes.MAX_HEALTH, CHAMPION_HEALTH, AttributeModifier.Operation.ADD_VALUE);
-        modifiers.add(Attributes.ATTACK_DAMAGE, CHAMPION_DAMAGE, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        modifiers.add(Attributes.MAX_HEALTH, CHAMPION_HEALTH, AttributeModifier.Operation.ADDITION);
+        modifiers.add(Attributes.ATTACK_DAMAGE, CHAMPION_DAMAGE, AttributeModifier.Operation.MULTIPLY_TOTAL);
         championModifiers(mob, modifiers);
     }
 

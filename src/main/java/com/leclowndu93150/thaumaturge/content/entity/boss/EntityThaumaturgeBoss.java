@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthHelper;
@@ -225,13 +226,13 @@ public class EntityThaumaturgeBoss extends Monster {
     }
 
     private boolean syncModifier(AttributeInstance instance, ResourceLocation id, double amount, boolean wanted) {
-        if (instance.hasModifier(id) == wanted) {
+        if (NamedAttributeModifiers.has(instance, id) == wanted) {
             return false;
         }
         if (wanted) {
-            instance.addTransientModifier(new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_VALUE));
+            instance.addTransientModifier(NamedAttributeModifiers.create(id, amount, AttributeModifier.Operation.ADDITION));
         } else {
-            instance.removeModifier(id);
+            instance.removeModifier(NamedAttributeModifiers.id(id));
         }
         return true;
     }

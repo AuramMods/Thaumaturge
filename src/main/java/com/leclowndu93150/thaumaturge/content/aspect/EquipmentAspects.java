@@ -84,7 +84,7 @@ final class EquipmentAspects {
         double total = 0.0;
         for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
             if (entry.attribute().equals(attribute)
-                    && entry.modifier().operation() == AttributeModifier.Operation.ADD_VALUE) {
+                    && entry.modifier().operation() == AttributeModifier.Operation.ADDITION) {
                 total += entry.modifier().amount();
             }
         }

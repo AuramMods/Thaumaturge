@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.entity.trait;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
@@ -22,6 +23,10 @@ public interface MobTraitModifiers {
      */
     void add(Holder<Attribute> attribute, double amount, AttributeModifier.Operation operation);
 
+    default void add(Attribute attribute, double amount, AttributeModifier.Operation operation) {
+        add(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute), amount, operation);
+    }
+
     /**
      * Adds a modifier that moves the attribute's base value to {@code value}. The engine
      * computes the difference from the carrier's current base value.
@@ -30,4 +35,8 @@ public interface MobTraitModifiers {
      * @param value     the effective base value while the trait is present
      */
     void setBase(Holder<Attribute> attribute, double value);
+
+    default void setBase(Attribute attribute, double value) {
+        setBase(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute), value);
+    }
 }

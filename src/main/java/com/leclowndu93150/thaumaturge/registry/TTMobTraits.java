@@ -47,7 +47,7 @@ public final class TTMobTraits {
     public static final RegistryObject<ModifierChampionTrait> BOLD = TRAITS.register(
             "bold",
             () -> new ModifierChampionTrait(
-                    Attributes.MOVEMENT_SPEED, BOLD_SPEED, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+                    Attributes.MOVEMENT_SPEED, BOLD_SPEED, AttributeModifier.Operation.MULTIPLY_BASE));
     public static final RegistryObject<SpinedChampionTrait> SPINED =
             TRAITS.register("spine", SpinedChampionTrait::new);
     public static final RegistryObject<ArmoredChampionTrait> ARMORED =
@@ -55,7 +55,7 @@ public final class TTMobTraits {
     public static final RegistryObject<ModifierChampionTrait> MIGHTY = TRAITS.register(
             "mighty",
             () -> new ModifierChampionTrait(
-                    Attributes.ATTACK_DAMAGE, MIGHTY_DAMAGE, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+                    Attributes.ATTACK_DAMAGE, MIGHTY_DAMAGE, AttributeModifier.Operation.MULTIPLY_TOTAL));
     public static final RegistryObject<EffectChampionTrait> GRIM =
             TRAITS.register("grim", () -> new EffectChampionTrait(EffectCodecs.holder(MobEffects.WITHER), GRIM_WITHER_TICKS));
     public static final RegistryObject<WardedChampionTrait> WARDED =

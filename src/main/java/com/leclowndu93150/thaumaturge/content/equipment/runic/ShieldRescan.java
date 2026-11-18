@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment.runic;
 
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -31,15 +32,15 @@ public final class ShieldRescan {
         if (attribute == null) {
             return;
         }
-        AttributeModifier existing = attribute.getModifier(RunicShielding.MODIFIER_ID);
-        int applied = existing == null ? NONE : (int) existing.amount();
+        AttributeModifier existing = attribute.getModifier(NamedAttributeModifiers.id(RunicShielding.MODIFIER_ID));
+        int applied = existing == null ? NONE : (int) existing.getAmount();
         if (applied == max) {
             return;
         }
-        attribute.removeModifier(RunicShielding.MODIFIER_ID);
+        attribute.removeModifier(NamedAttributeModifiers.id(RunicShielding.MODIFIER_ID));
         if (max != NONE) {
             attribute.addTransientModifier(
-                    new AttributeModifier(RunicShielding.MODIFIER_ID, max, AttributeModifier.Operation.ADD_VALUE));
+                    NamedAttributeModifiers.create(RunicShielding.MODIFIER_ID, max, AttributeModifier.Operation.ADDITION));
         }
     }
 }

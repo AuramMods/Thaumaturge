@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.content.equipment.ArmorTypes;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataDefaults;
@@ -1083,13 +1084,13 @@ public final class TTItems {
                     .attributes(ItemAttributeModifiers.builder()
                             .add(
                                     Attributes.ARMOR,
-                                    new AttributeModifier(
-                                            GOGGLES_REVEALING_ID, 1, AttributeModifier.Operation.ADD_VALUE),
+                                    NamedAttributeModifiers.create(
+                                            GOGGLES_REVEALING_ID, 1, AttributeModifier.Operation.ADDITION),
                                     EquipmentSlotGroup.HEAD)
                             .add(
                                     Attributes.ARMOR_TOUGHNESS,
-                                    new AttributeModifier(
-                                            GOGGLES_REVEALING_ID, 1, AttributeModifier.Operation.ADD_VALUE),
+                                    NamedAttributeModifiers.create(
+                                            GOGGLES_REVEALING_ID, 1, AttributeModifier.Operation.ADDITION),
                                     EquipmentSlotGroup.HEAD)
                             .build()));
 

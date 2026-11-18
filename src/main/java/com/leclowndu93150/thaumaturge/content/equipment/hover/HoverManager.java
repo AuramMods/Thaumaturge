@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment.hover;
 
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -118,9 +119,9 @@ public final class HoverManager {
 
     private static void keepAloft(ServerPlayer player) {
         AttributeInstance flight = player.getAttribute(ForgeMod.CREATIVE_FLIGHT);
-        if (flight != null && !flight.hasModifier(FLIGHT_MODIFIER_ID)) {
-            flight.addTransientModifier(new AttributeModifier(
-                    FLIGHT_MODIFIER_ID, FLIGHT_MODIFIER_VALUE, AttributeModifier.Operation.ADD_VALUE));
+        if (flight != null && !NamedAttributeModifiers.has(flight, FLIGHT_MODIFIER_ID)) {
+            flight.addTransientModifier(NamedAttributeModifiers.create(
+                    FLIGHT_MODIFIER_ID, FLIGHT_MODIFIER_VALUE, AttributeModifier.Operation.ADDITION));
         }
         Abilities abilities = player.getAbilities();
         if (!abilities.flying && !player.onGround()) {
@@ -132,7 +133,7 @@ public final class HoverManager {
     private static void land(ServerPlayer player) {
         AttributeInstance flight = player.getAttribute(ForgeMod.CREATIVE_FLIGHT);
         if (flight != null) {
-            flight.removeModifier(FLIGHT_MODIFIER_ID);
+            flight.removeModifier(NamedAttributeModifiers.id(FLIGHT_MODIFIER_ID));
         }
         Abilities abilities = player.getAbilities();
         if (abilities.flying && !player.getAbilities().mayfly) {
