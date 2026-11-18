@@ -11,6 +11,7 @@
     "world.entity.MobAccessor",
     "world.entity.EntityEyeHeightMixin",
     "world.entity.EntityTypeGeometryMixin",
+    "world.entity.LivingEntityJumpStrengthMixin",
     "world.entity.monster.SlimeDimensionsMixin",
     "world.entity.item.ItemEntityGravityMixin",
     "world.entity.projectile.ThrowableProjectileGravityMixin",

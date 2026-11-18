@@ -1,11 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.equipment.trim;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.api.items.trim.TrimMaterialBonus;
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.datamap.DataMaps;
 import com.leclowndu93150.thaumaturge.itemdata.ArmorTrimData;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
@@ -15,10 +18,13 @@ import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
+import io.netty.buffer.Unpooled;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
@@ -27,17 +33,23 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.Item;
@@ -47,6 +59,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.minecraft.world.item.armortrim.TrimPattern;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
@@ -210,6 +225,88 @@ class TrimAndDiscountRuntimeTest {
             });
         } finally {
             MinecraftForge.EVENT_BUS.unregister(handler);
+        }
+    }
+
+    @Test
+    void travellerModifiersReachNativeJumpAndStepCalculationsAndPacket() throws Exception {
+        var jumpAttribute = TTAttributes.JUMP_STRENGTH.get();
+        assertEquals(ResourceLocation.withDefaultNamespace("generic.jump_strength"), ForgeRegistries.ATTRIBUTES.getKey(jumpAttribute));
+        assertNotSame(Attributes.JUMP_STRENGTH, jumpAttribute);
+        assertTrue(jumpAttribute.isClientSyncable());
+        assertEquals((double) 0.42F, jumpAttribute.getDefaultValue());
+        assertEquals(32.0, jumpAttribute.sanitizeValue(64.0));
+        assertEquals(0.0, jumpAttribute.sanitizeValue(-1.0));
+
+        assertEquals(0.42F * ProbePlayer.BLOCK_JUMP_FACTOR, new ProbePlayer().jumpPower());
+        Map<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> builders = new LinkedHashMap<>();
+        modBus.post(new EntityAttributeModificationEvent(builders));
+        var merged = new AttributeSupplier.Builder(DefaultAttributes.getSupplier(EntityType.PLAYER));
+        merged.combine(builders.get(EntityType.PLAYER));
+
+        var field = ForgeHooks.class.getDeclaredField("FORGE_ATTRIBUTES");
+        field.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        var definitions = (Map<EntityType<? extends LivingEntity>, AttributeSupplier>) field.get(null);
+        var original = definitions.put(EntityType.PLAYER, merged.build());
+        try {
+            var player = new ProbePlayer();
+            var jump = player.getAttribute(jumpAttribute);
+            var step = player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get());
+            assertNotNull(jump);
+            assertNotNull(step);
+            assertEquals(0.6F, player.getStepHeight());
+            var jumpBonus = NamedAttributeModifiers.create(ResourceLocation.fromNamespaceAndPath("thaumaturge", "traveller_jump"),
+                    0.275F, AttributeModifier.Operation.ADDITION);
+            var stepBonus = NamedAttributeModifiers.create(ResourceLocation.fromNamespaceAndPath("thaumaturge", "traveller_step"),
+                    0.5F, AttributeModifier.Operation.ADDITION);
+            jump.addTransientModifier(jumpBonus);
+            step.addTransientModifier(stepBonus);
+            assertTrue(player.addEffect(new MobEffectInstance(MobEffects.JUMP, 80, 1)));
+            assertEquals((0.42F + 0.275F) * ProbePlayer.BLOCK_JUMP_FACTOR + 0.2F, player.jumpPower(), 1.0e-6F);
+            assertEquals(1.1F, player.getStepHeight());
+
+            var packet = new ClientboundUpdateAttributesPacket(player.getId(), List.of(jump, step));
+            var wire = new FriendlyByteBuf(Unpooled.buffer());
+            try {
+                packet.write(wire);
+                var read = new ClientboundUpdateAttributesPacket(wire);
+                assertFalse(wire.isReadable());
+                var snapshot = read.getValues().stream().filter(value -> value.getAttribute() == jumpAttribute).findFirst().orElseThrow();
+                assertEquals(jump.getBaseValue(), snapshot.getBase());
+                assertEquals(jumpBonus.getId(), snapshot.getModifiers().iterator().next().getId());
+            } finally {
+                wire.release();
+            }
+
+            jump.removeModifier(jumpBonus.getId());
+            step.removeModifier(stepBonus.getId());
+            assertEquals(0.42F * ProbePlayer.BLOCK_JUMP_FACTOR + 0.2F, player.jumpPower(), 1.0e-6F);
+            assertEquals(0.6F, player.getStepHeight());
+            step.setBaseValue(0.5F - 0.6F);
+            assertEquals(0.5F, player.getStepHeight());
+        } finally {
+            if (original == null) definitions.remove(EntityType.PLAYER);
+            else definitions.put(EntityType.PLAYER, original);
+        }
+    }
+
+    private static final class ProbePlayer extends Player {
+        static final float BLOCK_JUMP_FACTOR = 0.8F;
+
+        ProbePlayer() {
+            super(mock(Level.class), BlockPos.ZERO, 0.0F, new GameProfile(UUID.randomUUID(), "PortMovement"));
+        }
+
+        @Override protected float getBlockJumpFactor() {
+            return BLOCK_JUMP_FACTOR;
+        }
+
+        @Override public boolean isSpectator() { return false; }
+        @Override public boolean isCreative() { return false; }
+
+        float jumpPower() {
+            return getJumpPower();
         }
     }
 }

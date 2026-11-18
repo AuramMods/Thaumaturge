@@ -37,7 +37,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -90,6 +89,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import org.jspecify.annotations.Nullable;
 
 public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGolemAPI, RangedAttackMob {
@@ -121,8 +121,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private static final double HEAVY_WORK_PENALTY = 0.175;
     private static final double FLYER_WORK_PENALTY = 0.33;
     private static final double WHEELED_WORK_BONUS = 0.25;
-    private static final double WHEELED_STEP_HEIGHT = 0.5;
-    private static final double STEP_HEIGHT = 0.6;
+    private static final float WHEELED_STEP_HEIGHT = 0.5F;
+    private static final float STEP_HEIGHT = 0.6F;
     private static final double FOLLOW_RANGE = 40.0;
     private static final double FOLLOW_RANGE_SCOUT = 56.0;
     private static final double MELEE_SPEED = 1.15;
@@ -151,6 +151,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     public EntityThaumaturgeGolem(EntityType<? extends EntityThaumaturgeGolem> type, Level level) {
         super(type, level);
         this.xpReward = 5;
+        this.setMaxUpStep(STEP_HEIGHT);
     }
 
     public static int xpForNextRank(int rank) {
@@ -163,8 +164,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
                 .add(Attributes.MAX_HEALTH, 10.0)
                 .add(Attributes.ATTACK_DAMAGE, 0.0)
                 .add(Attributes.FOLLOW_RANGE, 40.0)
-                .add(Attributes.ARMOR, 2.0)
-                .add(Attributes.STEP_HEIGHT, 0.6);
+                .add(Attributes.ARMOR, 2.0);
     }
 
     @Override
@@ -402,8 +402,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         setBaseAttribute(Attributes.ARMOR, GolemStats.armor(props) + armorBonus);
         setBaseAttribute(Attributes.ATTACK_DAMAGE, GolemStats.meleeDamage(props));
         setBaseAttribute(
-                Attributes.STEP_HEIGHT,
-                props.hasTrait(TTGolemTraits.WHEELED.get()) ? WHEELED_STEP_HEIGHT : STEP_HEIGHT);
+                ForgeMod.STEP_HEIGHT_ADDITION.get(),
+                props.hasTrait(TTGolemTraits.WHEELED.get()) ? WHEELED_STEP_HEIGHT - STEP_HEIGHT : 0.0);
         setBaseAttribute(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED * speedFactor);
         setBaseAttribute(
                 Attributes.FOLLOW_RANGE,
@@ -411,7 +411,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
                         * accessoryRangeFactor());
     }
 
-    private void setBaseAttribute(Holder<Attribute> attribute, double value) {
+    private void setBaseAttribute(Attribute attribute, double value) {
         AttributeInstance instance = getAttribute(attribute);
         if (instance != null) {
             instance.setBaseValue(value);

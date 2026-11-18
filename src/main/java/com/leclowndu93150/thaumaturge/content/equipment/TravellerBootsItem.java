@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataDefaults;
 
@@ -17,12 +18,12 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -69,8 +70,8 @@ public final class TravellerBootsItem extends ArmorItem {
                 || event.getTo().getItem() instanceof TravellerBootsItem) {
             return;
         }
-        AttributeInstance stepHeight = player.getAttribute(Attributes.STEP_HEIGHT);
-        AttributeInstance jumpHeight = player.getAttribute(Attributes.JUMP_STRENGTH);
+        AttributeInstance stepHeight = player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get());
+        AttributeInstance jumpHeight = player.getAttribute(TTAttributes.JUMP_STRENGTH.get());
         if (stepHeight != null) stepHeight.removeModifier(STEP_MODIFIER.getId());
         if (jumpHeight != null) jumpHeight.removeModifier(JUMP_MODIFIER.getId());
     }
@@ -94,8 +95,8 @@ public final class TravellerBootsItem extends ArmorItem {
         }
         boolean active = isActive(player, stack);
         boolean stepActive = isStepActive(player, stack);
-        AttributeInstance stepHeight = player.getAttribute(Attributes.STEP_HEIGHT);
-        AttributeInstance jumpHeight = player.getAttribute(Attributes.JUMP_STRENGTH);
+        AttributeInstance stepHeight = player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get());
+        AttributeInstance jumpHeight = player.getAttribute(TTAttributes.JUMP_STRENGTH.get());
         if (stepHeight != null) {
             if (stepActive && !stepHeight.hasModifier(STEP_MODIFIER)) {
                 stepHeight.addTransientModifier(STEP_MODIFIER);

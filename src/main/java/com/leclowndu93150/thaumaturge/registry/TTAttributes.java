@@ -32,6 +32,12 @@ public final class TTAttributes {
 
     public static final DeferredRegister<Attribute> ATTRIBUTES =
             DeferredRegister.create(ForgeRegistries.ATTRIBUTES, TTIds.MODID);
+    private static final DeferredRegister<Attribute> VANILLA_ATTRIBUTES =
+            DeferredRegister.create(ForgeRegistries.ATTRIBUTES, "minecraft");
+
+    public static final RegistryObject<Attribute> JUMP_STRENGTH = VANILLA_ATTRIBUTES.register(
+            "generic.jump_strength",
+            () -> new RangedAttribute("attribute.name.generic.jump_strength", 0.42F, 0.0, 32.0).setSyncable(true));
 
     public static final RegistryObject<Attribute> VIS_DISCOUNT = ATTRIBUTES.register(
             "vis_discount",
@@ -44,6 +50,7 @@ public final class TTAttributes {
 
     public static void register(IEventBus modBus) {
         ATTRIBUTES.register(modBus);
+        VANILLA_ATTRIBUTES.register(modBus);
         modBus.addListener(TTAttributes::onAttributesCreated);
     }
 
@@ -88,6 +95,7 @@ public final class TTAttributes {
 
     public static void onAttributesCreated(EntityAttributeModificationEvent event) {
         event.add(EntityType.PLAYER, VIS_DISCOUNT.get());
+        event.add(EntityType.PLAYER, JUMP_STRENGTH.get());
         for (EntityType<? extends LivingEntity> type : event.getTypes()) {
             if (type != EntityType.PLAYER) {
                 if (!event.has(type, Attributes.ATTACK_DAMAGE)) {

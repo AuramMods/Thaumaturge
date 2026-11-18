@@ -190,6 +190,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/effect/MobEffectInstanceMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/EntityEyeHeightMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/EntityTypeGeometryMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/LivingEntityJumpStrengthMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/monster/SlimeDimensionsMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/item/ItemEntityGravityMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/projectile/ThrowableProjectileGravityMixin.java'
