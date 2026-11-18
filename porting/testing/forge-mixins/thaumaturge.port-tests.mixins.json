@@ -17,6 +17,8 @@
     "world.entity.LivingEntityJumpStrengthMixin",
     "world.entity.AbsorptionAmountMixin",
     "world.entity.LivingEntityAbsorptionMixin",
+    "world.entity.LivingEntityDamagePhaseMixin",
+    "world.entity.player.PlayerDamagePhaseMixin",
     "world.entity.monster.SlimeDimensionsMixin",
     "world.entity.item.ItemEntityGravityMixin",
     "world.entity.projectile.ThrowableProjectileGravityMixin",

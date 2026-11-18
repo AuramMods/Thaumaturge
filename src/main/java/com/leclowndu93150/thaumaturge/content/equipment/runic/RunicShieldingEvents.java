@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment.runic;
 
+import com.leclowndu93150.thaumaturge.event.combat.DamagePhaseEvent;
 import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
@@ -11,7 +12,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 
@@ -41,7 +41,7 @@ public final class RunicShieldingEvents {
     }
 
     @SubscribeEvent
-    public static void onLivingDamage(LivingDamageEvent.Pre event) {
+    public static void onLivingDamage(DamagePhaseEvent.BeforeAbsorption event) {
         if (event.getEntity() instanceof ServerPlayer player && hasActiveShield(player)) {
             playEffect(player);
         }

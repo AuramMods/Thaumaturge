@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.encounter;
 
+import com.leclowndu93150.thaumaturge.event.combat.DamagePhaseEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthService;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import org.jspecify.annotations.Nullable;
 
@@ -23,7 +23,7 @@ public final class EncounterCombatEvents {
     private EncounterCombatEvents() {}
 
     @SubscribeEvent
-    public static void onDamaged(LivingDamageEvent.Post event) {
+    public static void onDamaged(DamagePhaseEvent.AfterDamage event) {
         LivingEntity entity = event.getEntity();
         Optional<UUID> credited = creditFor(event.getSource().getEntity());
         if (event.getNewDamage() <= 0.0F || credited.isEmpty()) {

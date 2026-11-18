@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
+import com.leclowndu93150.thaumaturge.event.combat.DamagePhaseEvent;
 import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
@@ -34,7 +35,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -169,7 +169,7 @@ public final class ResearchProgressionEvents {
     }
 
     @SubscribeEvent
-    public static void onFireDamage(LivingDamageEvent.Post event) {
+    public static void onFireDamage(DamagePhaseEvent.AfterDamage event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if (!event.getSource().is(DamageTypeTags.IS_FIRE)) return;
         PlayerResearch knowledge = PlayerResearchAccess.of(player);
@@ -183,7 +183,7 @@ public final class ResearchProgressionEvents {
     }
 
     @SubscribeEvent
-    public static void onProjectileDamage(LivingDamageEvent.Post event) {
+    public static void onProjectileDamage(DamagePhaseEvent.AfterDamage event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         ResourceLocation research = projectileResearch(event.getSource().getDirectEntity());
         if (research == null) return;
