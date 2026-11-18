@@ -58,10 +58,10 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(DATA_RITUALIST, false);
-        entityData.define(DATA_RITUAL_ANCHOR, BlockPos.ZERO);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(DATA_RITUALIST, false);
+        getEntityData().define(DATA_RITUAL_ANCHOR, BlockPos.ZERO);
     }
 
     public boolean isRitualist() {

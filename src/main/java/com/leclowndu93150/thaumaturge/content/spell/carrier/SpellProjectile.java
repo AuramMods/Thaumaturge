@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.nbt.CompoundTag;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -87,7 +86,7 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {}
+    protected void defineSynchedData() {}
 
     @Override
     protected double getDefaultGravity() {

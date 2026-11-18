@@ -57,9 +57,9 @@ public final class EntityGrapple extends ThrowableProjectile {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        entityData.define(PULLING, false);
-        entityData.define(MAIN_HAND, true);
+    protected void defineSynchedData() {
+        getEntityData().define(PULLING, false);
+        getEntityData().define(MAIN_HAND, true);
     }
 
     @Override

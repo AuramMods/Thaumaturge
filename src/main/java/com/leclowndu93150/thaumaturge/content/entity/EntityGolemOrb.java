@@ -57,9 +57,9 @@ public class EntityGolemOrb extends ThrowableProjectile implements ISidedHurt {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        entityData.define(DATA_RED, false);
-        entityData.define(DATA_TARGET, NO_TARGET);
+    protected void defineSynchedData() {
+        getEntityData().define(DATA_RED, false);
+        getEntityData().define(DATA_TARGET, NO_TARGET);
     }
 
     public boolean isRed() {

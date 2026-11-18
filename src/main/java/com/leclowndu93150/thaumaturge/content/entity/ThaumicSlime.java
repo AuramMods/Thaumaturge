@@ -54,9 +54,9 @@ public final class ThaumicSlime extends Slime {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(DATA_LAUNCHED, LAUNCH_TICKS);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(DATA_LAUNCHED, LAUNCH_TICKS);
     }
 
     @Override

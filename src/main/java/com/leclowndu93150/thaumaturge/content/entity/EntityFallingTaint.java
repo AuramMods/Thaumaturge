@@ -8,7 +8,6 @@ import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -60,7 +59,7 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder data) {}
+    protected void defineSynchedData() {}
 
     @Override
     public void tick() {

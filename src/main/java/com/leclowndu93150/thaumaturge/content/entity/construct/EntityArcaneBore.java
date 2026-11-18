@@ -78,10 +78,10 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(FACING, Direction.NORTH);
-        entityData.define(ACTIVE, false);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(FACING, Direction.NORTH);
+        getEntityData().define(ACTIVE, false);
     }
 
     @Override

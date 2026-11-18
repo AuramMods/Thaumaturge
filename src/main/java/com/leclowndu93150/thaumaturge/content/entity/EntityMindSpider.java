@@ -39,10 +39,10 @@ public final class EntityMindSpider extends Spider {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(DATA_HARMLESS, false);
-        entityData.define(DATA_VIEWER, "");
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(DATA_HARMLESS, false);
+        getEntityData().define(DATA_VIEWER, "");
     }
 
     public String getViewer() {

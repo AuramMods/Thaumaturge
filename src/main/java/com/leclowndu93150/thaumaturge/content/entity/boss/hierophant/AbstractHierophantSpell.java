@@ -64,10 +64,10 @@ public abstract class AbstractHierophantSpell extends Entity {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(START, 0L);
-        builder.define(CASTER_YAW, 0.0F);
-        builder.define(DIRECTION, new Vector3f(0, 0, 1));
+    protected void defineSynchedData() {
+        getEntityData().define(START, 0L);
+        getEntityData().define(CASTER_YAW, 0.0F);
+        getEntityData().define(DIRECTION, new Vector3f(0, 0, 1));
     }
 
     public final float age(float partialTick) {

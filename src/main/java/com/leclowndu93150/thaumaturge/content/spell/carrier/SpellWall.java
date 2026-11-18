@@ -55,9 +55,9 @@ public final class SpellWall extends AbstractSpellCarrier {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(WIDTH, DEFAULT_WIDTH);
-        builder.define(FACING, 0.0F);
+    protected void defineSynchedData() {
+        getEntityData().define(WIDTH, DEFAULT_WIDTH);
+        getEntityData().define(FACING, 0.0F);
     }
 
     @Override

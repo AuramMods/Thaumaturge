@@ -97,9 +97,9 @@ public class EntityEldritchCrab extends Monster implements ISidedHurt {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(DATA_HELM, false);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(DATA_HELM, false);
     }
 
     public boolean hasHelm() {

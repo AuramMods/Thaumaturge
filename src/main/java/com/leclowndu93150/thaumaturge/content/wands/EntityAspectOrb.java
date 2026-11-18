@@ -90,9 +90,9 @@ public class EntityAspectOrb extends Entity {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(DATA_ASPECT, NO_ASPECT);
-        builder.define(DATA_VALUE, DEFAULT_VALUE);
+    protected void defineSynchedData() {
+        getEntityData().define(DATA_ASPECT, NO_ASPECT);
+        getEntityData().define(DATA_VALUE, DEFAULT_VALUE);
     }
 
     public @Nullable ResourceKey<IAspect> getAspect() {

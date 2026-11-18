@@ -119,12 +119,12 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(ACTION, HierophantAction.IDLE.ordinal());
-        builder.define(ACTION_START, 0L);
-        builder.define(AWAKENED, false);
-        builder.define(CAST_YAW, 0.0F);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(ACTION, HierophantAction.IDLE.ordinal());
+        getEntityData().define(ACTION_START, 0L);
+        getEntityData().define(AWAKENED, false);
+        getEntityData().define(CAST_YAW, 0.0F);
     }
 
     public HierophantAction action() {

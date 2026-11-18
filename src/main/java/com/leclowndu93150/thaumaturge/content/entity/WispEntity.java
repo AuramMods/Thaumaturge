@@ -86,9 +86,9 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(DATA_ASPECT, "");
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(DATA_ASPECT, "");
     }
 
     public @Nullable Holder<IAspect> aspect() {

@@ -112,9 +112,9 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements Ranged
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(HEADLESS, false);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(HEADLESS, false);
     }
 
     public boolean isHeadless() {

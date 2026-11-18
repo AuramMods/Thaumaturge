@@ -51,8 +51,8 @@ public final class SpellCloud extends AbstractSpellCarrier {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(RADIUS, 1.0F);
+    protected void defineSynchedData() {
+        getEntityData().define(RADIUS, 1.0F);
     }
 
     public float radius() {

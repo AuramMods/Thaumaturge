@@ -114,9 +114,9 @@ public final class EntityFireBat extends Monster implements IBatAnimated, ISided
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(DATA_HANGING, false);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(DATA_HANGING, false);
     }
 
     public boolean isHanging() {

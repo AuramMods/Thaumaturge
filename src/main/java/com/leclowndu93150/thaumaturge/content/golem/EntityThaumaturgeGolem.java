@@ -168,14 +168,14 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(PROPS, GolemProperties.createDefault());
-        entityData.define(COLOR, (byte) 0);
-        entityData.define(FLAGS, (byte) 0);
-        entityData.define(CLIMBING, (byte) 0);
-        entityData.define(ACCESSORIES, "");
-        entityData.define(ACCESSORY_STATES, GolemAccessoryStates.EMPTY);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(PROPS, GolemProperties.createDefault());
+        getEntityData().define(COLOR, (byte) 0);
+        getEntityData().define(FLAGS, (byte) 0);
+        getEntityData().define(CLIMBING, (byte) 0);
+        getEntityData().define(ACCESSORIES, "");
+        getEntityData().define(ACCESSORY_STATES, GolemAccessoryStates.EMPTY);
     }
 
     public List<GolemAccessory> getAccessories() {

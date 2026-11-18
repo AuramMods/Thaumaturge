@@ -107,11 +107,11 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(DATA_DOMESTICATED, false);
-        entityData.define(DATA_RAGE, 0);
-        entityData.define(DATA_VARIANT, (byte) TYPE_FORAGER);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(DATA_DOMESTICATED, false);
+        getEntityData().define(DATA_RAGE, 0);
+        getEntityData().define(DATA_VARIANT, (byte) TYPE_FORAGER);
     }
 
     public boolean isDomesticated() {

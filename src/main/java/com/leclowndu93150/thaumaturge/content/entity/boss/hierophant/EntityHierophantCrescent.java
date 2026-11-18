@@ -28,9 +28,9 @@ public final class EntityHierophantCrescent extends AbstractHierophantSpell {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(LEFT, false);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(LEFT, false);
     }
 
     public void setLeft(boolean left) {

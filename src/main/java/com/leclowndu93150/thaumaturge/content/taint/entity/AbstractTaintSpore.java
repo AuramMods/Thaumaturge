@@ -50,9 +50,9 @@ public abstract class AbstractTaintSpore extends Monster {
     protected abstract void onBurst(ServerLevel level);
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder data) {
-        super.defineSynchedData(data);
-        data.define(DATA_SPORE_SIZE, MIN_SIZE);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(DATA_SPORE_SIZE, MIN_SIZE);
     }
 
     @Override

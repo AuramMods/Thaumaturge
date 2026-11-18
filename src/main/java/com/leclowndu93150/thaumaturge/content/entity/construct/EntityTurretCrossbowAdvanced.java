@@ -45,9 +45,9 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(FLAGS, (byte) 0);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(FLAGS, (byte) 0);
     }
 
     @Override

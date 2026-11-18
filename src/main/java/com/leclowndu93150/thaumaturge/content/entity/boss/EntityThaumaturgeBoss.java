@@ -70,10 +70,10 @@ public class EntityThaumaturgeBoss extends Monster {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(DATA_AGGRO, 0);
-        entityData.define(DATA_EMERGENCE, 0);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(DATA_AGGRO, 0);
+        getEntityData().define(DATA_EMERGENCE, 0);
     }
 
     public int getAnger() {

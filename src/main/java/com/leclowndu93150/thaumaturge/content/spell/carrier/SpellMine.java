@@ -59,8 +59,8 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(ARMED, false);
+    protected void defineSynchedData() {
+        getEntityData().define(ARMED, false);
     }
 
     public boolean armed() {

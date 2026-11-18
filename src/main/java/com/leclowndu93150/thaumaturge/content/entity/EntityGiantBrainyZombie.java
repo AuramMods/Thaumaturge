@@ -42,9 +42,9 @@ public final class EntityGiantBrainyZombie extends EntityBrainyZombie implements
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(DATA_ANGER, 0.0F);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(DATA_ANGER, 0.0F);
     }
 
     public float getAnger() {

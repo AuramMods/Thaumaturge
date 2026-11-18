@@ -82,11 +82,11 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(SEED, 0);
-        builder.define(SIZE, DEFAULT_SIZE);
-        builder.define(STABILITY, 0.0F);
-        builder.define(COLLAPSE, false);
+    protected void defineSynchedData() {
+        getEntityData().define(SEED, 0);
+        getEntityData().define(SIZE, DEFAULT_SIZE);
+        getEntityData().define(STABILITY, 0.0F);
+        getEntityData().define(COLLAPSE, false);
     }
 
     private <T> T synced(EntityDataAccessor<T> accessor) {

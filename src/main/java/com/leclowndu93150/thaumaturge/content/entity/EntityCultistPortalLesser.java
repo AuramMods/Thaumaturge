@@ -53,9 +53,9 @@ public class EntityCultistPortalLesser extends Monster {
     protected void registerGoals() {}
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(DATA_ACTIVE, false);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(DATA_ACTIVE, false);
     }
 
     public boolean isActive() {

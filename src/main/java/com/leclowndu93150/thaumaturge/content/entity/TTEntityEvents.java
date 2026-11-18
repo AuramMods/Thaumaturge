@@ -18,7 +18,7 @@ import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSpore;
 import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSporeSwarmer;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
-import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Pig;
@@ -31,93 +31,93 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID)
 public final class TTEntityEvents {
     private TTEntityEvents() {}
 
     @SubscribeEvent
-    public static void onSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+    public static void onSpawnPlacements(SpawnPlacementRegisterEvent event) {
         event.register(
                 TTEntities.WISP.get(),
-                SpawnPlacementTypes.NO_RESTRICTIONS,
+                SpawnPlacements.Type.NO_RESTRICTIONS,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 WispEntity::checkWispSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.BRAINY_ZOMBIE.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (type, level, reason, pos, random) -> !level.getBiome(pos).is(TTBiomeTags.IS_TAINTED)
                         && Monster.checkMonsterSpawnRules(type, level, reason, pos, random),
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.BRAINY_HUSK.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Monster::checkMonsterSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.GIANT_BRAINY_ZOMBIE.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Monster::checkMonsterSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.PECH.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 EntityPech::checkPechSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.ELDRITCH_CRAB.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Monster::checkMonsterSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.INHABITED_ZOMBIE.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 EntityInhabitedZombie::checkInhabitedSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.ELDRITCH_GUARDIAN.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 EntityEldritchGuardian::checkGuardianSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.CULTIST_KNIGHT.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Monster::checkAnyLightMonsterSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.CULTIST_CLERIC.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Monster::checkAnyLightMonsterSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.FIRE_BAT.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 EntityFireBat::checkFireBatSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.THAUMIC_SLIME.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 ThaumicSlime::checkSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(
                 TTEntities.TAINTACLE.get(),
-                SpawnPlacementTypes.ON_GROUND,
+                SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractTaintacle::checkTaintacleSpawnRules,
-                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
     }
 
     @SubscribeEvent

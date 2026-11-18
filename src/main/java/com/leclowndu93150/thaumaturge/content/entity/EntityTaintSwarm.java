@@ -75,9 +75,9 @@ public final class EntityTaintSwarm extends Monster {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder data) {
-        super.defineSynchedData(data);
-        data.define(SUMMONED, false);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(SUMMONED, false);
     }
 
     @Override

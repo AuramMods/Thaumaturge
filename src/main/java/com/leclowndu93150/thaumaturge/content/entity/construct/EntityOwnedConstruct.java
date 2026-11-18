@@ -52,9 +52,9 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        super.defineSynchedData(entityData);
-        entityData.define(MASTER, Optional.empty());
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        getEntityData().define(MASTER, Optional.empty());
     }
 
     public boolean isOwned() {
