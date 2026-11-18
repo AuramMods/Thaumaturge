@@ -23,6 +23,11 @@ public final class DataMaps {
     }
 
     @SuppressWarnings("unchecked")
+    public static <R> boolean loaded(Holder<R> holder, DataMapType<R, ?> type) {
+        return holder instanceof HolderDataMapAccess<?> access && ((HolderDataMapAccess<R>) access).thaumaturge$hasDataMap(type);
+    }
+
+    @SuppressWarnings("unchecked")
     public static <R> void replace(Registry<R> registry, Map<DataMapType<R, ?>, Map<ResourceKey<R>, ?>> values) {
         for (var entry : values.entrySet()) {
             if (!entry.getKey().registryKey().equals(registry.key())) throw new IllegalArgumentException("Data map belongs to another registry: " + entry.getKey().id());

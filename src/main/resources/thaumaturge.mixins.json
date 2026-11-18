@@ -35,7 +35,9 @@
     "registry.MappedRegistryDataMapMixin",
     "registry.HolderReferenceDataMapMixin",
     "registry.RegistryLookupDataMapMixin",
-    "server.ServerResourceDataMapsMixin"
+    "server.ServerResourceDataMapsMixin",
+    "forge.ForgeFuelDataMapMixin",
+    "world.item.AxeDataMapMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",

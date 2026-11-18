@@ -20,4 +20,10 @@ abstract class HolderReferenceDataMapMixin<R> implements HolderDataMapAccess<R> 
         return owner instanceof RegistryDataMapAccess<?> storage
                 ? ((RegistryDataMapAccess<R>) storage).thaumaturge$dataMap(type).get(key()) : null;
     }
+
+    @Override @SuppressWarnings("unchecked")
+    public boolean thaumaturge$hasDataMap(DataMapType<R, ?> type) {
+        return owner instanceof RegistryDataMapAccess<?> storage
+                && ((RegistryDataMapAccess<R>) storage).thaumaturge$hasDataMap(type);
+    }
 }

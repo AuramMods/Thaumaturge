@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceKey;
 
 /** Implemented on native MappedRegistry and inherited by Forge's NamespacedWrapper. */
 public interface RegistryDataMapAccess<R> {
+    boolean thaumaturge$hasDataMap(DataMapType<R, ?> type);
     <T> Map<ResourceKey<R>, T> thaumaturge$dataMap(DataMapType<R, T> type);
     void thaumaturge$replaceDataMaps(Map<DataMapType<R, ?>, Map<ResourceKey<R>, ?>> values);
 }

@@ -6,8 +6,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
-import net.neoforged.neoforge.registries.datamaps.builtin.FurnaceFuel;
-import net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps;
+import com.leclowndu93150.thaumaturge.datamap.builtin.FurnaceFuel;
+import com.leclowndu93150.thaumaturge.datamap.builtin.BuiltinDataMaps;
 
 public final class FuelValuesProvider extends DataMapProvider {
     private static final int ALUMENTUM_BURN_TICKS = 4800;
@@ -18,7 +18,7 @@ public final class FuelValuesProvider extends DataMapProvider {
 
     @Override
     protected void gather(HolderLookup.Provider provider) {
-        Builder<FurnaceFuel, Item> b = builder(NeoForgeDataMaps.FURNACE_FUELS);
+        Builder<FurnaceFuel, Item> b = builder(BuiltinDataMaps.FURNACE_FUELS);
 
         b.add(TTItems.ALUMENTUM, new FurnaceFuel(ALUMENTUM_BURN_TICKS), false);
     }

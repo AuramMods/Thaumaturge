@@ -6,8 +6,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
-import net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps;
-import net.neoforged.neoforge.registries.datamaps.builtin.Strippable;
+import com.leclowndu93150.thaumaturge.datamap.builtin.BuiltinDataMaps;
+import com.leclowndu93150.thaumaturge.datamap.builtin.Strippable;
 
 public final class StrippingProvider extends DataMapProvider {
     public StrippingProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
@@ -16,7 +16,7 @@ public final class StrippingProvider extends DataMapProvider {
 
     @Override
     protected void gather(HolderLookup.Provider provider) {
-        Builder<Strippable, Block> b = builder(NeoForgeDataMaps.STRIPPABLES);
+        Builder<Strippable, Block> b = builder(BuiltinDataMaps.STRIPPABLES);
 
         b.add(TTBlocks.LOG_GREATWOOD, new Strippable(TTBlocks.STRIPPED_LOG_GREATWOOD.get()), false);
         b.add(TTBlocks.WOOD_GREATWOOD, new Strippable(TTBlocks.STRIPPED_WOOD_GREATWOOD.get()), false);

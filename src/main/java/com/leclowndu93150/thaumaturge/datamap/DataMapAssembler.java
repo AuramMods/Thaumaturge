@@ -18,6 +18,10 @@ public final class DataMapAssembler {
     public static <R, T> Map<ResourceKey<R>, T> build(Registry<R> registry, DataMapType<R, T> type,
             List<DataMapFile<R, T>> layers, Consumer<String> errors) {
         Map<ResourceKey<R>, Sourced<R, T>> values = new LinkedHashMap<>();
+        type.defaults(registry).forEach((key, value) -> {
+            if (!key.isFor(registry.key()) || registry.getHolder(key).isEmpty()) throw new IllegalArgumentException("Unknown default data map entry " + key);
+            values.put(key, new Sourced<>(value, Either.right(key)));
+        });
         for (var layer : layers) {
             if (layer.replace()) values.clear();
             for (var addition : layer.values()) resolve(registry, addition.key(), true, errors, holder -> {

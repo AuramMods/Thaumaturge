@@ -32,6 +32,10 @@ abstract class MappedRegistryDataMapMixin<R> implements RegistryDataMapAccess<R>
         return (Map<ResourceKey<R>, T>) thaumaturge$dataMaps.getOrDefault(type, Map.of());
     }
 
+    @Override public boolean thaumaturge$hasDataMap(DataMapType<R, ?> type) {
+        return thaumaturge$dataMaps.containsKey(type);
+    }
+
     @Override public void thaumaturge$replaceDataMaps(Map<DataMapType<R, ?>, Map<ResourceKey<R>, ?>> values) {
         Map<DataMapType<R, ?>, Map<ResourceKey<R>, ?>> copy = new LinkedHashMap<>();
         values.forEach((type, data) -> copy.put(type, Map.copyOf(data)));

@@ -21,6 +21,10 @@ abstract class RegistryLookupDataMapMixin<R> implements RegistryDataMapLookup<R>
         return thaumaturge$storage.thaumaturge$dataMap(type);
     }
 
+    @Override public boolean thaumaturge$hasDataMap(DataMapType<R, ?> type) {
+        return thaumaturge$storage.thaumaturge$hasDataMap(type);
+    }
+
     @Override public void thaumaturge$replaceDataMaps(Map<DataMapType<R, ?>, Map<ResourceKey<R>, ?>> values) {
         thaumaturge$storage.thaumaturge$replaceDataMaps(values);
     }

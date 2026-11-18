@@ -104,7 +104,7 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
     }
 
     private static int burnTimeOf(Level level, ItemStack stack) {
-        return stack.getBurnTime(RecipeType.SMELTING);
+        return net.minecraftforge.common.ForgeHooks.getBurnTime(stack, RecipeType.SMELTING);
     }
 
     public static void staticTick(Level level, BlockPos pos, BlockState state, BlockEntitySmelter smelter) {

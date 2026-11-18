@@ -2,6 +2,8 @@ package com.leclowndu93150.thaumaturge.datamap;
 
 import com.mojang.serialization.Codec;
 import java.util.Objects;
+import java.util.Map;
+import java.util.function.Function;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -15,11 +17,13 @@ public final class DataMapType<R, T> {
     private final boolean mandatorySync;
     private final DataMapValueMerger<R, T> merger;
     private final Codec<? extends DataMapValueRemover<R, T>> remover;
+    private final Function<Registry<R>, Map<ResourceKey<R>, T>> defaults;
 
     private DataMapType(Builder<T, R> builder) {
         registryKey = builder.registryKey; id = builder.id; codec = builder.codec;
         networkCodec = builder.networkCodec; mandatorySync = builder.mandatorySync;
         merger = builder.merger; remover = builder.remover;
+        defaults = builder.defaults;
     }
 
     public ResourceKey<Registry<R>> registryKey() { return registryKey; }
@@ -29,6 +33,7 @@ public final class DataMapType<R, T> {
     public boolean mandatorySync() { return mandatorySync; }
     public DataMapValueMerger<R, T> merger() { return merger; }
     public Codec<? extends DataMapValueRemover<R, T>> remover() { return remover; }
+    public Map<ResourceKey<R>, T> defaults(Registry<R> registry) { return defaults.apply(registry); }
 
     public static <T, R> Builder<T, R> builder(ResourceLocation id, ResourceKey<Registry<R>> registry, Codec<T> codec) {
         return new Builder<>(id, registry, codec);
@@ -42,6 +47,7 @@ public final class DataMapType<R, T> {
         private boolean mandatorySync;
         private DataMapValueMerger<R, T> merger = (registry, first, oldValue, second, newValue) -> newValue;
         private Codec<? extends DataMapValueRemover<R, T>> remover;
+        private Function<Registry<R>, Map<ResourceKey<R>, T>> defaults = registry -> Map.of();
 
         private Builder(ResourceLocation id, ResourceKey<Registry<R>> registry, Codec<T> codec) {
             this.id = Objects.requireNonNull(id); this.registryKey = Objects.requireNonNull(registry);
@@ -52,6 +58,7 @@ public final class DataMapType<R, T> {
         }
         public Builder<T, R> merger(DataMapValueMerger<R, T> merger) { this.merger = Objects.requireNonNull(merger); return this; }
         public Builder<T, R> remover(Codec<? extends DataMapValueRemover<R, T>> remover) { this.remover = Objects.requireNonNull(remover); return this; }
+        public Builder<T, R> defaults(Function<Registry<R>, Map<ResourceKey<R>, T>> defaults) { this.defaults = Objects.requireNonNull(defaults); return this; }
         public DataMapType<R, T> build() { return new DataMapType<>(this); }
     }
 }

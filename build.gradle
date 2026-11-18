@@ -175,6 +175,8 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/alchemy/PotionBrewingAccessor.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/alchemy/PotionBrewingMixAccessor.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/forge/TierSortingRegistryMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/forge/ForgeFuelDataMapMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/item/AxeDataMapMixin.java'
         compileClasspath += sourceSets.portCodec.output + sourceSets.main.compileClasspath
     }
 }
