@@ -47,10 +47,13 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.minecraft.world.item.armortrim.TrimPattern;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.BusBuilder;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
@@ -61,6 +64,7 @@ class TrimAndDiscountRuntimeTest {
     private static final ResourceLocation FIXTURE_ID = id("discount_helmet");
     private static final ResourceKey<TrimMaterial> MATERIAL = ResourceKey.create(Registries.TRIM_MATERIAL, id("thaumium"));
     private static final ResourceKey<TrimPattern> PATTERN = ResourceKey.create(Registries.TRIM_PATTERN, id("example"));
+    private static IEventBus modBus;
     private static Item helmet;
 
     private static ResourceLocation id(String path) {
@@ -69,15 +73,20 @@ class TrimAndDiscountRuntimeTest {
 
     @BeforeAll
     static void registerThroughNativeForge() throws Exception {
-        var bus = BusBuilder.builder().build();
-        TTAttributes.register(bus);
+        modBus = BusBuilder.builder().build();
+        // The focused launcher skips mod construction. Bind Forge's own attributes before
+        // EntityAttributeModificationEvent initializes the native DefaultAttributes table.
+        var forgeAttributes = ForgeMod.class.getDeclaredField("ATTRIBUTES");
+        forgeAttributes.setAccessible(true);
+        ((DeferredRegister<?>) forgeAttributes.get(null)).register(modBus);
+        TTAttributes.register(modBus);
         var registry = (ForgeRegistry<?>) ForgeRegistries.ATTRIBUTES;
         var ctor = RegisterEvent.class.getDeclaredConstructor(ResourceKey.class, ForgeRegistry.class, Registry.class);
         ctor.setAccessible(true);
         boolean locked = registry.isLocked();
         registry.unfreeze();
         try {
-            bus.post(ctor.newInstance(ForgeRegistries.Keys.ATTRIBUTES, registry, BuiltInRegistries.ATTRIBUTE));
+            modBus.post(ctor.newInstance(ForgeRegistries.Keys.ATTRIBUTES, registry, BuiltInRegistries.ATTRIBUTE));
         } finally {
             if (locked) registry.freeze();
         }
@@ -182,8 +191,7 @@ class TrimAndDiscountRuntimeTest {
         assertEquals(1.0, attribute.sanitizeValue(1.5));
 
         Map<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> builders = new LinkedHashMap<>();
-        var attributes = new EntityAttributeModificationEvent(builders);
-        TTAttributes.onAttributesCreated(attributes);
+        modBus.post(new EntityAttributeModificationEvent(builders));
         var player = builders.get(EntityType.PLAYER).build();
         assertTrue(player.hasAttribute(attribute));
 
