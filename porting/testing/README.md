@@ -268,3 +268,10 @@ Cycle 039 checks named and direct sound holder codecs and native vanilla sound
 packet parameters without opening a sound engine or audio device. Focused totals
 are 282 server / 290 client; actual spell/equipment execution and full-client
 sound resource validation remain pending under the silent test profiles.
+
+
+Cycle 040 verifies an actual Forge armor-material registry, native armor item
+construction before material binding, stats/attributes, per-item durability,
+repair, layer metadata and damage persistence. Focused totals are 288 server /
+296 client. Full material catalog/tool tiers and multi-layer/tint/trims/rendering
+still require their remaining source and full-mod runtime acceptance.

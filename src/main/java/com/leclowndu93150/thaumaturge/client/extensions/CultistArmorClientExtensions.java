@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.extensions;
 
+import com.leclowndu93150.thaumaturge.content.equipment.ArmorMaterialData;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.gear.ClericArmorModel;
@@ -171,7 +172,7 @@ public final class CultistArmorClientExtensions {
 
         @Override
         public int getArmorLayerTintColor(
-                ItemStack stack, LivingEntity entity, ArmorMaterial.Layer layer, int layerIdx, int fallbackColor) {
+                ItemStack stack, LivingEntity entity, ArmorMaterialData.Layer layer, int layerIdx, int fallbackColor) {
             if (robeDyeable || !layer.dyeable()) {
                 return IClientItemExtensions.super.getArmorLayerTintColor(
                         stack, entity, layer, layerIdx, fallbackColor);

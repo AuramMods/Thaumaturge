@@ -12,7 +12,7 @@ public final class VoidRobeArmorItem extends ArmorItem implements IVisDiscountGe
     private static final int VIS_DISCOUNT = 5;
     private static final int WARP = 3;
 
-    public VoidRobeArmorItem(Holder<ArmorMaterial> material, ArmorItem.Type type, Properties properties) {
+    public VoidRobeArmorItem(ArmorMaterial material, ArmorItem.Type type, Properties properties) {
         super(material, type, GearWarp.with(properties, WARP));
     }
 

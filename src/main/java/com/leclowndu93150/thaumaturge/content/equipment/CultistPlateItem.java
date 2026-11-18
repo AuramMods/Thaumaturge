@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.content.equipment.ArmorMaterialData;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.EntityInhabitedZombie;
 import net.minecraft.core.Holder;
@@ -16,13 +17,13 @@ public final class CultistPlateItem extends ArmorItem {
     private static final ResourceLocation ZOMBIE_PLATE_INNER =
             TTIds.rl("textures/models/armor/zombie_plate_layer_2.png");
 
-    public CultistPlateItem(Holder<ArmorMaterial> material, Type type, Properties properties) {
+    public CultistPlateItem(ArmorMaterial material, Type type, Properties properties) {
         super(material, type, properties);
     }
 
     @Override
     public ResourceLocation getArmorTexture(
-            ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
+            ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterialData.Layer layer, boolean innerModel) {
         if (entity instanceof EntityInhabitedZombie) {
             return innerModel ? ZOMBIE_PLATE_INNER : ZOMBIE_PLATE_OUTER;
         }

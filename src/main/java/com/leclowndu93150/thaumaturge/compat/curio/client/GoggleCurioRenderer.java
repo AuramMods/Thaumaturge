@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.curio.client;
 
+import com.leclowndu93150.thaumaturge.content.equipment.ArmorMaterialData;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -63,8 +64,7 @@ public final class GoggleCurioRenderer implements ICurioRenderer {
     }
 
     private static List<ResourceLocation> armorTextures(ArmorItem armorItem) {
-        ArmorMaterial material = armorItem.getMaterial().value();
-        return material.layers().stream().map(layer -> layer.texture(false)).toList();
+        return ArmorMaterialData.layers(armorItem.getMaterial()).stream().map(layer -> layer.texture(false)).toList();
     }
 
     private HumanoidModel<LivingEntity> armorModel() {

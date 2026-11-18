@@ -89,9 +89,9 @@ public final class FortressArmorEvents {
             }
             ItemStack piece = victim.getItemBySlot(slot);
             if (piece.getItem() instanceof FortressArmorItem) {
-                fortressDefense += TTMaterials.ARMOR_FORTRESS.value().defense().get(armorType(slot));
+                fortressDefense += TTMaterials.ARMOR_FORTRESS.defense().get(armorType(slot));
             } else if (piece.getItem() instanceof VoidRobeArmorItem) {
-                robeDefense += TTMaterials.ARMOR_VOID_ROBE.value().defense().get(armorType(slot));
+                robeDefense += TTMaterials.ARMOR_VOID_ROBE.defense().get(armorType(slot));
             }
         }
         float ratio = 0.0F;

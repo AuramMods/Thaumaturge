@@ -10,7 +10,7 @@ public final class CultistRobeItem extends ArmorItem implements IVisDiscountGear
     private static final int VIS_DISCOUNT = 1;
     private static final int WARP = 1;
 
-    public CultistRobeItem(Holder<ArmorMaterial> material, ArmorItem.Type type, Properties properties) {
+    public CultistRobeItem(ArmorMaterial material, ArmorItem.Type type, Properties properties) {
         super(material, type, GearWarp.with(properties, WARP));
     }
 

@@ -82,6 +82,8 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/content/warp/effect/WarpWardEffect.java'
         java.include 'com/leclowndu93150/thaumaturge/content/world/LoadedChunks.java'
         java.include 'com/leclowndu93150/thaumaturge/registry/ForgeRegistration.java'
+        java.include 'com/leclowndu93150/thaumaturge/content/equipment/ArmorMaterialData.java'
+        java.include 'com/leclowndu93150/thaumaturge/content/equipment/ArmorTypes.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/RegistryBlockEntity.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/AbstractSyncedBlockEntity.java'
         java.include 'com/leclowndu93150/thaumaturge/api/items/ItemMatch.java'

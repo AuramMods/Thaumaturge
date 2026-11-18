@@ -12,7 +12,7 @@ public class VoidGearItem extends ArmorItem {
     private static final int REPAIR_INTERVAL_TICKS = 20;
     static final int VOID_GEAR_WARP = 1;
 
-    public VoidGearItem(Holder<ArmorMaterial> material, ArmorItem.Type type, Properties properties) {
+    public VoidGearItem(ArmorMaterial material, ArmorItem.Type type, Properties properties) {
         super(material, type, GearWarp.with(properties, VOID_GEAR_WARP));
     }
 

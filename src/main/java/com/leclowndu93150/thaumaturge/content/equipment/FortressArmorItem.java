@@ -16,7 +16,7 @@ import net.minecraft.world.item.TooltipFlag;
 public final class FortressArmorItem extends ArmorItem {
     public static final int NO_MASK = -1;
 
-    public FortressArmorItem(Holder<ArmorMaterial> material, ArmorItem.Type type, Properties properties) {
+    public FortressArmorItem(ArmorMaterial material, ArmorItem.Type type, Properties properties) {
         super(material, type, properties);
     }
 
