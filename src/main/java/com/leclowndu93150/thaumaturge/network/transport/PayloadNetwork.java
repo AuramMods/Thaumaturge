@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.network.transport;
 
+import com.leclowndu93150.thaumaturge.datamap.ClientDataMapSync;
+import com.leclowndu93150.thaumaturge.datamap.DataMapSync;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadCatalog.Flow;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
@@ -7,6 +9,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.Connection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,7 +27,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 
 /** Forge play transport for the mod's typed messages. */
 public final class PayloadNetwork {
-    private static final String PROTOCOL = "forge-1.20.1-1";
+    private static final String PROTOCOL = "forge-1.20.1-2";
     private static final PayloadCatalog CATALOG = new PayloadCatalog();
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation("thaumaturge", "main"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals);
@@ -49,6 +52,16 @@ public final class PayloadNetwork {
                 .consumerMainThread((packet, context) ->
                         CATALOG.handle(packet.payload(), Flow.SERVERBOUND, new ForgeContext(context.get())))
                 .add();
+        CHANNEL.messageBuilder(DataMapSync.Fragment.class, 2, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(DataMapSync.Fragment::write)
+                .decoder(DataMapSync.Fragment::read)
+                .consumerMainThread((fragment, context) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                        () -> () -> ClientDataMapSync.receive(context.get().getNetworkManager(), fragment)))
+                .add();
+    }
+
+    public static void sendDataMapFragment(Connection connection, DataMapSync.Fragment fragment) {
+        CHANNEL.sendTo(fragment, connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     private PayloadNetwork() {}
