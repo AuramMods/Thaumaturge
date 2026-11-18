@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.carrier;
 
+import com.leclowndu93150.thaumaturge.content.entity.ProjectileSpawnOwner;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.content.spell.world.SpellTargeting;
@@ -10,7 +11,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -22,9 +25,10 @@ import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.network.NetworkHooks;
 
-public final class SpellMine extends ThrowableProjectile implements IEntityWithComplexSpawn {
+public final class SpellMine extends ThrowableProjectile implements IEntityAdditionalSpawnData {
     private static final EntityDataAccessor<Boolean> ARMED =
             SynchedEntityData.defineId(SpellMine.class, EntityDataSerializers.BOOLEAN);
     private static final int LIFESPAN = 1200;
@@ -77,12 +81,19 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
     }
 
     @Override
-    public void writeSpawnData(RegistryFriendlyByteBuf buffer) {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    @Override
+    public void writeSpawnData(FriendlyByteBuf buffer) {
+        ProjectileSpawnOwner.write(buffer, this);
         charge.writeLook(buffer);
     }
 
     @Override
-    public void readSpawnData(RegistryFriendlyByteBuf buffer) {
+    public void readSpawnData(FriendlyByteBuf buffer) {
+        ProjectileSpawnOwner.read(buffer, this);
         charge.readLook(buffer);
     }
 

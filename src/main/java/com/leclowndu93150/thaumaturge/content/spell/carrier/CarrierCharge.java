@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.content.spell.delivery.SpellLook;
 import java.util.List;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import org.jspecify.annotations.Nullable;
 
@@ -45,11 +45,11 @@ public final class CarrierCharge {
         look = payload != null ? payload.look() : SpellLook.DEFAULT;
     }
 
-    public void writeLook(RegistryFriendlyByteBuf buffer) {
+    public void writeLook(FriendlyByteBuf buffer) {
         SpellLook.STREAM_CODEC.encode(buffer, look);
     }
 
-    public void readLook(RegistryFriendlyByteBuf buffer) {
+    public void readLook(FriendlyByteBuf buffer) {
         look = SpellLook.STREAM_CODEC.decode(buffer);
     }
 }

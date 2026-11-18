@@ -2,20 +2,22 @@ package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.particle.BubbleParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
-public final class EntityFollowingItem extends ItemEntity implements IEntityWithComplexSpawn {
+public final class EntityFollowingItem extends ItemEntity implements IEntityAdditionalSpawnData {
     private static final int NO_COLLECTOR = -1;
     private static final int ACCELERATION_TICKS = 20;
     private static final double ARRIVAL_RADIUS = 0.5;
@@ -78,7 +80,7 @@ public final class EntityFollowingItem extends ItemEntity implements IEntityWith
     }
 
     private void trailBubble() {
-        RandomSource random = getRandom();
+        RandomSource random = this.random;
         BubbleParticleOptions bubble = new BubbleParticleOptions(
                 BUBBLE_COLOR,
                 1.0F,
@@ -97,17 +99,22 @@ public final class EntityFollowingItem extends ItemEntity implements IEntityWith
     }
 
     @Override
-    public boolean ignoreExplosion(Explosion explosion) {
+    public boolean ignoreExplosion() {
         return true;
     }
 
     @Override
-    public void writeSpawnData(RegistryFriendlyByteBuf buffer) {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    @Override
+    public void writeSpawnData(FriendlyByteBuf buffer) {
         ByteBufCodecs.VAR_INT.encode(buffer, collector == null ? NO_COLLECTOR : collector.getId());
     }
 
     @Override
-    public void readSpawnData(RegistryFriendlyByteBuf buffer) {
+    public void readSpawnData(FriendlyByteBuf buffer) {
         int collectorId = ByteBufCodecs.VAR_INT.decode(buffer);
         follow(collectorId == NO_COLLECTOR ? null : level().getEntity(collectorId));
     }

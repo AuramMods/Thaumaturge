@@ -7,7 +7,9 @@ import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -18,9 +20,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.network.NetworkHooks;
 
-public final class EntityFallingTaint extends Entity implements IEntityWithComplexSpawn, ISidedHurt {
+public final class EntityFallingTaint extends Entity implements IEntityAdditionalSpawnData, ISidedHurt {
 
     private static final int MAX_HANG_TIME = 100;
     private static final int MAX_FALL_TIME = 600;
@@ -146,13 +149,18 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
     }
 
     @Override
-    public void writeSpawnData(RegistryFriendlyByteBuf buf) {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    @Override
+    public void writeSpawnData(FriendlyByteBuf buf) {
         buf.writeVarInt(Block.getId(fallTile));
         buf.writeBlockPos(originPos);
     }
 
     @Override
-    public void readSpawnData(RegistryFriendlyByteBuf buf) {
+    public void readSpawnData(FriendlyByteBuf buf) {
         fallTile = Block.stateById(buf.readVarInt());
         originPos = buf.readBlockPos();
     }

@@ -3,7 +3,9 @@ package com.leclowndu93150.thaumaturge.content.spell.carrier;
 import java.util.UUID;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -11,10 +13,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractSpellCarrier extends Entity implements TraceableEntity, IEntityWithComplexSpawn {
+public abstract class AbstractSpellCarrier extends Entity implements TraceableEntity, IEntityAdditionalSpawnData {
     private static final String OWNER_KEY = "owner";
     private static final String AGE_KEY = "age";
     private static final String LIFETIME_KEY = "lifetime";
@@ -55,12 +58,17 @@ public abstract class AbstractSpellCarrier extends Entity implements TraceableEn
     }
 
     @Override
-    public void writeSpawnData(RegistryFriendlyByteBuf buffer) {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    @Override
+    public void writeSpawnData(FriendlyByteBuf buffer) {
         charge.writeLook(buffer);
     }
 
     @Override
-    public void readSpawnData(RegistryFriendlyByteBuf buffer) {
+    public void readSpawnData(FriendlyByteBuf buffer) {
         charge.readLook(buffer);
     }
 

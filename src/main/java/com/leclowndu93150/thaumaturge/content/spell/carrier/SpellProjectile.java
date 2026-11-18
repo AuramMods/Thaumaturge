@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.carrier;
 
+import com.leclowndu93150.thaumaturge.content.entity.ProjectileSpawnOwner;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellStats;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.content.spell.world.SpellTargeting;
@@ -10,7 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.nbt.CompoundTag;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -24,10 +27,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
-public final class SpellProjectile extends ThrowableProjectile implements IEntityWithComplexSpawn {
+public final class SpellProjectile extends ThrowableProjectile implements IEntityAdditionalSpawnData {
     private static final String GRAVITY_KEY = "gravity";
     private static final String SPLASH_KEY = "splash";
     private static final String HOMING_KEY = "homing";
@@ -94,7 +98,13 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
     }
 
     @Override
-    public void writeSpawnData(RegistryFriendlyByteBuf buffer) {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    @Override
+    public void writeSpawnData(FriendlyByteBuf buffer) {
+        ProjectileSpawnOwner.write(buffer, this);
         charge.writeLook(buffer);
         buffer.writeDouble(gravity);
         buffer.writeBoolean(homing);
@@ -102,7 +112,8 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
     }
 
     @Override
-    public void readSpawnData(RegistryFriendlyByteBuf buffer) {
+    public void readSpawnData(FriendlyByteBuf buffer) {
+        ProjectileSpawnOwner.read(buffer, this);
         charge.readLook(buffer);
         gravity = buffer.readDouble();
         homing = buffer.readBoolean();
