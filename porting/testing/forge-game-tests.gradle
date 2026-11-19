@@ -1,4 +1,5 @@
-def profile = layout.buildDirectory.dir('forge-game-tests/server')
+def profileName = providers.gradleProperty('portIntegrations').isPresent() ? 'with-integrations' : 'required-mods'
+def profile = layout.buildDirectory.dir("forge-game-tests/${profileName}")
 def report = layout.buildDirectory.file('test-results/forgeGameTest/TEST-world.xml')
 
 sourceSets {

@@ -90,17 +90,20 @@ public final class EssentiaGameTests {
                 "Jar placement lost its label or contents");
 
         test.assertTrue(test.getLevel().destroyBlock(test.absolutePos(JAR), true), "Jar break failed");
-        var drops = test.getEntities(EntityType.ITEM, JAR, 1.5);
-        test.assertTrue(drops.size() == 1, "Expected exactly one jar drop");
-        ItemStack dropped = drops.get(0).getItem();
-        test.assertTrue(dropped.is(TTItems.JAR_NORMAL.get()) && dropped.getCount() == 1, "Wrong jar drop");
-        test.assertTrue(TTAspects.ORDO.equals(ItemData.get(dropped, TTDataComponents.ASPECT_FILTER.get())),
-                "Broken jar lost its label");
-        var contents = ItemData.get(dropped, TTDataComponents.ESSENTIA_CONTENTS.get());
-        test.assertTrue(contents != null && contents.totalAmount() == 19
-                        && contents.contents().entries().get(0).aspect() == order,
-                "Broken jar lost the registered aspect or its amount");
-        test.succeed();
+        test.succeedWhen(() -> {
+            var items = test.getEntities(EntityType.ITEM, JAR, 1.5);
+            var drops = items.stream().map(entity -> entity.getItem())
+                    .filter(stack -> stack.is(TTItems.JAR_NORMAL.get())).toList();
+            test.assertTrue(drops.size() == 1 && drops.get(0).getCount() == 1,
+                    "Expected exactly one jar drop among " + items.stream().map(entity -> entity.getItem()).toList());
+            ItemStack dropped = drops.get(0);
+            test.assertTrue(TTAspects.ORDO.equals(ItemData.get(dropped, TTDataComponents.ASPECT_FILTER.get())),
+                    "Broken jar lost its label");
+            var contents = ItemData.get(dropped, TTDataComponents.ESSENTIA_CONTENTS.get());
+            test.assertTrue(contents != null && contents.totalAmount() == 19
+                            && contents.contents().entries().get(0).aspect() == order,
+                    "Broken jar lost the registered aspect or its amount");
+        });
     }
 
     @GameTest(template = ROOM, timeoutTicks = 160)

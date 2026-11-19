@@ -3,8 +3,11 @@ package com.leclowndu93150.thaumaturge.testing;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
+import com.leclowndu93150.thaumaturge.content.aura.AuraManager;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.content.workbench.BlockEntityArcaneWorkbench;
@@ -12,6 +15,7 @@ import com.leclowndu93150.thaumaturge.content.workbench.MenuArcaneWorkbench;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTWandParts;
 import com.mojang.authlib.GameProfile;
@@ -22,15 +26,23 @@ import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.WrittenBookItem;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
@@ -40,6 +52,9 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 public final class ResearchGameTests {
     private static final String ROOM = "essentia_room";
     private static final BlockPos CENTER = new BlockPos(2, 1, 2);
+    private static final BlockPos BOOKCASE = CENTER.east();
+    private static final BlockPos BED = CENTER.west();
+    private static final InteractionHand DUST_HAND = InteractionHand.OFF_HAND;
 
     private ResearchGameTests() {}
 
@@ -47,28 +62,12 @@ public final class ResearchGameTests {
     public static void crystalPickupAndWakeAwardJournalOnce(GameTestHelper test) {
         var player = survivalPlayer(test);
         var research = PlayerResearchAccess.of(player);
-        var order = Objects.requireNonNull(Aspects.resolve(test.getLevel(), TTAspects.ORDO));
-        var crystal = new ItemStack(TTItems.ESSENTIA_CRYSTAL.get());
-        ItemData.set(crystal, TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(order, 1));
-
         test.assertFalse(research.knows(TTIds.rl("gotcrystals")), "New player already knew the crystal discovery");
-        var expectedCrystal = crystal.copy();
-        var drop = new ItemEntity(test.getLevel(), player.getX(), player.getY(), player.getZ(), crystal);
-        drop.setNoPickUpDelay();
-        test.getLevel().addFreshEntity(drop);
-        drop.playerTouch(player);
-        test.assertTrue(drop.isRemoved() && player.getInventory().contains(expectedCrystal),
-                "Native item pickup did not move the crystal to the inventory");
+        pickUpCrystal(test, player);
         test.assertTrue(research.hasCompleted(TTIds.rl("gotcrystals")), "Crystal pickup did not complete the discovery");
         test.assertFalse(research.knows(TTIds.rl("gotdream")), "Dream unlocked before waking");
 
-        var bed = Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH);
-        test.setBlock(CENTER.below(), Blocks.SMOOTH_STONE);
-        test.setBlock(CENTER.south().below(), Blocks.SMOOTH_STONE);
-        test.setBlock(CENTER.south(), bed.setValue(BedBlock.PART, BedPart.FOOT));
-        test.setBlock(CENTER, bed.setValue(BedBlock.PART, BedPart.HEAD));
-        player.startSleeping(test.absolutePos(CENTER));
-        player.stopSleepInBed(true, true);
+        wakeInBed(test, player);
         test.assertTrue(research.hasCompleted(TTIds.rl("gotdream")), "Waking did not complete the dream research");
         ItemStack journal = player.getInventory().items.stream()
                 .filter(stack -> stack.is(Items.WRITTEN_BOOK))
@@ -80,8 +79,7 @@ public final class ResearchGameTests {
                         && contents.getList(WrittenBookItem.TAG_PAGES, Tag.TAG_STRING).size() == 3,
                 "Dream journal did not contain a valid title, author and three pages");
 
-        player.startSleeping(test.absolutePos(CENTER));
-        player.stopSleepInBed(true, true);
+        wakeInBed(test, player);
         test.assertTrue(player.getInventory().countItem(Items.WRITTEN_BOOK) == 1, "Waking again duplicated the journal");
         test.succeed();
     }
@@ -118,6 +116,152 @@ public final class ResearchGameTests {
             menu.removed(player);
         }
         test.succeed();
+    }
+
+    @GameTest(template = ROOM, timeoutTicks = 180)
+    public static void firstStepsUnlockTheThaumometer(GameTestHelper test) {
+        var player = survivalPlayer(test);
+        var research = PlayerResearchAccess.of(player);
+        var firstSteps = TTIds.rl("first_steps");
+        var dust = craftSalisMundus(test, player);
+        player.setItemInHand(DUST_HAND, dust);
+        test.setBlock(BOOKCASE, Blocks.BOOKSHELF);
+
+        test.assertFalse(ResearchManager.unlockRequested(player, firstSteps), "First Steps unlocked without the book");
+        test.assertTrue(!useDust(test, player, BOOKCASE).consumesAction() && dust.getCount() == 2,
+                "The bookshelf recipe consumed dust before the dream");
+        pickUpCrystal(test, player);
+        wakeInBed(test, player);
+        test.assertTrue(useDust(test, player, BOOKCASE).consumesAction() && dust.getCount() == 1,
+                "The bookshelf recipe did not consume one dust after the dream");
+
+        test.startSequence().thenWaitUntil(() -> {
+            test.assertTrue(test.getBlockState(BOOKCASE).isAir(), "Waiting for the bookshelf transformation");
+            var books = test.getEntities(TTEntities.SPECIAL_ITEM.get(), BOOKCASE, 1.5);
+            test.assertTrue(books.size() == 1 && books.get(0).getItem().is(TTItems.THAUMONOMICON.get()),
+                    "The bookshelf did not yield one Thaumonomicon");
+            var book = books.get(0);
+            book.setNoPickUpDelay();
+            book.playerTouch(player);
+            test.assertTrue(research.hasCompleted(TTIds.rl("gotthaumonomicon")),
+                    "Picking up the Thaumonomicon did not unlock its research");
+        }).thenExecute(() -> {
+            test.assertTrue(ResearchManager.unlockRequested(player, firstSteps), "The Thaumonomicon did not unlock First Steps");
+            test.assertFalse(ResearchManager.advanceStage(player, firstSteps), "First Steps advanced without a workbench");
+            test.assertTrue(useDust(test, player, CENTER).consumesAction() && dust.isEmpty(),
+                    "The crafting table recipe did not consume one dust");
+        }).thenWaitUntil(() -> {
+            test.assertTrue(test.getBlockState(CENTER).is(TTBlocks.ARCANE_WORKBENCH.get()),
+                    "Waiting for the crafting table transformation");
+        }).thenExecute(() -> craftThaumometer(test, player)).thenSucceed();
+    }
+
+    private static ItemStack craftSalisMundus(GameTestHelper test, FakePlayer player) {
+        test.setBlock(CENTER, Blocks.CRAFTING_TABLE);
+        var inventory = player.getInventory();
+        var menu = new CraftingMenu(1, inventory,
+                ContainerLevelAccess.create(test.getLevel(), test.absolutePos(CENTER)));
+        try {
+            menu.getSlot(1).set(new ItemStack(Items.BOWL));
+            menu.getSlot(2).set(new ItemStack(Items.FLINT));
+            menu.getSlot(3).set(new ItemStack(Items.REDSTONE, 2));
+            menu.getSlot(4).set(crystal(test, TTAspects.AER, 2));
+            menu.getSlot(5).set(crystal(test, TTAspects.IGNIS, 2));
+            menu.getSlot(6).set(crystal(test, TTAspects.AER, 2));
+            test.assertTrue(menu.getSlot(0).getItem().isEmpty(), "Salis Mundus accepted duplicate aspects");
+            menu.getSlot(6).set(crystal(test, TTAspects.AQUA, 2));
+            test.assertTrue(menu.getSlot(0).getItem().is(TTItems.SALIS_MUNDUS.get()),
+                    "Three different crystals did not produce a Salis Mundus preview");
+            menu.clicked(0, 0, ClickType.QUICK_MOVE, player);
+            test.assertTrue(inventory.countItem(TTItems.SALIS_MUNDUS.get()) == 2, "Expected two crafted dusts");
+            test.assertTrue(menu.getSlot(1).getItem().is(Items.BOWL) && menu.getSlot(2).getItem().is(Items.FLINT),
+                    "Crafting did not return the bowl and flint");
+            int slot = inventory.findSlotMatchingItem(new ItemStack(TTItems.SALIS_MUNDUS.get()));
+            return inventory.removeItem(slot, 2);
+        } finally {
+            menu.removed(player);
+        }
+    }
+
+    private static void craftThaumometer(GameTestHelper test, FakePlayer player) {
+        var workbench = (BlockEntityArcaneWorkbench) test.getBlockEntity(CENTER);
+        var grid = workbench.getInventory();
+        var menu = (MenuArcaneWorkbench) workbench.createMenu(2, player.getInventory(), player);
+        var aura = Objects.requireNonNull(AuraManager.chunkAt(test.getLevel(), workbench.getBlockPos()));
+        float originalVis = aura.getVis();
+        try {
+            aura.setVis(100);
+            for (int slot : new int[] {1, 3, 5, 7}) {
+                grid.setItem(slot, new ItemStack(Items.GOLD_INGOT));
+            }
+            grid.setItem(4, new ItemStack(Items.GLASS_PANE));
+            for (int index = 0; index < MenuArcaneWorkbench.PRIMAL_ORDER.size(); index++) {
+                grid.setItem(MenuArcaneWorkbench.CRYSTAL_SLOT_START + index,
+                        crystal(test, MenuArcaneWorkbench.PRIMAL_ORDER.get(index), 1));
+            }
+            var madeThaumometer = ResearchManager.craftedKey(TTIds.rl("thaumometer"));
+            var research = PlayerResearchAccess.of(player);
+            menu.clicked(0, 0, ClickType.PICKUP, player);
+            test.assertTrue(menu.getSlot(0).getItem().isEmpty() && menu.getCarried().isEmpty()
+                            && aura.getVis() == 100 && !research.knows(madeThaumometer),
+                    "The research-locked recipe previewed, consumed vis, or awarded credit");
+
+            var firstSteps = TTIds.rl("first_steps");
+            test.assertTrue(ResearchManager.advanceStage(player, firstSteps) && research.stageOf(firstSteps) == 1,
+                    "Transforming the crafting table did not satisfy the First Steps requirement");
+            aura.setVis(24);
+            menu.slotsChanged(grid);
+            test.assertTrue(menu.getSlot(0).getItem().isEmpty() && aura.getVis() == 24,
+                    "The workbench offered a crystal-funded craft with less than 25 vis");
+            AuraHelper.addVis(test.getLevel(), workbench.getBlockPos(), 1);
+            menu.slotsChanged(grid);
+            test.assertTrue(menu.getSlot(0).getItem().is(TTItems.THAUMOMETER.get()) && aura.getVis() == 25,
+                    "The unlocked preview did not appear at 25 vis or charged the preview");
+
+            menu.clicked(0, 0, ClickType.PICKUP, player);
+            test.assertTrue(menu.getCarried().is(TTItems.THAUMOMETER.get()) && menu.getCarried().getCount() == 1,
+                    "The unlocked recipe did not yield one Thaumometer");
+            test.assertTrue(grid.isEmpty() && aura.getVis() == 0 && research.knows(madeThaumometer),
+                    "The craft did not consume its ingredients, all six crystals and exactly 25 vis or record research");
+            test.assertFalse(ResearchManager.advanceStage(player, firstSteps), "First Steps completed without observations");
+        } finally {
+            aura.setVis(originalVis);
+            menu.removed(player);
+        }
+    }
+
+    private static InteractionResult useDust(GameTestHelper test, FakePlayer player, BlockPos target) {
+        BlockPos pos = test.absolutePos(target);
+        var hit = new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false);
+        return player.getItemInHand(DUST_HAND).useOn(new UseOnContext(player, DUST_HAND, hit));
+    }
+
+    private static void pickUpCrystal(GameTestHelper test, FakePlayer player) {
+        var crystal = crystal(test, TTAspects.ORDO, 1);
+        var expected = crystal.copy();
+        var drop = new ItemEntity(test.getLevel(), player.getX(), player.getY(), player.getZ(), crystal);
+        drop.setNoPickUpDelay();
+        test.getLevel().addFreshEntity(drop);
+        drop.playerTouch(player);
+        test.assertTrue(drop.isRemoved() && player.getInventory().contains(expected),
+                "Native item pickup did not move the crystal to the inventory");
+    }
+
+    private static ItemStack crystal(GameTestHelper test, ResourceKey<IAspect> aspect, int count) {
+        var holder = Objects.requireNonNull(Aspects.resolve(test.getLevel(), aspect));
+        var crystal = new ItemStack(TTItems.ESSENTIA_CRYSTAL.get(), count);
+        ItemData.set(crystal, TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(holder, 1));
+        return crystal;
+    }
+
+    private static void wakeInBed(GameTestHelper test, FakePlayer player) {
+        var bed = Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH);
+        test.setBlock(BED.below(), Blocks.SMOOTH_STONE);
+        test.setBlock(BED.south().below(), Blocks.SMOOTH_STONE);
+        test.setBlock(BED.south(), bed.setValue(BedBlock.PART, BedPart.FOOT));
+        test.setBlock(BED, bed.setValue(BedBlock.PART, BedPart.HEAD));
+        player.startSleeping(test.absolutePos(BED));
+        player.stopSleepInBed(true, true);
     }
 
     private static FakePlayer survivalPlayer(GameTestHelper test) {
