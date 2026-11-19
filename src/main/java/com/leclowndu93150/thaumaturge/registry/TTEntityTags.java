@@ -9,6 +9,10 @@ import net.minecraft.world.entity.EntityType;
 public final class TTEntityTags {
     public static final TagKey<EntityType<?>> UNDEAD = TagKey.create(
             Registries.ENTITY_TYPE, ResourceLocation.withDefaultNamespace("undead"));
+    public static final TagKey<EntityType<?>> ASPECT_ARMADILLO = key("aspect/armadillo");
+    public static final TagKey<EntityType<?>> ASPECT_BOGGED = key("aspect/bogged");
+    public static final TagKey<EntityType<?>> ASPECT_BREEZE = key("aspect/breeze");
+    public static final TagKey<EntityType<?>> SCAN_FIREBALL = key("scan/fireball");
     public static final TagKey<EntityType<?>> TAINT_CONVERSION_IMMUNE = key("taint_conversion/immune");
     public static final TagKey<EntityType<?>> SABLE_RETAIN_IN_SUB_LEVEL = TagKey.create(
             Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(TTIds.SABLE, "retain_in_sub_level"));

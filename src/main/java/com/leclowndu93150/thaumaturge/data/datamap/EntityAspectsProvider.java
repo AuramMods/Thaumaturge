@@ -4,7 +4,9 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectDataMaps;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntityTags;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
@@ -12,7 +14,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
-import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
 
 public final class EntityAspectsProvider extends DataMapProvider {
     private HolderGetter<IAspect> aspects;
@@ -167,12 +168,11 @@ public final class EntityAspectsProvider extends DataMapProvider {
                 b,
                 EntityType.SNIFFER,
                 list(TTAspects.BESTIA, 15, TTAspects.HERBA, 10, TTAspects.SENSUS, 10, TTAspects.TERRA, 5));
-        add(b, EntityType.ARMADILLO, list(TTAspects.BESTIA, 8, TTAspects.PRAEMUNIO, 5, TTAspects.TERRA, 3));
-        add(b, EntityType.BOGGED, list(TTAspects.EXANIMIS, 20, TTAspects.HUMANUS, 5, TTAspects.HERBA, 5));
-        add(
-                b,
-                EntityType.BREEZE,
-                list(TTAspects.AER, 15, TTAspects.MOTUS, 10, TTAspects.POTENTIA, 5, TTAspects.PRAECANTATIO, 3));
+        b.add(TTEntityTags.ASPECT_ARMADILLO,
+                list(TTAspects.BESTIA, 8, TTAspects.PRAEMUNIO, 5, TTAspects.TERRA, 3), false);
+        b.add(TTEntityTags.ASPECT_BOGGED, list(TTAspects.EXANIMIS, 20, TTAspects.HUMANUS, 5, TTAspects.HERBA, 5), false);
+        b.add(TTEntityTags.ASPECT_BREEZE,
+                list(TTAspects.AER, 15, TTAspects.MOTUS, 10, TTAspects.POTENTIA, 5, TTAspects.PRAECANTATIO, 3), false);
         add(b, EntityType.ZOMBIE_VILLAGER, list(TTAspects.EXANIMIS, 20, TTAspects.HUMANUS, 15, TTAspects.TERRA, 5));
 
         add(

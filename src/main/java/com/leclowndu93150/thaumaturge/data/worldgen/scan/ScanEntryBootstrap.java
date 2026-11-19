@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.research.scan.ScanEntry;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntityTags;
 import com.leclowndu93150.thaumaturge.registry.TTItemTags;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
@@ -200,20 +201,7 @@ public final class ScanEntryBootstrap {
                         EntityType.SPECTRAL_ARROW,
                         EntityType.TRIDENT,
                         TTEntities.GOLEM_DART.get()));
-        register(
-                ctx,
-                "f_fireball",
-                "f_fireball",
-                null,
-                null,
-                entities(
-                        entityReg,
-                        EntityType.FIREBALL,
-                        EntityType.SMALL_FIREBALL,
-                        EntityType.DRAGON_FIREBALL,
-                        EntityType.WITHER_SKULL,
-                        EntityType.WIND_CHARGE,
-                        EntityType.BREEZE_WIND_CHARGE));
+        register(ctx, "f_fireball", "f_fireball", null, null, entityReg.getOrThrow(TTEntityTags.SCAN_FIREBALL));
         register(ctx, "f_spit", "f_spit", null, null, entities(entityReg, EntityType.LLAMA_SPIT));
         register(ctx, "f_voidseed", "f_voidseed", null, items(itemReg, TTItems.VOID_SEED.get()), null);
         register(
