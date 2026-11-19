@@ -95,6 +95,7 @@
     "client.renderer.entity.LivingEntityRenderScaleMixin",
     "client.renderer.entity.ItemRendererArmorDyeMixin",
     "client.renderer.entity.layers.HumanoidArmorLayerMixin",
+    "client.renderer.texture.SpriteSourcesMixin",
     "client.renderer.entity.EntityShadowScaleMixin"
   ],
   "injectors": {
