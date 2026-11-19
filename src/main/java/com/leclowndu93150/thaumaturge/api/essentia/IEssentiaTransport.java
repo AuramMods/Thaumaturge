@@ -29,7 +29,7 @@ import org.jspecify.annotations.Nullable;
  *     accept a {@code null} side for those four queries.
  * @since 1.0.0
  * @deprecated Implement {@link IEssentiaConduit} instead and expose it through {@link
- *     EssentiaCapabilities#registerConduit}. This interface is removed in 2.0.
+ *     EssentiaCapabilities#exposeConduit}. This interface is removed in 2.0.
  */
 @Deprecated(since = "1.1.0", forRemoval = true)
 public interface IEssentiaTransport extends IEssentiaConduit {

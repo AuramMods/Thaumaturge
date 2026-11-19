@@ -80,6 +80,12 @@ writes the summary and XML to `build/test-results/forgeOriginalTest`, and closes
 the client. Gradle treats failed, skipped or aborted cases and an empty suite as
 a failed test run. The launcher and its dependencies live in test source sets.
 
+To run the build and its verification tasks after datagen, use
+`./gradlew -PportHiddenWindow -PportIntegrations build`. Gradle's `check` task
+uses the original Forge client suite, the headless GameTests and both focused
+Forge suites. On a machine without a display, run the build under Xvfb with
+software OpenGL as the CI workflow does.
+
 ## In-world Forge GameTests
 
 ```sh

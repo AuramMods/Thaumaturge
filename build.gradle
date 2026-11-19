@@ -641,6 +641,10 @@ tasks.withType(Test).configureEach {
     systemProperty 'thaumaturge.testResourceRoot', file('src/main/resources').absolutePath
 }
 
+tasks.named('javadoc', Javadoc) {
+    options.tags('apiNote:a:API Note:', 'implNote:a:Implementation Note:')
+}
+
 tasks.named('compilePortMixinsJava', JavaCompile) {
     dependsOn 'createMcpToSrg'
     options.compilerArgs.addAll([
@@ -764,6 +768,14 @@ apply from: 'porting/testing/forge-tests.gradle'
 apply from: 'porting/testing/forge-original-tests.gradle'
 apply from: 'porting/testing/forge-game-tests.gradle'
 
+tasks.named('check') {
+    // The original suite needs Forge's loaded game classpath and registries.
+    setDependsOn(dependsOn.findAll { dependency ->
+        !(dependency instanceof Provider && dependency.orNull instanceof JvmTestSuite
+                && dependency.orNull.name == 'test')
+    })
+    dependsOn 'runForgeOriginalTestClient', 'runGameTestServer', 'runForgePortTests', 'runForgePortClientTests'
+}
 
 tasks.register('generateColorReference', JavaExec) {
     dependsOn tasks.named('portDfuReferenceClasses')
