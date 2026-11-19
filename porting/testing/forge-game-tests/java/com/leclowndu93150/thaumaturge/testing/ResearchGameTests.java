@@ -419,7 +419,7 @@ public final class ResearchGameTests {
         player.stopSleepInBed(true, true);
     }
 
-    private static FakePlayer survivalPlayer(GameTestHelper test) {
+    static FakePlayer survivalPlayer(GameTestHelper test) {
         var player = new FakePlayer(test.getLevel(), new GameProfile(UUID.randomUUID(), "ThaumaturgeTest"));
         player.setGameMode(GameType.SURVIVAL);
         var spawn = test.absolutePos(CENTER.north());
