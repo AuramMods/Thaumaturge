@@ -1,31 +1,29 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
-import com.leclowndu93150.thaumaturge.datamap.DataMaps;
-
-import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
-import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.warp.ItemWarp;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
 import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
+import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import java.util.Set;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class WarpEventHandler {
@@ -50,8 +48,7 @@ public final class WarpEventHandler {
         if (!entity.isUsingItem() || !entity.getUseItem().is(Items.MILK_BUCKET)) {
             return;
         }
-        ResourceLocation id =
-                event.getEffect().unwrapKey().map(ResourceKey::location).orElse(null);
+        ResourceLocation id = ForgeRegistries.MOB_EFFECTS.getKey(event.getEffect());
         if (id != null && MILK_PROOF_EFFECTS.contains(id)) {
             event.setCanceled(true);
         }
@@ -100,7 +97,7 @@ public final class WarpEventHandler {
             }
         }
         MobEffectInstance hunger = player.getEffect(TTMobEffects.UNNATURAL_HUNGER.get());
-        if (hunger == null || used.get(DataComponents.FOOD) == null) {
+        if (hunger == null || used.getFoodProperties(player) == null) {
             return;
         }
         if (used.is(Items.ROTTEN_FLESH) || used.is(TTItems.BRAIN.get())) {

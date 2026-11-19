@@ -31,7 +31,7 @@ public class ItemSanitySoap extends Item {
     }
 
     @Override
-    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+    public int getUseDuration(ItemStack stack) {
         return USE_DURATION_TICKS;
     }
 
@@ -48,7 +48,7 @@ public class ItemSanitySoap extends Item {
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingTicks) {
-        if (getUseDuration(stack, entity) - remainingTicks > FINISH_THRESHOLD_TICKS) {
+        if (getUseDuration(stack) - remainingTicks > FINISH_THRESHOLD_TICKS) {
             entity.releaseUsingItem();
         }
         if (level.isClientSide()) {
@@ -69,7 +69,7 @@ public class ItemSanitySoap extends Item {
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        int used = getUseDuration(stack, entity) - timeLeft;
+        int used = getUseDuration(stack) - timeLeft;
         if (used <= FINISH_THRESHOLD_TICKS || !(entity instanceof Player)) {
             return;
         }
