@@ -82,7 +82,7 @@ public final class ThaumometerLensRenderer {
     public static void submitReadout(
             Minecraft minecraft, AbstractClientPlayer player, PoseStack poseStack, MultiBufferSource buffers) {
         ClientLevel level = minecraft.level;
-        if (level == null) {
+        if (level == null || player.isRemoved()) {
             return;
         }
         ScanTarget target = ThaumometerItem.resolveTarget(level, player);

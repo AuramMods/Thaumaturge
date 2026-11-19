@@ -30,7 +30,7 @@ public final class ResearchToastEvents {
     public static void onClientTick(ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null || ++tickCounter < CHECK_INTERVAL_TICKS) {
+        if (mc.player == null || mc.player.isRemoved() || mc.level == null || ++tickCounter < CHECK_INTERVAL_TICKS) {
             return;
         }
         tickCounter = 0;

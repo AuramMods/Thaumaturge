@@ -18,7 +18,8 @@ public final class ResearchSyncEvents {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        if (!(event.player instanceof ServerPlayer player)) {
+        // Forge can finish a player tick after removal invalidates the capability.
+        if (!(event.player instanceof ServerPlayer player) || player.isRemoved()) {
             return;
         }
         if (AttachmentData.get(player, TTAttachments.KNOWLEDGE).takeSyncPending()) {

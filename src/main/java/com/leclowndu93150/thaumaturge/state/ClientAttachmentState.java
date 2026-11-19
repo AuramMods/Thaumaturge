@@ -15,7 +15,7 @@ final class ClientAttachmentState {
         var level = Minecraft.getInstance().level;
         if (level == null) return;
         var owner = level.getEntity(payload.entityId());
-        if (owner == null) return; // A queued update can outlive tracking of its entity.
+        if (owner == null || owner.isRemoved()) return; // A queued update can outlive the entity's capability.
         AttachmentKey<?> key = AttachmentData.registry().get(payload.key());
         if (key == null || key.syncCodec() == null) {
             throw new DecoderException("Unknown synchronized state " + payload.key());

@@ -54,7 +54,7 @@ public final class GogglesWorldOverlay {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.player == null || mc.options.hideGui) {
+        if (mc.level == null || mc.player == null || mc.player.isRemoved() || mc.options.hideGui) {
             return;
         }
         if (!GogglesAccess.wearsRevealingGear(mc.player)) {

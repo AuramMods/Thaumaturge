@@ -57,7 +57,7 @@ public final class WarpEventHandler {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        if (!(event.player instanceof ServerPlayer player)) {
+        if (!(event.player instanceof ServerPlayer player) || player.isRemoved()) {
             return;
         }
         if (!ThaumaturgeCommonConfig.WUSS_MODE.get()

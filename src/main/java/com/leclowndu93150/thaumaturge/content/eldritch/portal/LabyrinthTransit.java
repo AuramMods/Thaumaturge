@@ -34,6 +34,9 @@ public final class LabyrinthTransit {
     private LabyrinthTransit() {}
 
     public static void touch(ServerLevel level, ServerPlayer player, Optional<PortalLink> link) {
+        if (!player.isAlive()) {
+            return;
+        }
         TransitState state = AttachmentData.get(player, TTAttachments.LABYRINTH_TRANSIT);
         long now = level.getGameTime();
         if (now < state.cooldownUntil()) {
@@ -84,6 +87,9 @@ public final class LabyrinthTransit {
     }
 
     static void tick(ServerPlayer player) {
+        if (player.isRemoved()) {
+            return;
+        }
         TransitState state = AttachmentData.getExistingDataOrNull(player, TTAttachments.LABYRINTH_TRANSIT);
         if (state == null) {
             return;
@@ -144,6 +150,9 @@ public final class LabyrinthTransit {
     }
 
     public static void abandon(ServerPlayer player) {
+        if (player.isRemoved()) {
+            return;
+        }
         TransitState state = AttachmentData.getExistingDataOrNull(player, TTAttachments.LABYRINTH_TRANSIT);
         if (state != null) {
             release(player.level().getServer(), player.getUUID(), state);

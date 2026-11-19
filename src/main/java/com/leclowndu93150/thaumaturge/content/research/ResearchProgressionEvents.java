@@ -204,7 +204,7 @@ public final class ResearchProgressionEvents {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        if (!(event.player instanceof ServerPlayer player)) return;
+        if (!(event.player instanceof ServerPlayer player) || player.isRemoved()) return;
         if (player.tickCount == 0) return;
         PlayerKnowledge knowledge = (PlayerKnowledge) PlayerResearchAccess.of(player);
         boolean auromancyInProgress = knowledge.knows(UNLOCK_AUROMANCY)

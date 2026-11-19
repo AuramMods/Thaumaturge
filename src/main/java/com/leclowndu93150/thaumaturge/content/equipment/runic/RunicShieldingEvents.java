@@ -28,7 +28,7 @@ public final class RunicShieldingEvents {
     public static void onPlayerTick(PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         Player entity = event.player;
-        if (!entity.isSpectator()) {
+        if (!entity.isRemoved() && !entity.isSpectator()) {
             tickShield(entity);
         }
     }

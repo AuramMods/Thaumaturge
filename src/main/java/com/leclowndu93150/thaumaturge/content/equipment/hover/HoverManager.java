@@ -27,7 +27,7 @@ public final class HoverManager {
     private HoverManager() {}
 
     public static boolean isHovering(Player player) {
-        return AttachmentData.get(player, TTAttachments.HOVERING);
+        return !player.isRemoved() && AttachmentData.get(player, TTAttachments.HOVERING);
     }
 
     public static ItemStack wornHoverGear(Player player) {
@@ -46,6 +46,9 @@ public final class HoverManager {
     }
 
     public static void toggle(ServerPlayer player) {
+        if (player.isRemoved()) {
+            return;
+        }
         ItemStack worn = wornHoverGear(player);
         if (!(worn.getItem() instanceof IHoverGear gear)) {
             return;

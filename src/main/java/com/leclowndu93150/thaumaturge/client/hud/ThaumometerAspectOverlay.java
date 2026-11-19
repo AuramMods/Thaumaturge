@@ -54,7 +54,7 @@ public final class ThaumometerAspectOverlay {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.player == null || mc.options.hideGui) {
+        if (mc.level == null || mc.player == null || mc.player.isRemoved() || mc.options.hideGui) {
             return;
         }
         if (!holdsThaumometer(mc.player) || mc.options.getCameraType().isFirstPerson()) {
