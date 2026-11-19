@@ -29,8 +29,9 @@ public record ConnectedCornersModel(ResourceLocation sprites, ResourceLocation p
             ModelBaker models,
             Function<Material, TextureAtlasSprite> sprites,
             ModelState modelState,
-            ItemOverrides overrides) {
-        ConnectedBakeContext baker = new ConnectedBakeContext(models, sprites);
+            ItemOverrides overrides,
+            ResourceLocation modelLocation) {
+        ConnectedBakeContext baker = new ConnectedBakeContext(modelLocation, sprites);
         return new ConnectedBlockStateModel(
                 CornerFaceQuads.bake(baker, sprites()),
                 ConnectedQuads.EMPTY,

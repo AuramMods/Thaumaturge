@@ -70,7 +70,8 @@ public final class ConnectedQuadBaker {
                 BlockElementFace.NO_TINT,
                 material.contents().name().toString(),
                 new BlockFaceUV(new float[] {uvs.minU(), uvs.minV(), uvs.maxU(), uvs.maxV()}, 0));
-        return new FaceBakery().bakeQuad(from, to, element, material, face, BlockModelRotation.X0_Y0, null, true);
+        return new FaceBakery().bakeQuad(
+                from, to, element, material, face, BlockModelRotation.X0_Y0, null, true, baker.modelLocation());
     }
 
     public static BakedQuad bakeWhole(

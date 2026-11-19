@@ -42,8 +42,9 @@ public record ConnectedStairsModel(
             ModelBaker models,
             Function<Material, TextureAtlasSprite> sprites,
             ModelState modelState,
-            ItemOverrides overrides) {
-        ConnectedBakeContext baker = new ConnectedBakeContext(models, sprites);
+            ItemOverrides overrides,
+            ResourceLocation modelLocation) {
+        ConnectedBakeContext baker = new ConnectedBakeContext(modelLocation, sprites);
         StairCellQuads[] quads = new StairCellQuads[FACES.length];
         for (Direction face : FACES) {
             quads[face.ordinal()] = StairCellQuads.bake(

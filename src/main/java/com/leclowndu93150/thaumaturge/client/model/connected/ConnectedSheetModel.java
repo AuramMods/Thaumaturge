@@ -79,8 +79,9 @@ public record ConnectedSheetModel(
             ModelBaker models,
             Function<Material, TextureAtlasSprite> sprites,
             ModelState modelState,
-            ItemOverrides overrides) {
-        ConnectedBakeContext baker = new ConnectedBakeContext(models, sprites);
+            ItemOverrides overrides,
+            ResourceLocation modelLocation) {
+        ConnectedBakeContext baker = new ConnectedBakeContext(modelLocation, sprites);
         float[] insets = new float[DIRECTIONS.length];
         if (model.isEmpty()) {
             TextureAtlasSprite particle =

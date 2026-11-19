@@ -60,12 +60,13 @@ public final class TTMeshGeometry implements IUnbakedGeometry<TTMeshGeometry> {
             ModelBaker baker,
             Function<Material, TextureAtlasSprite> spriteGetter,
             ModelState modelState,
-            ItemOverrides overrides) {
+            ItemOverrides overrides,
+            ResourceLocation modelLocation) {
         Transformation rootTransform = context.getRootTransform();
         if (!rootTransform.isIdentity()) {
             modelState = UnbakedGeometryHelper.composeRootTransformIntoModelState(modelState, rootTransform);
         }
-        TTMesh mesh = loadMesh();
+        TTMesh mesh = loadMesh(modelLocation);
         Matrix4f transform = new Matrix4f()
                 .translate(CENTER_OFFSET, CENTER_OFFSET, CENTER_OFFSET)
                 .mul(modelState.getRotation().getMatrix());
@@ -94,11 +95,11 @@ public final class TTMeshGeometry implements IUnbakedGeometry<TTMeshGeometry> {
         return builder.build();
     }
 
-    private TTMesh loadMesh() {
+    private TTMesh loadMesh(ResourceLocation modelLocation) {
         try {
             return TTMeshLoader.load(Minecraft.getInstance().getResourceManager(), model);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load mesh model at " + model, e);
+            throw new RuntimeException("Could not load mesh " + model + " for model " + modelLocation, e);
         }
     }
 

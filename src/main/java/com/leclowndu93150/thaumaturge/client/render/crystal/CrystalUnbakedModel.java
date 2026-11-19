@@ -32,17 +32,18 @@ public final class CrystalUnbakedModel implements IUnbakedGeometry<CrystalUnbake
             ModelBaker baker,
             Function<Material, TextureAtlasSprite> spriteGetter,
             ModelState modelState,
-            ItemOverrides overrides) {
-        TTMesh mesh = loadMesh();
+            ItemOverrides overrides,
+            ResourceLocation modelLocation) {
+        TTMesh mesh = loadMesh(modelLocation);
         TextureAtlasSprite particle = spriteGetter.apply(context.getMaterial(PARTICLE_SLOT));
         return new CrystalBakedModel(mesh, particle);
     }
 
-    private static TTMesh loadMesh() {
+    private static TTMesh loadMesh(ResourceLocation modelLocation) {
         try {
             return TTMeshLoader.load(Minecraft.getInstance().getResourceManager(), MODEL_LOCATION);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load crystal OBJ at " + MODEL_LOCATION, e);
+            throw new RuntimeException("Could not load crystal mesh " + MODEL_LOCATION + " for model " + modelLocation, e);
         }
     }
 

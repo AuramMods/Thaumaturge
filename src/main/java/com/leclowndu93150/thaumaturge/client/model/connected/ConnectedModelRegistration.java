@@ -12,8 +12,8 @@ public final class ConnectedModelRegistration {
 
     @SubscribeEvent
     public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {
-        event.register(ConnectedSheetModel.TYPE, new ConnectedModelLoader<>(ConnectedSheetModel.CODEC));
-        event.register(ConnectedCornersModel.TYPE, new ConnectedModelLoader<>(ConnectedCornersModel.CODEC));
-        event.register(ConnectedStairsModel.TYPE, new ConnectedModelLoader<>(ConnectedStairsModel.CODEC));
+        event.register(ConnectedSheetModel.TYPE.getPath(), new ConnectedModelLoader<>(ConnectedSheetModel.CODEC));
+        event.register(ConnectedCornersModel.TYPE.getPath(), new ConnectedModelLoader<>(ConnectedCornersModel.CODEC));
+        event.register(ConnectedStairsModel.TYPE.getPath(), new ConnectedModelLoader<>(ConnectedStairsModel.CODEC));
     }
 }
