@@ -21,7 +21,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -78,7 +77,7 @@ public final class BlockNode extends Block implements EntityBlock, BlockInteract
 
     @Override
     public ItemStack getCloneItemStack(
-            BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+            BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         ItemStack stack = new ItemStack(TTItems.CREATIVE_NODE_PLACER.get());
         if (level instanceof Level world && level.getBlockEntity(pos) instanceof BlockEntityNode node) {
             node.saveToItem(stack);

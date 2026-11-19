@@ -176,7 +176,7 @@ public final class BlockManaPod extends BaseEntityBlock {
 
     @Override
     public ItemStack getCloneItemStack(
-            BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+            BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         ItemStack stack = new ItemStack(TTItems.MANA_BEAN.get());
         if (level.getBlockEntity(pos) instanceof BlockEntityManaPod pod) {
             Holder<IAspect> aspect = pod.aspect();
