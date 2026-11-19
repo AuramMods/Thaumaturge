@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.EntityBrainyDrowned;
+import com.leclowndu93150.thaumaturge.content.entity.EntityScale;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.DrownedModel;
@@ -35,13 +36,14 @@ public final class BrainyDrownedRenderer
             PoseStack poseStack,
             float bob,
             float yBodyRot,
-            float partialTick,
-            float scale) {
-        super.setupRotations(entity, poseStack, bob, yBodyRot, partialTick, scale);
+            float partialTick) {
+        super.setupRotations(entity, poseStack, bob, yBodyRot, partialTick);
         float swimAmount = entity.getSwimAmount(partialTick);
         if (swimAmount > 0.0F) {
             float tilt = Mth.lerp(swimAmount, 0.0F, -10.0F - entity.getXRot());
-            poseStack.rotateAround(Axis.XP.rotationDegrees(tilt), 0.0F, entity.getBbHeight() / 2.0F / scale, 0.0F);
+            // The render pose and the world bounding box already include the entity's scale.
+            float pivotY = entity.getBbHeight() * 0.5F / EntityScale.factor(entity);
+            poseStack.rotateAround(Axis.XP.rotationDegrees(tilt), 0.0F, pivotY, 0.0F);
         }
     }
 }
