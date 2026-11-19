@@ -1,5 +1,7 @@
 {
-  "blocks": "thaumaturge:eldritch_crust_glowing",
+  "blocks": [
+    "thaumaturge:eldritch_crust_glowing"
+  ],
   "stats": {
     "arcana": 12.0,
     "clues": 1,

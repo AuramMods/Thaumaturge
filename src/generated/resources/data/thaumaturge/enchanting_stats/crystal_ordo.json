@@ -1,5 +1,7 @@
 {
-  "blocks": "thaumaturge:crystal_ordo",
+  "blocks": [
+    "thaumaturge:crystal_ordo"
+  ],
   "stats": {
     "arcana": 5.0,
     "clues": 1,

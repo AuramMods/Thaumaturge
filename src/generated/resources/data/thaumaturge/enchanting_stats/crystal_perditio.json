@@ -1,5 +1,7 @@
 {
-  "blocks": "thaumaturge:crystal_perditio",
+  "blocks": [
+    "thaumaturge:crystal_perditio"
+  ],
   "stats": {
     "arcana": -5.0,
     "eterna": 3.0,

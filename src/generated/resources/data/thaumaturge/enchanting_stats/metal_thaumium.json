@@ -1,5 +1,7 @@
 {
-  "blocks": "thaumaturge:metal_thaumium",
+  "blocks": [
+    "thaumaturge:metal_thaumium"
+  ],
   "stats": {
     "arcana": 3.0,
     "eterna": 4.0,

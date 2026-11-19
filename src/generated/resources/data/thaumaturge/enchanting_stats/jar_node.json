@@ -1,5 +1,7 @@
 {
-  "blocks": "thaumaturge:jar_node",
+  "blocks": [
+    "thaumaturge:jar_node"
+  ],
   "stats": {
     "arcana": 20.0,
     "clues": 1,

@@ -1,5 +1,7 @@
 {
-  "blocks": "thaumaturge:metal_void",
+  "blocks": [
+    "thaumaturge:metal_void"
+  ],
   "stats": {
     "arcana": 8.0,
     "eterna": 4.0,

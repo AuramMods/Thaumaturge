@@ -1,5 +1,7 @@
 {
-  "blocks": "thaumaturge:vis_battery",
+  "blocks": [
+    "thaumaturge:vis_battery"
+  ],
   "stats": {
     "arcana": 10.0,
     "eterna": 8.0,
