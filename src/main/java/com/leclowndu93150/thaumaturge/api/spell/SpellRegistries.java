@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.fx.SpellFxStyle;
 import com.mojang.serialization.Codec;
+import java.util.function.Supplier;
 import net.minecraft.core.Registry;
 
 /**
@@ -25,24 +26,25 @@ public final class SpellRegistries {
     public static final Codec<SpellAction> ACTION_CODEC =
             Codecs.lazyInitialized(() -> Codecs.dispatch(actions().byNameCodec(), SpellAction::type, SpellActionType::codec));
 
-    private static Registry<SpellBehaviorType<?>> behaviors;
-    private static Registry<SpellActionType<?>> actions;
-    private static Registry<SpellFxStyle> fxStyles;
+    private static Supplier<Registry<SpellBehaviorType<?>>> behaviors;
+    private static Supplier<Registry<SpellActionType<?>>> actions;
+    private static Supplier<Registry<SpellFxStyle>> fxStyles;
 
     private SpellRegistries() {}
 
     /**
-     * Binds the registries.
+     * Binds registry access during mod construction. The suppliers resolve the actual registries
+     * after Forge creates them.
      *
-     * @param behaviorRegistry the behaviour type registry
-     * @param actionRegistry   the action type registry
-     * @param fxRegistry       the effect style registry
+     * @param behaviorRegistry access to the behaviour type registry
+     * @param actionRegistry   access to the action type registry
+     * @param fxRegistry       access to the effect style registry
      * @throws IllegalStateException when already bound
      */
     public static void bind(
-            Registry<SpellBehaviorType<?>> behaviorRegistry,
-            Registry<SpellActionType<?>> actionRegistry,
-            Registry<SpellFxStyle> fxRegistry) {
+            Supplier<Registry<SpellBehaviorType<?>>> behaviorRegistry,
+            Supplier<Registry<SpellActionType<?>>> actionRegistry,
+            Supplier<Registry<SpellFxStyle>> fxRegistry) {
         if (behaviors != null) {
             throw new IllegalStateException("SpellRegistries already bound");
         }
@@ -81,10 +83,10 @@ public final class SpellRegistries {
         return bound(fxStyles);
     }
 
-    private static <T> Registry<T> bound(Registry<T> registry) {
+    private static <T> Registry<T> bound(Supplier<Registry<T>> registry) {
         if (registry == null) {
             throw new IllegalStateException("SpellRegistries used before Thaumaturge bound them");
         }
-        return registry;
+        return registry.get();
     }
 }

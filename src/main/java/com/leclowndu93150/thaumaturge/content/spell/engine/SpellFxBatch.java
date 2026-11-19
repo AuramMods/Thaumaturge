@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
@@ -101,7 +102,7 @@ final class SpellFxBatch implements SpellFx {
 
     private static Holder<SpellFxStyle> resolve(ResourceLocation style) {
         Optional<Holder.Reference<SpellFxStyle>> holder =
-                SpellRegistries.fxStyles().getHolder(style);
-        return holder.isPresent() ? holder.get() : TTSpellFx.SPARKLE;
+                SpellRegistries.fxStyles().getHolder(ResourceKey.create(SpellFxStyle.REGISTRY_KEY, style));
+        return holder.isPresent() ? holder.get() : TTSpellFx.SPARKLE.getHolder().orElseThrow();
     }
 }

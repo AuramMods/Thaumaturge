@@ -148,7 +148,7 @@ public final class Thaumaturge {
         ResearchGate.bind(ResearchManager::doesPassGate);
         RechargeAccess.bind(new RechargeBindings());
         GogglesAccess.bind(new GogglesBindings());
-        SpellRegistries.bind(TTSpellBehaviors.registry(), TTSpellActions.registry(), TTSpellFx.registry());
+        SpellRegistries.bind(TTSpellBehaviors::registry, TTSpellActions::registry, TTSpellFx::registry);
         Spells.bind(new SpellBindings());
 
         LabyrinthHelper.bind(new LabyrinthBindings());

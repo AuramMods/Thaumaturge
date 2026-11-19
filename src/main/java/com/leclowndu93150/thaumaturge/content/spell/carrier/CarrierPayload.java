@@ -14,6 +14,7 @@ import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -41,7 +42,7 @@ public record CarrierPayload(SpellContinuation continuation, SpellLook look) {
 
     public static void particle(Level level, SpellLook look, Vec3 at, Vec3 motion) {
         Optional<Holder.Reference<SpellFxStyle>> style =
-                SpellRegistries.fxStyles().getHolder(look.fx());
+                SpellRegistries.fxStyles().getHolder(ResourceKey.create(SpellFxStyle.REGISTRY_KEY, look.fx()));
         if (style.isPresent()) {
             style.get().value().spawn(level, at, motion, look.color(), level.getRandom());
         }

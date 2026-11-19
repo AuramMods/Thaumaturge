@@ -41,8 +41,8 @@ import com.leclowndu93150.thaumaturge.content.spell.modifier.StatModifier;
 import com.leclowndu93150.thaumaturge.content.spell.script.ScriptedEffect;
 import com.leclowndu93150.thaumaturge.content.spell.script.ScriptedNode;
 import com.mojang.serialization.MapCodec;
-import java.util.function.Supplier;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -164,8 +164,8 @@ public final class TTSpellBehaviors {
 
     private static RegistryObject<SpellBehaviorType<ScriptedNode>> scripted(
             String path, SpellPartKind kind) {
-        Supplier<SpellBehaviorType<?>> self = () -> REGISTRY.get(TTIds.rl(path));
-        return register(path, kind, ScriptedNode.codec(self));
+        ResourceLocation id = TTIds.rl(path);
+        return register(path, kind, ScriptedNode.codec(() -> REGISTRY.get().getValue(id)));
     }
 
     public static Registry<SpellBehaviorType<?>> registry() {
