@@ -87,9 +87,9 @@ public final class BlockSilverwoodNodeLog extends RotatedPillarBlock implements 
     }
 
     @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         BlockNode.burstNode(level, pos);
-        return super.playerWillDestroy(level, pos, state, player);
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override

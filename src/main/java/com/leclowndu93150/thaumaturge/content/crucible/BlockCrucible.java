@@ -131,11 +131,11 @@ public class BlockCrucible extends BaseEntityBlock implements BlockInteractions 
     }
 
     @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (level.getBlockEntity(pos) instanceof BlockEntityCrucible crucible) {
             crucible.spillRemnants();
         }
-        return super.playerWillDestroy(level, pos, state, player);
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override

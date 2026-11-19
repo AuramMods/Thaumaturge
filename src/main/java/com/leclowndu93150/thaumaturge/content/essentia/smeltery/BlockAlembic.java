@@ -221,12 +221,12 @@ public class BlockAlembic extends BaseEntityBlock implements LabelTarget, BlockI
     }
 
     @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide()
                 && level.getBlockEntity(pos) instanceof BlockEntityAlembic alembic
                 && alembic.aspectFilterKey() != null) {
             popResource(level, pos, new ItemStack(TTItems.LABEL.get()));
         }
-        return super.playerWillDestroy(level, pos, state, player);
+        super.playerWillDestroy(level, pos, state, player);
     }
 }

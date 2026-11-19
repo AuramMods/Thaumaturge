@@ -165,11 +165,11 @@ public final class BlockNode extends Block implements EntityBlock, BlockInteract
     }
 
     @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof BlockEntityNode node) {
             node.burstIntoOrbs(serverLevel, pos);
         }
-        return super.playerWillDestroy(level, pos, state, player);
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override

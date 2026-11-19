@@ -90,14 +90,14 @@ public final class BlockThaumatoriumTop extends BaseEntityBlock implements Block
     }
 
     @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide() && player.isCreative()) {
             BlockPos below = pos.below();
             if (level.getBlockState(below).is(TTBlocks.THAUMATORIUM.get())) {
                 level.destroyBlock(below, false);
             }
         }
-        return super.playerWillDestroy(level, pos, state, player);
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override

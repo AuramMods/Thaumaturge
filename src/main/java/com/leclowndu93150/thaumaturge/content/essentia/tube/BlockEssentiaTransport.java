@@ -130,9 +130,9 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
     }
 
     @Override
-    public BlockState playerWillDestroy(Level world, BlockPos at, BlockState broken, Player breaker) {
+    public void playerWillDestroy(Level world, BlockPos at, BlockState broken, Player breaker) {
         spillEssentiaOnBreak(world, at);
-        return super.playerWillDestroy(world, at, broken, breaker);
+        super.playerWillDestroy(world, at, broken, breaker);
     }
 
     protected static void spillEssentiaOnBreak(Level level, BlockPos pos) {

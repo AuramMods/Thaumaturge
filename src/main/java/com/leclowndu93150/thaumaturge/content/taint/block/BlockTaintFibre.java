@@ -253,7 +253,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     }
 
     @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (level instanceof ServerLevel serverLevel && state.getValue(GROWTH3)) {
             AuraHelper.polluteAura(
                     serverLevel,
@@ -261,7 +261,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
                     GROWTH3_POLLUTION_BASE + serverLevel.getRandom().nextInt(GROWTH3_POLLUTION_RANGE),
                     true);
         }
-        return super.playerWillDestroy(level, pos, state, player);
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
