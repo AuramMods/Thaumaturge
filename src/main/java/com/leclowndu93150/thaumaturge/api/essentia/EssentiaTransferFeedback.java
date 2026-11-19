@@ -44,7 +44,7 @@ public final class EssentiaTransferFeedback {
         if (transferred <= 0 || player.level().isClientSide()) {
             return;
         }
-        IEssentiaItemStorage storage = resultingStack.getCapability(EssentiaCapabilities.ITEM_STORAGE);
+        IEssentiaItemStorage storage = resultingStack.getCapability(EssentiaCapabilities.ITEM_STORAGE).orElse(null);
         if (storage != null) {
             storage.playTransferFeedback(player, direction);
         }

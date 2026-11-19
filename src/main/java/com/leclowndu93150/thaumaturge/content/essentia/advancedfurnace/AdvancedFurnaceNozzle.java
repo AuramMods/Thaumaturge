@@ -41,7 +41,7 @@ public final class AdvancedFurnaceNozzle extends PassiveEssentiaSource {
 
     @Override
     public boolean releasesOn(Direction face) {
-        if (!furnace.isAssembled()) {
+        if (!furnace.isAssembled() || !furnace.nozzleLookupActive()) {
             return false;
         }
         return mouth.equals(face);

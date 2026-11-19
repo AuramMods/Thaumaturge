@@ -63,6 +63,7 @@ import com.leclowndu93150.thaumaturge.content.equipment.BlockEffectGlimmer;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEssentiaPort;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAdvancedAlchemicalFurnace;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAdvancedFurnaceNozzle;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockBellows;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJar;
@@ -870,7 +871,7 @@ public final class TTBlocks {
 
     public static final RegistryObject<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_NOZZLE = ForgeRegistration.registerBlock(BLOCKS,
             "advanced_alchemical_furnace_nozzle",
-            BlockPlaceholder::new,
+            BlockAdvancedFurnaceNozzle::new,
             advancedFurnacePlaceholderProps().noLootTable().noOcclusion());
 
     public static final RegistryObject<BlockPedestal> PEDESTAL_ANCIENT =

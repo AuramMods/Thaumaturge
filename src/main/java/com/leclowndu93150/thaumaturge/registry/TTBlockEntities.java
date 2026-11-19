@@ -42,6 +42,7 @@ import com.leclowndu93150.thaumaturge.content.eldritch.reliquary.BlockEntityEldr
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityEssentiaPort;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedFurnaceNozzle;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockEntityBellows;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEntityEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
@@ -189,6 +190,10 @@ public final class TTBlockEntities {
                                     TTBlocks.SMELTER_THAUMIUM.get(),
                                     TTBlocks.SMELTER_VOID.get()),
                             null));
+
+    public static final RegistryObject<BlockEntityType<BlockEntityAdvancedFurnaceNozzle>> ADVANCED_ALCHEMICAL_FURNACE_NOZZLE =
+            BLOCK_ENTITIES.register("advanced_alchemical_furnace_nozzle", () -> new BlockEntityType<>(
+                    BlockEntityAdvancedFurnaceNozzle::new, Set.of(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get()), null));
 
     public static final RegistryObject<BlockEntityType<BlockEntityAdvancedAlchemicalFurnace>>
             ADVANCED_ALCHEMICAL_FURNACE = BLOCK_ENTITIES.register(

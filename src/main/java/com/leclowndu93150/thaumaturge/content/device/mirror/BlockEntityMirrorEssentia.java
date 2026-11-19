@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectSource;
@@ -23,6 +24,7 @@ public final class BlockEntityMirrorEssentia extends BlockEntityMirrorBase imple
 
     public BlockEntityMirrorEssentia(BlockPos pos, BlockState state) {
         super(TTBlockEntities.MIRROR_ESSENTIA.get(), pos, state);
+        exposeCapability(AspectCapabilities.CONTAINER, side -> this);
     }
 
     @Override

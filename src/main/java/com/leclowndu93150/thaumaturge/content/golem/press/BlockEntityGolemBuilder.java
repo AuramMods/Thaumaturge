@@ -98,6 +98,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
 
     public BlockEntityGolemBuilder(BlockPos pos, BlockState state) {
         super(TTBlockEntities.GOLEM_BUILDER.get(), pos, state);
+        exposeConduit(side -> side == null || connectsOn(side) ? this : null);
         exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> outputHandler());
     }
 

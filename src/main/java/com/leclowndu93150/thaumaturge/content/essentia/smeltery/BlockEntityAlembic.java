@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -49,6 +51,10 @@ public class BlockEntityAlembic extends AbstractSyncedBlockEntity
 
     public BlockEntityAlembic(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ALEMBIC.get(), pos, state);
+        exposeConduit(side -> this);
+        exposeCapability(AspectCapabilities.CONTAINER, side -> this);
+        exposeCapability(EssentiaCapabilities.STORAGE,
+                side -> side != null && connectsOn(side) ? storage(side) : null);
     }
 
     @Override
@@ -84,9 +90,7 @@ public class BlockEntityAlembic extends AbstractSyncedBlockEntity
             return;
         }
         spout = newFacing;
-        if (level != null) {
-            level.invalidateCapabilities(worldPosition);
-        }
+        refreshCapabilityViews();
         setChangedAndSync();
     }
 
@@ -269,7 +273,11 @@ public class BlockEntityAlembic extends AbstractSyncedBlockEntity
         filter = TTNbt.read(input, FILTER_KEY, LegacyIds.ASPECT_KEY_CODEC, registries)
                 .orElse(null);
         amount = Java17.clamp(input.getInt(AMOUNT_KEY), 0, CAPACITY);
-        spout = TTNbt.read(input, FACING_KEY, Direction.CODEC, registries).orElse(Direction.DOWN);
+        Direction savedSpout = TTNbt.read(input, FACING_KEY, Direction.CODEC, registries).orElse(Direction.DOWN);
+        if (spout != savedSpout) {
+            spout = savedSpout;
+            refreshCapabilityViews();
+        }
     }
 
     @Override

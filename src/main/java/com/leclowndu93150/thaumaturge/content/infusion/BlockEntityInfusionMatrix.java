@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
@@ -100,6 +101,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
 
     public BlockEntityInfusionMatrix(BlockPos pos, BlockState state) {
         super(TTBlockEntities.INFUSION_MATRIX.get(), pos, state);
+        exposeCapability(AspectCapabilities.CONTAINER, side -> this);
     }
 
     public boolean isActive() {

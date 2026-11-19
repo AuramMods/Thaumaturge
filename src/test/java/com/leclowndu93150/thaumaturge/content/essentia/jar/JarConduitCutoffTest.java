@@ -12,9 +12,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
-import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
-import com.leclowndu93150.thaumaturge.registry.TTCapabilities;
 import com.mojang.serialization.Lifecycle;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -25,10 +23,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -232,50 +226,26 @@ class JarConduitCutoffTest {
         assertNoCommittedSideEffects(alembic);
     }
 
-    private <T> ICapabilityProvider<BlockEntity, Direction, T> provider(
-            RegisterCapabilitiesEvent event, BlockCapability<T, Direction> capability, BlockEntityType<?> type) {
-        return mockingDetails(event).getInvocations().stream()
-                .filter(call -> call.getMethod().getName().equals("registerBlockEntity"))
-                .filter(call -> call.getArgument(0) == capability && call.getArgument(1) == type)
-                .map(call -> (ICapabilityProvider<BlockEntity, Direction, T>) call.getArgument(2))
-                .findFirst()
-                .orElseThrow();
-    }
-
     @Test
     void nativeRegistrationExposesDirectConduitAndLegacyAdapterForAllThreeVessels() {
-        RegisterCapabilitiesEvent event = mock(RegisterCapabilitiesEvent.class);
-        TTCapabilities.onRegisterCapabilities(event);
         BlockEntityJar jar = jar();
         BlockEntityJarVoid voidJar = voidJar();
         BlockEntityAlembic alembic = alembic();
-        List<BlockEntity> vessels = List.of(jar, voidJar, alembic);
-        List<BlockEntityType<?>> types =
-                List.of(TTBlockEntities.JAR.get(), TTBlockEntities.JAR_VOID.get(), TTBlockEntities.ALEMBIC.get());
-        for (int index = 0; index < vessels.size(); index++) {
-            BlockEntity vessel = vessels.get(index);
-            ICapabilityProvider<BlockEntity, Direction, IEssentiaConduit> direct =
-                    provider(event, EssentiaCapabilities.CONDUIT, types.get(index));
-            ICapabilityProvider<BlockEntity, Direction, IEssentiaTransport> old =
-                    provider(event, EssentiaCapabilities.TRANSPORT, types.get(index));
-            assertSame(vessel, direct.getCapability(vessel, Direction.UP));
-            IEssentiaTransport legacy = old.getCapability(vessel, Direction.UP);
-            assertNotNull(legacy);
+        for (BlockEntity vessel : List.of(jar, voidJar, alembic)) {
+            assertSame(vessel, vessel.getCapability(EssentiaCapabilities.CONDUIT, Direction.UP).orElse(null));
+            IEssentiaTransport legacy = vessel.getCapability(EssentiaCapabilities.TRANSPORT, Direction.UP)
+                    .orElseThrow(AssertionError::new);
             assertNotSame(vessel, legacy);
             assertEquals(0, legacy.addEssentia(fire, 1, Direction.DOWN, true));
             assertEquals(0, legacy.takeEssentia(order, 1, Direction.DOWN, true));
-            assertSame(vessel, direct.getCapability(vessel, null));
-            assertNotNull(old.getCapability(vessel, null));
+            assertSame(vessel, vessel.getCapability(EssentiaCapabilities.CONDUIT).orElse(null));
+            assertTrue(vessel.getCapability(EssentiaCapabilities.TRANSPORT).isPresent());
         }
-        IEssentiaConduit direct = provider(event, EssentiaCapabilities.CONDUIT, TTBlockEntities.JAR.get())
-                .getCapability(jar, Direction.UP);
-        IEssentiaTransport legacy = provider(event, EssentiaCapabilities.TRANSPORT, TTBlockEntities.JAR.get())
-                .getCapability(jar, Direction.UP);
+        IEssentiaTransport legacy = jar.getCapability(EssentiaCapabilities.TRANSPORT, Direction.UP)
+                .orElseThrow(AssertionError::new);
         jar.setAspectFilter(TTAspects.ORDO);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO, Direction.UP))
-                .thenReturn(direct);
-        when(level.getCapability(EssentiaCapabilities.TRANSPORT, BlockPos.ZERO, Direction.UP))
-                .thenReturn(legacy);
+        when(level.hasChunk(0, 0)).thenReturn(true);
+        when(level.getBlockEntity(BlockPos.ZERO)).thenReturn(jar);
         assertSame(jar, EssentiaAccess.conduit(level, BlockPos.ZERO, Direction.UP));
         assertSame(legacy, EssentiaAccess.transport(level, BlockPos.ZERO, Direction.UP));
         assertEquals(0, legacy.addEssentia(fire, 1, Direction.UP, true));

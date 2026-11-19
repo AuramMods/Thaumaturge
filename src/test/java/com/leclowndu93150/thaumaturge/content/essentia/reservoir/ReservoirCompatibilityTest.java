@@ -14,7 +14,6 @@ import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
-import com.leclowndu93150.thaumaturge.registry.TTCapabilities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import com.mojang.serialization.Lifecycle;
 import java.util.List;
@@ -30,8 +29,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.util.LazyOptional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -117,8 +117,10 @@ class ReservoirCompatibilityTest {
     void pullUsesItsOwnCadenceAndReadsOnlyLoadedConnectedChunks() {
         var reservoir = reservoir();
         IEssentiaConduit source = mock(IEssentiaConduit.class);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.east(), Direction.WEST))
-                .thenReturn(source);
+        BlockEntity provider = mock(BlockEntity.class);
+        when(level.getBlockEntity(BlockPos.ZERO.east())).thenReturn(provider);
+        when(provider.getCapability(EssentiaCapabilities.CONDUIT, Direction.WEST))
+                .thenReturn(LazyOptional.of(() -> source));
         when(source.connectsOn(Direction.WEST)).thenReturn(true);
         when(source.releasesOn(Direction.WEST)).thenReturn(true);
         when(source.heldAmount(Direction.WEST)).thenReturn(2);
@@ -199,13 +201,11 @@ class ReservoirCompatibilityTest {
 
     @Test
     void reservoirIsNotExposedAsAnAspectContainer() {
-        RegisterCapabilitiesEvent event = mock(RegisterCapabilitiesEvent.class);
-        TTCapabilities.onRegisterCapabilities(event);
-        boolean exposed = mockingDetails(event).getInvocations().stream()
-                .filter(call -> call.getMethod().getName().equals("registerBlockEntity"))
-                .anyMatch(call -> call.getArgument(0) == AspectCapabilities.CONTAINER
-                        && call.getArgument(1) == TTBlockEntities.ESSENTIA_RESERVOIR.get());
-        assertFalse(exposed);
+        var reservoir = reservoir();
+        assertFalse(reservoir.getCapability(AspectCapabilities.CONTAINER).isPresent());
+        for (Direction side : Direction.values()) {
+            assertFalse(reservoir.getCapability(AspectCapabilities.CONTAINER, side).isPresent());
+        }
     }
 
     @Test

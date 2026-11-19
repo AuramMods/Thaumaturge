@@ -87,7 +87,7 @@ public final class BlockTubeFilter extends BlockTube implements BlockInteraction
         if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeFilter filter) || filter.aspectFilter() != null) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        IItemEssentia contents = stack.getCapability(EssentiaCapabilities.CONTAINER);
+        IItemEssentia contents = stack.getCapability(EssentiaCapabilities.CONTAINER).orElse(null);
         if (contents == null) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }

@@ -65,6 +65,7 @@ public final class BlockEntityFluxScrubber extends RegistryBlockEntity implement
 
     public BlockEntityFluxScrubber(BlockPos pos, BlockState state) {
         super(TTBlockEntities.FLUX_SCRUBBER.get(), pos, state);
+        exposeConduit(side -> side == null || connectsOn(side) ? this : null);
     }
 
     public static int essentiaCapacity() {

@@ -9,7 +9,7 @@ import net.minecraft.world.phys.Vec3;
 /**
  * A block that feeds primal vis into the vis relay network. Thaumaturge's energized aura nodes are
  * sources; an addon block becomes one by providing {@link VisRelayCapabilities#SOURCE} for its
- * block entity in {@code RegisterCapabilitiesEvent}.
+ * block entity. Query it with a null side.
  *
  * <p>A relay links to the nearest source within 8 blocks, or else to the nearest linked relay,
  * and checks the link again every 40 ticks. Relays and their consumers look the capability up

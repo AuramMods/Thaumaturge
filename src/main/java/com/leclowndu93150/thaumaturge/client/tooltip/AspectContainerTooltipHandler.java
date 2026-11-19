@@ -36,7 +36,7 @@ public final class AspectContainerTooltipHandler {
         if (stack.isEmpty()) {
             return;
         }
-        IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER);
+        IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER).orElse(null);
         if (essentia != null) {
             renderAspectList(essentia.getAspects(), event.getToolTip());
         }

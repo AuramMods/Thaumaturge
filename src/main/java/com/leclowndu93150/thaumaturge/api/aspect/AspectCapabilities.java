@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.api.aspect;
 
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 
 /**
  * Registry-style holder for the aspect capability types.
@@ -16,8 +16,7 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
  */
 public final class AspectCapabilities {
     /** Sided block capability for aspect storing. */
-    public static final BlockCapability<IAspectContainer, Direction> CONTAINER = BlockCapability.createSided(
-            ResourceLocation.fromNamespaceAndPath("thaumaturge", "aspect_container"), IAspectContainer.class);
+    public static final Capability<IAspectContainer> CONTAINER = CapabilityManager.get(new CapabilityToken<>() {});
 
     private AspectCapabilities() {}
 }

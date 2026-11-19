@@ -81,6 +81,7 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
 
     public BlockEntityPotionSprayer(BlockPos pos, BlockState state) {
         super(TTBlockEntities.POTION_SPRAYER.get(), pos, state);
+        exposeConduit(side -> this);
     }
 
     public static boolean holdsPotionItem(ItemStack stack) {

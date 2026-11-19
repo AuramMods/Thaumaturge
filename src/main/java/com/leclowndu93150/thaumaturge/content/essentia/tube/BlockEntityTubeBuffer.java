@@ -71,6 +71,7 @@ public final class BlockEntityTubeBuffer extends AbstractSyncedBlockEntity
 
     public BlockEntityTubeBuffer(BlockPos pos, BlockState state) {
         super(TTBlockEntities.TUBE_BUFFER.get(), pos, state);
+        exposeConduit(side -> this);
     }
 
     public AspectList heldAspects() {

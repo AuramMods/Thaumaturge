@@ -57,6 +57,7 @@ public final class BlockEntityEssentiaReservoir extends RegistryBlockEntity impl
 
     public BlockEntityEssentiaReservoir(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ESSENTIA_RESERVOIR.get(), pos, state);
+        exposeConduit(side -> side == null || connectsOn(side) ? this : null);
     }
 
     public AspectList contents() {

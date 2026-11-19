@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.manabean;
 
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
@@ -13,6 +15,7 @@ import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -26,6 +29,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jspecify.annotations.Nullable;
 
 public final class ItemManaBean extends Item {
@@ -37,6 +41,11 @@ public final class ItemManaBean extends Item {
 
     public ItemManaBean(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+        return EssentiaCapabilities.item(() -> ComponentEssentia.crystal(stack), null);
     }
 
     public static @Nullable Holder<IAspect> aspectOf(ItemStack stack) {

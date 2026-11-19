@@ -70,6 +70,32 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
     private int cooldown;
     private int cycleDuration;
     private boolean assembled;
+    private boolean nozzleLookupActive = true;
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        reviveCaps();
+    }
+
+    @Override
+    public void reviveCaps() {
+        super.reviveCaps();
+        nozzleLookupActive = true;
+    }
+
+    @Override
+    public void invalidateCaps() {
+        nozzleLookupActive = false;
+        super.invalidateCaps();
+        if (level != null) {
+            AdvancedAlchemicalFurnaceStructure.invalidateNozzles(level, worldPosition);
+        }
+    }
+
+    boolean nozzleLookupActive() {
+        return nozzleLookupActive && !isRemoved();
+    }
 
     public BlockEntityAdvancedAlchemicalFurnace(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), pos, state);

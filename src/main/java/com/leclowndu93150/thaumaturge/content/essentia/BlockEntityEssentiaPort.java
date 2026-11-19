@@ -40,6 +40,7 @@ public final class BlockEntityEssentiaPort extends RegistryBlockEntity implement
 
     public BlockEntityEssentiaPort(BlockPos pos, BlockState state, boolean input) {
         super(TTBlockEntities.ESSENTIA_PORT.get(), pos, state);
+        exposeConduit(side -> side == null || connectsOn(side) ? this : null);
         this.input = input;
         this.sources = new EssentiaSources(pos, SOURCE_RANGE)
                 .facing(state.getValue(BlockStateProperties.FACING))

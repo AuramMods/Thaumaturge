@@ -94,17 +94,31 @@ public final class AdvancedAlchemicalFurnaceStructure {
     }
 
     public static void refreshNozzles(Level level, BlockPos controller) {
+        invalidateNozzles(level, controller);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos nozzle = controller.relative(direction);
-            level.invalidateCapabilities(nozzle);
-            BlockEssentiaTransport.refreshConnectionsAround(level, nozzle);
+            if (LoadedChunks.contains(level, nozzle)) {
+                BlockEssentiaTransport.refreshConnectionsAround(level, nozzle);
+            }
+        }
+    }
+
+    static void invalidateNozzles(Level level, BlockPos controller) {
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos nozzle = controller.relative(direction);
+            if (LoadedChunks.contains(level, nozzle)
+                    && level.getBlockEntity(nozzle) instanceof BlockEntityAdvancedFurnaceNozzle endpoint) {
+                endpoint.refreshCapabilityViews();
+            }
         }
     }
 
     public static @Nullable IEssentiaConduit nozzle(Level level, BlockPos nozzle, @Nullable Direction side) {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            if (level.getBlockEntity(nozzle.relative(direction))
-                    instanceof BlockEntityAdvancedAlchemicalFurnace furnace) {
+            BlockPos controller = nozzle.relative(direction);
+            if (LoadedChunks.contains(level, controller)
+                    && level.getBlockEntity(controller) instanceof BlockEntityAdvancedAlchemicalFurnace furnace
+                    && furnace.nozzleLookupActive()) {
                 AdvancedFurnaceNozzle port = furnace.nozzle(direction.getOpposite());
                 return side == null || port.connectsOn(side) ? port : null;
             }

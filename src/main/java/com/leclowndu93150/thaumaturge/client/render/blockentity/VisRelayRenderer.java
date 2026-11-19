@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockVisRelay;
+import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityAccess;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -62,7 +63,7 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
         if (parentState.getBlock() instanceof BlockVisRelay) {
             target = BlockVisRelay.crystalPosition(parent, parentState);
         } else {
-            var source = relay.getLevel().getCapability(VisRelayCapabilities.SOURCE, parent, null);
+            var source = BlockCapabilityAccess.find(relay.getLevel(), parent, VisRelayCapabilities.SOURCE, null);
             target = source == null ? Vec3.atCenterOf(parent) : source.beamTarget(parent);
         }
         Vec3 start = ClientSpaces.renderPosition(relay.getLevel(), target)

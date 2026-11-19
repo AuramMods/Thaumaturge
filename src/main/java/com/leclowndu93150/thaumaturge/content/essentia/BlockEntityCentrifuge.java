@@ -56,6 +56,7 @@ public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity imple
 
     public BlockEntityCentrifuge(BlockPos pos, BlockState state) {
         super(TTBlockEntities.CENTRIFUGE.get(), pos, state);
+        exposeConduit(side -> this);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityCentrifuge centrifuge) {

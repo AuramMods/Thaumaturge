@@ -3,6 +3,8 @@ package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -73,13 +75,18 @@ class SmelteryCompatibilityTest {
     @Test
     void facingInvalidatesCapabilitiesOnlyOnAnActualChange() {
         BlockEntityAlembic alembic = alembic(BlockPos.ZERO);
+        var original = alembic.getCapability(EssentiaCapabilities.STORAGE, Direction.NORTH);
+        assertTrue(original.isPresent());
         alembic.aimSpout(Direction.DOWN);
-        verify(level, never()).invalidateCapabilities(any(BlockPos.class));
+        assertTrue(original.isPresent());
         alembic.fill(order, 7);
         alembic.aimSpout(Direction.NORTH);
-        verify(level).invalidateCapabilities(BlockPos.ZERO);
+        assertFalse(original.isPresent());
+        assertFalse(alembic.getCapability(EssentiaCapabilities.STORAGE, Direction.NORTH).isPresent());
+        var upward = alembic.getCapability(EssentiaCapabilities.STORAGE, Direction.UP);
+        assertTrue(upward.isPresent());
         alembic.aimSpout(Direction.NORTH);
-        verify(level, times(1)).invalidateCapabilities(BlockPos.ZERO);
+        assertSame(upward, alembic.getCapability(EssentiaCapabilities.STORAGE, Direction.UP));
         assertEquals(7, alembic.amount());
         assertEquals(TTAspects.ORDO, alembic.aspectKey());
         assertFalse(alembic.releasesOn(Direction.NORTH));

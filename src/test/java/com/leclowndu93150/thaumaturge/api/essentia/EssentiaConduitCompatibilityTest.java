@@ -4,25 +4,19 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
-import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TTItems;
-import java.util.List;
+import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityViews;
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.neoforge.capabilities.IBlockCapabilityProvider;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.util.LazyOptional;
 import org.junit.jupiter.api.Test;
-import org.mockito.invocation.Invocation;
 
-@SuppressWarnings({"removal", "unchecked"})
+@SuppressWarnings("removal")
 class EssentiaConduitCompatibilityTest {
     private final Holder<IAspect> aspect = Holder.direct(mock(IAspect.class));
 
@@ -117,60 +111,58 @@ class EssentiaConduitCompatibilityTest {
     @Test
     void lookupPrefersConduitAndFallsBackToLegacyTransport() {
         Level level = mock(Level.class);
+        BlockEntity provider = mock(BlockEntity.class);
         IEssentiaConduit conduit = mock(IEssentiaConduit.class);
         IEssentiaTransport legacy = mock(IEssentiaTransport.class);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO, Direction.UP))
-                .thenReturn(conduit);
+        when(level.hasChunk(0, 0)).thenReturn(true);
+        when(level.getBlockEntity(BlockPos.ZERO)).thenReturn(provider);
+        when(provider.getCapability(eq(EssentiaCapabilities.CONDUIT), nullable(Direction.class)))
+                .thenReturn(LazyOptional.empty());
+        when(provider.getCapability(eq(EssentiaCapabilities.TRANSPORT), nullable(Direction.class)))
+                .thenReturn(LazyOptional.empty());
+        when(provider.getCapability(EssentiaCapabilities.CONDUIT, Direction.UP)).thenReturn(LazyOptional.of(() -> conduit));
         assertSame(conduit, EssentiaAccess.conduit(level, BlockPos.ZERO, Direction.UP));
-        verify(level, never()).getCapability(EssentiaCapabilities.TRANSPORT, BlockPos.ZERO, Direction.UP);
+        verify(provider, never()).getCapability(EssentiaCapabilities.TRANSPORT, Direction.UP);
 
-        when(level.getCapability(EssentiaCapabilities.TRANSPORT, BlockPos.ZERO, null))
-                .thenReturn(legacy);
+        when(provider.getCapability(EssentiaCapabilities.TRANSPORT, null)).thenReturn(LazyOptional.of(() -> legacy));
         assertSame(legacy, EssentiaAccess.conduit(level, BlockPos.ZERO, null));
         assertFalse(EssentiaAccess.hasConduit(level, BlockPos.ZERO, Direction.DOWN));
     }
 
     @Test
     void blockEntityRegistrationPublishesConduitAndLegacyViewWithSameSides() {
-        RegisterCapabilitiesEvent event = mock(RegisterCapabilitiesEvent.class);
-        BlockEntityType<BlockEntity> type = mock(BlockEntityType.class);
-        BlockEntity blockEntity = mock(BlockEntity.class);
+        BlockCapabilityViews views = new BlockCapabilityViews();
         IEssentiaConduit conduit = mock(IEssentiaConduit.class);
-        EssentiaCapabilities.registerConduit(event, type, (be, side) -> side == Direction.UP ? conduit : null);
-        List<Invocation> calls = List.copyOf(mockingDetails(event).getInvocations());
-        assertEquals(2, calls.size());
-        assertSame(EssentiaCapabilities.CONDUIT, calls.get(0).getArgument(0));
-        assertSame(EssentiaCapabilities.TRANSPORT, calls.get(1).getArgument(0));
-        assertSame(type, calls.get(0).getArgument(1));
-        assertSame(type, calls.get(1).getArgument(1));
-        ICapabilityProvider<BlockEntity, Direction, IEssentiaConduit> direct =
-                calls.get(0).getArgument(2);
-        ICapabilityProvider<BlockEntity, Direction, IEssentiaTransport> legacy =
-                calls.get(1).getArgument(2);
-        assertSame(conduit, direct.getCapability(blockEntity, Direction.UP));
-        assertNull(direct.getCapability(blockEntity, Direction.DOWN));
-        assertNotNull(legacy.getCapability(blockEntity, Direction.UP));
-        assertNull(legacy.getCapability(blockEntity, Direction.DOWN));
+        EssentiaCapabilities.exposeConduit(views, side -> side == Direction.UP ? conduit : null);
+        assertSame(conduit, views.getCapability(EssentiaCapabilities.CONDUIT, Direction.UP).orElseThrow(AssertionError::new));
+        assertFalse(views.getCapability(EssentiaCapabilities.CONDUIT, Direction.DOWN).isPresent());
+        assertTrue(views.getCapability(EssentiaCapabilities.TRANSPORT, Direction.UP).isPresent());
+        assertFalse(views.getCapability(EssentiaCapabilities.TRANSPORT, Direction.DOWN).isPresent());
     }
 
     @Test
-    void blockRegistrationPublishesBothViewsAndPreservesNullableSide() {
-        RegisterCapabilitiesEvent event = mock(RegisterCapabilitiesEvent.class);
-        Block block = mock(Block.class);
+    void nativeBlockEntityPreservesNullableSideAndInvalidatesBothViews() {
         IEssentiaConduit conduit = mock(IEssentiaConduit.class);
-        EssentiaCapabilities.registerConduitBlock(
-                event, (level, pos, state, be, side) -> side == null ? conduit : null, block);
-        List<Invocation> calls = List.copyOf(mockingDetails(event).getInvocations());
-        assertEquals(2, calls.size());
-        assertSame(EssentiaCapabilities.CONDUIT, calls.get(0).getArgument(0));
-        assertSame(EssentiaCapabilities.TRANSPORT, calls.get(1).getArgument(0));
-        IBlockCapabilityProvider<IEssentiaConduit, Direction> direct =
-                calls.get(0).getArgument(1);
-        IBlockCapabilityProvider<IEssentiaTransport, Direction> legacy =
-                calls.get(1).getArgument(1);
-        assertSame(conduit, direct.getCapability(null, BlockPos.ZERO, null, null, null));
-        assertNotNull(legacy.getCapability(null, BlockPos.ZERO, null, null, null));
-        assertNull(legacy.getCapability(null, BlockPos.ZERO, null, null, Direction.DOWN));
+        class Endpoint extends RegistryBlockEntity {
+            Endpoint() {
+                super(BlockEntityType.FURNACE, BlockPos.ZERO, Blocks.FURNACE.defaultBlockState());
+                exposeConduit(side -> side == null ? conduit : null);
+            }
+        }
+        var endpoint = new Endpoint();
+        var direct = endpoint.getCapability(EssentiaCapabilities.CONDUIT);
+        var legacy = endpoint.getCapability(EssentiaCapabilities.TRANSPORT);
+        assertSame(conduit, direct.orElseThrow(AssertionError::new));
+        assertTrue(legacy.isPresent());
+        assertFalse(endpoint.getCapability(EssentiaCapabilities.TRANSPORT, Direction.DOWN).isPresent());
+        assertSame(legacy, endpoint.getCapability(EssentiaCapabilities.TRANSPORT));
+        endpoint.setRemoved();
+        assertFalse(direct.isPresent());
+        assertFalse(legacy.isPresent());
+        assertFalse(endpoint.getCapability(EssentiaCapabilities.CONDUIT).isPresent());
+        endpoint.clearRemoved();
+        assertSame(conduit, endpoint.getCapability(EssentiaCapabilities.CONDUIT).orElseThrow(AssertionError::new));
+        assertNotSame(legacy, endpoint.getCapability(EssentiaCapabilities.TRANSPORT));
     }
 
     @Test
@@ -192,15 +184,4 @@ class EssentiaConduitCompatibilityTest {
         verify(source).insert(aspect, 2, Direction.UP, false);
     }
 
-    @Test
-    void filterFacadeCopiesStacksAndRejectsRebinding() {
-        ItemStack input = new ItemStack(TTItems.LABEL.get());
-        ItemStack labelled = EssentiaAccess.withAspectFilter(input, TTAspects.ORDO);
-        assertNull(EssentiaAccess.aspectFilter(input));
-        assertEquals(TTAspects.ORDO, EssentiaAccess.aspectFilter(labelled));
-        ItemStack cleared = EssentiaAccess.withAspectFilter(labelled, null);
-        assertNull(EssentiaAccess.aspectFilter(cleared));
-        assertEquals(TTAspects.ORDO, EssentiaAccess.aspectFilter(labelled));
-        assertThrows(IllegalStateException.class, () -> EssentiaAccess.bind(TTDataComponents.ASPECT_FILTER));
-    }
 }

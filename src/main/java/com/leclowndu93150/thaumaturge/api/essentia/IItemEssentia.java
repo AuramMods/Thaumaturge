@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
  * The essentia carried by one item stack: phials, filled jars, essentia crystals, mana beans.
  *
  * <p>Obtained through the {@link EssentiaCapabilities#CONTAINER} item capability, which returns a view bound to the queried stack.
- * Writes go straight into that stack's data components; to change another stack, query its own view.
+ * Writes update the queried stack's item data. Query each stack separately to work with copies.
  *
  * @since 1.0.0
  */

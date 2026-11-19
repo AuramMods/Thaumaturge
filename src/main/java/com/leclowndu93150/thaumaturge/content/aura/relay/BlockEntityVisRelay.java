@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayCapabilities;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityAccess;
 import com.leclowndu93150.thaumaturge.content.world.space.BlockSightline;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -219,7 +220,7 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
     }
 
     private static @Nullable IVisRelaySource usableSource(ServerLevel level, BlockPos pos) {
-        IVisRelaySource source = level.getCapability(VisRelayCapabilities.SOURCE, pos, null);
+        IVisRelaySource source = BlockCapabilityAccess.find(level, pos, VisRelayCapabilities.SOURCE, null);
         return source != null && source.canSupply() ? source : null;
     }
 

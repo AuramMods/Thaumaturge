@@ -40,6 +40,7 @@ public final class BlockEntityLampFertility extends RegistryBlockEntity implemen
 
     public BlockEntityLampFertility(BlockPos pos, BlockState state) {
         super(TTBlockEntities.LAMP_FERTILITY.get(), pos, state);
+        exposeConduit(side -> intake());
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityLampFertility lamp) {

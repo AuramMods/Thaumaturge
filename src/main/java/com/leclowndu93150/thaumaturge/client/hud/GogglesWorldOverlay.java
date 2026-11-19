@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.render.WorldRenderPose;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
+import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityAccess;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
@@ -118,11 +119,11 @@ public final class GogglesWorldOverlay {
         if (blockEntity instanceof BlockEntityInfusionMatrix matrix) {
             return new AspectReadout(matrix.remainingEssentia(), true);
         }
-        IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, pos, side);
+        IAspectContainer container = BlockCapabilityAccess.find(level, pos, AspectCapabilities.CONTAINER, side);
         if (container != null) {
             return new AspectReadout(container.getAspects(), true);
         }
-        IAspectQuery query = level.getCapability(EssentiaCapabilities.ASPECT_QUERY, pos, side);
+        IAspectQuery query = BlockCapabilityAccess.find(level, pos, EssentiaCapabilities.ASPECT_QUERY, side);
         return query == null
                 ? new AspectReadout(AspectList.EMPTY, false)
                 : new AspectReadout(query.queryAspects(), false);

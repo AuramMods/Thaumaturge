@@ -1,11 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectSource;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
@@ -57,6 +59,10 @@ public abstract class AbstractBlockEntityJar extends AbstractSyncedBlockEntity
 
     protected AbstractBlockEntityJar(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+        exposeConduit(side -> side == null || connectsOn(side) ? this : null);
+        exposeCapability(AspectCapabilities.CONTAINER, side -> this);
+        exposeCapability(EssentiaCapabilities.STORAGE,
+                side -> side != null && connectsOn(side) ? storage(side) : null);
     }
 
     @Override

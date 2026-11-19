@@ -8,6 +8,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -35,9 +37,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.util.LazyOptional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("removal")
 class AdvancedFurnaceCutoffTest {
     private ServerLevel level;
     private RegistryAccess registries;
@@ -318,18 +322,45 @@ class AdvancedFurnaceCutoffTest {
         TTNbt.store(saved, "Aspects", AspectList.CODEC, registries, AspectList.EMPTY.add(order, 9));
         furnace.loadAdditional(saved, registries);
         when(level.getBlockEntity(BlockPos.ZERO)).thenReturn(furnace);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
+        var outlets = new HashMap<Direction, BlockEntityAdvancedFurnaceNozzle>();
+        var originalDirect = new HashMap<Direction, LazyOptional<IEssentiaConduit>>();
+        for (Direction side : Direction.Plane.HORIZONTAL) {
+            BlockPos mouth = BlockPos.ZERO.relative(side);
+            var outlet = new BlockEntityAdvancedFurnaceNozzle(
+                    mouth, TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get().defaultBlockState());
+            outlet.setLevel(level);
+            outlets.put(side, outlet);
+            when(level.getBlockEntity(mouth)).thenReturn(outlet);
+            var view = outlet.getCapability(EssentiaCapabilities.CONDUIT, side);
+            assertEquals(9, view.orElseThrow(AssertionError::new).heldAmount(side));
+            originalDirect.put(side, view);
+        }
+        var north = outlets.get(Direction.NORTH);
+        var originalLegacy = north.getCapability(EssentiaCapabilities.TRANSPORT, Direction.NORTH);
+        assertTrue(originalLegacy.isPresent());
+        assertFalse(north.getCapability(EssentiaCapabilities.CONDUIT, Direction.SOUTH).isPresent());
         clearInvocations(furnace, level);
         try (var tubes = mockStatic(BlockEssentiaTransport.class)) {
             AdvancedAlchemicalFurnaceStructure.refreshNozzles(level, BlockPos.ZERO);
             for (Direction side : Direction.Plane.HORIZONTAL) {
                 BlockPos mouth = BlockPos.ZERO.relative(side);
-                verify(level).invalidateCapabilities(mouth);
                 tubes.verify(() -> BlockEssentiaTransport.refreshConnectionsAround(level, mouth));
+                assertFalse(originalDirect.get(side).isPresent());
             }
         }
+        assertFalse(originalLegacy.isPresent());
         assertEquals(9, furnace.aspects().totalAmount());
         verify(furnace, never()).setChanged();
         verify(level, never()).sendBlockUpdated(any(), any(), any(), anyInt());
+        var revived = north.getCapability(EssentiaCapabilities.CONDUIT, Direction.NORTH);
+        var held = revived.orElseThrow(AssertionError::new);
+        furnace.invalidateCaps();
+        assertFalse(revived.isPresent());
+        assertFalse(north.getCapability(EssentiaCapabilities.CONDUIT, Direction.NORTH).isPresent());
+        assertEquals(0, held.extract(order, 1, Direction.NORTH, false));
+        furnace.reviveCaps();
+        assertTrue(north.getCapability(EssentiaCapabilities.CONDUIT, Direction.NORTH).isPresent());
     }
 
     @Test

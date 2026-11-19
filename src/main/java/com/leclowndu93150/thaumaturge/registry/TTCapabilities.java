@@ -1,154 +1,32 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
-import com.leclowndu93150.thaumaturge.api.aura.VisRelayCapabilities;
-import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
-import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.AdvancedAlchemicalFurnaceStructure;
-import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
-import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
-import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectItemStorage;
-import com.leclowndu93150.thaumaturge.content.item.PhialItem;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
+import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
+import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
+import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
+import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaItemStorage;
+import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStorage;
+import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
+import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID)
 public final class TTCapabilities {
     private TTCapabilities() {}
 
     @SubscribeEvent
+    @SuppressWarnings("removal")
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        crucible(event);
-        nodes(event);
-        devices(event);
-        essentiaTransport(event);
-        essentiaItems(event);
-        smeltery(event);
-        golemBuilder(event);
-        infusion(event);
+        event.register(IEssentiaConduit.class);
+        event.register(IEssentiaTransport.class);
+        event.register(IEssentiaStorage.class);
+        event.register(IAspectQuery.class);
+        event.register(IItemEssentia.class);
+        event.register(IEssentiaItemStorage.class);
+        event.register(IAspectContainer.class);
+        event.register(IVisRelaySource.class);
     }
-
-    private static void infusion(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                AspectCapabilities.CONTAINER, TTBlockEntities.INFUSION_MATRIX.get(), (be, side) -> be);
-    }
-
-    private static void crucible(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(AspectCapabilities.CONTAINER, TTBlockEntities.CRUCIBLE.get(), (be, side) -> be);
-    }
-
-    private static void nodes(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(AspectCapabilities.CONTAINER, TTBlockEntities.NODE.get(), (be, side) -> be);
-        event.registerBlockEntity(
-                VisRelayCapabilities.SOURCE, TTBlockEntities.NODE.get(), (be, context) -> be.relaySource());
-        event.registerBlockEntity(AspectCapabilities.CONTAINER, TTBlockEntities.JAR_NODE.get(), (be, side) -> be);
-    }
-
-    private static void devices(RegisterCapabilitiesEvent event) {
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.LAMP_GROWTH.get(), (be, side) -> be.intake());
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.LAMP_FERTILITY.get(), (be, side) -> be.intake());
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.CENTRIFUGE.get(), (be, side) -> be);
-        EssentiaCapabilities.registerConduit(
-                event,
-                TTBlockEntities.ESSENTIA_CRYSTALIZER.get(),
-                (be, side) -> side == null || be.connectsOn(side) ? be : null);
-        EssentiaCapabilities.registerConduit(
-                event,
-                TTBlockEntities.ESSENTIA_RESERVOIR.get(),
-                (be, side) -> side == null || be.connectsOn(side) ? be : null);
-        EssentiaCapabilities.registerConduit(
-                event,
-                TTBlockEntities.FLUX_SCRUBBER.get(),
-                (be, side) -> side == null || be.connectsOn(side) ? be : null);
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.POTION_SPRAYER.get(), (be, side) -> be);
-        EssentiaCapabilities.registerConduit(
-                event,
-                TTBlockEntities.ESSENTIA_PORT.get(),
-                (be, side) -> side == null || be.connectsOn(side) ? be : null);
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.CONDENSER.get(), (be, side) -> be);
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.THAUMATORIUM.get(), (be, side) -> be);
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.THAUMATORIUM_TOP.get(), (be, side) -> be);
-        event.registerBlockEntity(
-                AspectCapabilities.CONTAINER, TTBlockEntities.MIRROR_ESSENTIA.get(), (be, side) -> be);
-    }
-
-    private static void essentiaTransport(RegisterCapabilitiesEvent event) {
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.TUBE.get(), (be, side) -> be);
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.TUBE_VALVE.get(), (be, side) -> be);
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.TUBE_RESTRICT.get(), (be, side) -> be);
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.TUBE_FILTER.get(), (be, side) -> be);
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.TUBE_ONEWAY.get(), (be, side) -> be);
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.TUBE_BUFFER.get(), (be, side) -> be);
-        event.registerBlockEntity(
-                EssentiaCapabilities.ASPECT_QUERY, TTBlockEntities.TUBE_FILTER.get(), (be, side) -> be);
-        TTBlockEntities.essentiaJars().forEach(type -> jarCapabilities(event, type));
-    }
-
-    private static <J extends AbstractBlockEntityJar> void jarCapabilities(
-            RegisterCapabilitiesEvent event, BlockEntityType<J> type) {
-        EssentiaCapabilities.registerConduit(
-                event, type, (be, side) -> side == null || be.connectsOn(side) ? be : null);
-        event.registerBlockEntity(
-                EssentiaCapabilities.STORAGE,
-                type,
-                (be, side) -> side != null && be.connectsOn(side) ? be.storage(side) : null);
-        event.registerBlockEntity(AspectCapabilities.CONTAINER, type, (be, side) -> be);
-    }
-
-    private static void essentiaItems(RegisterCapabilitiesEvent event) {
-        event.registerItem(
-                EssentiaCapabilities.CONTAINER, (stack, ctx) -> ComponentEssentia.phial(stack), TTItems.PHIAL.get());
-        event.registerItem(
-                EssentiaCapabilities.CONTAINER,
-                (stack, ctx) -> ComponentEssentia.crystal(stack),
-                TTItems.ESSENTIA_CRYSTAL.get(),
-                TTItems.MANA_BEAN.get());
-        event.registerItem(
-                EssentiaCapabilities.CONTAINER,
-                (stack, ctx) -> ComponentEssentia.jar(stack),
-                TTItems.JAR_NORMAL.get(),
-                TTItems.JAR_VOID.get());
-        event.registerItem(
-                EssentiaCapabilities.ITEM_STORAGE,
-                (stack, ctx) -> new SingleAspectItemStorage(stack, ComponentEssentia::jar, jarCapacity(stack), false),
-                TTItems.JAR_NORMAL.get(),
-                TTItems.JAR_VOID.get());
-        event.registerItem(
-                EssentiaCapabilities.ITEM_STORAGE,
-                (stack, ctx) ->
-                        new SingleAspectItemStorage(stack, ComponentEssentia::phial, PhialItem.BASE_AMOUNT, true),
-                TTItems.PHIAL.get());
-    }
-
-    private static int jarCapacity(ItemStack stack) {
-        return stack.getItem() instanceof BlockItem item && item.getBlock() instanceof IEssentiaJar jar
-                ? jar.jarCapacity()
-                : IEssentiaJar.DEFAULT_CAPACITY;
-    }
-
-    private static void smeltery(RegisterCapabilitiesEvent event) {
-        EssentiaCapabilities.registerConduit(event, TTBlockEntities.ALEMBIC.get(), (be, side) -> be);
-        event.registerBlockEntity(AspectCapabilities.CONTAINER, TTBlockEntities.ALEMBIC.get(), (be, side) -> be);
-        event.registerBlockEntity(
-                EssentiaCapabilities.STORAGE,
-                TTBlockEntities.ALEMBIC.get(),
-                (be, side) -> side != null && be.connectsOn(side) ? be.storage(side) : null);
-    }
-
-    private static void golemBuilder(RegisterCapabilitiesEvent event) {
-        EssentiaCapabilities.registerConduit(
-                event,
-                TTBlockEntities.GOLEM_BUILDER.get(),
-                (be, side) -> side == null || be.connectsOn(side) ? be : null);
-        EssentiaCapabilities.registerConduitBlock(
-                event,
-                (level, pos, state, be, side) -> AdvancedAlchemicalFurnaceStructure.nozzle(level, pos, side),
-                TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get());
-    }
-
 }

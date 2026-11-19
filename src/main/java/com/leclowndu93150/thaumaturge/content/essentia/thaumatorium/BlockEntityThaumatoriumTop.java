@@ -16,6 +16,7 @@ import org.jspecify.annotations.Nullable;
 public final class BlockEntityThaumatoriumTop extends RegistryBlockEntity implements SinkOnlyEssentiaFace {
     public BlockEntityThaumatoriumTop(BlockPos pos, BlockState state) {
         super(TTBlockEntities.THAUMATORIUM_TOP.get(), pos, state);
+        exposeConduit(side -> this);
     }
 
     private @Nullable BlockEntityThaumatorium lower() {

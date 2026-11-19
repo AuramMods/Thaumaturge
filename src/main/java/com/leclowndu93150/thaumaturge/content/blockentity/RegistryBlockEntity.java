@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.blockentity;
 
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
 import java.util.function.Function;
 import net.minecraft.core.BlockPos;
@@ -23,10 +25,18 @@ public abstract class RegistryBlockEntity extends BlockEntity {
 
     protected final <T> void exposeCapability(
             Capability<T> capability, Function<@Nullable Direction, @Nullable T> provider) {
+        exposedCapabilities().expose(capability, provider);
+    }
+
+    protected final void exposeConduit(Function<@Nullable Direction, @Nullable IEssentiaConduit> conduit) {
+        EssentiaCapabilities.exposeConduit(exposedCapabilities(), conduit);
+    }
+
+    private BlockCapabilityViews exposedCapabilities() {
         if (capabilityViews == null) {
             capabilityViews = new BlockCapabilityViews();
         }
-        capabilityViews.expose(capability, provider);
+        return capabilityViews;
     }
 
     @Override

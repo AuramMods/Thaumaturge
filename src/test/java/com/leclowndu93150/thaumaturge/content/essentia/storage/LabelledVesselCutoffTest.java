@@ -5,6 +5,8 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
@@ -97,13 +99,16 @@ class LabelledVesselCutoffTest {
         alembic.setStorageContents(TTAspects.ORDO, 7);
         when(level.getBlockEntity(BlockPos.ZERO)).thenReturn(alembic);
         ItemStack label = LabelItem.withAspect(TTAspects.IGNIS);
+        var easternStorage = alembic.getCapability(EssentiaCapabilities.STORAGE, Direction.EAST);
+        assertTrue(easternStorage.isPresent());
 
         assertTrue(block.attachLabel(level, BlockPos.ZERO, Direction.EAST, player, label));
         assertEquals(TTAspects.ORDO, alembic.aspectFilterKey());
         assertEquals(Direction.EAST, alembic.spoutSide());
         assertEquals(TTAspects.ORDO, alembic.aspectKey());
         assertEquals(7, alembic.amount());
-        verify(level).invalidateCapabilities(BlockPos.ZERO);
+        assertFalse(easternStorage.isPresent());
+        assertFalse(alembic.getCapability(EssentiaCapabilities.STORAGE, Direction.EAST).isPresent());
         verify(level, atLeastOnce()).sendBlockUpdated(any(), any(), any(), anyInt());
     }
 
@@ -121,6 +126,8 @@ class LabelledVesselCutoffTest {
         when(level.getBlockEntity(BlockPos.ZERO)).thenReturn(alembic);
         Direction originalSpout = alembic.spoutSide();
         ItemStack label = LabelItem.withAspect(TTAspects.IGNIS);
+        var easternStorage = alembic.getCapability(EssentiaCapabilities.STORAGE, Direction.EAST);
+        assertTrue(easternStorage.isPresent());
         clearInvocations(level);
 
         assertFalse(block.attachLabel(level, BlockPos.ZERO, face, player, label));
@@ -129,7 +136,7 @@ class LabelledVesselCutoffTest {
         assertEquals(TTAspects.ORDO, alembic.aspectKey());
         assertEquals(7, alembic.amount());
         assertEquals(1, label.getCount());
-        verify(level, never()).invalidateCapabilities(BlockPos.ZERO);
+        assertSame(easternStorage, alembic.getCapability(EssentiaCapabilities.STORAGE, Direction.EAST));
         verify(level, never()).sendBlockUpdated(any(), any(), any(), anyInt());
         verify(level, never()).playSound(null, BlockPos.ZERO, TTSounds.PAGE.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
     }

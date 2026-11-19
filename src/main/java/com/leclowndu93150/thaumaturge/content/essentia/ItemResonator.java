@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
+import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityAccess;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityCondenser;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeBuffer;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.TubeGeometry;
@@ -85,7 +86,7 @@ public final class ItemResonator extends Item {
     private static void reportContents(
             Player player, Level level, BlockPos pos, Direction face, IEssentiaConduit conduit) {
         IAspectContainer container = level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer
-                ? level.getCapability(AspectCapabilities.CONTAINER, pos, face)
+                ? BlockCapabilityAccess.find(level, pos, AspectCapabilities.CONTAINER, face)
                 : null;
         if (container != null) {
             for (AspectInstance entry : container.getAspects().sortedByTag()) {

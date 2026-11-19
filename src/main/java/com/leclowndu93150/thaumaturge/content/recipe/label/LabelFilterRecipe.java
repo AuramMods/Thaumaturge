@@ -50,7 +50,7 @@ public final class LabelFilterRecipe extends CustomRecipe {
 
             if (stack.is(TTItems.PHIAL.get())) {
                 if (aspect != null) return null;
-                IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER);
+                IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER).orElse(null);
                 if (essentia == null || essentia.getAspects().isEmpty()) return null;
                 aspect = Java17.first(essentia.getAspects().entries()).aspect();
             } else if (!stack.isEmpty()) {

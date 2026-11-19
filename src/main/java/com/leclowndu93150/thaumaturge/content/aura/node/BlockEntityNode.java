@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
@@ -8,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
+import com.leclowndu93150.thaumaturge.api.aura.VisRelayCapabilities;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.api.taint.ITaintOrigin;
@@ -111,10 +113,12 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
 
     public BlockEntityNode(BlockPos pos, BlockState state) {
         this(TTBlockEntities.NODE.get(), pos, state);
+        exposeCapability(VisRelayCapabilities.SOURCE, side -> side == null ? relaySource() : null);
     }
 
     protected BlockEntityNode(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+        exposeCapability(AspectCapabilities.CONTAINER, side -> this);
     }
 
     public void applyNodeData(NodeData data) {

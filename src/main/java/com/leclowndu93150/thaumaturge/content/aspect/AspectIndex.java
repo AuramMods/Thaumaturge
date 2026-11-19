@@ -123,7 +123,7 @@ public final class AspectIndex implements IAspectIndex {
             return AspectList.EMPTY;
         }
 
-        IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER);
+        IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER).orElse(null);
         if (essentia != null && essentia.countsTowardItemAspects()) {
             return essentia.getAspects();
         }

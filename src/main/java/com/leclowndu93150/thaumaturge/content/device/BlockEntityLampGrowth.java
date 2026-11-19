@@ -54,6 +54,7 @@ public final class BlockEntityLampGrowth extends AbstractSyncedBlockEntity imple
 
     public BlockEntityLampGrowth(BlockPos pos, BlockState state) {
         super(TTBlockEntities.LAMP_GROWTH.get(), pos, state);
+        exposeConduit(side -> intake());
         for (int index = 0; index < COLUMN_COUNT; index++) {
             columnOrder[index] = index;
         }

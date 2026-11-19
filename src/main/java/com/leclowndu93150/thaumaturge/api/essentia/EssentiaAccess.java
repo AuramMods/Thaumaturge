@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.api.essentia;
 
-import com.leclowndu93150.thaumaturge.itemdata.ItemData;
-
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityAccess;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -46,8 +46,8 @@ public final class EssentiaAccess {
      */
     @SuppressWarnings("removal")
     public static @Nullable IEssentiaConduit conduit(Level level, BlockPos pos, @Nullable Direction face) {
-        IEssentiaConduit conduit = level.getCapability(EssentiaCapabilities.CONDUIT, pos, face);
-        return conduit != null ? conduit : level.getCapability(EssentiaCapabilities.TRANSPORT, pos, face);
+        IEssentiaConduit conduit = BlockCapabilityAccess.find(level, pos, EssentiaCapabilities.CONDUIT, face);
+        return conduit != null ? conduit : BlockCapabilityAccess.find(level, pos, EssentiaCapabilities.TRANSPORT, face);
     }
 
     /**
@@ -75,7 +75,7 @@ public final class EssentiaAccess {
     @Deprecated(since = "1.1.0", forRemoval = true)
     @SuppressWarnings("removal")
     public static @Nullable IEssentiaTransport transport(Level level, BlockPos pos, Direction face) {
-        return level.getCapability(EssentiaCapabilities.TRANSPORT, pos, face);
+        return BlockCapabilityAccess.find(level, pos, EssentiaCapabilities.TRANSPORT, face);
     }
 
     /**

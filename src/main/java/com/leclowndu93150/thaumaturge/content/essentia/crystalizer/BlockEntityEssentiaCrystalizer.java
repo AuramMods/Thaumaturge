@@ -90,6 +90,7 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
 
     public BlockEntityEssentiaCrystalizer(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ESSENTIA_CRYSTALIZER.get(), pos, state);
+        exposeConduit(side -> side == null || connectsOn(side) ? this : null);
     }
 
     public static void serverTick(

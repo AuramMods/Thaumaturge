@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.tube;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.behaviour.FilterTubeBehaviour;
@@ -33,6 +34,7 @@ public final class BlockEntityTubeFilter extends BlockEntityTube implements IAsp
 
     private BlockEntityTubeFilter(BlockPos pos, BlockState state, FilterTubeBehaviour filter) {
         super(TTBlockEntities.TUBE_FILTER.get(), pos, state, filter);
+        exposeCapability(EssentiaCapabilities.ASPECT_QUERY, side -> this);
         this.filter = filter;
     }
 

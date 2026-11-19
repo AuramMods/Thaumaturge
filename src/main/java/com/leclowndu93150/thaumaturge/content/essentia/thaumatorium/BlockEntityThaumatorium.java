@@ -74,6 +74,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
 
     public BlockEntityThaumatorium(BlockPos pos, BlockState state) {
         super(TTBlockEntities.THAUMATORIUM.get(), pos, state);
+        exposeConduit(side -> this);
         exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> catalyst());
     }
 

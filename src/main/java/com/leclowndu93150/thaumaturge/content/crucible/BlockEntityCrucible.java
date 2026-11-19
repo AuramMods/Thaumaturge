@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.crucible;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -78,6 +79,7 @@ public class BlockEntityCrucible extends AbstractSyncedBlockEntity implements Re
 
     public BlockEntityCrucible(BlockPos worldPosition, BlockState blockState) {
         super(TTBlockEntities.CRUCIBLE.get(), worldPosition, blockState);
+        exposeCapability(AspectCapabilities.CONTAINER, side -> this);
         exposeCapability(ForgeCapabilities.FLUID_HANDLER, side -> getTank());
     }
 

@@ -103,6 +103,7 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
 
     protected BlockEntityTube(BlockEntityType<?> type, BlockPos pos, BlockState state, TubeBehaviour behaviour) {
         super(type, pos, state);
+        exposeConduit(side -> this);
         this.behaviour = behaviour;
         this.cadence = TickCadence.staggered(pos);
         Arrays.fill(sideOpen, true);

@@ -18,6 +18,7 @@ import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
+import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityAccess;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanNode;
@@ -146,7 +147,7 @@ public final class ThaumometerLensRenderer {
         Component name = pick.isEmpty() || !state.getFluidState().isEmpty()
                 ? state.getBlock().getName()
                 : pick.getHoverName();
-        IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, pos, null);
+        IAspectContainer container = BlockCapabilityAccess.find(level, pos, AspectCapabilities.CONTAINER, null);
         if (container != null && !container.getAspects().isEmpty()) {
             return Readout.plain(name, container.getAspects());
         }

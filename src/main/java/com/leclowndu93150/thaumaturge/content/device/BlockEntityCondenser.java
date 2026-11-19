@@ -78,6 +78,7 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
 
     public BlockEntityCondenser(BlockPos pos, BlockState state) {
         super(TTBlockEntities.CONDENSER.get(), pos, state);
+        exposeConduit(side -> this);
     }
 
     public int interval() {
