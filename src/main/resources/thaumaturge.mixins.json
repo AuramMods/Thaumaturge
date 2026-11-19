@@ -41,6 +41,7 @@
     "world.item.crafting.RecipeManagerMixin",
     "server.ReloadableServerResourcesMixin",
     "network.PacketDecoderRegistryContextMixin",
+    "network.PacketEncoderRegistryContextMixin",
     "resources.RegistryOpsAccessor",
     "world.effect.MobEffectInstanceMixin",
     "world.effect.AbsorptionMobEffectMixin",

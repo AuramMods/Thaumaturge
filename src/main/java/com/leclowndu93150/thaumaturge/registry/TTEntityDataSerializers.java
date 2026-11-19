@@ -7,20 +7,21 @@ import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public final class TTEntityDataSerializers {
     public static final DeferredRegister<EntityDataSerializer<?>> SERIALIZERS =
-            DeferredRegister.create(NeoForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, TTIds.MODID);
+            DeferredRegister.create(ForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, TTIds.MODID);
 
     public static final RegistryObject<EntityDataSerializer<GolemProperties>>
             GOLEM_PROPERTIES = SERIALIZERS.register(
-                    "golem_properties", () -> EntityDataSerializer.forValueType(GolemProperties.STREAM_CODEC));
+                    "golem_properties", () -> EntityDataSerializer.simple(
+                            GolemProperties.STREAM_CODEC::encode, GolemProperties.STREAM_CODEC::decode));
 
     public static final RegistryObject<EntityDataSerializer<GolemAccessoryStates>>
             GOLEM_ACCESSORY_STATES = SERIALIZERS.register(
                     "golem_accessory_states",
-                    () -> EntityDataSerializer.forValueType(GolemAccessoryStates.STREAM_CODEC));
+                    () -> GolemAccessoryStates.ENTITY_DATA_SERIALIZER);
 
     private TTEntityDataSerializers() {}
 
