@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.model.data.ModelData;
@@ -17,8 +17,7 @@ import net.minecraftforge.client.model.data.ModelData;
 public final class CentrifugeRenderer implements BlockEntityRenderer<BlockEntityCentrifuge> {
     private static final float BLOCK_CENTER = 0.5F;
 
-    public static final ModelResourceLocation SPINNER_MODEL_ID =
-            ModelResourceLocation.standalone(TTIds.rl("block/centrifuge_spinner"));
+    public static final ResourceLocation SPINNER_MODEL_ID = TTIds.rl("block/centrifuge_spinner");
 
     private final RandomSource random = RandomSource.create();
 

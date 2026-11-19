@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,8 +23,7 @@ public final class TubeValveRenderer implements BlockEntityRenderer<BlockEntityT
     private static final float FULL_TURN = 360.0F;
     private static final float SINK_TRAVEL = 0.11F;
 
-    public static final ModelResourceLocation MODEL_ID =
-            ModelResourceLocation.standalone(TTIds.rl("block/tube_valve_head"));
+    public static final ResourceLocation MODEL_ID = TTIds.rl("block/tube_valve_head");
 
     private final RandomSource random = RandomSource.create();
 

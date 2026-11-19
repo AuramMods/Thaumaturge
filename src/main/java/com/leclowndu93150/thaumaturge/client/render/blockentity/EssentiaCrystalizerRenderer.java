@@ -14,8 +14,8 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -24,8 +24,7 @@ import net.minecraftforge.client.model.data.ModelData;
 
 /** Animated crystalizer crystals. */
 public final class EssentiaCrystalizerRenderer implements BlockEntityRenderer<BlockEntityEssentiaCrystalizer> {
-    public static final ModelResourceLocation CRYSTAL_MODEL_ID =
-            ModelResourceLocation.standalone(TTIds.rl("block/crystalizer_crystal"));
+    public static final ResourceLocation CRYSTAL_MODEL_ID = TTIds.rl("block/crystalizer_crystal");
 
     private static final float PIXEL = 1.0F / 16.0F;
     private static final float CRADLE_TOP = 11.0F * PIXEL;
@@ -129,7 +128,6 @@ public final class EssentiaCrystalizerRenderer implements BlockEntityRenderer<Bl
                     tinted ? red : 1.0F,
                     tinted ? green : 1.0F,
                     tinted ? blue : 1.0F,
-                    1.0F,
                     light,
                     overlay);
         }

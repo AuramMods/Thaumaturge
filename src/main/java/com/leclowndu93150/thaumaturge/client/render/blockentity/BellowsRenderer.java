@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,10 +22,10 @@ public final class BellowsRenderer implements BlockEntityRenderer<BlockEntityBel
     private static final int BOTTOM = 0;
     private static final int TOP = 1;
     private static final int BAG = 2;
-    public static final ModelResourceLocation[] MODEL_IDS = {
-        ModelResourceLocation.standalone(TTIds.rl("block/bellows/bottom_plank")),
-        ModelResourceLocation.standalone(TTIds.rl("block/bellows/top_plank")),
-        ModelResourceLocation.standalone(TTIds.rl("block/bellows/bag"))
+    public static final ResourceLocation[] MODEL_IDS = {
+        TTIds.rl("block/bellows/bottom_plank"),
+        TTIds.rl("block/bellows/top_plank"),
+        TTIds.rl("block/bellows/bag")
     };
 
     private final RandomSource random = RandomSource.create();

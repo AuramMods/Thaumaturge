@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -25,10 +24,8 @@ import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.model.data.ModelData;
 
 public final class MirrorRenderer implements BlockEntityRenderer<BlockEntityMirrorBase> {
-    public static final ModelResourceLocation FRAME_MODEL_ID =
-            ModelResourceLocation.standalone(TTIds.rl("block/mirror"));
-    public static final ModelResourceLocation FRAME_ESSENTIA_MODEL_ID =
-            ModelResourceLocation.standalone(TTIds.rl("block/mirror_essentia"));
+    public static final ResourceLocation FRAME_MODEL_ID = TTIds.rl("block/mirror");
+    public static final ResourceLocation FRAME_ESSENTIA_MODEL_ID = TTIds.rl("block/mirror_essentia");
 
     private static final ResourceLocation PANE_TEXTURE = TTIds.rl("textures/block/mirrorpane.png");
     private static final ResourceLocation PANE_TRANS_TEXTURE = TTIds.rl("textures/block/mirrorpanetrans.png");
@@ -102,7 +99,7 @@ public final class MirrorRenderer implements BlockEntityRenderer<BlockEntityMirr
     }
 
     private void renderFrame(
-            ModelResourceLocation id,
+            ResourceLocation id,
             BlockState state,
             PoseStack poseStack,
             MultiBufferSource buffers,

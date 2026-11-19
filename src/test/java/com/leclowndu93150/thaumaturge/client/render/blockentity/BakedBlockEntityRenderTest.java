@@ -34,6 +34,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -111,10 +112,10 @@ class BakedBlockEntityRenderTest {
                     .thenReturn(List.of(tinted, untinted, otherTint));
             fixture.render(Renderer.CRYSTALIZER);
             verify(fixture.consumer, atLeastOnce())
-                    .putBulkData(any(), eq(tinted), eq(0.2F), eq(0.4F), eq(0.6F), eq(1.0F), anyInt(), anyInt());
+                    .putBulkData(any(), eq(tinted), eq(0.2F), eq(0.4F), eq(0.6F), anyInt(), anyInt());
             for (BakedQuad quad : List.of(untinted, otherTint)) {
                 verify(fixture.consumer, atLeastOnce())
-                        .putBulkData(any(), eq(quad), eq(1.0F), eq(1.0F), eq(1.0F), eq(1.0F), anyInt(), anyInt());
+                        .putBulkData(any(), eq(quad), eq(1.0F), eq(1.0F), eq(1.0F), anyInt(), anyInt());
             }
         }
     }
@@ -136,7 +137,7 @@ class BakedBlockEntityRenderTest {
             when(minecraft.getModelManager()).thenReturn(models);
             when(minecraft.getBlockRenderer()).thenReturn(blocks);
             when(blocks.getModelRenderer()).thenReturn(modelRenderer);
-            when(models.getModel(any())).thenReturn(model);
+            when(models.getModel(any(ResourceLocation.class))).thenReturn(model);
             when(model.getRenderTypes(eq(state), any(), eq(ModelData.EMPTY))).thenReturn(ChunkRenderTypeSet.of(layers));
             when(buffers.getBuffer(any())).thenReturn(consumer);
             minecraftStatic = mockStatic(Minecraft.class);

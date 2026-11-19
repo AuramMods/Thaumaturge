@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.render.blockentity;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.eldritch.altar.BlockEntityEldritchAltar;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -86,7 +86,7 @@ public final class TTBlockEntityRenderers {
 
     @SubscribeEvent
     public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event) {
-        for (ModelResourceLocation modelId : BellowsRenderer.MODEL_IDS) {
+        for (ResourceLocation modelId : BellowsRenderer.MODEL_IDS) {
             event.register(modelId);
         }
         event.register(MirrorRenderer.FRAME_MODEL_ID);
