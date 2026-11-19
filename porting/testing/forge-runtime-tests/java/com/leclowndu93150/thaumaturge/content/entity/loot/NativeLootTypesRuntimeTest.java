@@ -34,10 +34,14 @@ import net.minecraft.server.packs.resources.SimpleReloadInstance;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootDataManager;
@@ -124,6 +128,53 @@ class NativeLootTypesRuntimeTest {
     }
 
     @Test
+    void nativeGsonPreservesChampionCurvesAndReadsLootingFromTheKiller() {
+        var context = mock(LootContext.class);
+        var gson = Deserializers.createLootTableSerializer().create();
+        float uncommonBase = 4.0F / 9.0F;
+        var rare = roundTripChance(gson, LootingChanceValue.linear(0.0F, 0.0F, 1.0F / 9.0F));
+        var uncommon = roundTripChance(gson, LootingChanceValue.byLevel(
+                uncommonBase, List.of(5.0F / 9.0F, 5.0F / 8.0F, 5.0F / 7.0F, 5.0F / 6.0F), 1.0F));
+
+        assertEquals(0.0F, rare.chance().getFloat(context));
+        assertEquals(uncommonBase, uncommon.chance().getFloat(context));
+        when(context.getParamOrNull(LootContextParams.KILLER_ENTITY)).thenReturn(mock(Entity.class));
+        assertEquals(uncommonBase, uncommon.chance().getFloat(context));
+
+        var killer = mock(LivingEntity.class);
+        when(context.getParamOrNull(LootContextParams.KILLER_ENTITY)).thenReturn(killer);
+        var expectedRare = new float[] {0.0F, 0.0F, 1.0F / 9.0F, 2.0F / 9.0F, 3.0F / 9.0F, 4.0F / 9.0F};
+        var expectedUncommon = new float[] {uncommonBase, 5.0F / 9.0F, 5.0F / 8.0F, 5.0F / 7.0F, 5.0F / 6.0F, 1.0F};
+        for (int level = 0; level < expectedUncommon.length; level++) {
+            equipLootingSword(killer, level);
+            assertEquals(expectedRare[level], rare.chance().getFloat(context), 1.0e-7F, "rare level " + level);
+            assertEquals(expectedUncommon[level], uncommon.chance().getFloat(context), "uncommon level " + level);
+        }
+    }
+
+    @Test
+    void ordinaryLootingChanceUsesTheSourceThresholdWithoutClamping() {
+        var context = mock(LootContext.class);
+        var killer = mock(LivingEntity.class);
+        var random = mock(RandomSource.class);
+        when(context.getParamOrNull(LootContextParams.KILLER_ENTITY)).thenReturn(killer);
+        when(context.getRandom()).thenReturn(random);
+        var chance = roundTripChance(Deserializers.createLootTableSerializer().create(),
+                LootingChanceValue.increasing(0.25F, 0.125F));
+
+        equipLootingSword(killer, 2);
+        assertEquals(0.5F, chance.chance().getFloat(context));
+        when(random.nextFloat()).thenReturn(Math.nextDown(0.5F), 0.5F, Math.nextDown(1.0F));
+        assertTrue(chance.test(context));
+        assertFalse(chance.test(context));
+
+        equipLootingSword(killer, 7);
+        assertEquals(1.125F, chance.chance().getFloat(context));
+        assertTrue(chance.test(context));
+        verify(random, times(3)).nextFloat();
+    }
+
+    @Test
     void nativeEquipmentTablesResolveWeightedKitReferencesAfterDatagenAndReload(@TempDir Path directory)
             throws Exception {
         var parent = id("knight");
@@ -185,6 +236,24 @@ class NativeLootTypesRuntimeTest {
         assertEquals("The Keeper", settings.name().getString());
         assertEquals("maze.test", assertInstanceOf(TranslatableContents.class, settings.announcement().getContents()).getKey());
         assertEquals(EncounterSettings.DEFAULT_VICTORY_DELAY, settings.victoryDelay());
+    }
+
+    private static NumberChanceCondition roundTripChance(com.google.gson.Gson gson, LootingChanceValue value) {
+        var json = gson.toJson(NumberChanceCondition.randomChance(value).build(), LootItemCondition.class);
+        assertEquals("thaumaturge:looting_chance",
+                JsonParser.parseString(json).getAsJsonObject().getAsJsonObject("chance").get("type").getAsString());
+        var chance = assertInstanceOf(NumberChanceCondition.class, gson.fromJson(json, LootItemCondition.class));
+        assertInstanceOf(LootingChanceValue.class, chance.chance());
+        assertEquals(Set.of(LootContextParams.KILLER_ENTITY), chance.getReferencedContextParams());
+        return chance;
+    }
+
+    private static void equipLootingSword(LivingEntity killer, int level) {
+        var sword = new ItemStack(Items.DIAMOND_SWORD);
+        if (level > 0) {
+            sword.enchant(Enchantments.MOB_LOOTING, level);
+        }
+        when(killer.getItemBySlot(EquipmentSlot.MAINHAND)).thenReturn(sword);
     }
 
     private static LootTable.Builder kit(Item weapon, Item helmet) {

@@ -142,11 +142,11 @@ public final class TTDataGenerators {
                 new LootTableProvider.SubProviderEntry(
                         () -> new TTEntityLootSubProvider(lookup.join()), LootContextParamSets.ENTITY),
                 new LootTableProvider.SubProviderEntry(
-                        () -> new TTEntityRewardLootSubProvider(lookup.join()), LootContextParamSets.ENTITY),
+                        TTEntityRewardLootSubProvider::new, LootContextParamSets.ENTITY),
                 new LootTableProvider.SubProviderEntry(
                         TTEquipmentLootSubProvider::new, MobSpawnEquipment.PARAMETERS),
                 new LootTableProvider.SubProviderEntry(
-                        () -> new TTTaintedLootSubProvider(lookup.join()), LootContextParamSets.ENTITY),
+                        TTTaintedLootSubProvider::new, LootContextParamSets.ENTITY),
                 new LootTableProvider.SubProviderEntry(
                         () -> new TTGameplayLootSubProvider(lookup.join()), LootContextParamSets.CHEST))));
         generator.addProvider(true, new TTGlobalLootModifierProvider(output));

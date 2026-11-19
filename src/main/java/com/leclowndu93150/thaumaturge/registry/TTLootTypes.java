@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.registry;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.loot.DifficultyValue;
 import com.leclowndu93150.thaumaturge.content.entity.loot.LabyrinthBoundCondition;
+import com.leclowndu93150.thaumaturge.content.entity.loot.LootingChanceValue;
 import com.leclowndu93150.thaumaturge.content.entity.loot.NoNearbyKinCondition;
 import com.leclowndu93150.thaumaturge.content.entity.loot.NumberChanceCondition;
 import com.leclowndu93150.thaumaturge.serialization.LootJsonSerializer;
@@ -29,6 +30,9 @@ public final class TTLootTypes {
     public static final RegistryObject<LootNumberProviderType> BY_DIFFICULTY =
             NUMBER_PROVIDERS.register("by_difficulty", () -> new LootNumberProviderType(
                     new LootJsonSerializer<>(DifficultyValue.MAP_CODEC)));
+    public static final RegistryObject<LootNumberProviderType> LOOTING_CHANCE =
+            NUMBER_PROVIDERS.register("looting_chance", () -> new LootNumberProviderType(
+                    new LootJsonSerializer<>(LootingChanceValue.MAP_CODEC)));
 
     private TTLootTypes() {}
 

@@ -4,7 +4,9 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.entity.loot.LabyrinthBoundCondition;
+import com.leclowndu93150.thaumaturge.content.entity.loot.LootingChanceValue;
 import com.leclowndu93150.thaumaturge.content.entity.loot.NoNearbyKinCondition;
+import com.leclowndu93150.thaumaturge.content.entity.loot.NumberChanceCondition;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
@@ -36,7 +38,6 @@ import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemConditi
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemKilledByPlayerCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceWithEnchantedBonusCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
@@ -64,8 +65,11 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
     private static final byte CULT_MAP_ZOOM = 2;
     private static final String CULT_MAP_NAME = "filled_map.thaumaturge.cult";
 
+    private final HolderLookup.Provider registries;
+
     public TTEntityLootSubProvider(HolderLookup.Provider registries) {
-        super(FeatureFlags.REGISTRY.allFlags(), FeatureFlagSet.of(), registries);
+        super(FeatureFlags.REGISTRY.allFlags(), FeatureFlagSet.of());
+        this.registries = registries;
     }
 
     @Override
@@ -110,10 +114,8 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
                                 .setRolls(ConstantValue.exactly(GIANT_FLESH_ROLLS))
                                 .add(LootItem.lootTableItem(Items.ROTTEN_FLESH)
                                         .apply(SetItemCountFunction.setCount(ConstantValue.exactly(2)))
-                                        .when(
-                                                LootItemRandomChanceWithEnchantedBonusCondition
-                                                        .randomChanceAndLootingBoost(
-                                                                this.registries, GIANT_FLESH_CHANCE, 0.0F))))
+                                        .when(NumberChanceCondition.randomChance(
+                                                LootingChanceValue.increasing(GIANT_FLESH_CHANCE, 0.0F)))))
                         .withPool(brainPool()));
         add(
                 TTEntities.PECH.get(),
@@ -213,8 +215,7 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
 
     private LootPool.Builder constructPool(ItemLike item, float chance) {
         return singlePool(item)
-                .when(LootItemRandomChanceWithEnchantedBonusCondition.randomChanceAndLootingBoost(
-                        this.registries, chance, CONSTRUCT_LOOTING_BONUS));
+                .when(NumberChanceCondition.randomChance(LootingChanceValue.increasing(chance, CONSTRUCT_LOOTING_BONUS)));
     }
 
     private LootItem.Builder<?> vitiumCrystal() {
@@ -234,8 +235,7 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
                 .setRolls(ConstantValue.exactly(1))
                 .add(LootItem.lootTableItem(item))
                 .when(LootItemKilledByPlayerCondition.killedByPlayer())
-                .when(LootItemRandomChanceWithEnchantedBonusCondition.randomChanceAndLootingBoost(
-                        this.registries, chance, lootingBonus));
+                .when(NumberChanceCondition.randomChance(LootingChanceValue.increasing(chance, lootingBonus)));
     }
 
     private LootPool.Builder cultMapPool() {
@@ -276,15 +276,14 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
                 .add(LootItem.lootTableItem(Items.CARROT))
                 .add(LootItem.lootTableItem(Items.POTATO))
                 .when(LootItemKilledByPlayerCondition.killedByPlayer())
-                .when(LootItemRandomChanceWithEnchantedBonusCondition.randomChanceAndLootingBoost(
-                        this.registries, 0.025F, 0.01F));
+                .when(NumberChanceCondition.randomChance(LootingChanceValue.increasing(0.025F, 0.01F)));
     }
 
     private LootPool.Builder brainPool() {
         return LootPool.lootPool()
                 .setRolls(ConstantValue.exactly(1))
                 .add(LootItem.lootTableItem(TTItems.BRAIN.get())
-                        .when(LootItemRandomChanceWithEnchantedBonusCondition.randomChanceAndLootingBoost(
-                                this.registries, BRAIN_CHANCE, BRAIN_LOOTING_BONUS)));
+                        .when(NumberChanceCondition.randomChance(
+                                LootingChanceValue.increasing(BRAIN_CHANCE, BRAIN_LOOTING_BONUS))));
     }
 }
