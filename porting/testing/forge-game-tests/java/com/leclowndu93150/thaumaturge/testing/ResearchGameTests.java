@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.api.research.pool.AspectPoolAccess;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScannedBlock;
 import com.leclowndu93150.thaumaturge.content.aura.AuraManager;
+import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
@@ -37,6 +38,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -60,6 +62,7 @@ public final class ResearchGameTests {
     private static final BlockPos CENTER = new BlockPos(2, 1, 2);
     private static final BlockPos BOOKCASE = CENTER.east();
     private static final BlockPos BED = CENTER.west();
+    private static final BlockPos CRUCIBLE = CENTER.south();
     private static final InteractionHand DUST_HAND = InteractionHand.OFF_HAND;
 
     private ResearchGameTests() {}
@@ -124,8 +127,8 @@ public final class ResearchGameTests {
         test.succeed();
     }
 
-    @GameTest(template = ROOM, timeoutTicks = 180)
-    public static void firstStepsCompleteThroughCraftingAndScanning(GameTestHelper test) {
+    @GameTest(template = ROOM, timeoutTicks = 420)
+    public static void openingProgressionThroughNitor(GameTestHelper test) {
         var player = survivalPlayer(test);
         var research = PlayerResearchAccess.of(player);
         var firstSteps = TTIds.rl("first_steps");
@@ -134,11 +137,11 @@ public final class ResearchGameTests {
         test.setBlock(BOOKCASE, Blocks.BOOKSHELF);
 
         test.assertFalse(ResearchManager.unlockRequested(player, firstSteps), "First Steps unlocked without the book");
-        test.assertTrue(!useDust(test, player, BOOKCASE).consumesAction() && dust.getCount() == 2,
+        test.assertTrue(!useDust(test, player, BOOKCASE).consumesAction() && dust.getCount() == 3,
                 "The bookshelf recipe consumed dust before the dream");
         pickUpCrystal(test, player);
         wakeInBed(test, player);
-        test.assertTrue(useDust(test, player, BOOKCASE).consumesAction() && dust.getCount() == 1,
+        test.assertTrue(useDust(test, player, BOOKCASE).consumesAction() && dust.getCount() == 2,
                 "The bookshelf recipe did not consume one dust after the dream");
 
         test.startSequence().thenWaitUntil(() -> {
@@ -154,12 +157,28 @@ public final class ResearchGameTests {
         }).thenExecute(() -> {
             test.assertTrue(ResearchManager.unlockRequested(player, firstSteps), "The Thaumonomicon did not unlock First Steps");
             test.assertFalse(ResearchManager.advanceStage(player, firstSteps), "First Steps advanced without a workbench");
-            test.assertTrue(useDust(test, player, CENTER).consumesAction() && dust.isEmpty(),
+            test.assertTrue(useDust(test, player, CENTER).consumesAction() && dust.getCount() == 1,
                     "The crafting table recipe did not consume one dust");
         }).thenWaitUntil(() -> {
             test.assertTrue(test.getBlockState(CENTER).is(TTBlocks.ARCANE_WORKBENCH.get()),
                     "Waiting for the crafting table transformation");
-        }).thenExecute(() -> finishFirstSteps(test, player, craftThaumometer(test, player))).thenSucceed();
+        }).thenExecute(() -> {
+            var thaumometer = craftThaumometer(test, player);
+            finishFirstSteps(test, player, thaumometer);
+            player.setItemInHand(DUST_HAND, dust);
+            test.assertTrue(player.getInventory().add(thaumometer), "The player could not store the Thaumometer");
+            makeCrucible(test, player, dust);
+        }).thenWaitUntil(() -> {
+            test.assertTrue(test.getBlockState(CRUCIBLE).is(TTBlocks.CRUCIBLE.get()),
+                    "Waiting for the cauldron transformation");
+        }).thenExecute(() -> fillCrucible(test, player)).thenWaitUntil(() -> {
+            test.assertTrue(crucible(test).getHeat() > 150, "Waiting for the crucible to boil over the magma block");
+        }).thenExecute(() -> craftNitor(test, player)).thenWaitUntil(() -> {
+            var drops = test.getEntities(TTEntities.SPECIAL_ITEM.get(), CRUCIBLE, 1.5);
+            test.assertTrue(drops.size() == 1 && drops.get(0).getItem().is(TTItems.NITORS.get(DyeColor.YELLOW).get())
+                            && drops.get(0).getItem().getCount() == 1,
+                    "The crucible did not eject exactly one yellow Nitor");
+        }).thenSucceed();
     }
 
     private static ItemStack craftSalisMundus(GameTestHelper test, FakePlayer player) {
@@ -170,20 +189,20 @@ public final class ResearchGameTests {
         try {
             menu.getSlot(1).set(new ItemStack(Items.BOWL));
             menu.getSlot(2).set(new ItemStack(Items.FLINT));
-            menu.getSlot(3).set(new ItemStack(Items.REDSTONE, 2));
-            menu.getSlot(4).set(crystal(test, TTAspects.AER, 2));
-            menu.getSlot(5).set(crystal(test, TTAspects.IGNIS, 2));
-            menu.getSlot(6).set(crystal(test, TTAspects.AER, 2));
+            menu.getSlot(3).set(new ItemStack(Items.REDSTONE, 3));
+            menu.getSlot(4).set(crystal(test, TTAspects.AER, 3));
+            menu.getSlot(5).set(crystal(test, TTAspects.IGNIS, 3));
+            menu.getSlot(6).set(crystal(test, TTAspects.AER, 3));
             test.assertTrue(menu.getSlot(0).getItem().isEmpty(), "Salis Mundus accepted duplicate aspects");
-            menu.getSlot(6).set(crystal(test, TTAspects.AQUA, 2));
+            menu.getSlot(6).set(crystal(test, TTAspects.AQUA, 3));
             test.assertTrue(menu.getSlot(0).getItem().is(TTItems.SALIS_MUNDUS.get()),
                     "Three different crystals did not produce a Salis Mundus preview");
             menu.clicked(0, 0, ClickType.QUICK_MOVE, player);
-            test.assertTrue(inventory.countItem(TTItems.SALIS_MUNDUS.get()) == 2, "Expected two crafted dusts");
+            test.assertTrue(inventory.countItem(TTItems.SALIS_MUNDUS.get()) == 3, "Expected three crafted dusts");
             test.assertTrue(menu.getSlot(1).getItem().is(Items.BOWL) && menu.getSlot(2).getItem().is(Items.FLINT),
                     "Crafting did not return the bowl and flint");
             int slot = inventory.findSlotMatchingItem(new ItemStack(TTItems.SALIS_MUNDUS.get()));
-            return inventory.removeItem(slot, 2);
+            return inventory.removeItem(slot, 3);
         } finally {
             menu.removed(player);
         }
@@ -244,7 +263,7 @@ public final class ResearchGameTests {
         var chest = (ChestBlockEntity) test.getBlockEntity(BOOKCASE);
         // The scanner must retry advanced subjects after their components are discovered.
         Item[] subjects = {Items.GOLDEN_APPLE, Items.BOOK, Items.SOUL_TORCH, Items.BONE,
-                Items.REDSTONE, Items.TORCH, Items.MUSHROOM_STEW};
+                Items.REDSTONE, Items.TORCH, Items.MUSHROOM_STEW, Items.GLISTERING_MELON_SLICE, Items.CLAY_BALL};
         for (int index = 0; index < subjects.length; index++) {
             chest.setItem(index, new ItemStack(subjects[index]));
         }
@@ -287,6 +306,83 @@ public final class ResearchGameTests {
                 "The Thaumometer did not begin scanning the chest");
         scanner.releaseUsing(thaumometer, test.getLevel(), player, scanner.getUseDuration(thaumometer) - heldTicks);
         player.stopUsingItem();
+    }
+
+    private static void makeCrucible(GameTestHelper test, FakePlayer player, ItemStack dust) {
+        var alchemy = TTIds.rl("unlock_alchemy");
+        test.assertTrue(ResearchManager.unlockRequested(player, alchemy), "First Steps did not open alchemy research");
+        test.assertTrue(ResearchManager.advanceStage(player, alchemy), "The scan did not supply the alchemy observations");
+        test.assertFalse(ResearchManager.advanceStage(player, alchemy), "Alchemy advanced without a crucible");
+        test.setBlock(CRUCIBLE.below(), Blocks.MAGMA_BLOCK);
+        test.setBlock(CRUCIBLE, Blocks.CAULDRON);
+        test.assertTrue(useDust(test, player, CRUCIBLE).consumesAction() && dust.isEmpty(),
+                "The cauldron did not accept the final Salis Mundus");
+    }
+
+    private static BlockEntityCrucible crucible(GameTestHelper test) {
+        var entity = test.getBlockEntity(CRUCIBLE);
+        test.assertTrue(entity instanceof BlockEntityCrucible, "The transformed crucible has no block entity");
+        return (BlockEntityCrucible) entity;
+    }
+
+    private static void fillCrucible(GameTestHelper test, FakePlayer player) {
+        var alchemy = TTIds.rl("unlock_alchemy");
+        test.assertTrue(ResearchManager.advanceStage(player, alchemy)
+                        && PlayerResearchAccess.of(player).stageOf(alchemy) == 2,
+                "Transforming the cauldron did not satisfy the crucible requirement");
+        var inventory = player.getInventory();
+        inventory.selected = 8;
+        test.assertTrue(player.getMainHandItem().isEmpty(), "Expected an empty hotbar slot for the bucket");
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
+        test.assertTrue(clickCrucible(test, player).consumesAction()
+                        && player.getMainHandItem().is(Items.BUCKET)
+                        && crucible(test).getTank().getFluidAmount() == 1000,
+                "The survival bucket did not fill the crucible through its Forge fluid handler");
+        var bucket = inventory.removeItem(inventory.selected, 1);
+        test.assertTrue(inventory.add(bucket), "The player could not store the empty bucket");
+
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.COAL));
+        test.assertTrue(!clickCrucible(test, player).consumesAction()
+                        && player.getMainHandItem().is(Items.COAL) && crucible(test).getAspects().isEmpty(),
+                "The cold crucible consumed the coal");
+    }
+
+    private static void craftNitor(GameTestHelper test, FakePlayer player) {
+        var crucible = crucible(test);
+        test.assertTrue(clickCrucible(test, player).consumesAction() && player.getMainHandItem().isEmpty(),
+                "The boiling crucible did not dissolve the coal");
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.TORCH, 3));
+        for (int count = 2; count >= 0; count--) {
+            test.assertTrue(clickCrucible(test, player).consumesAction() && player.getMainHandItem().getCount() == count,
+                    "A torch interaction did not dissolve exactly one item");
+        }
+        var fire = Objects.requireNonNull(Aspects.resolve(test.getLevel(), TTAspects.IGNIS));
+        var power = Objects.requireNonNull(Aspects.resolve(test.getLevel(), TTAspects.POTENTIA));
+        var light = Objects.requireNonNull(Aspects.resolve(test.getLevel(), TTAspects.LUX));
+        var contents = crucible.getAspects();
+        test.assertTrue(contents.amountOf(fire) == 10 && contents.amountOf(power) == 10 && contents.amountOf(light) == 15
+                        && crucible.getTank().getFluidAmount() == 1000,
+                "Dissolving coal and torches changed the water or supplied the wrong aspects");
+
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLOWSTONE_DUST));
+        test.assertTrue(clickCrucible(test, player).consumesAction() && player.getMainHandItem().isEmpty(),
+                "The boiling crucible did not accept the Nitor catalyst");
+        contents = crucible.getAspects();
+        test.assertTrue(contents.totalAmount() == 5 && contents.amountOf(light) == 5
+                        && crucible.getTank().getFluidAmount() == 950,
+                "Nitor crafting consumed the wrong aspects or water");
+        var research = PlayerResearchAccess.of(player);
+        var alchemy = TTIds.rl("unlock_alchemy");
+        test.assertTrue(research.knows(ResearchManager.craftedKey(TTIds.rl("nitor_yellow")))
+                        && ResearchManager.advanceStage(player, alchemy) && research.hasCompleted(alchemy),
+                "Crafting Nitor did not satisfy the final alchemy stage");
+    }
+
+    private static InteractionResult clickCrucible(GameTestHelper test, FakePlayer player) {
+        var pos = test.absolutePos(CRUCIBLE);
+        var state = test.getBlockState(CRUCIBLE);
+        var hit = new BlockHitResult(Vec3.atCenterOf(pos).add(0, 0.5, 0), Direction.UP, pos, false);
+        return state.use(test.getLevel(), player, InteractionHand.MAIN_HAND, hit);
     }
 
     private static InteractionResult useDust(GameTestHelper test, FakePlayer player, BlockPos target) {
