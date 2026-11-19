@@ -125,8 +125,8 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                 TTBlockTags.UNSAFE_LANDING)) {
             tag(voidTag).add(TTBlocks.ELDRITCH_NOTHING_DORMANT.get()).add(TTBlocks.ELDRITCH_NOTHING.get());
         }
-        TagAppender<Block> candles = tag(TTBlockTags.CANDLES);
-        TTBlocks.CANDLES.values().forEach(candle -> candles.add(candle.getKey()));
+        var candles = tag(TTBlockTags.CANDLES);
+        TTBlocks.CANDLES.values().forEach(candle -> candles.add(candle.get()));
         tag(TTBlockTags.RESEARCH_BONUS_ORDO)
                 .addTag(TTBlockTags.CANDLES)
                 .addTag(BlockTags.BUTTONS)
@@ -392,8 +392,8 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                 .addTag(BlockTags.BASE_STONE_OVERWORLD)
                 .addTag(BlockTags.STONE_ORE_REPLACEABLES)
                 .addTag(BlockTags.STONE_BRICKS)
-                .addTag(Tags.Blocks.STONES)
-                .addTag(Tags.Blocks.COBBLESTONES)
+                .addTag(TTBlockTags.STONES)
+                .addTag(Tags.Blocks.COBBLESTONE)
                 .addTag(Tags.Blocks.ORES);
         tag(TTBlockTags.TAINT_CONVERTIBLE_CRUST)
                 .add(Blocks.RED_MUSHROOM_BLOCK)
@@ -537,7 +537,7 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                 .add(TTBlocks.CRYSTAL_PERDITIO.get())
                 .add(TTBlocks.CRYSTAL_VITIUM.get());
         for (TagKey<Block> thin : List.of(TTBlockTags.SABLE_SUPER_LIGHT, TTBlockTags.SABLE_QUARTER_VOLUME)) {
-            TagAppender<Block> appender = tag(thin)
+            var appender = tag(thin)
                     .addTag(TTBlockTags.CANDLES)
                     .add(TTBlocks.TUBE.get())
                     .add(TTBlocks.TUBE_VALVE.get())
@@ -547,7 +547,7 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                     .add(TTBlocks.MANA_POD.get())
                     .add(TTBlocks.VIS_RELAY.get())
                     .add(TTBlocks.REDSTONE_RELAY.get());
-            TTBlocks.NITORS.values().forEach(nitor -> appender.add(nitor.getKey()));
+            TTBlocks.NITORS.values().forEach(nitor -> appender.add(nitor.get()));
         }
         tag(TTBlockTags.SABLE_HALF_VOLUME)
                 .add(TTBlocks.JAR_NORMAL.get())
@@ -600,12 +600,18 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                 .add(Blocks.CORNFLOWER)
                 .add(Blocks.LILY_OF_THE_VALLEY);
 
-        tag(Tags.Blocks.STRIPPED_LOGS)
-                .add(TTBlocks.STRIPPED_LOG_GREATWOOD.get())
-                .add(TTBlocks.STRIPPED_LOG_SILVERWOOD.get());
+        tag(TTBlockTags.STRIPPED_LOGS)
+                .add(Blocks.STRIPPED_ACACIA_LOG, Blocks.STRIPPED_BAMBOO_BLOCK, Blocks.STRIPPED_BIRCH_LOG,
+                        Blocks.STRIPPED_CHERRY_LOG, Blocks.STRIPPED_DARK_OAK_LOG, Blocks.STRIPPED_JUNGLE_LOG,
+                        Blocks.STRIPPED_MANGROVE_LOG, Blocks.STRIPPED_OAK_LOG, Blocks.STRIPPED_SPRUCE_LOG,
+                        Blocks.STRIPPED_CRIMSON_STEM, Blocks.STRIPPED_WARPED_STEM,
+                        TTBlocks.STRIPPED_LOG_GREATWOOD.get(), TTBlocks.STRIPPED_LOG_SILVERWOOD.get());
 
-        tag(Tags.Blocks.STRIPPED_WOODS)
-                .add(TTBlocks.STRIPPED_WOOD_GREATWOOD.get())
-                .add(TTBlocks.STRIPPED_WOOD_SILVERWOOD.get());
+        tag(TTBlockTags.STRIPPED_WOODS)
+                .add(Blocks.STRIPPED_ACACIA_WOOD, Blocks.STRIPPED_BIRCH_WOOD, Blocks.STRIPPED_CHERRY_WOOD,
+                        Blocks.STRIPPED_DARK_OAK_WOOD, Blocks.STRIPPED_JUNGLE_WOOD, Blocks.STRIPPED_MANGROVE_WOOD,
+                        Blocks.STRIPPED_OAK_WOOD, Blocks.STRIPPED_SPRUCE_WOOD,
+                        Blocks.STRIPPED_CRIMSON_HYPHAE, Blocks.STRIPPED_WARPED_HYPHAE,
+                        TTBlocks.STRIPPED_WOOD_GREATWOOD.get(), TTBlocks.STRIPPED_WOOD_SILVERWOOD.get());
     }
 }

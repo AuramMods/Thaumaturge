@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.registry;
 import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
@@ -33,6 +34,18 @@ public final class TTItemTags {
     public static final TagKey<Item> EMPTY_BUCKETS = common("buckets/empty");
     public static final TagKey<Item> WATER_BUCKETS = common("buckets/water");
     public static final TagKey<Item> MILK_BUCKETS = common("buckets/milk");
+    public static final TagKey<Item> STRIPPED_LOGS = common("stripped_logs");
+    public static final TagKey<Item> STRIPPED_WOODS = common("stripped_woods");
+    public static final TagKey<Item> SHIELDS = common("tools/shield");
+    public static final TagKey<Item> MELEE_WEAPONS = common("tools/melee_weapon");
+    public static final TagKey<Item> MINING_TOOLS = common("tools/mining_tool");
+
+    public static final TagKey<Item> DYEABLE = vanilla("dyeable");
+    public static final TagKey<Item> DURABILITY_ENCHANTABLE = vanilla("enchantable/durability");
+    public static final TagKey<Item> HEAD_ARMOR = vanilla("head_armor");
+    public static final TagKey<Item> CHEST_ARMOR = vanilla("chest_armor");
+    public static final TagKey<Item> LEG_ARMOR = vanilla("leg_armor");
+    public static final TagKey<Item> FOOT_ARMOR = vanilla("foot_armor");
 
     public static final TagKey<Item> GREATWOOD_LOGS = key("greatwood_logs");
     public static final TagKey<Item> SILVERWOOD_LOGS = key("silverwood_logs");
@@ -112,6 +125,10 @@ public final class TTItemTags {
 
     private static TagKey<Item> common(String path) {
         return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", path));
+    }
+
+    private static TagKey<Item> vanilla(String path) {
+        return ItemTags.create(ResourceLocation.withDefaultNamespace(path));
     }
 
     private static TagKey<Item> dynamicTrees(String path) {

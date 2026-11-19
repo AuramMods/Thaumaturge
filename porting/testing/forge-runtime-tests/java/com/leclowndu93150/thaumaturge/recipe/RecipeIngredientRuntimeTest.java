@@ -63,19 +63,24 @@ class RecipeIngredientRuntimeTest {
                     Set.copyOf(tags.get(TTItemTags.STONES.location())));
             assertTrue(tags.get(TTItemTags.NUGGETS_COPPER.location()).isEmpty());
             assertTrue(tags.get(TTItemTags.NUGGETS_SILVER.location()).isEmpty());
-            assertEquals(Set.of(Blocks.CRAFTING_TABLE),
-                    Set.copyOf(blocks.loadAndBuild(manager).get(TTBlockTags.CRAFTING_TABLES.location())));
+            var blockTags = blocks.loadAndBuild(manager);
+            assertEquals(Set.of(Blocks.CRAFTING_TABLE), Set.copyOf(blockTags.get(TTBlockTags.CRAFTING_TABLES.location())));
+            assertEquals(Set.of(Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE, Blocks.STONE, Blocks.DEEPSLATE, Blocks.TUFF),
+                    Set.copyOf(blockTags.get(TTBlockTags.STONES.location())));
         }
 
         Path forgeNuggets = Files.createDirectories(optionalMetals.resolve("data/forge/tags/items/nuggets"));
         Files.writeString(forgeNuggets.resolve("copper.json"), "{\"values\":[\"minecraft:iron_nugget\"]}");
         Files.writeString(forgeNuggets.resolve("silver.json"), "{\"values\":[\"minecraft:gold_nugget\"]}");
+        Path forgeBlocks = Files.createDirectories(optionalMetals.resolve("data/forge/tags/blocks"));
+        Files.writeString(forgeBlocks.resolve("stone.json"), "{\"values\":[\"minecraft:polished_andesite\"]}");
         try (var manager = new MultiPackResourceManager(PackType.SERVER_DATA, List.of(
                 new PathPackResources("thaumaturge", source, false),
                 new PathPackResources("metal-fixture", optionalMetals, false)))) {
             var tags = items.loadAndBuild(manager);
             assertEquals(Set.of(Items.IRON_NUGGET), Set.copyOf(tags.get(TTItemTags.NUGGETS_COPPER.location())));
             assertEquals(Set.of(Items.GOLD_NUGGET), Set.copyOf(tags.get(TTItemTags.NUGGETS_SILVER.location())));
+            assertTrue(blocks.loadAndBuild(manager).get(TTBlockTags.STONES.location()).contains(Blocks.POLISHED_ANDESITE));
         }
     }
 

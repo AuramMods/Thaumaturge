@@ -16,6 +16,9 @@ public final class TTBlockTags {
     public static final TagKey<Block> MAGICAL_CAVE_GROUND_REPLACEABLE = key("magical_cave_ground_replaceable");
     public static final TagKey<Block> SCAN_CLAY = key("scan/f_matclay");
     public static final TagKey<Block> CRAFTING_TABLES = common("player_workstations/crafting_tables");
+    public static final TagKey<Block> STONES = common("stones");
+    public static final TagKey<Block> STRIPPED_LOGS = common("stripped_logs");
+    public static final TagKey<Block> STRIPPED_WOODS = common("stripped_woods");
 
     public static final TagKey<Block> GREATWOOD_LOGS = key("greatwood_logs");
     public static final TagKey<Block> SILVERWOOD_LOGS = key("silverwood_logs");

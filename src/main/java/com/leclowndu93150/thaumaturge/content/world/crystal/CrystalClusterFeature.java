@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.datamap.DataMaps;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.BiomeAspects;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
 import com.mojang.serialization.Codec;
 import java.util.List;
@@ -120,7 +121,7 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
         for (Direction direction : DIRECTIONS) {
             BlockState neighbor = level.getBlockState(neighborPos.set(pos).move(direction));
             if (neighbor.is(BlockTags.BASE_STONE_OVERWORLD)
-                    || neighbor.is(Tags.Blocks.STONES)
+                    || neighbor.is(TTBlockTags.STONES)
                     || neighbor.is(Tags.Blocks.ORES)
                     || neighbor.is(BlockTags.BASE_STONE_NETHER)) {
                 return true;
