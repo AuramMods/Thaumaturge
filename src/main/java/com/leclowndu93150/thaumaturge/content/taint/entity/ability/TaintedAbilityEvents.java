@@ -55,7 +55,7 @@ public final class TaintedAbilityEvents {
         LivingEntity living = event.getEntity();
         if (living.level() instanceof ServerLevel level
                 && level.getDifficulty() != Difficulty.PEACEFUL
-                && MobTraits.has(living, TTMobTraits.SWARM_BURST.getKey())) {
+                && MobTraits.has(living, TTMobTraits.key(TTMobTraits.SWARM_BURST))) {
             EntityTaintSwarm.release(level, living.getX(), living.getY(BODY_MIDDLE), living.getZ());
         }
     }
@@ -67,7 +67,7 @@ public final class TaintedAbilityEvents {
                 || !(event.getProjectile() instanceof AbstractArrow arrow)
                 || !(arrow.level() instanceof ServerLevel level)
                 || !(arrow.getOwner() instanceof LivingEntity shooter)
-                || !MobTraits.has(shooter, TTMobTraits.TAINT_ARROWS.getKey())) {
+                || !MobTraits.has(shooter, TTMobTraits.key(TTMobTraits.TAINT_ARROWS))) {
             return;
         }
         TaintHelper.attemptFibreGrowth(level, hit.getBlockPos().relative(hit.getDirection()), true);
@@ -88,7 +88,7 @@ public final class TaintedAbilityEvents {
         }
         if (entity instanceof ThrownPotion potion
                 && potion.getOwner() instanceof LivingEntity thrower
-                && MobTraits.has(thrower, TTMobTraits.TAINT_BREWING.getKey())
+                && MobTraits.has(thrower, TTMobTraits.key(TTMobTraits.TAINT_BREWING))
                 && TaintBrewing.replacesThrow(level, potion, thrower)) {
             event.setCanceled(true);
         }

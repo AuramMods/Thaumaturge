@@ -128,24 +128,24 @@ public final class ChampionTraitVisuals {
     }
 
     private static void register() {
-        MobTraitVisuals.registerParticles(TTMobTraits.BOLD.getKey(), ChampionTraitVisuals::bold);
-        MobTraitVisuals.registerParticles(TTMobTraits.SPINED.getKey(), ChampionTraitVisuals::spined);
-        MobTraitVisuals.registerParticles(TTMobTraits.ARMORED.getKey(), ChampionTraitVisuals::armored);
-        MobTraitVisuals.registerParticles(TTMobTraits.MIGHTY.getKey(), ChampionTraitVisuals::mighty);
-        MobTraitVisuals.registerParticles(TTMobTraits.GRIM.getKey(), ChampionTraitVisuals::grim);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.BOLD), ChampionTraitVisuals::bold);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.SPINED), ChampionTraitVisuals::spined);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.ARMORED), ChampionTraitVisuals::armored);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.MIGHTY), ChampionTraitVisuals::mighty);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.GRIM), ChampionTraitVisuals::grim);
         MobTraitVisuals.registerTint(
-                TTMobTraits.GRIM.getKey(), ARGB32.colorFromFloat(OPAQUE, GRIM_TINT, GRIM_TINT, GRIM_TINT));
-        MobTraitVisuals.registerParticles(TTMobTraits.WARDED.getKey(), ChampionTraitVisuals::warded);
-        MobTraitVisuals.registerParticles(TTMobTraits.WARP.getKey(), ChampionTraitVisuals::warp);
-        MobTraitVisuals.registerParticles(TTMobTraits.UNDYING.getKey(), ChampionTraitVisuals::undying);
-        MobTraitVisuals.registerParticles(TTMobTraits.FIERY.getKey(), ChampionTraitVisuals::fiery);
-        MobTraitVisuals.registerTint(TTMobTraits.FIERY.getKey(), FIERY_TINT);
-        MobTraitVisuals.registerParticles(TTMobTraits.SICKLY.getKey(), ChampionTraitVisuals::sickly);
-        MobTraitVisuals.registerParticles(TTMobTraits.VENOMOUS.getKey(), ChampionTraitVisuals::venomous);
-        MobTraitVisuals.registerTint(TTMobTraits.VENOMOUS.getKey(), VENOMOUS_TINT);
-        MobTraitVisuals.registerParticles(TTMobTraits.VAMPIRIC.getKey(), ChampionTraitVisuals::vampiric);
-        MobTraitVisuals.registerTint(TTMobTraits.VAMPIRIC.getKey(), VAMPIRIC_TINT);
-        MobTraitVisuals.registerParticles(TTMobTraits.INFESTED.getKey(), ChampionTraitVisuals::infested);
+                TTMobTraits.key(TTMobTraits.GRIM), ARGB32.colorFromFloat(OPAQUE, GRIM_TINT, GRIM_TINT, GRIM_TINT));
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.WARDED), ChampionTraitVisuals::warded);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.WARP), ChampionTraitVisuals::warp);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.UNDYING), ChampionTraitVisuals::undying);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.FIERY), ChampionTraitVisuals::fiery);
+        MobTraitVisuals.registerTint(TTMobTraits.key(TTMobTraits.FIERY), FIERY_TINT);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.SICKLY), ChampionTraitVisuals::sickly);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.VENOMOUS), ChampionTraitVisuals::venomous);
+        MobTraitVisuals.registerTint(TTMobTraits.key(TTMobTraits.VENOMOUS), VENOMOUS_TINT);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.VAMPIRIC), ChampionTraitVisuals::vampiric);
+        MobTraitVisuals.registerTint(TTMobTraits.key(TTMobTraits.VAMPIRIC), VAMPIRIC_TINT);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.INFESTED), ChampionTraitVisuals::infested);
     }
 
     private static float spread(RandomSource random, float base, float range) {

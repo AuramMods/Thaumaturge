@@ -58,7 +58,7 @@ public final class EntityTaintSpore extends AbstractTaintSpore {
                         getZ() + random.nextDouble() - BROOD_SPREAD,
                         random.nextFloat() * FULL_TURN,
                         0.0F);
-                MobTraits.add(spider, TTMobTraits.TAINT_BROOD);
+                MobTraits.add(spider, TTMobTraits.holder(TTMobTraits.TAINT_BROOD));
                 level.addFreshEntity(spider);
             }
         }

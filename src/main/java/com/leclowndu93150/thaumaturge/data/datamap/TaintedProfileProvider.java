@@ -15,7 +15,6 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -112,7 +111,7 @@ public final class TaintedProfileProvider extends DataMapProvider {
     }
 
     private static Holder<MobTrait> trait(HolderGetter<MobTrait> traits, RegistryObject<? extends MobTrait> entry) {
-        return traits.getOrThrow(ResourceKey.create(MobTrait.REGISTRY_KEY, entry.getId()));
+        return traits.getOrThrow(TTMobTraits.key(entry));
     }
 
     private static TaintedProfile hostile(Holder<MobTrait> trait, boolean naturalSpawns) {

@@ -36,7 +36,7 @@ public final class TaintTraitVisuals {
 
     private static void register() {
         MobTraitVisuals.registerParticles(MobTraits.TAINTED, TaintTraitVisuals::fluxSwirl);
-        MobTraitVisuals.registerParticles(TTMobTraits.TAINT_BROOD.getKey(), TaintTraitVisuals::fluxSwirl);
+        MobTraitVisuals.registerParticles(TTMobTraits.key(TTMobTraits.TAINT_BROOD), TaintTraitVisuals::fluxSwirl);
     }
 
     private static void fluxSwirl(LivingEntity mob, Level level, RandomSource random, double x, double y, double z) {

@@ -22,7 +22,9 @@ import com.leclowndu93150.thaumaturge.content.taint.entity.TaintedTrait;
 import com.leclowndu93150.thaumaturge.content.taint.entity.ability.TaintLayingTrait;
 import com.leclowndu93150.thaumaturge.content.taint.entity.ability.TaintacleLureTrait;
 import com.leclowndu93150.thaumaturge.content.taint.entity.ability.WarpingStrikeTrait;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -107,6 +109,14 @@ public final class TTMobTraits {
 
     public static Registry<MobTrait> registry() {
         return ForgeRegistration.vanillaRegistry(REGISTRY);
+    }
+
+    public static ResourceKey<MobTrait> key(RegistryObject<? extends MobTrait> trait) {
+        return ForgeRegistration.entryKey(MobTrait.REGISTRY_KEY, trait);
+    }
+
+    public static Holder.Reference<MobTrait> holder(RegistryObject<? extends MobTrait> trait) {
+        return registry().getHolderOrThrow(key(trait));
     }
 
     public static void register(IEventBus modBus) {

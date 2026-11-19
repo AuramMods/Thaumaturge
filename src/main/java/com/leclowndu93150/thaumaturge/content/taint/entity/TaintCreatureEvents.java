@@ -100,7 +100,7 @@ public final class TaintCreatureEvents {
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
         LivingEntity entity = event.getEntity();
-        if (MobTraits.has(entity, TTMobTraits.TAINT_BROOD.getKey())) {
+        if (MobTraits.has(entity, TTMobTraits.key(TTMobTraits.TAINT_BROOD))) {
             event.setCanceled(true);
             return;
         }
@@ -138,7 +138,7 @@ public final class TaintCreatureEvents {
             event.setDroppedExperience(BROOD_EXPERIENCE);
             return;
         }
-        if (MobTraits.has(event.getEntity(), TTMobTraits.TAINT_BROOD.getKey())) {
+        if (MobTraits.has(event.getEntity(), TTMobTraits.key(TTMobTraits.TAINT_BROOD))) {
             event.setDroppedExperience(BROOD_EXPERIENCE);
         }
     }
@@ -147,7 +147,7 @@ public final class TaintCreatureEvents {
         if (explosion.radius() == BLAST_STRENGTH || !(explosion.getDirectSourceEntity() instanceof Creeper creeper)) {
             return null;
         }
-        return MobTraits.has(creeper, TTMobTraits.TAINT_BLAST.getKey()) ? creeper : null;
+        return MobTraits.has(creeper, TTMobTraits.key(TTMobTraits.TAINT_BLAST)) ? creeper : null;
     }
 
     private static ItemEntity dropOf(ServerLevel level, LivingEntity source, ItemStack stack) {

@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -60,6 +61,12 @@ public final class ForgeRegistration {
         RegistryObject<V>[] result = (RegistryObject<V>[]) new RegistryObject<?>[1];
         result[0] = register.register(name, () -> factory.apply(result[0].getId()));
         return result[0];
+    }
+
+    public static <R> ResourceKey<R> entryKey(
+            ResourceKey<? extends Registry<R>> registry, RegistryObject<? extends R> entry) {
+        return entry.getKey().<R>cast(registry).orElseThrow(() ->
+                new IllegalArgumentException(entry.getId() + " is not an entry in " + registry.location()));
     }
 
     @SuppressWarnings("unchecked")

@@ -40,7 +40,7 @@ public final class ChampionHelper {
                     mob,
                     persist,
                     mob instanceof Creeper
-                            ? TTMobTraits.BOLD
+                            ? TTMobTraits.holder(TTMobTraits.BOLD)
                             : traits.get(mob.getRandom().nextInt(traits.size())));
         }
     }

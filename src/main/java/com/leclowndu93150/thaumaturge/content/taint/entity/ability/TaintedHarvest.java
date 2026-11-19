@@ -32,10 +32,10 @@ final class TaintedHarvest {
     static @Nullable InteractionResult interact(Player player, InteractionHand hand, ItemStack held, LivingEntity mob) {
         if (held.is(Tags.Items.TOOLS_SHEAR)
                 && mob instanceof Sheep sheep
-                && MobTraits.has(sheep, TTMobTraits.TAINT_SHEARING.getKey())) {
+                && MobTraits.has(sheep, TTMobTraits.key(TTMobTraits.TAINT_SHEARING))) {
             return shear(player, hand, held, sheep);
         }
-        if (held.is(Items.BUCKET) && !mob.isBaby() && MobTraits.has(mob, TTMobTraits.FLUX_MILK.getKey())) {
+        if (held.is(Items.BUCKET) && !mob.isBaby() && MobTraits.has(mob, TTMobTraits.key(TTMobTraits.FLUX_MILK))) {
             return milk(player, hand, held);
         }
         return null;
