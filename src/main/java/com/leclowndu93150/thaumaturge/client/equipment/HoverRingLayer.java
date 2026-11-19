@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.equipment;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.content.equipment.hover.HoverManager;
@@ -73,11 +74,10 @@ public final class HoverRingLayer extends RenderLayer<AbstractClientPlayer, Play
 
     private static void vertex(
             VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float u, float v, int color) {
-        buffer.addVertex(pose.pose(), x, y, 0.0F)
-                .setColor(color)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(LightTexture.FULL_BRIGHT)
-                .setNormal(pose, 0.0F, 0.0F, 1.0F);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x, y, 0.0F)
+                .color(color)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(LightTexture.FULL_BRIGHT), pose, 0.0F, 0.0F, 1.0F);
     }
 }

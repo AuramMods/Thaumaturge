@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.effect;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
@@ -140,11 +141,10 @@ public final class OccludingEffectRenderer {
             float u,
             float v,
             Portal portal) {
-        buffer.addVertex(matrix, x, y, 0.0F)
-                .setUv(u, v)
-                .setColor(portal.tint)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(portal.light)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F);
+        EntityVertices.finish(buffer.vertex(matrix, x, y, 0.0F)
+                .color(portal.tint)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(portal.light), pose, 0.0F, 0.0F, -1.0F);
     }
 }

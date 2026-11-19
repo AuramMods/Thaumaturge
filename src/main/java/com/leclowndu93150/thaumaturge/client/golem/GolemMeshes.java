@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.golem;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
 import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshLoader;
@@ -52,12 +53,11 @@ public final class GolemMeshes {
             float nx = normals[vertex * 3];
             float ny = normals[vertex * 3 + 1];
             float nz = normals[vertex * 3 + 2];
-            buffer.addVertex(pose, positions[vertex * 3], positions[vertex * 3 + 1], positions[vertex * 3 + 2])
-                    .setColor(color)
-                    .setUv(u, v)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(pose, nx, ny, nz);
+            EntityVertices.finish(buffer.vertex(pose.pose(), positions[vertex * 3], positions[vertex * 3 + 1], positions[vertex * 3 + 2])
+                    .color(color)
+                    .uv(u, v)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(light), pose, nx, ny, nz);
         }
     }
 }

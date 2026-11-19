@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeBuffer;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
@@ -200,11 +201,10 @@ public final class TubeBufferRenderer implements BlockEntityRenderer<BlockEntity
             int color,
             int light,
             float[] normal) {
-        buffer.addVertex(pose, point[0], point[1], point[2])
-                .setUv(u, v)
-                .setColor(color)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, normal[0], normal[1], normal[2]);
+        EntityVertices.finish(buffer.vertex(pose.pose(), point[0], point[1], point[2])
+                .color(color)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, normal[0], normal[1], normal[2]);
     }
 }

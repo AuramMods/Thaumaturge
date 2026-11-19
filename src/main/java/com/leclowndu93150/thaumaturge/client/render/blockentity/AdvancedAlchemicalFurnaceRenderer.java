@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
 import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
@@ -221,12 +222,11 @@ public final class AdvancedAlchemicalFurnaceRenderer
             float nx,
             float ny,
             float nz) {
-        buffer.addVertex(pose, plane.x(px, py), plane.y(px, py), plane.z(px, py))
-                .setUv(u, v)
-                .setColor(WHITE)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, nx, ny, nz);
+        EntityVertices.finish(buffer.vertex(pose.pose(), plane.x(px, py), plane.y(px, py), plane.z(px, py))
+                .color(WHITE)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, nx, ny, nz);
     }
 
     record PanelPlane(
@@ -336,12 +336,11 @@ public final class AdvancedAlchemicalFurnaceRenderer
             for (int corner = 0; corner < 4; corner++) {
                 int vertex = quad * 4 + corner;
                 int index = vertex * 3;
-                buffer.addVertex(pose, positions[index], positions[index + 1], positions[index + 2])
-                        .setColor(WHITE)
-                        .setUv(uvs == null ? 0.0F : uvs[vertex * 2], uvs == null ? 0.0F : 1.0F - uvs[vertex * 2 + 1])
-                        .setOverlay(OverlayTexture.NO_OVERLAY)
-                        .setLight(light)
-                        .setNormal(pose, normals[index], normals[index + 1], normals[index + 2]);
+                EntityVertices.finish(buffer.vertex(pose.pose(), positions[index], positions[index + 1], positions[index + 2])
+                        .color(WHITE)
+                        .uv(uvs == null ? 0.0F : uvs[vertex * 2], uvs == null ? 0.0F : 1.0F - uvs[vertex * 2 + 1])
+                        .overlayCoords(OverlayTexture.NO_OVERLAY)
+                        .uv2(light), pose, normals[index], normals[index + 1], normals[index + 2]);
             }
         }
     }

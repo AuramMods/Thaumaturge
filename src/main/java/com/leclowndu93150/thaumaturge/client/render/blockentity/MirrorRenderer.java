@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirrorBase;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockMirror;
@@ -159,11 +160,10 @@ public final class MirrorRenderer implements BlockEntityRenderer<BlockEntityMirr
 
     private static void paneVertex(
             VertexConsumer buffer, PoseStack.Pose pose, float x, float z, float u, float v, int light) {
-        buffer.addVertex(pose, x, PANE_PLANE, z)
-                .setColor(-1)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 1.0F, 0.0F);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x, PANE_PLANE, z)
+                .color(-1)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, 0.0F, 1.0F, 0.0F);
     }
 }

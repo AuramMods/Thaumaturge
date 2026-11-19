@@ -121,12 +121,11 @@ public final class BoxGeometry {
             nz /= len;
         }
         for (int i = 0; i < 4; i++) {
-            buffer.addVertex(pose, verts[i][0], verts[i][1], verts[i][2])
-                    .setColor(tint)
-                    .setUv(uvs[i][0], uvs[i][1])
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(pose, nx, ny, nz);
+            EntityVertices.finish(buffer.vertex(pose.pose(), verts[i][0], verts[i][1], verts[i][2])
+                    .color(tint)
+                    .uv(uvs[i][0], uvs[i][1])
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(light), pose, nx, ny, nz);
         }
     }
 }

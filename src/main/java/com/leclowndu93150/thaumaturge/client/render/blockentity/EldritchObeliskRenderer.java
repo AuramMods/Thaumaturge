@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
 import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
@@ -172,12 +173,11 @@ public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockE
 
     private static void sideVertex(
             VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float u, float v, int light) {
-        buffer.addVertex(pose, x, y, 0.0F)
-                .setColor(-1)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x, y, 0.0F)
+                .color(-1)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, 0.0F, 0.0F, -1.0F);
     }
 
     @Override

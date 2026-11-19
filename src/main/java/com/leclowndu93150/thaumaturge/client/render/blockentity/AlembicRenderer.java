@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
@@ -57,12 +58,11 @@ public class AlembicRenderer implements BlockEntityRenderer<BlockEntityAlembic> 
             float nx,
             float ny,
             float nz) {
-        buffer.addVertex(pose, x, y, z)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, nx, ny, nz)
-                .setColor(color);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x, y, z)
+                .color(color)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, nx, ny, nz);
     }
 
     private void submitFilterLabel(

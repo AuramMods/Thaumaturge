@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockEntityPatternCrafter;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockPatternCrafter;
@@ -99,29 +100,25 @@ public final class PatternCrafterRenderer implements BlockEntityRenderer<BlockEn
             float u0,
             float u1,
             int light) {
-        buffer.addVertex(pose, x0, y0, z)
-                .setColor(-1)
-                .setUv(u0, 1.0F)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F);
-        buffer.addVertex(pose, x0, y1, z1)
-                .setColor(-1)
-                .setUv(u0, 0.0F)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F);
-        buffer.addVertex(pose, x1, y1, z1)
-                .setColor(-1)
-                .setUv(u1, 0.0F)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F);
-        buffer.addVertex(pose, x1, y0, z)
-                .setColor(-1)
-                .setUv(u1, 1.0F)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x0, y0, z)
+                .color(-1)
+                .uv(u0, 1.0F)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, 0.0F, 0.0F, -1.0F);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x0, y1, z1)
+                .color(-1)
+                .uv(u0, 0.0F)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, 0.0F, 0.0F, -1.0F);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x1, y1, z1)
+                .color(-1)
+                .uv(u1, 0.0F)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, 0.0F, 0.0F, -1.0F);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x1, y0, z)
+                .color(-1)
+                .uv(u1, 1.0F)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, 0.0F, 0.0F, -1.0F);
     }
 }

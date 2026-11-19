@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.eldritch.ReliquaryViewHolder;
 import com.leclowndu93150.thaumaturge.content.eldritch.reliquary.BlockEldritchReliquary;
@@ -146,11 +147,10 @@ public final class EldritchReliquaryRenderer implements BlockEntityRenderer<Bloc
 
     private static void vertex(
             VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float z, float u, float v) {
-        buffer.addVertex(pose, x, y, z)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(LightTexture.FULL_BRIGHT)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F)
-                .setColor(WHITE);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x, y, z)
+                .color(WHITE)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(LightTexture.FULL_BRIGHT), pose, 0.0F, 0.0F, -1.0F);
     }
 }

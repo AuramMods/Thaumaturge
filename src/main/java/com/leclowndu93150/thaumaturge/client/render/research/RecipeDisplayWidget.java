@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
@@ -1098,12 +1099,11 @@ public final class RecipeDisplayWidget {
 
     private static void fluidVertex(
             VertexConsumer consumer, PoseStack pose, float x, float y, float z, float u, float v) {
-        consumer.addVertex(pose.last(), x, y, z)
-                .setColor(255, 255, 255, 255)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(LightTexture.FULL_BRIGHT)
-                .setNormal(pose.last(), 0.0F, 1.0F, 0.0F);
+        EntityVertices.finish(consumer.vertex(pose.last().pose(), x, y, z)
+                .color(255, 255, 255, 255)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(LightTexture.FULL_BRIGHT), pose.last(), 0.0F, 1.0F, 0.0F);
     }
 
     private static int[] boundsOf(Map<BlockPos, BlockState> blocks) {

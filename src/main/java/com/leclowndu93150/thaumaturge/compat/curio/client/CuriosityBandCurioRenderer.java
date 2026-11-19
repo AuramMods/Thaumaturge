@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.curio.client;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -58,11 +59,10 @@ public final class CuriosityBandCurioRenderer implements ICurioRenderer {
 
     private static void vertex(
             VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float z, float u, float v, int light) {
-        buffer.addVertex(pose, x, y, z)
-                .setColor(-1)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x, y, z)
+                .color(-1)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, 0.0F, 0.0F, -1.0F);
     }
 }

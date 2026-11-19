@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -240,12 +241,11 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
             float z = centerZ + rightZ * cornerX * half;
             float u = glyphU + (cornerX + 1.0F) * HALF_UV * glyphWidth;
             float v = (cornerY + 1.0F) * HALF_UV;
-            buffer.addVertex(pose.pose(), x, y, z)
-                    .setColor(tint)
-                    .setUv(u, v)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(RUNE_LIGHT)
-                    .setNormal(pose, outX, 0.0F, outZ);
+            EntityVertices.finish(buffer.vertex(pose.pose(), x, y, z)
+                    .color(tint)
+                    .uv(u, v)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(RUNE_LIGHT), pose, outX, 0.0F, outZ);
         }
     }
 

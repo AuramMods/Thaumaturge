@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -72,12 +73,11 @@ public final class ResearchTableTop {
             float ny,
             float nz,
             int light) {
-        buffer.addVertex(pose, x, y, z)
-                .setColor(WHITE)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, nx, ny, nz);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x, y, z)
+                .color(WHITE)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, nx, ny, nz);
     }
 
     private static void sheet(PoseStack.Pose pose, VertexConsumer buffer, int light) {

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.effect;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -117,13 +118,12 @@ public final class FloatyLineRenderer {
             float u,
             float v,
             int color) {
-        buffer.addVertex(pose, (float) (center.x + across.x * sign), (float) (center.y + across.y * sign), (float)
+        EntityVertices.finish(buffer.vertex(pose.pose(), (float) (center.x + across.x * sign), (float) (center.y + across.y * sign), (float)
                         (center.z + across.z * sign))
-                .setColor(color)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(EMISSIVE_LIGHT)
-                .setNormal(pose, 0, 1, 0);
+                .color(color)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(EMISSIVE_LIGHT), pose, 0, 1, 0);
     }
 
     public static float time(long gameTime, float partialTicks) {

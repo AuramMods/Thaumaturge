@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.client.particle.ParticleSheet;
 import com.leclowndu93150.thaumaturge.client.particle.TTParticleSheets;
 import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
@@ -95,11 +96,10 @@ public final class NitorItemSpecialRenderer extends BlockEntityWithoutLevelRende
 
     private static void vertex(
             PoseStack.Pose pose, VertexConsumer buffer, float x, float y, float u, float v, int tint) {
-        buffer.addVertex(pose.pose(), x, y, 0.0F)
-                .setColor(tint)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(LightTexture.FULL_BRIGHT)
-                .setNormal(pose, 0.0F, 0.0F, 1.0F);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x, y, 0.0F)
+                .color(tint)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(LightTexture.FULL_BRIGHT), pose, 0.0F, 0.0F, 1.0F);
     }
 }

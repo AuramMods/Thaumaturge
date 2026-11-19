@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.content.eldritch.lock.BlockEldritchLock;
@@ -307,16 +308,15 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
         for (int[] corner : CORNERS) {
             float u = corner[0] * uHalf;
             float v = corner[1] * vHalf;
-            buffer.addVertex(
-                            pose,
+            EntityVertices.finish(buffer.vertex(
+                            pose.pose(),
                             centre[0] + uAxis[0] * u + vAxis[0] * v,
                             centre[1] + uAxis[1] * u + vAxis[1] * v,
                             centre[2] + uAxis[2] * u + vAxis[2] * v)
-                    .setColor(WHITE)
-                    .setUv(sprite.getU((corner[0] + 1) * HALF * uSpan), sprite.getV((1 - corner[1]) * HALF * vSpan))
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(pose, normal[0], normal[1], normal[2]);
+                    .color(WHITE)
+                    .uv(sprite.getU((corner[0] + 1) * HALF * uSpan), sprite.getV((1 - corner[1]) * HALF * vSpan))
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(light), pose, normal[0], normal[1], normal[2]);
         }
     }
 
@@ -430,12 +430,11 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
                 half[2] * (normal[2] + r * right[2] + u * up[2])
             };
             float[] world = turn(axis, offset, turns);
-            buffer.addVertex(pose, centre[0] + world[0], centre[1] + world[1], centre[2] + world[2])
-                    .setColor(WHITE)
-                    .setUv(us[corner], vs[corner])
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
-                    .setNormal(pose, worldNormal[0], worldNormal[1], worldNormal[2]);
+            EntityVertices.finish(buffer.vertex(pose.pose(), centre[0] + world[0], centre[1] + world[1], centre[2] + world[2])
+                    .color(WHITE)
+                    .uv(us[corner], vs[corner])
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(light), pose, worldNormal[0], worldNormal[1], worldNormal[2]);
         }
     }
 }

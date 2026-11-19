@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.aspect;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -345,11 +346,10 @@ public final class AspectTagWorldRenderer {
             float v,
             int color,
             int packedLight) {
-        buffer.addVertex(pose, x, y, 0.0F)
-                .setColor(color)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(packedLight)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x, y, 0.0F)
+                .color(color)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(packedLight), pose, 0.0F, 0.0F, -1.0F);
     }
 }

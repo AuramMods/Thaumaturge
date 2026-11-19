@@ -14,6 +14,7 @@ public final class TTMeshQuadBaker {
     private static final float CONTRACT_EPS = 1.0F / 256.0F;
     private static final float CONTRACT_DIVISOR = 256.0F;
     private static final float NORMAL_EPS = 1.0E-6F;
+    private static final float SPRITE_UV_RANGE = 16.0F;
     private static final int CORNERS_PER_QUAD = 4;
 
     private TTMeshQuadBaker() {}
@@ -43,10 +44,10 @@ public final class TTMeshQuadBaker {
             int blockLight,
             int skyLight,
             List<BakedQuad> output) {
-        QuadBakingVertexConsumer consumer = new QuadBakingVertexConsumer();
+        QuadBakingVertexConsumer consumer = new QuadBakingVertexConsumer(output::add);
         Matrix3f normalTransform = transform.normal(new Matrix3f());
         for (int quad = 0; quad < part.quadCount(); quad++) {
-            output.add(bakeQuad(
+            bakeQuad(
                     part,
                     quad,
                     sprite,
@@ -57,11 +58,11 @@ public final class TTMeshQuadBaker {
                     shade,
                     blockLight,
                     skyLight,
-                    consumer));
+                    consumer);
         }
     }
 
-    private static BakedQuad bakeQuad(
+    private static void bakeQuad(
             TTMeshPart part,
             int quad,
             TextureAtlasSprite sprite,
@@ -92,8 +93,8 @@ public final class TTMeshQuadBaker {
             normals[i] = new Vector3f(
                             part.normals()[vertex * 3], part.normals()[vertex * 3 + 1], part.normals()[vertex * 3 + 2])
                     .mul(normalTransform);
-            us[i] = sprite.getU(u);
-            vs[i] = sprite.getV(flipV ? 1.0F - v : v);
+            us[i] = sprite.getU(u * SPRITE_UV_RANGE);
+            vs[i] = sprite.getV((flipV ? 1.0F - v : v) * SPRITE_UV_RANGE);
         }
         contractUvs(us, vs, sprite);
 
@@ -114,13 +115,13 @@ public final class TTMeshQuadBaker {
         consumer.setHasAmbientOcclusion(shade);
         for (int i = 0; i < CORNERS_PER_QUAD; i++) {
             Vector3f vertexNormal = normals[i].lengthSquared() < NORMAL_EPS ? normal : normals[i].normalize();
-            consumer.addVertex(positions[i].x, positions[i].y, positions[i].z)
-                    .setColor(255, 255, 255, 255)
-                    .setUv(us[i], vs[i])
-                    .setUv2(blockLight, skyLight)
-                    .setNormal(vertexNormal.x, vertexNormal.y, vertexNormal.z);
+            consumer.vertex(positions[i].x, positions[i].y, positions[i].z)
+                    .color(255, 255, 255, 255)
+                    .uv(us[i], vs[i])
+                    .uv2(blockLight, skyLight)
+                    .normal(vertexNormal.x, vertexNormal.y, vertexNormal.z)
+                    .endVertex();
         }
-        return consumer.bakeQuad();
     }
 
     private static void contractUvs(float[] us, float[] vs, TextureAtlasSprite sprite) {

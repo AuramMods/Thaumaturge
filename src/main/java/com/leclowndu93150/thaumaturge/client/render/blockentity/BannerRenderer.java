@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
@@ -147,11 +148,10 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
 
     private static void addVertex(
             VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float u, float v, int color, int light) {
-        buffer.addVertex(pose, x, y, ASPECT_Z)
-                .setUv(u, v)
-                .setColor(color)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F)
-                .setOverlay(OverlayTexture.NO_OVERLAY);
+        EntityVertices.finish(buffer.vertex(pose.pose(), x, y, ASPECT_Z)
+                .color(color)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light), pose, 0.0F, 0.0F, -1.0F);
     }
 }
