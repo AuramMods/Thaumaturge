@@ -18,6 +18,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -57,7 +58,7 @@ final class ResearchTableBonuses {
         this.bonus = bonus;
     }
 
-    private record CrystalRow(RegistryObject<?> block, ResourceKey<IAspect> aspect) {}
+    private record CrystalRow(RegistryObject<? extends Block> block, ResourceKey<IAspect> aspect) {}
 
     static AspectList recalculate(Level level, BlockPos tablePos, AspectList current, RandomSource random) {
         return new ResearchTableBonuses(level, random, current).run(tablePos);

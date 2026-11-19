@@ -25,11 +25,12 @@ public final class NoteRules {
     }
 
     private static boolean componentOf(Holder<IAspect> compound, Holder<IAspect> component) {
-        if (compound.value().isPrimal()) {
+        var key = component.unwrapKey().orElse(null);
+        if (key == null || compound.value().isPrimal()) {
             return false;
         }
         for (Holder<IAspect> part : compound.value().components()) {
-            if (part.is(component.getKey())) {
+            if (part.is(key)) {
                 return true;
             }
         }

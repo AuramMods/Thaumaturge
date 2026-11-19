@@ -288,6 +288,6 @@ public final class AspectPools {
     }
 
     public static ResourceLocation idOf(Holder<IAspect> aspect) {
-        return aspect.getKey().location();
+        return aspect.unwrapKey().orElseThrow().location();
     }
 }
