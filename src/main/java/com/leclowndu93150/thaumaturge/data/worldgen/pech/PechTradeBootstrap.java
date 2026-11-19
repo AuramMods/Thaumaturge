@@ -1,44 +1,58 @@
 package com.leclowndu93150.thaumaturge.data.worldgen.pech;
 
-import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
-
-import com.leclowndu93150.thaumaturge.itemdata.ItemData;
-
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable;
 import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable.PechTrade;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataContext;
+import com.leclowndu93150.thaumaturge.itemdata.PotionData;
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.core.Holder;
+import java.util.Optional;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
-import com.leclowndu93150.thaumaturge.itemdata.PotionData;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
-import com.leclowndu93150.thaumaturge.itemdata.EnchantmentData;
 import net.minecraft.world.level.ItemLike;
 
 public final class PechTradeBootstrap {
     private PechTradeBootstrap() {}
 
-    public static void bootstrap(BootstapContext<PechTradeTable> ctx) {
-        HolderGetter<IAspect> aspects = ctx.lookup(IAspect.REGISTRY_KEY);
-        HolderGetter<Enchantment> enchantments = ctx.lookup(Registries.ENCHANTMENT);
+    public static HolderLookup.Provider withTrades(HolderLookup.Provider registries) {
+        // Crystal stacks encode their aspect into NBT as soon as they are created.
+        var aspects = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
+        var tables = ItemDataContext.withRegistries(registries, () -> new RegistrySetBuilder()
+                .add(PechTradeTable.REGISTRY_KEY, ctx -> bootstrap(ctx, aspects))
+                .build(RegistryAccess.EMPTY));
+        return new HolderLookup.Provider() {
+            @Override
+            public <T> Optional<HolderLookup.RegistryLookup<T>> lookup(
+                    ResourceKey<? extends Registry<? extends T>> key) {
+                return tables.lookup(key).or(() -> registries.lookup(key));
+            }
+        };
+    }
 
+    private static void bootstrap(BootstapContext<PechTradeTable> ctx, HolderGetter<IAspect> aspects) {
         List<PechTrade> forager = new ArrayList<>();
         add(forager, 1, TTItems.CLUSTER_IRON.get());
         add(forager, 1, TTItems.CLUSTER_GOLD.get());
@@ -93,15 +107,15 @@ public final class PechTradeBootstrap {
         }
         add(stalker, 2, Items.GHAST_TEAR);
         add(stalker, 2, Items.COMPASS);
-        stalker.add(book(enchantments, 2, Enchantments.POWER));
+        stalker.add(book(2, Enchantments.POWER_ARROWS));
         add(stalker, 3, Items.EXPERIENCE_BOTTLE);
         add(stalker, 3, Items.EXPERIENCE_BOTTLE);
         add(stalker, 3, Items.GOLDEN_APPLE);
         add(stalker, 4, TTItems.ELDRITCH_EYE.get());
         add(stalker, 4, Items.ENCHANTED_GOLDEN_APPLE);
         add(stalker, 4, Items.SPECTRAL_ARROW);
-        stalker.add(book(enchantments, 5, Enchantments.FLAME));
-        stalker.add(book(enchantments, 5, Enchantments.INFINITY));
+        stalker.add(book(5, Enchantments.FLAMING_ARROWS));
+        stalker.add(book(5, Enchantments.INFINITY_ARROWS));
         add(stalker, 5, TTItems.CURIO_KNOWLEDGE.get());
         register(ctx, "stalker", stalker);
     }
@@ -126,12 +140,7 @@ public final class PechTradeBootstrap {
         return new PechTrade(tier, stack);
     }
 
-    private static PechTrade book(
-            HolderGetter<Enchantment> enchantments, int tier, ResourceKey<Enchantment> enchantment) {
-        EnchantmentData.Mutable stored = new EnchantmentData.Mutable(EnchantmentData.EMPTY);
-        stored.set(enchantments.getOrThrow(enchantment), 1);
-        ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
-        ItemData.set(stack, VanillaItemData.STORED_ENCHANTMENTS, stored.toImmutable());
-        return new PechTrade(tier, stack);
+    private static PechTrade book(int tier, Enchantment enchantment) {
+        return new PechTrade(tier, EnchantedBookItem.createForEnchantment(new EnchantmentInstance(enchantment, 1)));
     }
 }

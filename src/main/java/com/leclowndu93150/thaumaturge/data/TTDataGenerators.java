@@ -15,7 +15,6 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.Room
 import com.leclowndu93150.thaumaturge.content.eldritch.site.ObeliskSite;
 import com.leclowndu93150.thaumaturge.content.entity.loot.MobSpawnEquipment;
 import com.leclowndu93150.thaumaturge.content.infusion.instability.InstabilityOutcome;
-import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable;
 import com.leclowndu93150.thaumaturge.data.damagetype.TTDamageTypeBootstrap;
 import com.leclowndu93150.thaumaturge.data.datamap.AuraModifierProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.ChampionWhitelistProvider;
@@ -103,9 +102,11 @@ public final class TTDataGenerators {
             return;
         }
 
-        var datapackEntries = generator.addProvider(true, new DatapackBuiltinEntriesProvider(
-                output, event.getLookupProvider(), registryEntries(), Set.of(TTIds.MODID)));
-        var lookup = datapackEntries.getRegistryProvider();
+        var namespaces = Set.of(TTIds.MODID);
+        var registryProvider = new DatapackBuiltinEntriesProvider(
+                output, event.getLookupProvider(), registryEntries(), namespaces);
+        var lookup = registryProvider.getRegistryProvider().thenApply(PechTradeBootstrap::withTrades);
+        generator.addProvider(true, new DatapackBuiltinEntriesProvider(output, lookup, namespaces));
 
         generator.addProvider(true, new LabyrinthRoomProvider(output));
         generator.addProvider(true, new SparseTemplateProvider(output));
@@ -157,7 +158,6 @@ public final class TTDataGenerators {
                 .add(IAspect.REGISTRY_KEY, AspectBootstrap::bootstrap)
                 .add(IResearchCategory.REGISTRY_KEY, CategoryBootstrap::bootstrap)
                 .add(ScanEntry.REGISTRY_KEY, ScanEntryBootstrap::bootstrap)
-                .add(PechTradeTable.REGISTRY_KEY, PechTradeBootstrap::bootstrap)
                 .add(Blueprint.REGISTRY_KEY, BlueprintBootstrap::bootstrap)
                 .add(Registries.DAMAGE_TYPE, TTDamageTypeBootstrap::bootstrap)
                 .add(Registries.CONFIGURED_FEATURE, TTConfiguredFeatures::bootstrap)
