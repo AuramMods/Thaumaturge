@@ -125,7 +125,7 @@ public class EntityInhabitedZombie extends Zombie {
 
     protected @Nullable EntityEldritchCrab createConversionCrab(ServerLevel level) {
         BlockPos spawnPos = this.blockPosition();
-        return TTEntities.ELDRITCH_CRAB.get().create(level, null, spawnPos, MobSpawnType.CONVERSION, false, false);
+        return TTEntities.ELDRITCH_CRAB.get().create(level, null, null, spawnPos, MobSpawnType.CONVERSION, false, false);
     }
 
     protected void puffOfSmoke(ServerLevel level) {

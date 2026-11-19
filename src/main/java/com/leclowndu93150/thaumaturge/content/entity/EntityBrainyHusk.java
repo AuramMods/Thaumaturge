@@ -5,15 +5,16 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Husk;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
 
-public class EntityBrainyHusk extends Husk {
+public class EntityBrainyHusk extends Husk implements WaterConversionTarget {
     public EntityBrainyHusk(EntityType<? extends EntityBrainyHusk> type, Level level) {
         super(type, level);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return net.minecraft.world.entity.monster.Zombie.createAttributes()
+        return Zombie.createAttributes()
                 .add(Attributes.MAX_HEALTH, 25.0)
                 .add(Attributes.ATTACK_DAMAGE, 5.0)
                 .add(Attributes.ARMOR, 3.0)
@@ -21,12 +22,13 @@ public class EntityBrainyHusk extends Husk {
     }
 
     @Override
+    public EntityType<? extends Zombie> waterConversionTarget() {
+        return TTEntities.BRAINY_ZOMBIE.get();
+    }
+
+    @Override
     protected void doUnderWaterConversion() {
-        if (!net.neoforged.neoforge.event.EventHooks.canLivingConvert(
-                this, TTEntities.BRAINY_ZOMBIE.get(), timer -> this.conversionTime = timer)) {
-            return;
-        }
-        this.convertToZombieType(TTEntities.BRAINY_ZOMBIE.get());
+        this.convertToZombieType(waterConversionTarget());
         if (!this.isSilent()) {
             this.level().levelEvent(null, 1041, this.blockPosition(), 0);
         }

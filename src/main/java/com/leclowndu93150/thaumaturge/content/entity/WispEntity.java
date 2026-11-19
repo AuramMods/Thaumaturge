@@ -100,7 +100,7 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
         if (parsed == null) {
             return null;
         }
-        return this.registryAccess()
+        return this.level().registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
                 .get(ResourceKey.create(IAspect.REGISTRY_KEY, parsed))
                 .map(holder -> (Holder<IAspect>) holder)
@@ -114,7 +114,7 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
     @Override
     public AspectList entityAspects() {
         Holder<IAspect> self = aspect();
-        var registry = this.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
+        var registry = this.level().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
         AspectList aspects = AspectList.EMPTY
                 .add(registry.getOrThrow(TTAspects.AURAM), SELF_ASPECT_AMOUNT)
                 .add(registry.getOrThrow(TTAspects.VOLATUS), SELF_ASPECT_AMOUNT);
@@ -192,7 +192,7 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
     }
 
     private void pickRandomAspect() {
-        var registry = this.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
+        var registry = this.level().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
         boolean compound = this.random.nextInt(COMPOUND_TYPE_ONE_IN) == 0;
         List<Holder.Reference<IAspect>> pool = registry.listElements()
                 .filter(holder -> holder.value().isPrimal() != compound)

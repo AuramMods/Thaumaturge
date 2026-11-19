@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import org.jspecify.annotations.Nullable;
 
 public final class ConstructFollowOwnerGoal extends Goal {
@@ -50,15 +50,15 @@ public final class ConstructFollowOwnerGoal extends Goal {
     @Override
     public void start() {
         repathIn = 0;
-        waterMalus = construct.getPathfindingMalus(PathType.WATER);
-        construct.setPathfindingMalus(PathType.WATER, 0.0F);
+        waterMalus = construct.getPathfindingMalus(BlockPathTypes.WATER);
+        construct.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
     }
 
     @Override
     public void stop() {
         owner = null;
         construct.getNavigation().stop();
-        construct.setPathfindingMalus(PathType.WATER, waterMalus);
+        construct.setPathfindingMalus(BlockPathTypes.WATER, waterMalus);
     }
 
     @Override
