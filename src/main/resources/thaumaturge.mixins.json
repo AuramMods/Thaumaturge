@@ -68,6 +68,8 @@
     "world.item.CrossbowLootingMixin",
     "world.item.BlockItemDataMixin",
     "world.level.block.entity.BlockEntityItemDataMixin",
+    "world.level.levelgen.ChunkGeneratorBiomeAccessor",
+    "world.level.levelgen.NoiseGeneratorBiomeCodecMixin",
     "world.level.chunk.LevelChunkRegistryContextMixin",
     "world.level.chunk.storage.ChunkSerializerRegistryContextMixin",
     "world.level.chunk.ProtoChunkAttachmentsMixin",
