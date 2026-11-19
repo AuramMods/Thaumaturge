@@ -335,20 +335,46 @@ class GolemBuilderCutoffTest {
     }
 
     @Test
-    void nativeSaveRetainsExistingSchemaAndJobButNotTransientIntakeBuffer() {
+    void nativeSaveRetainsJobAndPaysTheRestoredMachinaExactlyOnce() {
         BlockEntityGolemBuilder original = working();
         original.outputHandler().setStackInSlot(0, placer(GolemProperties.createDefault(), 2));
-        original.insert(machina, 1, null, false);
-        CompoundTag saved = original.getUpdateTag(registries);
-        assertEquals(Set.of("inventory", "golem", "cost", "mcost"), saved.getAllKeys());
+        clearInvocations(original);
+        assertEquals(1, original.insert(machina, 1, null, false));
+        verify(original).setChanged();
+        CompoundTag saved = original.saveWithoutMetadata();
+        assertEquals(Set.of("inventory", "golem", "cost", "mcost", "buffered"), saved.getAllKeys());
+        assertTrue(saved.getBoolean("buffered"));
+
         BlockEntityGolemBuilder loaded = builder();
-        loaded.loadAdditional(saved, registries);
-        assertEquals(saved, loaded.getUpdateTag(registries));
+        loaded.load(saved);
+        assertEquals(saved, loaded.saveWithoutMetadata());
         assertEquals(original.pendingGolem(), loaded.pendingGolem());
         assertEquals(original.cost(), loaded.cost());
-        assertEquals(1, loaded.roomFor(machina, null));
+        assertEquals(0, loaded.roomFor(machina, null));
         tick(loaded, 1);
-        assertEquals(original.cost(), loaded.cost());
+        assertEquals(original.cost() - 1, loaded.cost());
+        assertEquals(1, loaded.roomFor(machina, null));
+
+        BlockEntityGolemBuilder reloaded = builder();
+        reloaded.load(loaded.saveWithoutMetadata());
+        tick(reloaded, 1);
+        assertEquals(original.cost() - 1, reloaded.cost());
+        assertEquals(2, reloaded.outputHandler().getStackInSlot(0).getCount());
+    }
+
+    @Test
+    void legacySaveWithoutBufferRetainsJobWithoutGrantingMachina() {
+        BlockEntityGolemBuilder builder = working();
+        int cost = builder.cost();
+        CompoundTag legacy = builder.saveWithoutMetadata();
+        legacy.remove("buffered");
+        assertEquals(1, builder.insert(machina, 1, null, false));
+
+        builder.load(legacy);
+        assertNotNull(builder.pendingGolem());
+        assertEquals(1, builder.roomFor(machina, null));
+        tick(builder, 1);
+        assertEquals(cost, builder.cost());
     }
 
     @Test
