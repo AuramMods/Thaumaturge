@@ -21,7 +21,6 @@ import net.minecraft.core.BlockPos;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -151,12 +150,5 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
     @Override
     public boolean shouldRenderOffScreen(BlockEntityVisRelay be) {
         return true;
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityVisRelay relay) {
-        AABB self = new AABB(relay.getBlockPos());
-        BlockPos parent = relay.parentPos();
-        return parent == null ? self : self.minmax(new AABB(parent));
     }
 }

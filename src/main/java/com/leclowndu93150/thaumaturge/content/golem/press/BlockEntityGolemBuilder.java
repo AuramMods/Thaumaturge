@@ -312,7 +312,8 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
         return false;
     }
 
-    public AABB renderBounds() {
+    @Override
+    public AABB getRenderBoundingBox() {
         return new AABB(
                 worldPosition.getX() - RENDER_REACH_LOW,
                 worldPosition.getY(),

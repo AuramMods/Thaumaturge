@@ -23,7 +23,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.phys.AABB;
 
 public final class GolemBuilderRenderer implements BlockEntityRenderer<BlockEntityGolemBuilder> {
     public static final ResourceLocation MODEL = TTIds.rl("models/mesh/golembuilder.ttmesh");
@@ -102,11 +101,6 @@ public final class GolemBuilderRenderer implements BlockEntityRenderer<BlockEnti
                 .uv(u, v)
                 .overlayCoords(OverlayTexture.NO_OVERLAY)
                 .uv2(LAVA_LIGHT), pose, 0.0F, 1.0F, 0.0F);
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityGolemBuilder builder) {
-        return builder.renderBounds();
     }
 
     @Override

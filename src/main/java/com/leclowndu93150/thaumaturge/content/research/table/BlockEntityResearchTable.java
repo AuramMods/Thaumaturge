@@ -46,11 +46,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity implements MenuProvider {
+    public static final float BOUNDS_MARGIN = 0.5F;
     public static final int SLOT_SCRIBE_TOOLS = 0;
     public static final int SLOT_NOTE = 1;
     public static final int SLOT_COUNT = 2;
@@ -74,6 +76,16 @@ public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity im
     public BlockEntityResearchTable(BlockPos pos, BlockState state) {
         super(TTBlockEntities.RESEARCH_TABLE.get(), pos, state);
         exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> items());
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        BlockPos pos = getBlockPos();
+        BlockState state = getBlockState();
+        Direction facing = state.hasProperty(BlockResearchTable.FACING)
+                ? state.getValue(BlockResearchTable.FACING)
+                : Direction.NORTH;
+        return new AABB(pos).minmax(new AABB(pos.relative(facing)).inflate(BOUNDS_MARGIN));
     }
 
     public ItemStackHandler items() {

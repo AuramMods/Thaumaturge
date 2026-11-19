@@ -23,7 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
@@ -76,9 +75,6 @@ public final class AdvancedAlchemicalFurnaceRenderer
     private static final int BACKING_LIGHT = LightTexture.pack(BACKING_BLOCK_LIGHT, 0);
     private static final int FLAME_LIGHT = LightTexture.pack(FLAME_BLOCK_LIGHT, 0);
     private static final float PANEL_FULL = 0.0F;
-    private static final float BOUNDS_MARGIN_LOW = 1.0F;
-    private static final float BOUNDS_MARGIN_HIGH = 2.0F;
-    private static final float BOUNDS_HEIGHT = 2.0F;
     private static final PanelPlane GOO_SURFACE = new PanelPlane(
             CENTER - GOO_SURFACE_HALF,
             GOO_SURFACE_Y,
@@ -343,18 +339,6 @@ public final class AdvancedAlchemicalFurnaceRenderer
                         .uv2(light), pose, normals[index], normals[index + 1], normals[index + 2]);
             }
         }
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityAdvancedAlchemicalFurnace furnace) {
-        var pos = furnace.getBlockPos();
-        return new AABB(
-                pos.getX() - BOUNDS_MARGIN_LOW,
-                pos.getY(),
-                pos.getZ() - BOUNDS_MARGIN_LOW,
-                pos.getX() + BOUNDS_MARGIN_HIGH,
-                pos.getY() + BOUNDS_HEIGHT,
-                pos.getZ() + BOUNDS_MARGIN_HIGH);
     }
 
     @Override

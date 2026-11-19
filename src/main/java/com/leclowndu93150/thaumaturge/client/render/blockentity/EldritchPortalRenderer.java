@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
@@ -66,11 +65,6 @@ public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEn
         buffer.vertex(mat, -sx, sy, 0.0F).uv(u1, 1.0F).color(-1).uv2(LIGHT).endVertex();
         buffer.vertex(mat, sx, sy, 0.0F).uv(u0, 1.0F).color(-1).uv2(LIGHT).endVertex();
         buffer.vertex(mat, sx, -sy, 0.0F).uv(u0, 0.0F).color(-1).uv2(LIGHT).endVertex();
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityEldritchPortal portal) {
-        return new AABB(portal.getBlockPos()).inflate(1.5);
     }
 
     @Override

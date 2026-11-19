@@ -14,6 +14,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 
 public final class BlockEntityDioptra extends AbstractSyncedBlockEntity {
     public static final int GRID_SIZE = 13;
@@ -31,6 +32,18 @@ public final class BlockEntityDioptra extends AbstractSyncedBlockEntity {
 
     public BlockEntityDioptra(BlockPos pos, BlockState state) {
         super(TTBlockEntities.DIOPTRA.get(), pos, state);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        BlockPos pos = getBlockPos();
+        return new AABB(
+                pos.getX() - 0.3,
+                pos.getY() - 0.3,
+                pos.getZ() - 0.3,
+                pos.getX() + 1.3,
+                pos.getY() + 2.3,
+                pos.getZ() + 1.3);
     }
 
     public byte gridValue(int index) {

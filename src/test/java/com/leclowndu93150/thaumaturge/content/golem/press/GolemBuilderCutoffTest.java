@@ -417,7 +417,7 @@ class GolemBuilderCutoffTest {
         verify(level, never())
                 .playLocalSound(
                         anyDouble(), anyDouble(), anyDouble(), any(), any(), anyFloat(), anyFloat(), anyBoolean());
-        assertEquals(new AABB(-1, 0, -1, 2, 2, 2), builder.renderBounds());
+        assertEquals(new AABB(-1, 0, -1, 2, 2, 2), builder.getRenderBoundingBox());
     }
 
     @Test

@@ -15,15 +15,12 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public final class ArcaneBoreBlockRenderer implements BlockEntityRenderer<BlockEntityArcaneBore> {
     private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/arcanebore.png");
-    private static final double BEAM_REACH = 6.0;
 
     private final ArcaneBoreModel model;
 
@@ -82,11 +79,5 @@ public final class ArcaneBoreBlockRenderer implements BlockEntityRenderer<BlockE
     @Override
     public boolean shouldRenderOffScreen(BlockEntityArcaneBore bore) {
         return true;
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityArcaneBore bore) {
-        BlockPos pos = bore.getBlockPos();
-        return new AABB(pos).inflate(BEAM_REACH);
     }
 }

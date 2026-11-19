@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.ResearchTableModel;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
+import com.leclowndu93150.thaumaturge.content.research.table.BlockResearchTable;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.List;
@@ -90,12 +91,22 @@ class ResearchTablePaperPortTest {
     @Test
     void facingSideInflationIsAppliedBeforeJoiningTheTableBounds() {
         BlockPos pos = new BlockPos(4, 7, -2);
+        BlockEntityResearchTable table = mock(BlockEntityResearchTable.class);
+        BlockState state = mock(BlockState.class);
+        when(table.getBlockPos()).thenReturn(pos);
+        when(table.getBlockState()).thenReturn(state);
+        when(table.getRenderBoundingBox()).thenCallRealMethod();
+        when(state.hasProperty(BlockResearchTable.FACING)).thenReturn(true);
+
         for (Direction facing : List.of(Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST)) {
+            when(state.getValue(BlockResearchTable.FACING)).thenReturn(facing);
             AABB expected = new AABB(pos).minmax(new AABB(pos.relative(facing)).inflate(0.5D));
-            assertEquals(expected, ResearchTableRenderer.renderBounds(pos, facing), facing.toString());
+            assertEquals(expected, table.getRenderBoundingBox(), facing.toString());
         }
 
-        AABB northBounds = ResearchTableRenderer.renderBounds(pos, Direction.NORTH);
+        when(state.hasProperty(BlockResearchTable.FACING)).thenReturn(false);
+        AABB northBounds = table.getRenderBoundingBox();
+        assertEquals(new AABB(pos).minmax(new AABB(pos.north()).inflate(0.5D)), northBounds);
         assertEquals(pos.getZ() + 1.0D, northBounds.maxZ, 0.0D);
     }
 }

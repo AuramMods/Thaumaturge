@@ -9,8 +9,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 public final class BlockEntityEldritchLock extends AbstractSyncedBlockEntity {
+    private static final float BOUNDS_MARGIN = 3.0F;
     private static final String MAZE = "maze";
     private static final String CHARGED_AT = "charged_at";
 
@@ -19,6 +21,11 @@ public final class BlockEntityEldritchLock extends AbstractSyncedBlockEntity {
 
     public BlockEntityEldritchLock(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ELDRITCH_LOCK.get(), pos, state);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        return new AABB(getBlockPos()).inflate(BOUNDS_MARGIN);
     }
 
     public Optional<MazeId> maze() {

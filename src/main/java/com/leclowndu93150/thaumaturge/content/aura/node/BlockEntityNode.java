@@ -39,6 +39,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -46,10 +47,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspectContainer, ITaintOrigin {
+    public static final float ENERGIZED_CORE_SCALE = 1.35F;
+    public static final float ENERGIZED_PULSE_AMPLITUDE = 0.25F;
+    private static final double ORB_SWEEP = (ENERGIZED_CORE_SCALE + ENERGIZED_PULSE_AMPLITUDE) * Mth.SQRT_OF_TWO;
     private static final int REGEN_INTERVAL_NORMAL = 600;
     private static final int REGEN_INTERVAL_BRIGHT = 400;
     private static final int REGEN_INTERVAL_PALE = 900;
@@ -119,6 +124,15 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     protected BlockEntityNode(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         exposeCapability(AspectCapabilities.CONTAINER, side -> this);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        AABB bounds = new AABB(getBlockPos()).inflate(ORB_SWEEP);
+        UUID drainId = getDrainPlayer();
+        Level currentLevel = getLevel();
+        Player drainer = drainId == null || currentLevel == null ? null : currentLevel.getPlayerByUUID(drainId);
+        return drainer == null ? bounds : bounds.minmax(drainer.getBoundingBox());
     }
 
     public void applyNodeData(NodeData data) {

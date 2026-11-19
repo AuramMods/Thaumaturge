@@ -27,7 +27,6 @@ import net.minecraft.resources.ResourceLocation;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBanner> {
     private static final ResourceLocation TEX_BLANK = TTIds.rl("textures/entity/banner_blank.png");
@@ -47,14 +46,6 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
     public BannerRenderer(BlockEntityRendererProvider.Context context) {
         this.frame = new TTBannerModel(context.bakeLayer(TTModelLayers.TT_BANNER), false);
         this.cloth = new TTBannerModel(context.bakeLayer(TTModelLayers.TT_BANNER), true);
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityBanner banner) {
-        boolean onWall = banner.getBlockState().getBlock() instanceof BannerWallBlock;
-        return new AABB(banner.getBlockPos())
-                .expandTowards(0, onWall ? -1 : 1, 0)
-                .inflate(0.25);
     }
 
     @Override

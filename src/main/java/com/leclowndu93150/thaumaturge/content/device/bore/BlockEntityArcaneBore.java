@@ -24,12 +24,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityArcaneBore extends AbstractSyncedBlockEntity implements ArcaneBoreHost {
+    private static final double BEAM_REACH = 6.0;
     public static final float EYE_HEIGHT = 0.8125F;
 
     private static final float MAX_HEAD_PITCH = 90.0F;
@@ -48,6 +50,12 @@ public final class BlockEntityArcaneBore extends AbstractSyncedBlockEntity imple
 
     public BlockEntityArcaneBore(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ARCANE_BORE.get(), pos, state);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        BlockPos pos = getBlockPos();
+        return new AABB(pos).inflate(BEAM_REACH);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityArcaneBore bore) {

@@ -1,5 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import static com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode.ENERGIZED_CORE_SCALE;
+import static com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode.ENERGIZED_PULSE_AMPLITUDE;
+
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
@@ -30,8 +33,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
@@ -70,10 +71,7 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
     private static final float DRAIN_LINE_WIDTH = 0.15F;
     private static final float ENERGIZED_SPIN_FACTOR = 2.0F;
     private static final float ENERGIZED_LAYER_CONTRACTION = 0.6F;
-    private static final float ENERGIZED_CORE_SCALE = 1.35F;
     private static final float ENERGIZED_PULSE_PERIOD = 4.0F;
-    private static final float ENERGIZED_PULSE_AMPLITUDE = 0.25F;
-    private static final double ORB_SWEEP = (ENERGIZED_CORE_SCALE + ENERGIZED_PULSE_AMPLITUDE) * Mth.SQRT_OF_TWO;
     private static final int ENERGIZED_CORE_COLOR = 0x99CCFF;
 
     public NodeRenderer(BlockEntityRendererProvider.Context context) {}
@@ -81,15 +79,6 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
     @Override
     public boolean shouldRenderOffScreen(BlockEntityNode node) {
         return true;
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityNode node) {
-        AABB bounds = new AABB(node.getBlockPos()).inflate(ORB_SWEEP);
-        UUID drainId = node.getDrainPlayer();
-        Level level = node.getLevel();
-        Player drainer = drainId == null || level == null ? null : level.getPlayerByUUID(drainId);
-        return drainer == null ? bounds : bounds.minmax(drainer.getBoundingBox());
     }
 
     @Override
@@ -184,9 +173,9 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
         state.time = player.level().getGameTime();
         state.frameSeed = node.getBlockPos().getX();
         state.draining = false;
-        if (node.getDrainPlayer() != null
-                && player.level().getPlayerByUUID(node.getDrainPlayer()) instanceof Player drainer
-                && drainer.isUsingItem()) {
+        UUID drainId = node.getDrainPlayer();
+        Player drainer = drainId == null ? null : player.level().getPlayerByUUID(drainId);
+        if (drainer != null && drainer.isUsingItem()) {
             float useTicks = drainer.getTicksUsingItem() + partialTicks;
             Vec3 hand = drainHand(drainer, player, partialTicks);
             Vec3 nodeCenter = ClientSpaces.renderPosition(node.getLevel(), Vec3.atCenterOf(node.getBlockPos()));

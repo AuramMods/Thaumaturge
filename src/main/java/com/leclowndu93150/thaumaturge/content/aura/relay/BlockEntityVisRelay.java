@@ -17,6 +17,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jspecify.annotations.Nullable;
@@ -40,6 +41,13 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
 
     public BlockEntityVisRelay(BlockPos pos, BlockState state) {
         super(TTBlockEntities.VIS_RELAY.get(), pos, state);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        AABB self = new AABB(getBlockPos());
+        BlockPos parent = parentPos();
+        return parent == null ? self : self.minmax(new AABB(parent));
     }
 
     public @Nullable BlockPos parentPos() {

@@ -31,6 +31,11 @@ public final class BlockEntityEldritchPortal extends RegistryBlockEntity {
         super(TTBlockEntities.ELDRITCH_PORTAL.get(), pos, state);
     }
 
+    @Override
+    public AABB getRenderBoundingBox() {
+        return new AABB(getBlockPos()).inflate(1.5);
+    }
+
     public void clientTick(Level level, BlockPos pos) {
         age++;
         if (age % SOUND_INTERVAL == 1) {

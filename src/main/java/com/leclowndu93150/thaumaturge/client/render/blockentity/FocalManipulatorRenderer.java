@@ -23,7 +23,6 @@ import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -46,7 +45,6 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final float BEAM_ALPHA = 0.5F;
     private static final int FADED = 0;
     private static final float FLAT_UV = 0.5F;
-    private static final int RENDER_BOUNDS_HEIGHT = 2;
 
     private static final RenderType BEAM_TYPE = TTRenderTypes.fxAdditive(TTIds.rl("textures/misc/white.png"));
     private static final RenderType GLOW_TYPE = TTRenderTypes.fxAdditiveBlurred(ParticleTextures.STAR_GLINT);
@@ -224,17 +222,5 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     @Override
     public int getViewDistance() {
         return 64;
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityFocalManipulator table) {
-        var pos = table.getBlockPos();
-        return new AABB(
-                pos.getX(),
-                pos.getY(),
-                pos.getZ(),
-                pos.getX() + 1.0,
-                pos.getY() + RENDER_BOUNDS_HEIGHT,
-                pos.getZ() + 1.0);
     }
 }

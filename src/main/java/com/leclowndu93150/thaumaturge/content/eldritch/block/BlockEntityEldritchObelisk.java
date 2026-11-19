@@ -26,6 +26,11 @@ public final class BlockEntityEldritchObelisk extends RegistryBlockEntity {
         super(TTBlockEntities.ELDRITCH_OBELISK.get(), pos, state);
     }
 
+    @Override
+    public AABB getRenderBoundingBox() {
+        return new AABB(getBlockPos()).inflate(0.5, 0.0, 0.5).expandTowards(0.0, 5.0, 0.0);
+    }
+
     public void serverTick(Level level, BlockPos pos) {
         if (counter++ % PULSE_INTERVAL != 0) {
             return;

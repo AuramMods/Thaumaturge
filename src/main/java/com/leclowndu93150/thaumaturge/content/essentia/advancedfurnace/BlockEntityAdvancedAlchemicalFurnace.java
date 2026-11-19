@@ -33,9 +33,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEntity {
+    private static final float BOUNDS_MARGIN_LOW = 1.0F;
+    private static final float BOUNDS_MARGIN_HIGH = 2.0F;
+    private static final float BOUNDS_HEIGHT = 2.0F;
     public static final int MAX_ESSENTIA = 500;
     public static final int MAX_POWER = 500;
     public static final int HOT_HEAT = 100;
@@ -102,6 +106,18 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             nozzles[direction.get2DDataValue()] = new AdvancedFurnaceNozzle(this, direction);
         }
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        var pos = getBlockPos();
+        return new AABB(
+                pos.getX() - BOUNDS_MARGIN_LOW,
+                pos.getY(),
+                pos.getZ() - BOUNDS_MARGIN_LOW,
+                pos.getX() + BOUNDS_MARGIN_HIGH,
+                pos.getY() + BOUNDS_HEIGHT,
+                pos.getZ() + BOUNDS_MARGIN_HIGH);
     }
 
     public static void serverTick(

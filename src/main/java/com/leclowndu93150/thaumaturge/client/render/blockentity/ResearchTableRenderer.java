@@ -19,12 +19,10 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEntityResearchTable> {
     private static final ResourceLocation INKWELL_MESH = TTIds.rl("models/mesh/research_inkwell.ttmesh");
@@ -33,7 +31,6 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
     private static final ResourceLocation QUILL_TEXTURE = TTIds.rl("textures/entity/tablequill.png");
 
     private static final int DEFAULT_SCROLL_COLOR = 0x999999;
-    private static final float BOUNDS_MARGIN = 0.5F;
     private static final float INKWELL_X = -0.28125F;
     private static final float INKWELL_Z = 0.28125F;
     private static final int WHITE = 0xFFFFFFFF;
@@ -51,16 +48,6 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
 
     public ResearchTableRenderer(BlockEntityRendererProvider.Context context) {
         this.model = new ResearchTableModel(context.bakeLayer(TTModelLayers.RESEARCH_TABLE));
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityResearchTable table) {
-        BlockPos pos = table.getBlockPos();
-        BlockState state = table.getBlockState();
-        Direction facing = state.hasProperty(BlockResearchTable.FACING)
-                ? state.getValue(BlockResearchTable.FACING)
-                : Direction.NORTH;
-        return renderBounds(pos, facing);
     }
 
     @Override
@@ -126,10 +113,6 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
         poseStack.mulPose(Axis.YP.rotationDegrees(QUILL_YAW));
         poseStack.mulPose(Axis.XP.rotationDegrees(HALF_TURN));
         poseStack.scale(QUILL_SCALE, QUILL_SCALE, QUILL_SCALE);
-    }
-
-    static AABB renderBounds(BlockPos pos, Direction facing) {
-        return new AABB(pos).minmax(new AABB(pos.relative(facing)).inflate(BOUNDS_MARGIN));
     }
 
     private static void renderInkwell(PoseStack poseStack, MultiBufferSource buffers, int light) {

@@ -25,7 +25,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
 public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEntityEldritchLock> {
@@ -76,7 +75,6 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
     private static final float NORTH_YAW = 180.0F;
     private static final float WEST_YAW = 270.0F;
     private static final float EAST_YAW = 90.0F;
-    private static final float BOUNDS_MARGIN = 3.0F;
     private static final int VIEW_DISTANCE = 64;
     private static final int DISPLAY_SEED = 0;
 
@@ -157,11 +155,6 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
     @Override
     public boolean shouldRenderOffScreen(BlockEntityEldritchLock lock) {
         return true;
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityEldritchLock lock) {
-        return new AABB(lock.getBlockPos()).inflate(BOUNDS_MARGIN);
     }
 
     @Override

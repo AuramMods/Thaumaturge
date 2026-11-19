@@ -18,7 +18,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.AABB;
 
 public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockEntityEldritchObelisk> {
     public static final ResourceLocation CAP_MODEL = TTIds.rl("models/mesh/obelisk_cap.ttmesh");
@@ -178,11 +177,6 @@ public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockE
                 .uv(u, v)
                 .overlayCoords(OverlayTexture.NO_OVERLAY)
                 .uv2(light), pose, 0.0F, 0.0F, -1.0F);
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityEldritchObelisk obelisk) {
-        return new AABB(obelisk.getBlockPos()).inflate(0.5, 0.0, 0.5).expandTowards(0.0, 5.0, 0.0);
     }
 
     @Override

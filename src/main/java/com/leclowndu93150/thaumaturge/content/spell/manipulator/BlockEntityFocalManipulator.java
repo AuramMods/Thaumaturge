@@ -46,12 +46,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity implements MenuProvider {
+    private static final int RENDER_BOUNDS_HEIGHT = 2;
     public static final int SLOT_FOCUS = 0;
     public static final int MAX_NAME_LENGTH = 50;
     private static final int DRAIN_INTERVAL = 20;
@@ -72,6 +74,18 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
 
     public BlockEntityFocalManipulator(BlockPos pos, BlockState state) {
         super(TTBlockEntities.FOCAL_MANIPULATOR.get(), pos, state);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        var pos = getBlockPos();
+        return new AABB(
+                pos.getX(),
+                pos.getY(),
+                pos.getZ(),
+                pos.getX() + 1.0,
+                pos.getY() + RENDER_BOUNDS_HEIGHT,
+                pos.getZ() + 1.0);
     }
 
     public ItemStackHandler items() {

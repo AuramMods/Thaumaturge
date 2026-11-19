@@ -13,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityBanner extends AbstractSyncedBlockEntity implements BlockItemData {
@@ -20,6 +21,14 @@ public final class BlockEntityBanner extends AbstractSyncedBlockEntity implement
 
     public BlockEntityBanner(BlockPos pos, BlockState state) {
         super(TTBlockEntities.BANNER.get(), pos, state);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        boolean onWall = getBlockState().getBlock() instanceof BannerWallBlock;
+        return new AABB(getBlockPos())
+                .expandTowards(0, onWall ? -1 : 1, 0)
+                .inflate(0.25);
     }
 
     public @Nullable ResourceKey<IAspect> aspect() {

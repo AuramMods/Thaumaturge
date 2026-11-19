@@ -9,12 +9,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.AABB;
 
 public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDioptra> {
     private static final ResourceLocation SURFACE_TEXTURE = TTIds.rl("textures/misc/gridblock.png");
@@ -242,18 +240,6 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
     @Override
     public boolean shouldRenderOffScreen(BlockEntityDioptra blockEntity) {
         return true;
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityDioptra dioptra) {
-        BlockPos pos = dioptra.getBlockPos();
-        return new AABB(
-                pos.getX() - 0.3,
-                pos.getY() - 0.3,
-                pos.getZ() - 0.3,
-                pos.getX() + 1.3,
-                pos.getY() + 2.3,
-                pos.getZ() + 1.3);
     }
 
     private record Palette(float red, float green, float blue, float time) {

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import static com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeStabilizer.BUBBLE_HALF;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
@@ -19,7 +21,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -52,8 +53,6 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     private static final int ADVANCED_TINT = 0xFF4A3C;
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BUBBLE_LIGHT = LightTexture.FULL_BRIGHT;
-    private static final float BUBBLE_HALF = 0.72F;
-    private static final float BUBBLE_LIFT = 1.5F;
     private static final float BUBBLE_PULSE_BASE = 0.7F;
     private static final float BUBBLE_PULSE_PERIOD = 90.0F;
     private static final int BUBBLE_ADVANCED_TINT = 0xFF7A52;
@@ -63,13 +62,6 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     @Override
     public boolean shouldRenderOffScreen(BlockEntityNodeStabilizer stabilizer) {
         return true;
-    }
-
-    @Override
-    public AABB getRenderBoundingBox(BlockEntityNodeStabilizer stabilizer) {
-        Vec3 center = Vec3.atCenterOf(stabilizer.getBlockPos()).add(0.0, BUBBLE_LIFT - 0.5, 0.0);
-        double boundsHalf = BUBBLE_HALF * Math.sqrt(2.0);
-        return new AABB(stabilizer.getBlockPos()).minmax(new AABB(center, center).inflate(boundsHalf));
     }
 
     @Override
@@ -94,7 +86,7 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
             float alpha = NodeStabilizerRenderMath.bubbleAlpha(count, ticks);
             int tint = advanced ? BUBBLE_ADVANCED_TINT : 0xFFFFFF;
             int color = ARGB32.color((int) (alpha * 255.0F), tint);
-            Vec3 origin = Vec3.atCenterOf(stabilizer.getBlockPos()).add(0.0, BUBBLE_LIFT - 0.5, 0.0);
+            Vec3 origin = stabilizer.bubbleCenter();
             LateWorldRenderQueue.enqueueBlockEntity(
                     origin, (latePose, lateBuffers) -> drawBubble(latePose, lateBuffers, color));
         }
