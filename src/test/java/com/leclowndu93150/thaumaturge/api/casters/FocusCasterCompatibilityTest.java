@@ -5,10 +5,8 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
-import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.content.spell.casting.CasterHands;
@@ -150,8 +148,7 @@ class FocusCasterCompatibilityTest {
     }
 
     private static ItemStack wandStack() {
-        WandCap cap = new WandCap(1.0F, Map.of(), 1, TTIds.rl("test_cap"));
-        return ItemWand.create(TTItems.WAND.get(), cap, TTWandParts.ROD_WOOD.get(), false);
+        return ItemWand.create(TTItems.WAND.get(), TTWandParts.CAP_GOLD.get(), TTWandParts.ROD_WOOD.get(), false);
     }
 
     @Test

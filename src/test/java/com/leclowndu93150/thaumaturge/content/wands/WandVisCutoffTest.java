@@ -1,7 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
-import com.leclowndu93150.thaumaturge.itemdata.ItemData;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -13,6 +11,7 @@ import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.leclowndu93150.thaumaturge.compat.Java17;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
@@ -21,12 +20,43 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.RegisterEvent;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class WandVisCutoffTest {
+@Mod.EventBusSubscriber(modid = TTIds.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public class WandVisCutoffTest {
+    private static final ThreadLocal<Storage> ACTIVE_STORAGE = new ThreadLocal<>();
+    private static final WandCap CAP = new WandCap(0.5F, Map.of(), 1, TTIds.rl("test_vis_cutoff_cap"));
+    private static final WandRod ROD = new WandRod(
+            50, 1, TTIds.rl("test_vis_cutoff_rod"), null, false, false, false, null, new IWandVisStorage() {
+                @Override
+                public WandVis getVis(ItemStack stack) {
+                    return ACTIVE_STORAGE.get().getVis(stack);
+                }
+
+                @Override
+                public void setVis(ItemStack stack, WandVis charge) {
+                    ACTIVE_STORAGE.get().setVis(stack, charge);
+                }
+            });
+
+    @SubscribeEvent
+    public static void registerWandParts(RegisterEvent event) {
+        event.register(WandCap.REGISTRY_KEY, TTIds.rl("test_vis_cutoff_cap"), () -> CAP);
+        event.register(WandRod.REGISTRY_KEY, TTIds.rl("test_vis_cutoff_rod"), () -> ROD);
+    }
+
+    @AfterEach
+    void clearCustomStorage() {
+        ACTIVE_STORAGE.remove();
+    }
+
     private static final class Storage implements IWandVisStorage {
         WandVis charge;
         int reads;
@@ -56,9 +86,8 @@ class WandVisCutoffTest {
     }
 
     private static ItemStack customWand(Storage storage) {
-        WandCap cap = new WandCap(0.5F, Map.of(), 1, TTIds.rl("test_cap"));
-        WandRod rod = new WandRod(50, 1, TTIds.rl("test_rod"), null, false, false, false, null, storage);
-        ItemStack stack = ItemWand.create(TTItems.WAND.get(), cap, rod, false);
+        ACTIVE_STORAGE.set(storage);
+        ItemStack stack = ItemWand.create(TTItems.WAND.get(), CAP, ROD, false);
         ItemData.set(stack, TTDataComponents.WAND_VIS.get(), WandVis.EMPTY);
         return stack;
     }
@@ -76,6 +105,7 @@ class WandVisCutoffTest {
         WandVis before = funded();
         Storage storage = new Storage(before);
         ItemStack stack = customWand(storage);
+        var itemTag = stack.getTag().copy();
         assertTrue(pay(stack, WandVisHelper.evenSplit(120), exact, simulate));
         assertEquals(1, storage.reads);
         assertEquals(simulate ? 0 : 1, storage.writes.size());
@@ -83,7 +113,8 @@ class WandVisCutoffTest {
         TTAspects.PRIMALS.forEach(aspect -> assertEquals(after, storage.charge.amount(aspect)));
         if (simulate) assertSame(before, storage.charge);
         else assertSame(storage.charge, Java17.first(storage.writes));
-        assertSame(WandVis.EMPTY, ItemData.get(stack, TTDataComponents.WAND_VIS.get()));
+        assertEquals(WandVis.EMPTY, ItemData.get(stack, TTDataComponents.WAND_VIS.get()));
+        assertEquals(itemTag, stack.getTag());
     }
 
     @ParameterizedTest
