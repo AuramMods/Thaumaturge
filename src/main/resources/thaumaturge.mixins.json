@@ -14,6 +14,7 @@
     "world.entity.FaceAttachedPassengerMixin",
     "world.entity.EntityRandomAccessor",
     "world.entity.EntityScaleMixin",
+    "world.entity.EntityPortalScaleMixin",
     "world.entity.EntityTypeGeometryMixin",
     "world.entity.LivingEntityScaleMixin",
     "world.level.PortalEntityScaleMixin",

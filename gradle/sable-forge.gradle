@@ -1,0 +1,56 @@
+// The Forge port is available as source. Build its named classes for compilation
+// and its reobfuscated JAR for optional integration tests.
+def sableRepository = 'https://github.com/NotAsher999/sable-1.20.1.git'
+def sableSource = layout.projectDirectory.dir(".gradle/sable-forge/${sable_forge_revision}")
+def sableClasses = sableSource.dir('forge/build/classes/java/main')
+def sableJar = sableSource.file("forge/build/libs/sable-forge-${minecraft_version}-${sable_forge_version}.jar")
+
+def checkoutSableForge = tasks.register('checkoutSableForge') {
+    inputs.property 'repository', sableRepository
+    inputs.property 'revision', sable_forge_revision
+    outputs.file sableSource.file('.git/HEAD')
+
+    doLast {
+        sableSource.asFile.mkdirs()
+        project.exec {
+            workingDir sableSource
+            commandLine 'git', 'init', '--quiet'
+        }
+        project.exec {
+            workingDir sableSource
+            commandLine 'git', 'fetch', '--quiet', '--depth=1', sableRepository, sable_forge_revision
+        }
+        project.exec {
+            workingDir sableSource
+            commandLine 'git', 'checkout', '--quiet', '--detach', sable_forge_revision
+        }
+    }
+}
+
+def buildSableForge = tasks.register('buildSableForge', Exec) {
+    description = 'Build the pinned Forge Sable dependency from source'
+    dependsOn checkoutSableForge
+    inputs.file sableSource.file('.git/HEAD')
+    inputs.files(fileTree(sableSource) {
+        exclude '.git/**', '**/.gradle/**', '**/build/**'
+    }).withPathSensitivity(PathSensitivity.RELATIVE)
+    outputs.dirs sableClasses, sableSource.dir('forge/build/devlibs')
+    outputs.file sableJar
+
+    workingDir sableSource
+    environment 'JAVA_HOME', System.getProperty('java.home')
+    def arguments = ['--no-daemon', '--console=plain', ':forge:jar']
+    if (gradle.startParameter.offline) {
+        arguments.add('--offline')
+    }
+    def gradleBin = new File(gradle.gradleHomeDir, 'bin')
+    if (System.getProperty('os.name').startsWith('Windows')) {
+        commandLine(['cmd.exe', '/d', '/c', new File(gradleBin, 'gradle.bat').absolutePath] + arguments)
+    } else {
+        commandLine([new File(gradleBin, 'gradle').absolutePath] + arguments)
+    }
+}
+
+dependencies {
+    compileOnly files(sableClasses).builtBy(buildSableForge)
+}

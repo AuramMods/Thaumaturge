@@ -428,6 +428,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/renderer/entity/ItemRendererArmorDyeMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/renderer/entity/layers/HumanoidArmorLayerMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/EntityScaleMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/EntityPortalScaleMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/LivingEntityScaleMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/level/PortalEntityScaleMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/client/particle/**'
@@ -750,6 +751,7 @@ tasks.matching { it.name == 'runClient' }.configureEach {
 }
 tasks.matching { it.name in ['runServer', 'runGameTestServer'] }.configureEach { dependsOn prepareTestServers }
 
+apply from: 'gradle/sable-forge.gradle'
 apply from: 'porting/testing/forge-tests.gradle'
 
 

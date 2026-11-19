@@ -37,7 +37,7 @@ abstract class EntityScaleMixin {
         }
     }
 
-    @ModifyExpressionValue(method = {"getBoundingBoxForPose", "getRelativePortalPosition", "getDimensionsForge"},
+    @ModifyExpressionValue(method = {"getBoundingBoxForPose", "getDimensionsForge"},
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/entity/Entity;getDimensions(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/entity/EntityDimensions;"))
     private EntityDimensions thaumaturge$scalePoseDimensions(EntityDimensions nativeSize) {
