@@ -12,14 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jspecify.annotations.Nullable;
 
@@ -80,9 +78,6 @@ public final class ResearchLinkData extends SavedData {
             builder -> builder.group(Link.CODEC.listOf().fieldOf("links").forGetter(data -> data.links))
                     .apply(builder, ResearchLinkData::new));
 
-    public static final SavedData.Factory<ResearchLinkData> FACTORY =
-            new SavedData.Factory<>(ResearchLinkData::new, ResearchLinkData::load, DataFixTypes.LEVEL);
-
     private final List<Link> links;
     private final Set<UUID> pendingPlayers = new HashSet<>();
 
@@ -99,15 +94,15 @@ public final class ResearchLinkData extends SavedData {
     }
 
     public static ResearchLinkData get(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(FACTORY, "research_share");
+        return server.overworld().getDataStorage().computeIfAbsent(ResearchLinkData::load, ResearchLinkData::new, "research_share");
     }
 
-    private static ResearchLinkData load(CompoundTag tag, HolderLookup.Provider registries) {
+    private static ResearchLinkData load(CompoundTag tag) {
         return CODEC.parse(NbtOps.INSTANCE, tag.get("data")).result().orElseGet(ResearchLinkData::new);
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    public CompoundTag save(CompoundTag tag) {
         DataResult<Tag> encoded = CODEC.encodeStart(NbtOps.INSTANCE, this);
         tag.put("data", Codecs.getOrThrow(encoded));
         return tag;

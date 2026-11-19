@@ -10,10 +10,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
+import org.jspecify.annotations.Nullable;
 
 public final class LabyrinthData extends SavedData {
     public static final Codec<LabyrinthData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -21,10 +22,8 @@ public final class LabyrinthData extends SavedData {
                     Codec.INT.fieldOf("next_id").forGetter(data -> data.nextId),
                     Codec.INT.fieldOf("next_region").forGetter(data -> data.nextRegion))
             .apply(instance, LabyrinthData::new));
-    public static final SavedData.Factory<LabyrinthData> TYPE =
-            new SavedData.Factory<>(LabyrinthData::new, LabyrinthData::load, DataFixTypes.LEVEL);
-
     private final Int2ObjectMap<MazeRecord> mazes = new Int2ObjectLinkedOpenHashMap<>();
+    private @Nullable ServerLevel owner;
     private int nextId;
     private int nextRegion;
 
@@ -39,7 +38,10 @@ public final class LabyrinthData extends SavedData {
     }
 
     public static LabyrinthData get(ServerLevel outer) {
-        return outer.getDataStorage().computeIfAbsent(TYPE, "thaumaturge_labyrinths");
+        LabyrinthData data = outer.getDataStorage().computeIfAbsent(
+                tag -> load(tag, outer.registryAccess()), LabyrinthData::new, "thaumaturge_labyrinths");
+        data.owner = outer;
+        return data;
     }
 
     public Optional<MazeRecord> get(MazeId id) {
@@ -87,7 +89,8 @@ public final class LabyrinthData extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    public CompoundTag save(CompoundTag tag) {
+        HolderLookup.Provider registries = owner == null ? RegistryAccess.EMPTY : owner.registryAccess();
         TTNbt.store(tag, "labyrinth", CODEC, registries, this);
         return tag;
     }

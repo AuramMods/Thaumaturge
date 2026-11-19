@@ -7,13 +7,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -25,13 +23,10 @@ public final class TaintEcologyState extends SavedData {
     private static final float MINIMUM_SATURATION = 0.0001F;
     private static final float DECAY_PER_TICK = 0.05F / 24000.0F;
 
-    private static final SavedData.Factory<TaintEcologyState> FACTORY =
-            new SavedData.Factory<>(TaintEcologyState::new, TaintEcologyState::load, DataFixTypes.LEVEL);
-
     private final Map<Long, Entry> entries = new HashMap<>();
 
     public static TaintEcologyState get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(TaintEcologyState::load, TaintEcologyState::new, DATA_NAME);
     }
 
     public void copyTo(LevelChunk chunk) {
@@ -121,7 +116,7 @@ public final class TaintEcologyState extends SavedData {
         return ChunkPos.asLong(pos.getX() >> 4, pos.getZ() >> 4);
     }
 
-    private static TaintEcologyState load(CompoundTag tag, HolderLookup.Provider registries) {
+    private static TaintEcologyState load(CompoundTag tag) {
         TaintEcologyState state = new TaintEcologyState();
         ListTag entries = tag.getList(ENTRIES_TAG, Tag.TAG_COMPOUND);
         for (Tag rawEntry : entries) {
@@ -137,7 +132,7 @@ public final class TaintEcologyState extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    public CompoundTag save(CompoundTag tag) {
         ListTag savedEntries = new ListTag();
         Iterator<Map.Entry<Long, Entry>> iterator = entries.entrySet().iterator();
         while (iterator.hasNext()) {

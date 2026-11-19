@@ -3,11 +3,9 @@ package com.leclowndu93150.thaumaturge.content.entity.ranger;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 
 public final class CrimsonPatrolSchedule extends SavedData {
@@ -18,8 +16,6 @@ public final class CrimsonPatrolSchedule extends SavedData {
     public static final Codec<CrimsonPatrolSchedule> CODEC = RecordCodecBuilder.create(
             builder -> builder.group(Codec.LONG.fieldOf("next_attempt").forGetter(schedule -> schedule.nextAttempt))
                     .apply(builder, CrimsonPatrolSchedule::new));
-    public static final SavedData.Factory<CrimsonPatrolSchedule> FACTORY =
-            new SavedData.Factory<>(CrimsonPatrolSchedule::new, CrimsonPatrolSchedule::load, DataFixTypes.LEVEL);
 
     private long nextAttempt;
 
@@ -32,15 +28,15 @@ public final class CrimsonPatrolSchedule extends SavedData {
     }
 
     public static CrimsonPatrolSchedule get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(FACTORY, NAME);
+        return level.getDataStorage().computeIfAbsent(CrimsonPatrolSchedule::load, CrimsonPatrolSchedule::new, NAME);
     }
 
-    private static CrimsonPatrolSchedule load(CompoundTag tag, HolderLookup.Provider registries) {
+    private static CrimsonPatrolSchedule load(CompoundTag tag) {
         return CODEC.parse(NbtOps.INSTANCE, tag.get(DATA_KEY)).result().orElseGet(CrimsonPatrolSchedule::new);
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    public CompoundTag save(CompoundTag tag) {
         tag.put(DATA_KEY, Codecs.getOrThrow(CODEC.encodeStart(NbtOps.INSTANCE, this)));
         return tag;
     }

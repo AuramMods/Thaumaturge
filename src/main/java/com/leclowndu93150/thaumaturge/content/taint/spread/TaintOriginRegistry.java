@@ -10,11 +10,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jspecify.annotations.Nullable;
@@ -23,9 +21,6 @@ public final class TaintOriginRegistry extends SavedData {
     public static final Codec<TaintOriginRegistry> CODEC = RecordCodecBuilder.create(
             builder -> builder.group(BlockPos.CODEC.listOf().fieldOf("seeds").forGetter(TaintOriginRegistry::snapshot))
                     .apply(builder, TaintOriginRegistry::new));
-
-    public static final SavedData.Factory<TaintOriginRegistry> FACTORY =
-            new SavedData.Factory<>(TaintOriginRegistry::new, TaintOriginRegistry::load, DataFixTypes.LEVEL);
 
     private static final String DATA_KEY = "data";
     private static final String NAME = "thaumaturge_taint_seeds";
@@ -42,15 +37,15 @@ public final class TaintOriginRegistry extends SavedData {
     }
 
     public static TaintOriginRegistry get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(FACTORY, NAME);
+        return level.getDataStorage().computeIfAbsent(TaintOriginRegistry::load, TaintOriginRegistry::new, NAME);
     }
 
-    private static TaintOriginRegistry load(CompoundTag tag, HolderLookup.Provider registries) {
+    private static TaintOriginRegistry load(CompoundTag tag) {
         return CODEC.parse(NbtOps.INSTANCE, tag.get(DATA_KEY)).result().orElseGet(TaintOriginRegistry::new);
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    public CompoundTag save(CompoundTag tag) {
         tag.put(DATA_KEY, Codecs.getOrThrow(CODEC.encodeStart(NbtOps.INSTANCE, this)));
         return tag;
     }

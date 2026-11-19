@@ -9,20 +9,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 
 public final class NodeLocationIndex extends SavedData {
     private static final String DATA_NAME = "thaumaturge_node_locations";
     private static final double REACHED_DISTANCE_SQ = 10.0 * 10.0;
-    private static final SavedData.Factory<NodeLocationIndex> FACTORY =
-            new SavedData.Factory<>(NodeLocationIndex::new, NodeLocationIndex::load, DataFixTypes.LEVEL);
 
     private final Map<NodeType, Set<Long>> nodes = new EnumMap<>(NodeType.class);
 
@@ -33,7 +29,7 @@ public final class NodeLocationIndex extends SavedData {
     }
 
     public static NodeLocationIndex get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(NodeLocationIndex::load, NodeLocationIndex::new, DATA_NAME);
     }
 
     public void register(BlockPos pos, NodeType type) {
@@ -79,7 +75,7 @@ public final class NodeLocationIndex extends SavedData {
                 .map(BlockPos::of);
     }
 
-    private static NodeLocationIndex load(CompoundTag tag, HolderLookup.Provider registries) {
+    private static NodeLocationIndex load(CompoundTag tag) {
         NodeLocationIndex index = new NodeLocationIndex();
         if (tag.contains("LegacyMigrationComplete")) {
             index.setDirty();
@@ -111,7 +107,7 @@ public final class NodeLocationIndex extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    public CompoundTag save(CompoundTag tag) {
         ListTag nodeList = new ListTag();
         nodes.forEach((type, positions) -> positions.forEach(pos -> {
             CompoundTag node = new CompoundTag();

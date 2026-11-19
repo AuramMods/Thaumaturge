@@ -8,23 +8,19 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 
 public final class BlockForwarding extends SavedData {
     private static final String DATA_NAME = "thaumaturge_block_forwarding";
     private static final String FORWARDS_KEY = "forwards";
     private static final Codec<List<Forward>> FORWARDS_CODEC = Forward.CODEC.listOf();
-    private static final SavedData.Factory<BlockForwarding> FACTORY =
-            new SavedData.Factory<>(BlockForwarding::new, BlockForwarding::load, DataFixTypes.LEVEL);
 
     private final Map<BlockPos, BlockPos> forwards = new HashMap<>();
 
     private static BlockForwarding get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(BlockForwarding::load, BlockForwarding::new, DATA_NAME);
     }
 
     public static BlockPos follow(ServerLevel level, BlockPos pos) {
@@ -47,19 +43,19 @@ public final class BlockForwarding extends SavedData {
         data.setDirty();
     }
 
-    private static BlockForwarding load(CompoundTag tag, HolderLookup.Provider registries) {
+    private static BlockForwarding load(CompoundTag tag) {
         BlockForwarding data = new BlockForwarding();
-        TTNbt.read(tag, FORWARDS_KEY, FORWARDS_CODEC, registries)
+        TTNbt.read(tag, FORWARDS_KEY, FORWARDS_CODEC)
                 .ifPresent(forwards -> forwards.forEach(forward -> data.forwards.put(forward.from(), forward.to())));
         return data;
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    public CompoundTag save(CompoundTag tag) {
         List<Forward> list = forwards.entrySet().stream()
                 .map(entry -> new Forward(entry.getKey(), entry.getValue()))
                 .toList();
-        TTNbt.store(tag, FORWARDS_KEY, FORWARDS_CODEC, registries, list);
+        TTNbt.store(tag, FORWARDS_KEY, FORWARDS_CODEC, list);
         return tag;
     }
 
