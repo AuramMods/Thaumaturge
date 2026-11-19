@@ -228,10 +228,11 @@ class JarConduitCutoffTest {
 
     @Test
     void nativeRegistrationExposesDirectConduitAndLegacyAdapterForAllThreeVessels() {
-        BlockEntityJar jar = jar();
-        BlockEntityJarVoid voidJar = voidJar();
-        BlockEntityAlembic alembic = alembic();
+        var jar = new BlockEntityJar(BlockPos.ZERO, TTBlocks.JAR_NORMAL.get().defaultBlockState());
+        var voidJar = new BlockEntityJarVoid(BlockPos.ZERO, TTBlocks.JAR_VOID.get().defaultBlockState());
+        var alembic = new BlockEntityAlembic(BlockPos.ZERO, TTBlocks.ALEMBIC.get().defaultBlockState());
         for (BlockEntity vessel : List.of(jar, voidJar, alembic)) {
+            vessel.setLevel(level);
             assertSame(vessel, vessel.getCapability(EssentiaCapabilities.CONDUIT, Direction.UP).orElse(null));
             IEssentiaTransport legacy = vessel.getCapability(EssentiaCapabilities.TRANSPORT, Direction.UP)
                     .orElseThrow(AssertionError::new);

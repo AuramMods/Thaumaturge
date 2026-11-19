@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import com.mojang.serialization.Lifecycle;
@@ -72,13 +73,22 @@ class AdvancedFurnaceCompatibilityTest {
         CompoundTag tag = reserves(true, 400);
         tag.putInt("Cooldown", 7);
         tag.putInt("CycleDuration", 15);
-        TTNbt.store(tag, "Input", ItemStack.CODEC, registries, new ItemStack(Items.DIRT));
+        ItemStack input = new ItemStack(Items.DIRT);
+        TTNbt.store(tag, "Input", ItemStack.CODEC, registries, input);
         TTNbt.store(tag, "Aspects", AspectList.CODEC, registries, AspectList.EMPTY.add(order, 12));
         furnace.loadAdditional(tag, registries);
+        assertTrue(ItemStack.isSameItemSameTags(input, furnace.input()));
+        assertEquals(1, furnace.input().getCount());
+        CompoundTag saved = furnace.getUpdateTag(registries);
         assertEquals(
                 Set.of("Aspects", "Input", "Heat", "Perditio", "Aqua", "Cooldown", "CycleDuration", "Assembled"),
-                furnace.getUpdateTag(registries).getAllKeys());
-        assertEquals(tag, furnace.getUpdateTag(registries));
+                saved.getAllKeys());
+        CompoundTag canonical = tag.copy();
+        TTNbt.store(canonical, "Input", ItemStackCodecs.CODEC, registries, input);
+        assertEquals(canonical, saved);
+        BlockEntityAdvancedAlchemicalFurnace loaded = furnace();
+        loaded.loadAdditional(saved, registries);
+        assertEquals(saved, loaded.getUpdateTag(registries));
         tag.putInt("Heat", Integer.MAX_VALUE);
         tag.putInt("Perditio", -1);
         tag.putInt("Cooldown", -10);

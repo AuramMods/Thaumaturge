@@ -317,11 +317,14 @@ class AdvancedFurnaceCutoffTest {
 
     @Test
     void realStructureRefreshInvalidatesAllFourNozzlesAndKeepsPassiveSimulationPure() {
-        BlockEntityAdvancedAlchemicalFurnace furnace = furnace(500, 500, 500);
-        assertTrue(furnace.isAssembled());
-        CompoundTag saved = furnace.getUpdateTag(registries);
+        var furnace = new BlockEntityAdvancedAlchemicalFurnace(
+                BlockPos.ZERO, TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get().defaultBlockState());
+        furnace.setLevel(level);
+        CompoundTag saved = new CompoundTag();
+        saved.putBoolean("Assembled", true);
         TTNbt.store(saved, "Aspects", AspectList.CODEC, registries, AspectList.EMPTY.add(order, 9));
         furnace.loadAdditional(saved, registries);
+        assertTrue(furnace.isAssembled());
         when(level.getBlockEntity(BlockPos.ZERO)).thenReturn(furnace);
         when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         var outlets = new HashMap<Direction, BlockEntityAdvancedFurnaceNozzle>();
@@ -341,7 +344,7 @@ class AdvancedFurnaceCutoffTest {
         var originalLegacy = north.getCapability(EssentiaCapabilities.TRANSPORT, Direction.NORTH);
         assertTrue(originalLegacy.isPresent());
         assertFalse(north.getCapability(EssentiaCapabilities.CONDUIT, Direction.SOUTH).isPresent());
-        clearInvocations(furnace, level);
+        clearInvocations(level);
         try (var tubes = mockStatic(BlockEssentiaTransport.class)) {
             AdvancedAlchemicalFurnaceStructure.refreshNozzles(level, BlockPos.ZERO);
             for (Direction side : Direction.Plane.HORIZONTAL) {
@@ -352,7 +355,7 @@ class AdvancedFurnaceCutoffTest {
         }
         assertFalse(originalLegacy.isPresent());
         assertEquals(9, furnace.aspects().totalAmount());
-        verify(furnace, never()).setChanged();
+        verify(level, never()).blockEntityChanged(any());
         verify(level, never()).sendBlockUpdated(any(), any(), any(), anyInt());
         var revived = north.getCapability(EssentiaCapabilities.CONDUIT, Direction.NORTH);
         var held = revived.orElseThrow(AssertionError::new);

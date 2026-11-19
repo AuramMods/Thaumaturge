@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.HashMap;
@@ -153,7 +154,7 @@ class MirrorInboxCutoffTest {
     private List<ItemStack> savedStacks(BlockEntityMirror mirror, String key) {
         CompoundTag saved = new CompoundTag();
         mirror.saveAdditional(saved, REGISTRIES);
-        return TTNbt.read(saved, key, ItemStack.CODEC.listOf(), REGISTRIES).orElse(List.of());
+        return TTNbt.read(saved, key, ItemStackCodecs.CODEC.listOf(), REGISTRIES).orElseThrow();
     }
 
 }
