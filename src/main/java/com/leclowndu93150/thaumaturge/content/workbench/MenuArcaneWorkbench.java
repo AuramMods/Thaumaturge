@@ -164,7 +164,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
 
     private void updateResult(ServerPlayer sp, ServerLevel level) {
         ItemStack result = ItemStack.EMPTY;
-        RecipeHolder<?> recipeToStore = null;
+        CraftingRecipe recipeToStore = null;
         displayingArcane = false;
 
         ArcaneCraftingTransaction.Result arcane = ArcaneCraftingTransaction.preview(
@@ -178,8 +178,8 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
         if (result.isEmpty()) {
             Optional<RecipeHolder<CraftingRecipe>> vanilla = findVanillaRecipe(level, vanillaInput);
             if (vanilla.isPresent()) {
-                result = vanilla.get().value().assemble(vanillaInput, level.registryAccess());
-                recipeToStore = vanilla.get();
+                recipeToStore = vanilla.get().value();
+                result = recipeToStore.assemble(vanillaInput, level.registryAccess());
             }
         }
 
@@ -232,8 +232,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
 
     private ItemStack craftVanilla(
             ServerPlayer serverPlayer, ServerLevel level, ItemStack expected, List<ItemStack> remainders) {
-        RecipeHolder<?> used = resultContainer.getRecipeUsed();
-        if (used == null || !(used.value() instanceof CraftingRecipe recipe)) {
+        if (!(resultContainer.getRecipeUsed() instanceof CraftingRecipe recipe)) {
             return ItemStack.EMPTY;
         }
         CraftingInput.Positioned positioned = craftingInventory.asPositionedCraftInput();

@@ -22,6 +22,7 @@ sourceSets {
 }
 
 tasks.named('compilePortRuntimeTestJava', JavaCompile) {
+    source 'src/test/java/com/leclowndu93150/thaumaturge/api/recipe/ArcaneCraftingTransactionTest.java'
     source 'src/test/java/com/leclowndu93150/thaumaturge/api/research/scan/ScanningPickBlockTest.java'
 }
 

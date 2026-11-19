@@ -19,11 +19,11 @@ public final class WorkbenchSourceRegistration {
         event.enqueueWork(() -> {
             RegisterWorkbenchVisSourcesEvent visSources = new RegisterWorkbenchVisSourcesEvent();
             visSources.register(new VisRelayWorkbenchSource());
-            ModLoader.postEvent(visSources);
+            ModLoader.get().postEvent(visSources);
             TTWorkbenchSources.registerVisSources(visSources.sources());
 
             RegisterWorkbenchAuraSourcesEvent auraSources = new RegisterWorkbenchAuraSourcesEvent();
-            ModLoader.postEvent(auraSources);
+            ModLoader.get().postEvent(auraSources);
             TTWorkbenchSources.registerAuraSources(auraSources.sources());
         });
     }

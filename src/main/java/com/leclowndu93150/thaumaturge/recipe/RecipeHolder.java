@@ -4,13 +4,19 @@ import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteB
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 /** Stable recipe identity, including display variants whose value can share an ID. */
 public record RecipeHolder<T extends Recipe<?>>(ResourceLocation id, T value) {
+    // Forge 1.20.1 uses RecipeManager IDs. Keep the later API's logical key for callers of our crafting APIs.
+    private static final ResourceKey<Registry<Recipe<?>>> RECIPE_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.withDefaultNamespace("recipe"));
+
     public static final StreamCodec<RegistryFriendlyByteBuf, RecipeHolder<?>> STREAM_CODEC = StreamCodec.of(
             (buffer, holder) -> {
                 buffer.writeResourceLocation(holder.id());
@@ -24,6 +30,10 @@ public record RecipeHolder<T extends Recipe<?>>(ResourceLocation id, T value) {
                 if (recipe == null) throw new DecoderException("Recipe serializer returned null for " + id);
                 return new RecipeHolder<>(id, recipe);
             });
+
+    public ResourceKey<Recipe<?>> key() {
+        return ResourceKey.create(RECIPE_KEY, id);
+    }
 
     @SuppressWarnings("unchecked")
     private static <R extends Recipe<?>> void writeRecipe(RegistryFriendlyByteBuf buffer, R recipe) {

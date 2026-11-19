@@ -35,7 +35,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
@@ -53,7 +52,7 @@ class WorkbenchCraftingTransactionTest {
         withAuraSources(List.of(source), () -> {
             ServerLevel level = mock(ServerLevel.class);
             MinecraftServer server = mock(MinecraftServer.class);
-            RecipeManager recipeManager = mock(RecipeManager.class);
+            RecipeManager recipeManager = new RecipeManager();
             ServerPlayer player = mock(ServerPlayer.class);
             UUID playerId = UUID.randomUUID();
             when(level.getServer()).thenReturn(server);
@@ -78,9 +77,10 @@ class WorkbenchCraftingTransactionTest {
             when(recipe.visCost()).thenReturn(0);
             when(recipe.crystalCost()).thenReturn(AspectList.EMPTY);
             when(recipe.getIngredients()).thenReturn(NonNullList.create());
-            RecipeHolder<ArcaneCraftingRecipe> holder =
-                    new RecipeHolder<>(ResourceLocation.withDefaultNamespace("transaction_test"), recipe);
-            when(recipeManager.getAllRecipesFor(TTRecipeTypes.ARCANE.get())).thenReturn(List.of(holder));
+            var recipeType = TTRecipeTypes.ARCANE.get();
+            when(recipe.getId()).thenReturn(ResourceLocation.withDefaultNamespace("transaction_test"));
+            when(recipe.getType()).thenReturn(recipeType);
+            recipeManager.replaceRecipes(List.of(recipe));
 
             ArcaneWorkbenchContext context = new ArcaneWorkbenchContext(
                     level, UUID.randomUUID(), null, null, playerId, ArcaneWorkbenchContext.Kind.VIRTUAL);
@@ -210,7 +210,7 @@ class WorkbenchCraftingTransactionTest {
         assertEquals(1, changes.size());
         assertEquals(1, inventory.dirtyCalls);
         assertEquals(1, overflow.size());
-        assertEquals(Items.DIRT, overflow.getFirst().getItem());
+        assertEquals(Items.DIRT, overflow.get(0).getItem());
 
         IArcaneCraftingStore.Consumption stale = new IArcaneCraftingStore.Consumption(
                 List.of(new ItemStack(Items.STONE, 9)),

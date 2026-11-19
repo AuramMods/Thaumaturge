@@ -106,7 +106,7 @@ public final class WorkbenchPayment {
             TransactionContext transaction) {
         AspectList crystalNeeds = AspectList.EMPTY;
         for (AspectInstance entry : recipe.crystalCost().entries()) {
-            ResourceKey<IAspect> primal = entry.aspect().getKey();
+            ResourceKey<IAspect> primal = entry.aspect().unwrapKey().orElseThrow();
             int centivis = entry.amount() * WandEconomy.CRYSTAL_SUBSTITUTE_VIS * WandEconomy.CENTIVIS_PER_VIS;
             Map<ResourceKey<IAspect>, Integer> single = new LinkedHashMap<>();
             single.put(primal, centivis);

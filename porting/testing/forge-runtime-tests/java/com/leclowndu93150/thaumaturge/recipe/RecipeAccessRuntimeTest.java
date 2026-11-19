@@ -72,6 +72,8 @@ public class RecipeAccessRuntimeTest {
         RecipeHolder<?> holder = access.byKey(ID).orElseThrow();
         assertSame(recipe, holder.value());
         assertEquals(ID, holder.id());
+        assertEquals(ID, holder.key().location());
+        assertEquals(ResourceLocation.withDefaultNamespace("recipe"), holder.key().registry());
         assertSame(holder, access.byKey(ID).orElseThrow());
         assertSame(holder, access.getAllRecipesFor(RecipeType.SMELTING).get(0));
         assertSame(holder, access.getRecipes().get(0));

@@ -6,7 +6,6 @@ import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction.Ins
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionMatrixContext;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -82,7 +81,7 @@ public final class InfusionCraftingTransactions implements InfusionCraftingTrans
                 recipe.assemble(input, level.registryAccess()), input.catalyst());
         return new Inspection(
                 match.locked() ? Failure.RESEARCH_LOCKED : Failure.NONE,
-                ResourceKey.create(Registries.RECIPE, match.holder().id()),
+                match.holder().key(),
                 matrix.projectedCost(level, recipe.jobEssentia(input)),
                 recipe.jobInstability(input),
                 recipe.gateStatus(player),

@@ -7,13 +7,14 @@ import com.leclowndu93150.thaumaturge.api.transaction.SnapshotJournal;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.content.taint.item.ItemEssentiaCrystal;
+import com.leclowndu93150.thaumaturge.recipe.CraftingInput;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Holder;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
-import com.leclowndu93150.thaumaturge.recipe.CraftingInput;
 
 public class InventoryArcaneWorkbench extends SimpleContainer implements IArcaneWorkbench, CraftingContainer {
     public static final int CRAFTING_SLOTS = 9;
@@ -100,16 +101,16 @@ public class InventoryArcaneWorkbench extends SimpleContainer implements IArcane
     }
 
     @Override
+    public NonNullList<ItemStack> getItems() {
+        return items;
+    }
+
     public CraftingInput asCraftInput() {
-        List<ItemStack> grid = new ArrayList<>(9);
-        for (int i = 0; i < 9; i++) {
-            grid.add(getItem(i));
-        }
-        return CraftingInput.of(3, 3, grid);
+        return CraftingInput.of(getWidth(), getHeight(), new ArrayList<>(items.subList(0, CRAFTING_SLOTS)));
     }
 
     public CraftingInput.Positioned asPositionedCraftInput() {
-        return CraftingInput.ofPositioned(3, 3, getItems().subList(0, CRAFTING_SLOTS));
+        return CraftingInput.ofPositioned(getWidth(), getHeight(), items.subList(0, CRAFTING_SLOTS));
     }
 
     void applyCraft(List<ItemStack> items, TransactionContext transaction) {

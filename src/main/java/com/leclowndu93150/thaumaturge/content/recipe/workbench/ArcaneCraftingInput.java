@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
-import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.content.taint.item.ItemEssentiaCrystal;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
@@ -179,9 +179,9 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
         List<ItemStack> crystals = items.subList(items.size() - 7, items.size() - 1);
         List<AspectInstance> aspects = new ArrayList<>();
         for (ItemStack crystal : crystals) {
-            if (crystal.is(TTItems.ESSENTIA_CRYSTAL.get()) && ItemData.has(crystal, TTDataComponents.CRYSTAL_ASPECT)) {
-                Holder<IAspect> aspect =
-                        ItemData.get(crystal, TTDataComponents.CRYSTAL_ASPECT.get()).aspect();
+            if (!crystal.is(TTItems.ESSENTIA_CRYSTAL.get())) continue;
+            Holder<IAspect> aspect = ItemEssentiaCrystal.aspectOf(crystal);
+            if (aspect != null) {
                 aspects.add(new AspectInstance(aspect, crystal.getCount()));
             }
         }

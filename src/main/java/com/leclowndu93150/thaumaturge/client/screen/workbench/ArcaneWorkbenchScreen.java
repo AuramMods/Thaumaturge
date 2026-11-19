@@ -107,8 +107,8 @@ public class ArcaneWorkbenchScreen extends AbstractTTContainerScreen<MenuArcaneW
         if (plan != null && !plan.crystalsToConsume().isEmpty()) {
             for (AspectInstance instance : plan.crystalsToConsume().entries()) {
                 int color = instance.aspect().value().color();
-                int index = MenuArcaneWorkbench.PRIMAL_ORDER.indexOf(
-                        instance.aspect().getKey());
+                int index = instance.aspect().unwrapKey().map(MenuArcaneWorkbench.PRIMAL_ORDER::indexOf).orElse(-1);
+                if (index < 0) continue;
                 int slotX = x + MenuArcaneWorkbench.CRYSTAL_X[index];
                 int slotY = y + MenuArcaneWorkbench.CRYSTAL_Y[index];
                 graphics.pose().pushPose();

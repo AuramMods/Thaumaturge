@@ -15,8 +15,6 @@ import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -46,7 +44,7 @@ public final class ArcaneCraftingTransactions implements ArcaneCraftingTransacti
                 recipe.visCost(), recipe.crystalCost(), recipe.getIngredients());
         return new ArcaneCraftingTransaction.Inspection(
                 match.failure(),
-                ResourceKey.create(Registries.RECIPE, match.holder().id()),
+                match.holder().key(),
                 recipe.assemble(input, context.level().registryAccess()),
                 remainders(recipe, input),
                 requirements,

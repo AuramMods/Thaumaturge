@@ -77,10 +77,10 @@ class ArcaneCraftingTransactionTest {
         ItemStack output = outputSupplier.get();
         List<ItemStack> remainders = remaindersSupplier.get();
         assertEquals(2, output.getCount());
-        assertEquals(3, remainders.getFirst().getCount());
+        assertEquals(3, remainders.get(0).getCount());
         output.setCount(1);
-        remainders.getFirst().setCount(1);
+        remainders.get(0).setCount(1);
         assertEquals(2, outputSupplier.get().getCount());
-        assertEquals(3, remaindersSupplier.get().getFirst().getCount());
+        assertEquals(3, remaindersSupplier.get().get(0).getCount());
     }
 }
