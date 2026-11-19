@@ -211,6 +211,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/content/wands/WandTooltips.java'
         java.include 'com/leclowndu93150/thaumaturge/content/wands/ItemPrimalCharm.java'
         java.include 'com/leclowndu93150/thaumaturge/content/aspect/AspectDataMapRegistration.java'
+        java.include 'com/leclowndu93150/thaumaturge/content/aspect/EquipmentAspects.java'
         java.include 'com/leclowndu93150/thaumaturge/api/spell/**'
         java.include 'com/leclowndu93150/thaumaturge/api/damagesource/**'
         java.include 'com/leclowndu93150/thaumaturge/content/entity/EntityIgnition.java'

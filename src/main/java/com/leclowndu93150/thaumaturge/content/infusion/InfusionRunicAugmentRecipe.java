@@ -89,7 +89,7 @@ public final class InfusionRunicAugmentRecipe extends AbstractRecipe<InfusionInp
             return true;
         }
         return stack.getItem() instanceof ArmorItem armor
-                && armor.getEquipmentSlot().getType() == EquipmentSlot.Type.HUMANOID_ARMOR;
+                && armor.getEquipmentSlot().getType() == EquipmentSlot.Type.ARMOR;
     }
 
     public List<Ingredient> scaledComponents(ItemStack catalyst) {

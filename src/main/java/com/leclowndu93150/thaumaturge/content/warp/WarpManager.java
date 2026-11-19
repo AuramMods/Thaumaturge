@@ -102,7 +102,7 @@ public final class WarpManager {
     }
 
     static boolean isHumanoidArmorSlot(EquipmentSlot slot) {
-        return slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR;
+        return slot.getType() == EquipmentSlot.Type.ARMOR;
     }
 
     private static void notifyGain(ServerPlayer player, WarpType type) {

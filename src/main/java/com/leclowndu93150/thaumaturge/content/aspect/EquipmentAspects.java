@@ -4,13 +4,14 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
@@ -18,7 +19,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.ShearsItem;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 final class EquipmentAspects {
     private static final int ASPECT_PER_POINT = 4;
@@ -38,7 +38,7 @@ final class EquipmentAspects {
             bonus = with(bonus, registries, TTAspects.PRAEMUNIO, armor.getDefense() * ASPECT_PER_POINT);
         }
         if (stack.is(ItemTags.SWORDS)) {
-            int attack = (int) attributeTotal(stack, Attributes.ATTACK_DAMAGE);
+            int attack = (int) additiveAttackDamage(stack);
             if (attack > 0) {
                 int amount = Math.max(1, attack - SWORD_BASE_MODIFIER) * ASPECT_PER_POINT;
                 bonus = with(bonus, registries, TTAspects.AVERSIO, amount);
@@ -76,22 +76,26 @@ final class EquipmentAspects {
         return list.add(aspect, amount);
     }
 
-    private static double attributeTotal(ItemStack stack, Holder<Attribute> attribute) {
-        ItemAttributeModifiers modifiers = stack.get(DataComponents.ATTRIBUTE_MODIFIERS);
-        if (modifiers == null) {
-            return 0.0;
-        }
+    private static double additiveAttackDamage(ItemStack stack) {
+        // Read the item's declared modifiers, as the baseline does before Forge-style stack events.
+        // A single declaration can appear in multiple slots, including declarations that apply to every slot.
+        Set<AttackModifier> counted = new HashSet<>();
         double total = 0.0;
-        for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
-            if (entry.attribute().equals(attribute)
-                    && entry.modifier().operation() == AttributeModifier.Operation.ADDITION) {
-                total += entry.modifier().amount();
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            var modifiers = stack.getItem().getAttributeModifiers(slot, stack).get(Attributes.ATTACK_DAMAGE);
+            for (AttributeModifier modifier : modifiers) {
+                if (modifier.getOperation() == AttributeModifier.Operation.ADDITION
+                        && counted.add(new AttackModifier(modifier.getId(), modifier.getAmount()))) {
+                    total += modifier.getAmount();
+                }
             }
         }
         return total;
     }
 
     private static boolean isHumanoidArmor(ArmorItem armor) {
-        return armor.getEquipmentSlot().getType() == EquipmentSlot.Type.HUMANOID_ARMOR;
+        return armor.getEquipmentSlot().getType() == EquipmentSlot.Type.ARMOR;
     }
+
+    private record AttackModifier(UUID id, double amount) {}
 }

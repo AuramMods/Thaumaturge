@@ -17,15 +17,18 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.Test;
 
 class WarpManagerTest {
     @Test
     void onlyHumanoidArmorSlotsContributeAsPlayerArmor() {
         assertTrue(WarpManager.isHumanoidArmorSlot(EquipmentSlot.HEAD));
+        assertTrue(WarpManager.isHumanoidArmorSlot(EquipmentSlot.CHEST));
+        assertTrue(WarpManager.isHumanoidArmorSlot(EquipmentSlot.LEGS));
         assertTrue(WarpManager.isHumanoidArmorSlot(EquipmentSlot.FEET));
-        assertFalse(WarpManager.isHumanoidArmorSlot(EquipmentSlot.BODY));
         assertFalse(WarpManager.isHumanoidArmorSlot(EquipmentSlot.MAINHAND));
+        assertFalse(WarpManager.isHumanoidArmorSlot(EquipmentSlot.OFFHAND));
     }
 
     @Test
@@ -37,7 +40,9 @@ class WarpManagerTest {
 
         when(stack.isEmpty()).thenReturn(false);
         when(stack.getItem()).thenReturn(item);
-        when(ItemData.getOrDefault(stack, TTDataComponents.STACK_WARP.get(), 0)).thenReturn(3);
+        ItemStack saved = new ItemStack(Items.STICK);
+        ItemData.set(saved, TTDataComponents.STACK_WARP.get(), 3);
+        when(stack.getTag()).thenReturn(saved.getTag());
         when(gear.warp(stack, wearer)).thenReturn(2);
 
         assertEquals(5, WarpManager.getFinalWarp(stack, wearer));
