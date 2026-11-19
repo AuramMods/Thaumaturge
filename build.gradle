@@ -410,6 +410,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/server/level/PlayerRespawnLogicInvoker.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/server/level/ServerPlayerKnownMovementMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/server/network/ServerKnownMovementMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/server/network/ServerGamePacketListenerImplAccessor.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/multiplayer/ClientLevelEntityTickMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/multiplayer/ClientPacketListenerEffectMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/particle/ItemPickupParticleMixin.java'

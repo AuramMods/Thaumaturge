@@ -10,6 +10,7 @@
     "server.level.PlayerRespawnLogicInvoker",
     "server.level.ServerPlayerKnownMovementMixin",
     "server.network.ServerKnownMovementMixin",
+    "server.network.ServerGamePacketListenerImplAccessor",
     "world.level.chunk.ProtoChunkAttachmentsMixin",
     "world.level.chunk.LevelChunkAttachmentsMixin",
     "world.level.chunk.storage.ChunkSerializerAttachmentsMixin",

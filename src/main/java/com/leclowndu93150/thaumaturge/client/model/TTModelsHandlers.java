@@ -37,8 +37,8 @@ public final class TTModelsHandlers {
 
     @SubscribeEvent
     public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {
-        event.register(MESH_LOADER_ID, TTMeshGeometry.Loader.INSTANCE);
-        event.register(CRYSTAL_LOADER_ID, CrystalUnbakedModel.Loader.INSTANCE);
+        event.register(MESH_LOADER_ID.getPath(), TTMeshGeometry.Loader.INSTANCE);
+        event.register(CRYSTAL_LOADER_ID.getPath(), CrystalUnbakedModel.Loader.INSTANCE);
     }
 
     @SubscribeEvent

@@ -131,16 +131,23 @@ public final class EntityGrapple extends ThrowableProjectile implements CustomGr
         return true;
     }
 
+    /** Called for a paid shot before the owner's inventory or the hook can tick. */
+    public void trackLaunch() {
+        Entity owner = getOwner();
+        if (!level().isClientSide() && owner != null) {
+            claim(owner);
+        }
+    }
+
     private boolean claim(Entity owner) {
-        if (!claimed) {
-            int tracked = AttachmentData.get(owner, TTAttachments.GRAPPLE_ID);
-            if (tracked >= 0 && tracked != getId() && level().getEntity(tracked) instanceof EntityGrapple previous) {
-                previous.discard();
-            }
-            AttachmentData.set(owner, TTAttachments.GRAPPLE_ID, getId());
-            claimed = true;
-        } else if (AttachmentData.get(owner, TTAttachments.GRAPPLE_ID) != getId()) {
-            return false;
+        int tracked = AttachmentData.get(owner, TTAttachments.GRAPPLE_ID);
+        if (claimed) {
+            return tracked == getId();
+        }
+        AttachmentData.set(owner, TTAttachments.GRAPPLE_ID, getId());
+        claimed = true;
+        if (tracked >= 0 && tracked != getId() && level().getEntity(tracked) instanceof EntityGrapple previous) {
+            previous.discard();
         }
         return true;
     }

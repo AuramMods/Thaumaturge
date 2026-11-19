@@ -45,12 +45,12 @@ public final class GrappleGunItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (level.isClientSide() || !Boolean.TRUE.equals(ItemData.get(stack, TTDataComponents.GRAPPLE_LOADED))) {
+        if (level.isClientSide() || !Boolean.TRUE.equals(ItemData.get(stack, TTDataComponents.GRAPPLE_LOADED.get()))) {
             return;
         }
         int tracked = AttachmentData.get(entity, TTAttachments.GRAPPLE_ID);
         if (tracked < 0 || !(level.getEntity(tracked) instanceof EntityGrapple grapple) || !grapple.isAlive()) {
-            ItemData.remove(stack, TTDataComponents.GRAPPLE_LOADED);
+            ItemData.remove(stack, TTDataComponents.GRAPPLE_LOADED.get());
         }
     }
 
@@ -77,8 +77,12 @@ public final class GrappleGunItem extends Item {
             grapple.shootFromRotation(
                     player, player.getXRot(), player.getYRot(), LAUNCH_PITCH_OFFSET, LAUNCH_VELOCITY, 0.0F);
             if (level.addFreshEntity(grapple)) {
-                RechargeAccess.spendVis(stack, 1);
-                ItemData.set(stack, TTDataComponents.GRAPPLE_LOADED, true);
+                if (RechargeAccess.spendVis(stack, 1)) {
+                    grapple.trackLaunch();
+                    ItemData.set(stack, TTDataComponents.GRAPPLE_LOADED.get(), true);
+                } else {
+                    grapple.discard();
+                }
             }
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
