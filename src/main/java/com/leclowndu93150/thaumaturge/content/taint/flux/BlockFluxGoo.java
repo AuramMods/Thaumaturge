@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -19,7 +18,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.FluidState;
-import org.jspecify.annotations.Nullable;
 
 public final class BlockFluxGoo extends LiquidBlock implements PhysicalFluxBlock {
     public static final MapCodec<LiquidBlock> CODEC =
@@ -111,7 +109,7 @@ public final class BlockFluxGoo extends LiquidBlock implements PhysicalFluxBlock
     }
 
     @Override
-    public ItemStack pickupBlock(@Nullable Player user, LevelAccessor level, BlockPos pos, BlockState state) {
+    public ItemStack pickupBlock(LevelAccessor level, BlockPos pos, BlockState state) {
         return ItemStack.EMPTY;
     }
 }

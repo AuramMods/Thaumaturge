@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public final class MagicPlantBlock extends AbstractTTPlant {
     public static final MapCodec<MagicPlantBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -52,7 +53,7 @@ public final class MagicPlantBlock extends AbstractTTPlant {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        aura.emit(level, pos.getBottomCenter().add(state.getOffset(level, pos)), random);
+        aura.emit(level, Vec3.atBottomCenterOf(pos).add(state.getOffset(level, pos)), random);
     }
 
     @Override
