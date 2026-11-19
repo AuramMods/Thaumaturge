@@ -317,7 +317,7 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
                         ATLAS,
                         ATLAS);
                 if (menu.color() >= 1 && menu.color() <= 16) {
-                    int dye = DyeColor.byId(menu.color() - 1).getTextureDiffuseColor();
+                    int dye = ARGB32.dyeColor(DyeColor.byId(menu.color() - 1));
                     GuiBlend.blitTinted(
                             graphics,
                             TTScreenTextures.GUI_BASE,

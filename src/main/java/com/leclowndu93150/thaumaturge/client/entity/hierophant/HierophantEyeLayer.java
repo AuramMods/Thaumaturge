@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity.hierophant;
 
+import com.leclowndu93150.thaumaturge.client.render.ModelRender;
 import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityEldritchHierophant;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.geom.ModelPart;
@@ -34,7 +35,8 @@ public final class HierophantEyeLayer extends RenderLayer<EntityEldritchHieropha
             return;
         }
         eye.setupAnim(state);
-        eye.renderToBuffer(
+        ModelRender.render(
+                eye,
                 pose,
                 collector.getBuffer(HierophantRenderTypes.EYE),
                 0xF000F0,

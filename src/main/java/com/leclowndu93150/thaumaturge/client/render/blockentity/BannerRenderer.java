@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
+import com.leclowndu93150.thaumaturge.client.render.ModelRender;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
@@ -84,7 +85,7 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
             yawDegrees = blockState.getValue(BannerStandingBlock.ROTATION) * 22.5F;
         }
         DyeColor dye = blockState.getBlock() instanceof AbstractBannerBlock bannerBlock ? bannerBlock.dye() : null;
-        int color = dye == null ? -1 : 0xFF000000 | dye.getTextureDiffuseColor();
+        int color = dye == null ? -1 : ARGB32.dyeColor(dye);
         ResourceLocation aspectTexture = null;
         ResourceKey<IAspect> aspect = banner.aspect();
         if (aspect != null && banner.getLevel() != null) {
@@ -115,8 +116,8 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
         poseStack.mulPose(Axis.YP.rotationDegrees(MODEL_FLIP));
         frame.setupAnim(onWall, phase);
         cloth.setupAnim(onWall, phase);
-        frame.root.render(poseStack, cutout, light, overlay, -1);
-        cloth.root.render(poseStack, cutout, light, overlay, color);
+        frame.root.render(poseStack, cutout, light, overlay);
+        ModelRender.render(cloth.root, poseStack, cutout, light, overlay, color);
         if (aspectTexture != null) {
             submitAspect(poseStack, buffers, aspectTexture, light);
         }

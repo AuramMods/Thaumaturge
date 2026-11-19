@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimColors;
 import com.leclowndu93150.thaumaturge.content.equipment.CultistArmorDyeing;
@@ -53,7 +54,7 @@ public final class TTColorHandlers {
                     constant(0xFF000000 | dye.getMapColor().col),
                     TTBlocks.CANDLES.get(dye).get());
             event.register(
-                    constant(0xFF000000 | (dye.getTextureDiffuseColor() & 0xFFFFFF)),
+                    constant(ARGB32.dyeColor(dye)),
                     TTItems.NITORS.get(dye).get());
         }
         event.register(constant(GREATWOOD_FOLIAGE_ARGB), TTItems.LEAVES_GREATWOOD.get());

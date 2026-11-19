@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
+import com.leclowndu93150.thaumaturge.client.render.ModelRender;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.FocusMineModel;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellMine;
@@ -52,7 +53,8 @@ public final class FocusMineRenderer extends EntityRenderer<SpellMine> {
         poseStack.pushPose();
         poseStack.translate(0.0F, GROUND_LIFT, 0.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(ticks * SPIN_DEGREES_PER_TICK));
-        model.root.render(
+        ModelRender.render(
+                model.root,
                 poseStack,
                 buffers.getBuffer(RenderType.entityCutout(TEXTURE)),
                 packedLight,

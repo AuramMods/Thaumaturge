@@ -66,7 +66,8 @@ public final class HierophantHammerRenderer extends EntityRenderer<EntityHieroph
         pose.mulPose(Axis.XP.rotationDegrees(state.age * SPIN_PER_TICK));
         pose.translate(palm.x, palm.y + MODEL_BASE_OFFSET, -palm.z);
         model.setupAnim(state.pose);
-        model.renderToBuffer(pose, collector.getBuffer(HierophantRenderTypes.HAMMER), light, OverlayTexture.NO_OVERLAY);
+        model.renderToBuffer(pose, collector.getBuffer(HierophantRenderTypes.HAMMER), light, OverlayTexture.NO_OVERLAY,
+                1.0F, 1.0F, 1.0F, 1.0F);
         pose.popPose();
     }
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.ModelRender;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
@@ -146,10 +147,11 @@ public final class InfusionMatrixRenderer implements BlockEntityRenderer<BlockEn
             float animationTime,
             float startUp,
             int phase) {
-        model.cube.render(poseStack, buffers.getBuffer(type), light, OverlayTexture.NO_OVERLAY, -1);
+        model.cube.render(poseStack, buffers.getBuffer(type), light, OverlayTexture.NO_OVERLAY);
         float glowAlpha = InfusionMatrixRenderMath.glow(animationTime, startUp, phase);
         if (glowAlpha > 0.0F) {
-            model.glow.render(
+            ModelRender.render(
+                    model.glow,
                     poseStack,
                     buffers.getBuffer(glowType),
                     LightTexture.FULL_BRIGHT,

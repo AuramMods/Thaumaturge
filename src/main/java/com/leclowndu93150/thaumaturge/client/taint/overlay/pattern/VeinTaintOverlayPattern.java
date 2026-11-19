@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.client.taint.overlay.pattern;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import java.util.Arrays;
-import net.minecraft.util.FastColor;
+import com.leclowndu93150.thaumaturge.compat.Colors;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.Mth;
 import org.joml.Vector3f;
@@ -89,7 +89,7 @@ public final class VeinTaintOverlayPattern implements TaintOverlayPattern {
                     overlay.setPixelRGBA(
                             x,
                             y,
-                            FastColor.ABGR32.fromArgb32(ARGB32.color(Math.round(ARGB32.alpha(color) * alpha), color)));
+                            Colors.swapRedBlue(ARGB32.color(Math.round(ARGB32.alpha(color) * alpha), color)));
                 }
             }
         }

@@ -2,10 +2,15 @@ package com.leclowndu93150.thaumaturge.compat;
 
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.DyeColor;
 
 /** Packed-color operations used by the 1.21.1 source, backed by native 1.20.1 math. */
 public final class Colors {
     private Colors() {}
+
+    public static int swapRedBlue(int color) {
+        return (color & 0xff00ff00) | (color >>> 16 & 0xff) | ((color & 0xff) << 16);
+    }
 
     public static final class ARGB32 extends FastColor.ARGB32 {
         private ARGB32() {}
@@ -13,6 +18,10 @@ public final class Colors {
         public static int color(int red, int green, int blue) { return color(255, red, green, blue); }
         public static int color(int alpha, int rgb) { return alpha << 24 | rgb & 0xffffff; }
         public static int opaque(int color) { return color | 0xff000000; }
+        public static int dyeColor(DyeColor dye) {
+            float[] rgb = dye.getTextureDiffuseColors();
+            return color(Math.round(rgb[0] * 255.0F), Math.round(rgb[1] * 255.0F), Math.round(rgb[2] * 255.0F));
+        }
         public static int colorFromFloat(float alpha, float red, float green, float blue) {
             return color(Mth.floor(alpha * 255.0F), Mth.floor(red * 255.0F),
                     Mth.floor(green * 255.0F), Mth.floor(blue * 255.0F));

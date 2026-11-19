@@ -93,7 +93,8 @@ public final class MindSpiderRenderer extends MobRenderer<EntityMindSpider, Spid
                 float headPitch) {
             this.getParentModel()
                     .renderToBuffer(
-                            poseStack, buffers.getBuffer(SPIDER_EYES), packedLight, OverlayTexture.NO_OVERLAY, -1);
+                            poseStack, buffers.getBuffer(SPIDER_EYES), packedLight, OverlayTexture.NO_OVERLAY,
+                            1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 }

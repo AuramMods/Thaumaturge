@@ -38,6 +38,7 @@ final class TaintSporeSwarmerCoreLayer
             float headPitch) {
         core.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         VertexConsumer consumer = buffers.getBuffer(RenderType.entityTranslucentEmissive(TaintSporeRenderer.TEXTURE));
-        core.renderToBuffer(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1);
+        core.renderToBuffer(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
+                1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

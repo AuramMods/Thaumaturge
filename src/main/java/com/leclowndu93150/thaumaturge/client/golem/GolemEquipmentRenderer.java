@@ -31,7 +31,7 @@ public final class GolemEquipmentRenderer {
                     buffers,
                     state.lightCoords,
                     ARGB32.color(
-                            ARGB32.alpha(color), DyeColor.byId(state.color - 1).getTextureDiffuseColor()));
+                            ARGB32.alpha(color), ARGB32.dyeColor(DyeColor.byId(state.color - 1))));
         }
     }
 

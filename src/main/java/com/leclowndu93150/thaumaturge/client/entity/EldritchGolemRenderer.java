@@ -55,7 +55,7 @@ public final class EldritchGolemRenderer extends ScaledMobRenderer<EntityEldritc
                             RenderType.entityTranslucentEmissive(TTIds.rl("textures/entity/eldritch_golem.png"))),
                     LightTexture.FULL_BRIGHT,
                     OverlayTexture.NO_OVERLAY,
-                    -1);
+                    1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 }

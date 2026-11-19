@@ -47,6 +47,6 @@ public final class BrainyDrownedOuterLayer<T extends Drowned> extends RenderLaye
                 netHeadYaw,
                 headPitch,
                 partialTick,
-                -1);
+                1.0F, 1.0F, 1.0F);
     }
 }

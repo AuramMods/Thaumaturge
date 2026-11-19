@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.render.ModelRender;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
@@ -107,7 +108,8 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
                     OverlayTexture.NO_OVERLAY);
             poseStack.pushPose();
             poseStack.scale(RIBBON_SCALE, RIBBON_SCALE, RIBBON_SCALE);
-            model.scrollRibbon.render(
+            ModelRender.render(
+                    model.scrollRibbon,
                     poseStack,
                     buffers.getBuffer(RenderType.entityCutout(TABLE_TEXTURE)),
                     light,

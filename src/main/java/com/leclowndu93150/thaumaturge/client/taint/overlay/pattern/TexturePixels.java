@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.taint.overlay.pattern;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.util.FastColor;
+import com.leclowndu93150.thaumaturge.compat.Colors;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.Mth;
 
@@ -14,7 +14,7 @@ public record TexturePixels(int width, int height, int[] argb) {
         int[] argb = new int[width * height];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                argb[y * width + x] = FastColor.ABGR32.fromArgb32(image.getPixelRGBA(x, y));
+                argb[y * width + x] = Colors.swapRedBlue(image.getPixelRGBA(x, y));
             }
         }
         return new TexturePixels(width, height, argb);

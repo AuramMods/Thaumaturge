@@ -14,8 +14,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.entity.LivingEntity;
 
 public final class TaintOverlayLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
-    private static final int NO_TINT = -1;
-
     public TaintOverlayLayer(RenderLayerParent<T, M> renderer) {
         super(renderer);
     }
@@ -47,14 +45,14 @@ public final class TaintOverlayLayer<T extends LivingEntity, M extends EntityMod
                 buffers.getBuffer(skinType),
                 packedLight,
                 LivingEntityRenderer.getOverlayCoords(entity, 0.0F),
-                NO_TINT);
+                1.0F, 1.0F, 1.0F, 1.0F);
         if (skin.glow() != null) {
             model.renderToBuffer(
                     poseStack,
                     buffers.getBuffer(RenderType.eyes(skin.glow())),
                     packedLight,
                     OverlayTexture.NO_OVERLAY,
-                    NO_TINT);
+                    1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 

@@ -156,7 +156,7 @@ public final class SealWorldRenderer {
         float g;
         float b;
         if (seal.color() > 0) {
-            int dye = DyeColor.byId(seal.color() - 1).getTextureDiffuseColor();
+            int dye = ARGB32.dyeColor(DyeColor.byId(seal.color() - 1));
             r = ARGB32.red(dye) / 255.0F;
             g = ARGB32.green(dye) / 255.0F;
             b = ARGB32.blue(dye) / 255.0F;

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.golem;
 
+import com.leclowndu93150.thaumaturge.client.render.ModelRender;
 import com.leclowndu93150.thaumaturge.api.client.golems.GolemAccessoryAnchor;
 import com.leclowndu93150.thaumaturge.api.client.golems.GolemPartRenderHook;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
@@ -48,7 +49,8 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
 
     @Override
     public ResourceLocation getTextureLocation(EntityThaumaturgeGolem entity) {
-        if (entity.properties() instanceof GolemProperties props) {
+        GolemProperties props = entity.properties();
+        if (props != null) {
             return props.material().texture();
         }
         return FALLBACK_TEXTURE;
@@ -146,9 +148,10 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
         ResourceLocation material = state.props.material().texture();
         ResourceLocation skin = GolemSkins.forMaterial(material);
         RenderType type = renderType(skin, xray, color);
-        model.renderToBuffer(pose, buffers.getBuffer(type), state.lightCoords, OverlayTexture.NO_OVERLAY, color);
+        ModelRender.render(model, pose, buffers.getBuffer(type), state.lightCoords, OverlayTexture.NO_OVERLAY, color);
         if (!xray) {
-            model.renderToBuffer(
+            ModelRender.render(
+                    model,
                     pose,
                     buffers.getBuffer(
                             ARGB32.alpha(color) < 255

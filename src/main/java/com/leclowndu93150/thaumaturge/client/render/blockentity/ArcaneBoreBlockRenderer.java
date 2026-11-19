@@ -56,7 +56,7 @@ public final class ArcaneBoreBlockRenderer implements BlockEntityRenderer<BlockE
                 buffers.getBuffer(RenderType.entityTranslucent(TEXTURE)),
                 packedLight,
                 OverlayTexture.NO_OVERLAY,
-                -1);
+                1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.popPose();
 
         if (bore.digging() && bore.boreActive()) {

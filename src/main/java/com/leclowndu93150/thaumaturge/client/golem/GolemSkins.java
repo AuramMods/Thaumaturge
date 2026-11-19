@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.golem;
 
+import com.leclowndu93150.thaumaturge.compat.Colors;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -81,7 +82,7 @@ public final class GolemSkins {
                     skin.setPixelRGBA(
                             x,
                             y,
-                            ABGR32.fromArgb32(ARGB32.color(
+                            Colors.swapRedBlue(ARGB32.color(
                                     ARGB32.alpha(pixel),
                                     Math.round(ARGB32.red(mapped) * detail),
                                     Math.round(ARGB32.green(mapped) * detail),
