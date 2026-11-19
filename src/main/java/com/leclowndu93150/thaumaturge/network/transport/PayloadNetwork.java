@@ -3,11 +3,13 @@ package com.leclowndu93150.thaumaturge.network.transport;
 import com.leclowndu93150.thaumaturge.datamap.ClientDataMapSync;
 import com.leclowndu93150.thaumaturge.datamap.DataMapSync;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadCatalog.Flow;
+import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.Connection;
 import net.minecraft.resources.ResourceLocation;
@@ -40,7 +42,7 @@ public final class PayloadNetwork {
                 .encoder((packet, buffer) -> CATALOG.encode(
                         new RegistryFriendlyByteBuf(buffer, serverRegistries()), packet.payload(), Flow.CLIENTBOUND))
                 .decoder(buffer -> new Clientbound(CATALOG.decode(
-                        new RegistryFriendlyByteBuf(buffer, ClientPayloadState.registries()), Flow.CLIENTBOUND)))
+                        new RegistryFriendlyByteBuf(buffer, clientboundRegistries()), Flow.CLIENTBOUND)))
                 .consumerMainThread((packet, context) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
                         () -> () -> CATALOG.handle(packet.payload(), Flow.CLIENTBOUND, new ForgeContext(context.get()))))
                 .add();
@@ -128,6 +130,12 @@ public final class PayloadNetwork {
     private static RegistryAccess serverRegistries() {
         return Objects.requireNonNull(ServerLifecycleHooks.getCurrentServer(), "No running server for gameplay payload")
                 .registryAccess();
+    }
+
+    private static HolderLookup.Provider clientboundRegistries() {
+        // Forge decodes on the network thread before the client finishes installing its local player.
+        HolderLookup.Provider received = RegistryContext.scoped();
+        return received == null ? ClientPayloadState.registries() : received;
     }
 
     private record ForgeContext(NetworkEvent.Context context) implements PayloadContext {

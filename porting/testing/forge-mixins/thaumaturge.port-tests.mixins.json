@@ -20,6 +20,7 @@
     "world.item.crafting.SmithingTransformRecipeAccessor",
     "server.ReloadableServerResourcesMixin",
     "network.PacketDecoderRegistryContextMixin",
+    "network.ConnectionRegistryContextMixin",
     "network.PacketEncoderRegistryContextMixin",
     "network.ClientboundLoginPacketRegistryMixin",
     "network.LoginRegistryCodecsMixin",

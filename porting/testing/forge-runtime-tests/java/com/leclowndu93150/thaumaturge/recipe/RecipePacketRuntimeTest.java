@@ -1,6 +1,10 @@
 package com.leclowndu93150.thaumaturge.recipe;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
@@ -13,6 +17,7 @@ import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.DecoderException;
 import java.util.List;
@@ -28,12 +33,15 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.PacketDecoder;
 import net.minecraft.network.PacketEncoder;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ChatTypeDecoration;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.game.ClientboundLoginPacket;
 import net.minecraft.network.protocol.game.ClientboundKeepAlivePacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
@@ -186,6 +194,45 @@ public class RecipePacketRuntimeTest {
             assertSame(first, receivedLinks.byId(3));
         } finally {
             channel.finishAndReleaseAll();
+        }
+    }
+
+    @Test
+    void deliveringConnectionScopesForgePayloadsBeforeTheLocalPlayerExists() {
+        var first = registries("first", false);
+        var second = registries("second", true);
+        var firstListener = mock(ClientGamePacketListener.class);
+        var secondListener = mock(ClientGamePacketListener.class);
+        var firstConnection = new Connection(PacketFlow.CLIENTBOUND);
+        var secondConnection = new Connection(PacketFlow.CLIENTBOUND);
+        var channelA = new EmbeddedChannel(firstConnection);
+        var channelB = new EmbeddedChannel(secondConnection);
+        firstConnection.setListener(firstListener);
+        secondConnection.setListener(secondListener);
+        doAnswer(call -> {
+            var registries = (RegistryAccess) RegistryContext.scoped();
+            assertSame(first.registryOrThrow(Registries.CHAT_TYPE), registries.registryOrThrow(Registries.CHAT_TYPE));
+            assertSame(BuiltInRegistries.ITEM, registries.registryOrThrow(Registries.ITEM));
+            return null;
+        }).when(firstListener).handleCustomPayload(any());
+        doAnswer(call -> {
+            var registries = (RegistryAccess) RegistryContext.scoped();
+            assertSame(second.registryOrThrow(Registries.CHAT_TYPE), registries.registryOrThrow(Registries.CHAT_TYPE));
+            return null;
+        }).when(secondListener).handleCustomPayload(any());
+
+        try {
+            channelA.writeInbound(login(first));
+            channelB.writeInbound(login(second));
+            var payload = new ClientboundCustomPayloadPacket(ID, new FriendlyByteBuf(Unpooled.EMPTY_BUFFER));
+            channelB.writeInbound(payload);
+            channelA.writeInbound(payload);
+            verify(firstListener).handleCustomPayload(payload);
+            verify(secondListener).handleCustomPayload(payload);
+            assertNull(RegistryContext.scoped());
+        } finally {
+            channelA.finishAndReleaseAll();
+            channelB.finishAndReleaseAll();
         }
     }
 

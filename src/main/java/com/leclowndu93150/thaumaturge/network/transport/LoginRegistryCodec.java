@@ -8,6 +8,8 @@ import com.mojang.serialization.Decoder;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.Holder;
@@ -36,6 +38,13 @@ public final class LoginRegistryCodec implements RegistryOps.RegistryInfoLookup 
     private final Map<ResourceKey<?>, MappedRegistry<?>> registries = new HashMap<>();
 
     private LoginRegistryCodec() {}
+
+    public static RegistryAccess.Frozen includeBuiltins(RegistryAccess received) {
+        Map<ResourceKey<?>, Registry<?>> combined = new LinkedHashMap<>();
+        BUILTINS.registries().forEach(entry -> combined.put(entry.key(), entry.value()));
+        received.registries().forEach(entry -> combined.put(entry.key(), entry.value()));
+        return new RegistryAccess.ImmutableRegistryAccess(List.copyOf(combined.values())).freeze();
+    }
 
     public static <T> RegistryOps<T> encodingOps(DynamicOps<T> builtins, RegistryAccess registries) {
         return withFallback(builtins, lookupOf(RegistryOps.create(builtins, registries)), lookupOf(builtins));
