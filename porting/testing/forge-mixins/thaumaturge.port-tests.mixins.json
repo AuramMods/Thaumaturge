@@ -14,6 +14,7 @@
     "world.effect.MobEffectInstanceMixin",
     "world.effect.AbsorptionMobEffectMixin",
     "world.entity.EntityEyeHeightMixin",
+    "world.entity.EntityRandomAccessor",
     "world.entity.EntityScaleMixin",
     "world.entity.EntityTypeGeometryMixin",
     "world.entity.LivingEntityScaleMixin",

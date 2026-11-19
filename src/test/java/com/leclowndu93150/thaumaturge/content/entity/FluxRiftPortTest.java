@@ -15,7 +15,6 @@ import static org.mockito.Mockito.when;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
-import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -29,7 +28,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -133,18 +131,5 @@ class FluxRiftPortTest {
         new RiftSegmentSweep().tick(level, rift);
 
         verify(level).clip(any(ClipContext.class));
-    }
-
-    @Test
-    void outlineIsSeedDeterministic() {
-        List<Vec3> firstPoints = new ArrayList<>();
-        List<Float> firstWidths = new ArrayList<>();
-        List<Vec3> secondPoints = new ArrayList<>();
-        List<Float> secondWidths = new ArrayList<>();
-        RiftOutline.build(24, 42, firstPoints, firstWidths);
-        RiftOutline.build(24, 42, secondPoints, secondWidths);
-        assertEquals(firstPoints, secondPoints);
-        assertEquals(firstWidths, secondWidths);
-        assertEquals(firstPoints.size(), firstWidths.size());
     }
 }

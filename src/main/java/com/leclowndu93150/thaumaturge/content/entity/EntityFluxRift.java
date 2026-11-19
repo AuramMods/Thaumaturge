@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -79,6 +80,10 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
 
     public static void spawnNear(ServerLevel level, BlockPos origin) {
         RiftSpawner.spawnNear(level, origin);
+    }
+
+    public RandomSource getRandom() {
+        return this.random;
     }
 
     @Override

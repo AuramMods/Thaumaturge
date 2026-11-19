@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.entity.projectile;
 import com.leclowndu93150.thaumaturge.content.particle.FireMoteParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOptions;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
+import com.leclowndu93150.thaumaturge.mixin.world.entity.EntityRandomAccessor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -20,7 +21,7 @@ public record ChargeTrail(int color, float shade, float alpha, float scale) {
 
     public void emit(Entity charge) {
         Level level = charge.level();
-        RandomSource random = charge.getRandom();
+        RandomSource random = ((EntityRandomAccessor) charge).thaumaturge$getRandom();
         Vec3 from = new Vec3(charge.xo, charge.yo, charge.zo);
         Vec3 to = charge.position();
         double lift = charge.getBbHeight() * 0.5;
