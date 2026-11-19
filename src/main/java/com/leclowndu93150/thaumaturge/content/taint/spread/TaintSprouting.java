@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.spread;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.compat.BlockCollisionChecks;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.AbstractTaintSeed;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSeed;
@@ -118,7 +119,7 @@ public final class TaintSprouting {
         boolean crowded = !level.getEntitiesOfClass(
                         AbstractTaintSeed.class, box.inflate(TaintOrigins.claimRadius() * CROWD_FRACTION))
                 .isEmpty();
-        return level.noBlockCollision(seed, box) && !crowded;
+        return BlockCollisionChecks.hasNoBlockCollision(level, seed, box) && !crowded;
     }
 
     private static int offset(RandomSource random, int reach) {

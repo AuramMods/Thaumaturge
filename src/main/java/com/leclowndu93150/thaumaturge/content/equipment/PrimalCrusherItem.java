@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.equipment;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import com.leclowndu93150.thaumaturge.api.items.MiningSpeedProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
@@ -16,7 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.TierSortingRegistry;
 
-public final class PrimalCrusherItem extends Item {
+public final class PrimalCrusherItem extends Item implements MiningSpeedProvider {
     private static final int CRUSHER_WARP = 2;
     private static final Multimap<Attribute, AttributeModifier> MAIN_HAND_MODIFIERS = ImmutableMultimap.of(
             Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier",
@@ -39,7 +40,12 @@ public final class PrimalCrusherItem extends Item {
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        return canMine(state) ? TTMaterials.TOOL_PRIMAL_VOID.getSpeed() : 1.0F;
+        return canMine(state) ? bestMiningSpeed(stack) : 1.0F;
+    }
+
+    @Override
+    public float bestMiningSpeed(ItemStack stack) {
+        return TTMaterials.TOOL_PRIMAL_VOID.getSpeed();
     }
 
     @Override

@@ -19,6 +19,7 @@ public final class TTEnglishProvider extends LanguageProvider {
     protected void addTranslations() {
         add("itemGroup.thaumaturge", "Thaumaturge");
         add("attribute.name.generic.scale", "Scale");
+        add("attribute.name.player.mining_efficiency", "Mining Efficiency");
 
         addJade();
         add("jade.thaumaturge.essentia.combined", "Essentia: %s %s/%s");

@@ -26,6 +26,7 @@
     "world.entity.EntityShowcaseProtectionMixin",
     "world.entity.MobShowcaseProtectionMixin",
     "world.entity.player.PlayerDamagePhaseMixin",
+    "world.entity.player.PlayerMiningEfficiencyMixin",
     "world.entity.monster.SlimeDimensionsMixin",
     "world.entity.monster.MobBowLootingMixin",
     "world.entity.monster.ZombieWaterConversionMixin",

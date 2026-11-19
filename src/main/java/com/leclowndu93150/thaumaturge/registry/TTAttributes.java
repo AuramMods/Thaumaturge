@@ -16,6 +16,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -29,6 +30,7 @@ import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class TTAttributes {
     private static final double DEFAULT_ATTACK_DAMAGE = 2.0;
+    private static final ResourceLocation EFFICIENCY_MODIFIER = ResourceLocation.withDefaultNamespace("enchantment.efficiency");
 
     public static final DeferredRegister<Attribute> ATTRIBUTES =
             DeferredRegister.create(ForgeRegistries.ATTRIBUTES, TTIds.MODID);
@@ -44,6 +46,9 @@ public final class TTAttributes {
     public static final RegistryObject<Attribute> SCALE = VANILLA_ATTRIBUTES.register(
             "generic.scale",
             () -> new RangedAttribute("attribute.name.generic.scale", 1.0, 0.0625, 16.0).setSyncable(true));
+    public static final RegistryObject<Attribute> MINING_EFFICIENCY = VANILLA_ATTRIBUTES.register(
+            "player.mining_efficiency",
+            () -> new RangedAttribute("attribute.name.player.mining_efficiency", 0.0, 0.0, 1024.0).setSyncable(true));
 
     public static final RegistryObject<Attribute> VIS_DISCOUNT = ATTRIBUTES.register(
             "vis_discount",
@@ -62,6 +67,7 @@ public final class TTAttributes {
 
     @SubscribeEvent
     public static void onItemAttributeModifier(ItemAttributeModifierEvent event) {
+        addEfficiencyEnchantment(event);
         addTrimDiscount(event);
         if (event.getItemStack().getItem() instanceof IVisDiscountGear gear
                 && gear.appliesInSlot(event.getItemStack(), event.getSlotType())) {
@@ -75,6 +81,17 @@ public final class TTAttributes {
                                 contribution,
                                 AttributeModifier.Operation.ADDITION));
             }
+        }
+    }
+
+    private static void addEfficiencyEnchantment(ItemAttributeModifierEvent event) {
+        if (event.getSlotType() != EquipmentSlot.MAINHAND) {
+            return;
+        }
+        int level = event.getItemStack().getEnchantmentLevel(Enchantments.BLOCK_EFFICIENCY);
+        if (level > 0) {
+            event.addModifier(MINING_EFFICIENCY.get(), NamedAttributeModifiers.create(
+                    EFFICIENCY_MODIFIER, (double) level * level + 1.0, AttributeModifier.Operation.ADDITION));
         }
     }
 
@@ -102,6 +119,7 @@ public final class TTAttributes {
     public static void onAttributesCreated(EntityAttributeModificationEvent event) {
         event.add(EntityType.PLAYER, VIS_DISCOUNT.get());
         event.add(EntityType.PLAYER, JUMP_STRENGTH.get());
+        event.add(EntityType.PLAYER, MINING_EFFICIENCY.get());
         for (EntityType<? extends LivingEntity> type : event.getTypes()) {
             if (!event.has(type, MAX_ABSORPTION.get())) {
                 event.add(type, MAX_ABSORPTION.get());
