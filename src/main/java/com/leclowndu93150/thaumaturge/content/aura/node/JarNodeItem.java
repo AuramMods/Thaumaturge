@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import org.jspecify.annotations.Nullable;
 
 public final class JarNodeItem extends BlockItem {
     public JarNodeItem(Block block, Item.Properties properties) {
@@ -43,7 +44,7 @@ public final class JarNodeItem extends BlockItem {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> builder, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> builder, TooltipFlag flag) {
         NodeData data = ItemData.get(stack, TTDataComponents.NODE_DATA.get());
         if (data == null) {
             return;

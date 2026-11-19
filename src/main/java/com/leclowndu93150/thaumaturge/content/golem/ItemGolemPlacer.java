@@ -24,6 +24,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.ForgeEventFactory;
+import org.jspecify.annotations.Nullable;
 
 public final class ItemGolemPlacer extends Item implements ISealDisplayer {
     public ItemGolemPlacer(Properties properties) {
@@ -39,7 +40,7 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         GolemProperties props = ItemData.get(stack, TTDataComponents.GOLEM_PROPERTIES.get());
         if (props == null) {
             return;

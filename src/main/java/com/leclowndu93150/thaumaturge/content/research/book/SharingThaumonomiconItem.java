@@ -22,6 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public final class SharingThaumonomiconItem extends Item {
     public SharingThaumonomiconItem(Properties properties) {
@@ -68,7 +69,7 @@ public final class SharingThaumonomiconItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> builder, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> builder, TooltipFlag flag) {
         ShareBinding binding = ItemData.get(stack, TTDataComponents.SHARE_BINDING.get());
         if (binding != null) {
             builder.add(Component.translatable("tooltip.thaumaturge.sharing.bound", binding.name())

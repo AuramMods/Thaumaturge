@@ -116,7 +116,7 @@ public final class ThaumostaticHarnessItem extends ArmorItem implements IHoverGe
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         ItemStack jar = getJar(stack);
         if (jar.getItem() instanceof JarItem) {
             for (AspectInstance entry : ComponentEssentia.jar(jar).getAspects().sortedByTag()) {
@@ -127,6 +127,6 @@ public final class ThaumostaticHarnessItem extends ArmorItem implements IHoverGe
                         .withStyle(ChatFormatting.GRAY));
             }
         }
-        super.appendHoverText(stack, context, tooltip, flag);
+        super.appendHoverText(stack, level, tooltip, flag);
     }
 }

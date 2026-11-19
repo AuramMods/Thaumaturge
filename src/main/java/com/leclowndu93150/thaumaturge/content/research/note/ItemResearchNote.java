@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public final class ItemResearchNote extends Item {
     public ItemResearchNote(Item.Properties properties) {
@@ -72,15 +73,15 @@ public final class ItemResearchNote extends Item {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         ResearchNoteData data = ResearchNotes.dataOf(stack);
         if (data == null) {
             return;
         }
-        if (context.registries() != null) {
+        if (level != null) {
             tooltip.add(Component.translatable(
                             "tooltip.thaumaturge.research_note.theory",
-                            ResearchNotes.entryName(context.registries(), data.entry()))
+                            ResearchNotes.entryName(level.registryAccess(), data.entry()))
                     .withStyle(ChatFormatting.DARK_PURPLE));
         }
         if (data.complete()) {

@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
+import org.jspecify.annotations.Nullable;
 
 public final class CheatThaumonomiconItem extends ThaumonomiconItem {
     public CheatThaumonomiconItem(Properties properties) {
@@ -35,7 +36,7 @@ public final class CheatThaumonomiconItem extends ThaumonomiconItem {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.thaumaturge.creative_only").withStyle(ChatFormatting.DARK_PURPLE));
     }
 }

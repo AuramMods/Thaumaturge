@@ -10,7 +10,9 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import org.jspecify.annotations.Nullable;
 
 public final class JarBrainItem extends BlockItem {
     public JarBrainItem(Block block, Item.Properties properties) {
@@ -19,12 +21,12 @@ public final class JarBrainItem extends BlockItem {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         Integer xp = ItemData.get(stack, TTDataComponents.STORED_XP.get());
         if (xp != null && xp > 0) {
             tooltip.add(Component.translatable("tooltip.thaumaturge.jar_brain.xp", xp)
                     .withStyle(ChatFormatting.GREEN));
         }
-        super.appendHoverText(stack, context, tooltip, flag);
+        super.appendHoverText(stack, level, tooltip, flag);
     }
 }

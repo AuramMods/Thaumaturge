@@ -8,6 +8,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public final class ItemWandRod extends Item {
     private final Supplier<WandRod> rod;
@@ -23,7 +25,7 @@ public final class ItemWandRod extends Item {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> builder, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> builder, TooltipFlag flag) {
         builder.add(Component.translatable(
                         "tooltip.thaumaturge.wand.capacity", rod.get().capacity())
                 .withStyle(ChatFormatting.GOLD));

@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 public final class ElementalSwordItem extends SwordItem implements IChanneledItem {
     private static final int USE_DURATION = 72000;
@@ -46,7 +47,7 @@ public final class ElementalSwordItem extends SwordItem implements IChanneledIte
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.thaumaturge.elemental_sword.toggle")
                 .withStyle(ChatFormatting.DARK_GRAY));
     }

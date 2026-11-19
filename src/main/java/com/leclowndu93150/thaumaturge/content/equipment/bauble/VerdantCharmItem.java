@@ -18,6 +18,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public final class VerdantCharmItem extends Item {
     public static final int TYPE_BASE = 0;
@@ -82,7 +84,7 @@ public final class VerdantCharmItem extends Item {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         int type = type(stack);
         if (type == TYPE_LIFE) {
             tooltip.add(Component.translatable("item.thaumaturge.verdant_charm.life.text")
@@ -91,6 +93,6 @@ public final class VerdantCharmItem extends Item {
             tooltip.add(Component.translatable("item.thaumaturge.verdant_charm.sustain.text")
                     .withStyle(ChatFormatting.GOLD));
         }
-        super.appendHoverText(stack, context, tooltip, flag);
+        super.appendHoverText(stack, level, tooltip, flag);
     }
 }

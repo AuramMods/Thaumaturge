@@ -7,6 +7,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public class ItemPrimalCharm extends Item {
     private static final int FLAVOR_LINE_COUNT = 5;
@@ -18,8 +19,7 @@ public class ItemPrimalCharm extends Item {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> builder, TooltipFlag flag) {
-        Level level = context.level();
+            ItemStack stack, @Nullable Level level, List<Component> builder, TooltipFlag flag) {
         long time = level == null ? 0L : level.getGameTime();
         int line = (int) Math.floorMod(time / FLAVOR_LINE_TICKS, (long) FLAVOR_LINE_COUNT);
         builder.add(Component.translatable("tooltip.thaumaturge.primal_charm." + line)

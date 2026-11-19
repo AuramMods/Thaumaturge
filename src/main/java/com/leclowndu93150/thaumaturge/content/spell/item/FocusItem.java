@@ -20,6 +20,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public class FocusItem extends Item {
     private static final String INDENT = "  ";
@@ -30,11 +32,11 @@ public class FocusItem extends Item {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> builder, TooltipFlag flag) {
-        describe(stack, context.registries(), builder::add);
+            ItemStack stack, @Nullable Level level, List<Component> builder, TooltipFlag flag) {
+        describe(stack, level == null ? null : level.registryAccess(), builder::add);
     }
 
-    public static void describe(ItemStack focus, HolderLookup.Provider registries, Consumer<Component> builder) {
+    public static void describe(ItemStack focus, HolderLookup.@Nullable Provider registries, Consumer<Component> builder) {
         Spell spell = Spells.spellOf(focus);
         if (spell == null || registries == null) {
             builder.accept(SpellText.blank());

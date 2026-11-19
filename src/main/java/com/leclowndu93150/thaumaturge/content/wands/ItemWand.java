@@ -401,13 +401,13 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> builder, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> builder, TooltipFlag flag) {
         builder.add(Component.translatable(
                         "tooltip.thaumaturge.wand.capacity",
                         WandVisHelper.getMaxVis(stack) / WandEconomy.CENTIVIS_PER_VIS)
                 .withStyle(ChatFormatting.GOLD));
         WandVis vis = WandVisHelper.getAllVis(stack);
-        HolderLookup.Provider registries = context.registries();
+        HolderLookup.@Nullable Provider registries = level == null ? null : level.registryAccess();
         MutableComponent amounts = null;
         Map<ResourceKey<IAspect>, Integer> pctByPrimal = new LinkedHashMap<>();
         for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {

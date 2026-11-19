@@ -20,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public final class RunedTabletItem extends Item {
     private static final String BOUND_TOOLTIP = "tooltip.thaumaturge.runed_tablet.bound";
@@ -64,7 +65,7 @@ public final class RunedTabletItem extends Item {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         LabyrinthKeys.boundTo(stack)
                 .ifPresent(maze -> tooltip.add(
                         Component.translatable(BOUND_TOOLTIP, maze.value()).withStyle(ChatFormatting.DARK_PURPLE)));

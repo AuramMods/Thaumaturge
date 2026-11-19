@@ -12,6 +12,8 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public final class FortressArmorItem extends ArmorItem {
     public static final int NO_MASK = -1;
@@ -31,7 +33,7 @@ public final class FortressArmorItem extends ArmorItem {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         if (hasGoggles(stack)) {
             tooltip.add(
                     Component.translatable("item.thaumaturge.goggles_revealing").withStyle(ChatFormatting.DARK_PURPLE));
@@ -41,6 +43,6 @@ public final class FortressArmorItem extends ArmorItem {
             tooltip.add(Component.translatable("item.thaumaturge.fortress_helm.mask." + mask)
                     .withStyle(ChatFormatting.GOLD));
         }
-        super.appendHoverText(stack, context, tooltip, flag);
+        super.appendHoverText(stack, level, tooltip, flag);
     }
 }

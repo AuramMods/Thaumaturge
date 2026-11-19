@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import com.leclowndu93150.thaumaturge.itemdata.ItemContents;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public final class FocusPouchItem extends Item {
     public static final int SIZE = 18;
@@ -46,7 +47,7 @@ public final class FocusPouchItem extends Item {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> builder, TooltipFlag flag) {
+            ItemStack stack, @Nullable Level level, List<Component> builder, TooltipFlag flag) {
         int count = 0;
         for (ItemStack focus : getInventory(stack)) {
             if (FocusItems.isFocus(focus)) {

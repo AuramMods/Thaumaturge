@@ -7,6 +7,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 public final class ItemWandCap extends Item {
     private final Supplier<WandCap> cap;
@@ -22,8 +24,8 @@ public final class ItemWandCap extends Item {
 
     @Override
     public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> builder, TooltipFlag flag) {
-        Component discount = WandTooltips.capCostSummary(context.registries(), cap.get());
+            ItemStack stack, @Nullable Level level, List<Component> builder, TooltipFlag flag) {
+        Component discount = WandTooltips.capCostSummary(level == null ? null : level.registryAccess(), cap.get());
         if (discount != null) {
             builder.add(discount);
         }
