@@ -22,7 +22,7 @@ public final class TTStructures {
             STRUCTURE_TYPES.register("mound", () -> () -> MoundStructure.CODEC);
 
     public static final RegistryObject<StructureType<ObeliskSiteStructure>> ELDRITCH_OBELISK =
-            STRUCTURE_TYPES.register("eldritch_obelisk", () -> () -> ObeliskSiteStructure.CODEC);
+            STRUCTURE_TYPES.register("eldritch_obelisk", () -> ObeliskSiteStructure.CODEC::codec);
     public static final RegistryObject<StructurePieceType> MOUND_PIECE =
             STRUCTURE_PIECES.register("mound", () -> (StructurePieceType.ContextlessType) MoundPiece::new);
 

@@ -16,13 +16,13 @@ public final class TTStructureProcessors {
             DeferredRegister.create(Registries.STRUCTURE_PROCESSOR, TTIds.MODID);
 
     public static final RegistryObject<StructureProcessorType<StripMarkersProcessor>>
-            STRIP_MARKERS = PROCESSORS.register("strip_markers", () -> () -> StripMarkersProcessor.CODEC);
+            STRIP_MARKERS = PROCESSORS.register("strip_markers", () -> StripMarkersProcessor.CODEC::codec);
     public static final RegistryObject<StructureProcessorType<ExposedSurfaceProcessor>>
-            EXPOSED_SURFACE = PROCESSORS.register("exposed_surface", () -> () -> ExposedSurfaceProcessor.CODEC);
+            EXPOSED_SURFACE = PROCESSORS.register("exposed_surface", () -> ExposedSurfaceProcessor.CODEC::codec);
     public static final RegistryObject<StructureProcessorType<ClusteredReplaceProcessor>>
-            CLUSTERED_REPLACE = PROCESSORS.register("clustered_replace", () -> () -> ClusteredReplaceProcessor.CODEC);
+            CLUSTERED_REPLACE = PROCESSORS.register("clustered_replace", () -> ClusteredReplaceProcessor.CODEC::codec);
     public static final RegistryObject<StructureProcessorType<StairMirrorProcessor>>
-            STAIR_MIRROR = PROCESSORS.register("stair_mirror", () -> () -> StairMirrorProcessor.CODEC);
+            STAIR_MIRROR = PROCESSORS.register("stair_mirror", () -> StairMirrorProcessor.CODEC::codec);
 
     private TTStructureProcessors() {}
 

@@ -39,7 +39,7 @@ final class ProcessorSeeds {
         for (Wrapper<T> entry : entries) {
             roll -= entry.getWeight().asInt();
             if (roll < 0) {
-                return entry.data();
+                return entry.getData();
             }
         }
         return null;

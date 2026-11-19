@@ -88,10 +88,10 @@ public final class LabyrinthConfig {
                 .defineInRange("lootScale", 1.0, 0.0, 4.0);
         disabledRooms = builder.comment(
                         "Room ids or #tags that are never placed, for example \"thaumaturge:passage/webbed_straight\" or \"#thaumaturge:labyrinth/rare\".")
-                .defineListAllowEmpty("disabledRooms", List.of(), () -> "", LabyrinthConfig::isIdOrTag);
+                .defineListAllowEmpty("disabledRooms", List.of(), LabyrinthConfig::isIdOrTag);
         disabledMarkers = builder.comment(
                         "Marker type ids that are skipped when rooms are placed, for example \"thaumaturge:aura\".")
-                .defineListAllowEmpty("disabledMarkers", List.of(), () -> "", LabyrinthConfig::isId);
+                .defineListAllowEmpty("disabledMarkers", List.of(), LabyrinthConfig::isId);
         defaultDefinition = builder.comment("Labyrinth definition used when an obelisk site does not name one.")
                 .define("defaultDefinition", "thaumaturge:eldritch", LabyrinthConfig::isId);
         builder.pop();

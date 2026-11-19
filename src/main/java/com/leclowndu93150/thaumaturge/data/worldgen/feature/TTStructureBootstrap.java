@@ -44,7 +44,12 @@ public final class TTStructureBootstrap {
     public static void bootstrapStructures(BootstapContext<Structure> context) {
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
         context.register(
-                MOUND, new MoundStructure(new Structure.StructureSettings(biomes.getOrThrow(TTBiomeTags.HAS_MOUND))));
+                MOUND,
+                new MoundStructure(new Structure.StructureSettings(
+                        biomes.getOrThrow(TTBiomeTags.HAS_MOUND),
+                        Map.of(),
+                        GenerationStep.Decoration.SURFACE_STRUCTURES,
+                        TerrainAdjustment.NONE)));
         SimpleWeightedRandomList<ResourceKey<ObeliskSite>> sites =
                 SimpleWeightedRandomList.<ResourceKey<ObeliskSite>>builder()
                         .add(ObeliskSiteBootstrap.CULT_RITUAL, CULT_WEIGHT)

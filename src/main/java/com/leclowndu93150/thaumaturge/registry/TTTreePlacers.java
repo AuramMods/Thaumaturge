@@ -25,23 +25,23 @@ public final class TTTreePlacers {
             DeferredRegister.create(Registries.TREE_DECORATOR_TYPE, TTIds.MODID);
 
     public static final RegistryObject<TrunkPlacerType<CrownTrunkPlacer>> CROWN_TRUNK =
-            TRUNK_PLACERS.register("crown_trunk_placer", () -> new TrunkPlacerType<>(CrownTrunkPlacer.CODEC));
+            TRUNK_PLACERS.register("crown_trunk_placer", () -> new TrunkPlacerType<>(CrownTrunkPlacer.CODEC.codec()));
     public static final RegistryObject<FoliagePlacerType<CrownFoliagePlacer>> CROWN_FOLIAGE =
-            FOLIAGE_PLACERS.register("crown_foliage_placer", () -> new FoliagePlacerType<>(CrownFoliagePlacer.CODEC));
+            FOLIAGE_PLACERS.register("crown_foliage_placer", () -> new FoliagePlacerType<>(CrownFoliagePlacer.CODEC.codec()));
     public static final RegistryObject<TreeDecoratorType<SpiderNestDecorator>> SPIDER_NEST =
-            TREE_DECORATORS.register("spider_nest", () -> new TreeDecoratorType<>(SpiderNestDecorator.CODEC));
+            TREE_DECORATORS.register("spider_nest", () -> new TreeDecoratorType<>(SpiderNestDecorator.CODEC.codec()));
 
     public static final RegistryObject<TrunkPlacerType<SilverwoodTrunkPlacer>> SILVERWOOD_TRUNK =
-            TRUNK_PLACERS.register("silverwood_trunk_placer", () -> new TrunkPlacerType<>(SilverwoodTrunkPlacer.CODEC));
+            TRUNK_PLACERS.register("silverwood_trunk_placer", () -> new TrunkPlacerType<>(SilverwoodTrunkPlacer.CODEC.codec()));
     public static final RegistryObject<FoliagePlacerType<LeafCellFoliagePlacer>>
             LEAF_CELL_FOLIAGE = FOLIAGE_PLACERS.register(
-                    "leaf_cell_foliage_placer", () -> new FoliagePlacerType<>(LeafCellFoliagePlacer.CODEC));
+                    "leaf_cell_foliage_placer", () -> new FoliagePlacerType<>(LeafCellFoliagePlacer.CODEC.codec()));
     public static final RegistryObject<TreeDecoratorType<DetachedLeafPruner>>
             DETACHED_LEAF_PRUNER = TREE_DECORATORS.register(
-                    "detached_leaf_pruner", () -> new TreeDecoratorType<>(DetachedLeafPruner.CODEC));
+                    "detached_leaf_pruner", () -> new TreeDecoratorType<>(DetachedLeafPruner.CODEC.codec()));
     public static final RegistryObject<TreeDecoratorType<ScatteredFlowersDecorator>>
             SCATTERED_FLOWERS = TREE_DECORATORS.register(
-                    "scattered_flowers", () -> new TreeDecoratorType<>(ScatteredFlowersDecorator.CODEC));
+                    "scattered_flowers", () -> new TreeDecoratorType<>(ScatteredFlowersDecorator.CODEC.codec()));
 
     private TTTreePlacers() {}
 

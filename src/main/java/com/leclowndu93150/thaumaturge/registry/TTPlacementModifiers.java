@@ -17,16 +17,16 @@ public final class TTPlacementModifiers {
 
     public static final RegistryObject<PlacementModifierType<ConfigRarityFilter>>
             CRIMSON_PORTAL_RARITY =
-                    PLACEMENT_MODIFIERS.register("crimson_portal_rarity", () -> () -> ConfigRarityFilter.CODEC);
+                    PLACEMENT_MODIFIERS.register("crimson_portal_rarity", () -> ConfigRarityFilter.CODEC::codec);
     public static final RegistryObject<PlacementModifierType<ConfigNodeSpawnFilter>>
             NODE_SPAWN_CHANCE =
-                    PLACEMENT_MODIFIERS.register("node_spawn_chance", () -> () -> ConfigNodeSpawnFilter.CODEC);
+                    PLACEMENT_MODIFIERS.register("node_spawn_chance", () -> ConfigNodeSpawnFilter.CODEC::codec);
     public static final RegistryObject<PlacementModifierType<MagicalCaveFloorPlacement>>
             MAGICAL_CAVE_FLOOR =
-                    PLACEMENT_MODIFIERS.register("magical_cave_floor", () -> () -> MagicalCaveFloorPlacement.CODEC);
+                    PLACEMENT_MODIFIERS.register("magical_cave_floor", () -> MagicalCaveFloorPlacement.CODEC::codec);
     public static final RegistryObject<PlacementModifierType<SurfaceBiomeSearch>>
             SURFACE_BIOME_SEARCH =
-                    PLACEMENT_MODIFIERS.register("surface_biome_search", () -> () -> SurfaceBiomeSearch.CODEC);
+                    PLACEMENT_MODIFIERS.register("surface_biome_search", () -> SurfaceBiomeSearch.CODEC::codec);
 
     private TTPlacementModifiers() {}
 
