@@ -13,7 +13,6 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.client.screen.casters.focal.FocalManipulatorScreen;
-import com.leclowndu93150.thaumaturge.client.screen.research.EntryDetailScreen;
 import com.leclowndu93150.thaumaturge.compat.jei.category.*;
 import com.leclowndu93150.thaumaturge.compat.jei.category.InfernalFurnaceCategory.InfernalBonusWrapper;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientHelper;
@@ -45,12 +44,12 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
-import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
@@ -72,13 +71,13 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
-import com.leclowndu93150.thaumaturge.recipe.RecipeInput;
 import com.leclowndu93150.thaumaturge.recipe.SingleRecipeInput;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
@@ -112,7 +111,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.registerSubtypeInterpreter(TTItems.ESSENTIA_CRYSTAL.get(), crystalAspectInterpreter);
         registration.registerSubtypeInterpreter(TTItems.PHIAL.get(), aspectsInterpreter);
         registration.registerSubtypeInterpreter(
-                TTItems.CELESTIAL_NOTES.asItem(),
+                TTItems.CELESTIAL_NOTES.get(),
                 new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::celestialBodySubtype));
         registration.registerSubtypeInterpreter(
                 TTItems.RESEARCH_NOTE.get(), new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::researchNoteSubtype));
@@ -151,7 +150,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         }
         registration.addExtraItemStacks(notes);
         registration.addExtraIngredients(
-                NeoForgeTypes.FLUID_STACK,
+                ForgeTypes.FLUID_STACK,
                 List.of(
                         new FluidStack(TTFluids.FLUX_GOO_SOURCE.get(), FluidType.BUCKET_VOLUME),
                         new FluidStack(TTFluids.PURIFYING_SOURCE.get(), FluidType.BUCKET_VOLUME),
@@ -190,16 +189,13 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
                         .map(aspect -> new AspectInstance(aspect, 1))
                         .toList(),
                 AspectIngredientHelper.INSTANCE,
-                AspectIngredientRenderer.INSTANCE,
-                AspectInstance.CODEC);
+                AspectIngredientRenderer.INSTANCE);
     }
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGuiContainerHandler(FocalManipulatorScreen.class, new FocalManipulatorGuiHandler());
-        ThaumonomiconGuiHandler bookHandler = new ThaumonomiconGuiHandler();
-        registration.addGuiScreenHandler(EntryDetailScreen.class, bookHandler);
-        registration.addGlobalGuiHandler(bookHandler);
+        ThaumonomiconGuiHandler.register(registration);
     }
 
     @Override
@@ -229,7 +225,8 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     @Override
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
-        registration.getCraftingCategory().addExtension(SalisMundusRecipe.class, SalisMundusCraftingExtension.INSTANCE);
+        registration.getCraftingCategory().addCategoryExtension(
+                SalisMundusRecipe.class, recipe -> SalisMundusCraftingExtension.INSTANCE);
     }
 
     @Override
@@ -249,12 +246,12 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
                 registration,
                 DustTriggerCategory.RECIPE_TYPE,
                 TTRecipeTypes.DUST_TRIGGER.get(),
-                r -> r.value() instanceof DustTriggerSimpleRecipe || r.value() instanceof DustTriggerTagRecipe);
+                r -> r instanceof DustTriggerSimpleRecipe || r instanceof DustTriggerTagRecipe);
         addTypedRecipes(
                 registration,
                 MultiblockCategory.RECIPE_TYPE,
                 TTRecipeTypes.DUST_TRIGGER.get(),
-                r -> r.value() instanceof DustTriggerMultiblockRecipe);
+                r -> r instanceof DustTriggerMultiblockRecipe);
         registerResearchConstructs(registration);
         addInfernalFurnaceBonuses(registration);
         registerAspectInfoPages(registration);
@@ -264,6 +261,11 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         AspectJeiSync.onRuntimeAvailable(jeiRuntime);
+    }
+
+    @Override
+    public void onRuntimeUnavailable() {
+        AspectJeiSync.onRuntimeUnavailable();
     }
 
     /*  @Override
@@ -316,9 +318,9 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     }
 
     private static final class ArcaneWorkbenchTransferHandler
-            implements IRecipeTransferHandler<MenuArcaneWorkbench, RecipeHolder<ArcaneCraftingRecipe>> {
+            implements IRecipeTransferHandler<MenuArcaneWorkbench, ArcaneCraftingRecipe> {
         private final IRecipeTransferHandlerHelper helper;
-        private final IRecipeTransferHandler<MenuArcaneWorkbench, RecipeHolder<ArcaneCraftingRecipe>> delegate;
+        private final IRecipeTransferHandler<MenuArcaneWorkbench, ArcaneCraftingRecipe> delegate;
 
         private ArcaneWorkbenchTransferHandler(IRecipeTransferHandlerHelper helper) {
             this.helper = helper;
@@ -336,7 +338,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         }
 
         @Override
-        public RecipeType<RecipeHolder<ArcaneCraftingRecipe>> getRecipeType() {
+        public RecipeType<ArcaneCraftingRecipe> getRecipeType() {
             return ArcaneWorkbenchCategory.RECIPE_TYPE;
         }
 
@@ -344,7 +346,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         @Deprecated(forRemoval = true)
         public IRecipeTransferError transferRecipe(
                 MenuArcaneWorkbench menu,
-                RecipeHolder<ArcaneCraftingRecipe> recipe,
+                ArcaneCraftingRecipe recipe,
                 IRecipeSlotsView recipeSlots,
                 Player player,
                 boolean doTransfer,
@@ -355,19 +357,19 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
         @Override
         public IRecipeTransferError transferRecipe(
-                IRecipeTransferContext<RecipeHolder<ArcaneCraftingRecipe>, MenuArcaneWorkbench> context,
+                IRecipeTransferContext<ArcaneCraftingRecipe, MenuArcaneWorkbench> context,
                 boolean doTransfer) {
             MenuArcaneWorkbench menu = context.getContainer();
-            RecipeHolder<ArcaneCraftingRecipe> recipe = context.getRecipe();
+            ArcaneCraftingRecipe recipe = context.getRecipe();
             IRecipeSlotsView filteredSlots = filteredRecipeSlots(menu, recipe, context.getRecipeSlots());
             return helper.transferRecipeWithInputAlternatives(delegate, context, List.of(filteredSlots), doTransfer);
         }
 
         private IRecipeSlotsView filteredRecipeSlots(
-                MenuArcaneWorkbench menu, RecipeHolder<ArcaneCraftingRecipe> recipe, IRecipeSlotsView recipeSlots) {
+                MenuArcaneWorkbench menu, ArcaneCraftingRecipe recipe, IRecipeSlotsView recipeSlots) {
             List<IRecipeSlotView> inputSlots = recipeSlots.getSlotViews(RecipeIngredientRole.INPUT);
             List<IRecipeSlotView> transferSlots = new ArrayList<>(inputSlots.subList(0, 9));
-            AspectList crystalCost = recipe.value().crystalCost();
+            AspectList crystalCost = recipe.crystalCost();
             int recipeSlotIndex = 9;
 
             for (int i = 0; i < MenuArcaneWorkbench.PRIMAL_ORDER.size(); i++) {
@@ -386,7 +388,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     }
 
     private static final class ArcaneWorkbenchTransferInfo
-            implements IRecipeTransferInfo<MenuArcaneWorkbench, RecipeHolder<ArcaneCraftingRecipe>> {
+            implements IRecipeTransferInfo<MenuArcaneWorkbench, ArcaneCraftingRecipe> {
         @Override
         public Class<? extends MenuArcaneWorkbench> getContainerClass() {
             return MenuArcaneWorkbench.class;
@@ -398,20 +400,20 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         }
 
         @Override
-        public RecipeType<RecipeHolder<ArcaneCraftingRecipe>> getRecipeType() {
+        public RecipeType<ArcaneCraftingRecipe> getRecipeType() {
             return ArcaneWorkbenchCategory.RECIPE_TYPE;
         }
 
         @Override
-        public boolean canHandle(MenuArcaneWorkbench menu, RecipeHolder<ArcaneCraftingRecipe> recipe) {
+        public boolean canHandle(MenuArcaneWorkbench menu, ArcaneCraftingRecipe recipe) {
             return true;
         }
 
         @Override
-        public List<Slot> getRecipeSlots(MenuArcaneWorkbench menu, RecipeHolder<ArcaneCraftingRecipe> recipe) {
+        public List<Slot> getRecipeSlots(MenuArcaneWorkbench menu, ArcaneCraftingRecipe recipe) {
             List<Slot> slots = new ArrayList<>(15);
             slots.addAll(menu.slots.subList(1, 10));
-            AspectList crystalCost = recipe.value().crystalCost();
+            AspectList crystalCost = recipe.crystalCost();
             for (int i = 0; i < MenuArcaneWorkbench.PRIMAL_ORDER.size(); i++) {
                 ResourceKey<IAspect> aspect = MenuArcaneWorkbench.PRIMAL_ORDER.get(i);
                 Optional<AspectInstance> cost = crystalCost(crystalCost, aspect);
@@ -425,7 +427,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         }
 
         @Override
-        public List<Slot> getInventorySlots(MenuArcaneWorkbench menu, RecipeHolder<ArcaneCraftingRecipe> recipe) {
+        public List<Slot> getInventorySlots(MenuArcaneWorkbench menu, ArcaneCraftingRecipe recipe) {
             return menu.slots.subList(17, 53);
         }
     }
@@ -561,17 +563,16 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         return null;
     }
 
-    private <I extends RecipeInput, R extends Recipe<I>> void addTypedRecipes(
+    private <C extends Container, R extends Recipe<C>> void addTypedRecipes(
             IRecipeRegistration registration,
-            RecipeType<RecipeHolder<R>> type,
+            RecipeType<R> type,
             net.minecraft.world.item.crafting.RecipeType<R> vanillaType,
-            @Nullable Predicate<RecipeHolder<R>> filter) {
-        List<RecipeHolder<R>> holders =
-                RecipeAccess.of(Minecraft.getInstance().level.getRecipeManager()).getAllRecipesFor(vanillaType);
+            @Nullable Predicate<R> filter) {
+        List<R> recipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(vanillaType);
         if (filter != null) {
-            holders = holders.stream().filter(filter).toList();
+            recipes = recipes.stream().filter(filter).toList();
         }
-        registration.addRecipes(type, holders);
+        registration.addRecipes(type, recipes);
     }
 
     private static void addInfernalFurnaceBonuses(IRecipeRegistration registration) {

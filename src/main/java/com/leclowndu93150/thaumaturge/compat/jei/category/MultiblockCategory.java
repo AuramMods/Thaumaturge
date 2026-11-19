@@ -39,14 +39,13 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jspecify.annotations.Nullable;
 
-public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<DustTrigger>> {
-    public static final RecipeType<RecipeHolder<DustTrigger>> RECIPE_TYPE = RecipeType.createRecipeHolderType(
-            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "multiblock_dust_trigger"));
+public final class MultiblockCategory implements IRecipeCategory<DustTrigger> {
+    public static final RecipeType<DustTrigger> RECIPE_TYPE =
+            new RecipeType<>(TTIds.rl("multiblock_dust_trigger"), DustTrigger.class);
 
     private static final int WIDTH = 144;
     private static final int HEIGHT = 108;
@@ -79,11 +78,11 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
     }
 
     @Override
-    public RecipeType<RecipeHolder<DustTrigger>> getRecipeType() {
+    public RecipeType<DustTrigger> getRecipeType() {
         return RECIPE_TYPE;
     }
 
-    public static RecipeType<RecipeHolder<DustTrigger>> type() {
+    public static RecipeType<DustTrigger> type() {
         return RECIPE_TYPE;
     }
 
@@ -108,14 +107,13 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<DustTrigger> holder, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, DustTrigger recipe, IFocusGroup focuses) {
 
         Component usage = Component.translatable("jei.thaumaturge.dust_trigger.target.multiblock");
         builder.addSlot(RecipeIngredientRole.INPUT, DUST_SLOT_X + 1, DUST_SLOT_Y + 1)
                 .addItemStack(new ItemStack(TTItems.SALIS_MUNDUS.get()))
                 .addRichTooltipCallback((view, tooltip) -> tooltip.add(usage));
 
-        DustTrigger recipe = holder.value();
         Blueprint blueprint = lookupBlueprint(((DustTriggerMultiblockRecipe) recipe).blueprintId());
 
         ItemStack result = DustTriggerCategory.resultStack(recipe);
@@ -159,26 +157,24 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
 
     @Override
     public void draw(
-            RecipeHolder<DustTrigger> holder,
+            DustTrigger recipe,
             IRecipeSlotsView recipeSlotsView,
             GuiGraphics guiGraphics,
             double mouseX,
             double mouseY) {
-        Blueprint blueprint = lookupBlueprint(((DustTriggerMultiblockRecipe) holder.value()).blueprintId());
-        ItemStack result = DustTriggerCategory.resultStack(holder.value());
+        Blueprint blueprint = lookupBlueprint(((DustTriggerMultiblockRecipe) recipe).blueprintId());
+        ItemStack result = DustTriggerCategory.resultStack(recipe);
         if (!result.isEmpty() && !isKeptBlueprintInput(blueprint, result)) {
             resultIcon.draw(guiGraphics, RESULT_SLOT_X - 6, RESULT_SLOT_Y - 6);
         }
         arrow.draw(guiGraphics, WIDTH / 2 - arrow.getWidth() / 2 - 20, 0);
-        boolean doesPassGate = holder.value().doesPassGate(Minecraft.getInstance().player);
+        boolean doesPassGate = recipe.doesPassGate(Minecraft.getInstance().player);
         if (!doesPassGate)
             guiGraphics.renderItem(Items.BARRIER.getDefaultInstance(), WIDTH / 2 - arrow.getWidth() / 2 - 14, 4);
-        drawExtra(holder, guiGraphics);
+        drawExtra(blueprint, guiGraphics);
     }
 
-    private void drawExtra(RecipeHolder<DustTrigger> holder, GuiGraphics guiGraphics) {
-        DustTriggerMultiblockRecipe recipe = (DustTriggerMultiblockRecipe) holder.value();
-        Blueprint blueprint = lookupBlueprint(recipe.blueprintId());
+    private void drawExtra(@Nullable Blueprint blueprint, GuiGraphics guiGraphics) {
         if (blueprint == null) {
             return;
         }
@@ -282,12 +278,12 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
     @Override
     public void getTooltip(
             ITooltipBuilder tooltip,
-            RecipeHolder<DustTrigger> recipe,
+            DustTrigger recipe,
             IRecipeSlotsView recipeSlotsView,
             double mouseX,
             double mouseY) {
-        Optional<ResearchGate> gate = recipe.value().researchGate();
-        boolean doesPassGate = recipe.value().doesPassGate(Minecraft.getInstance().player);
+        Optional<ResearchGate> gate = recipe.researchGate();
+        boolean doesPassGate = recipe.doesPassGate(Minecraft.getInstance().player);
         if (!doesPassGate
                 && mouseX > WIDTH / 2 - arrow.getWidth() / 2 - 14
                 && mouseX < WIDTH / 2 - arrow.getWidth() / 2 + 4

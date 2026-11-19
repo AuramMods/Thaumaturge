@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.compat.jei.category.AspectCompositionCategory;
 import com.leclowndu93150.thaumaturge.compat.jei.category.AspectFromStacksCategory;
+import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -15,7 +16,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.runtime.IJeiRuntime;
@@ -39,14 +42,9 @@ public final class AspectJeiSync {
         updateCompositionVisibility(jeiRuntime);
     }
 
-    private static boolean isAffected(Object ingredient, Set<ResourceLocation> changedIds) {
-        if (ingredient instanceof AspectInstance instance) {
-            return changedIds.contains(AspectPools.idOf(instance.aspect()));
-        }
-        if (ingredient instanceof ItemStack stack) {
-            return changedIds.contains(gatedAspectOf(stack));
-        }
-        return false;
+    static void onRuntimeUnavailable() {
+        runtime = null;
+        discoveredAspects.clear();
     }
 
     private static void updateCompositionVisibility(IJeiRuntime runtime) {
@@ -135,7 +133,18 @@ public final class AspectJeiSync {
         if (changedIds.isEmpty()) {
             return;
         }
-        JeiSearchIndex.reindex(current, ingredients, ingredient -> isAffected(ingredient, changedIds));
+        refreshIngredients(ingredients, AspectIngredientType.INSTANCE,
+                aspect -> changedIds.contains(AspectPools.idOf(aspect.aspect())));
+        refreshIngredients(ingredients, VanillaTypes.ITEM_STACK,
+                stack -> changedIds.contains(gatedAspectOf(stack)));
         updateCompositionVisibility(current);
+    }
+
+    private static <T> void refreshIngredients(
+            IIngredientManager manager, IIngredientType<T> type, Predicate<T> isAffected) {
+        List<T> affected = manager.getAllIngredients(type).stream().filter(isAffected).toList();
+        if (!affected.isEmpty()) {
+            manager.refreshIngredientsAtRuntime(type, affected);
+        }
     }
 }

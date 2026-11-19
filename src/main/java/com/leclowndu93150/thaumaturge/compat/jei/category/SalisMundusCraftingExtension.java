@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
-import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
@@ -13,9 +12,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 
-public final class SalisMundusCraftingExtension implements ICraftingCategoryExtension<SalisMundusRecipe> {
+public final class SalisMundusCraftingExtension implements ICraftingCategoryExtension {
     public static final SalisMundusCraftingExtension INSTANCE = new SalisMundusCraftingExtension();
 
     private static final int CRYSTAL_SLOTS = 3;
@@ -24,7 +22,6 @@ public final class SalisMundusCraftingExtension implements ICraftingCategoryExte
 
     @Override
     public void setRecipe(
-            RecipeHolder<SalisMundusRecipe> recipeHolder,
             IRecipeLayoutBuilder builder,
             ICraftingGridHelper craftingGridHelper,
             IFocusGroup focuses) {

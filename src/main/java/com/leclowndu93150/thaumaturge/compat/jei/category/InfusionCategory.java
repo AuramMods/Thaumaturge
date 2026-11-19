@@ -38,15 +38,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
-import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 
-public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> implements IRecipeCategory<RecipeHolder<R>> {
-    public static final RecipeType<RecipeHolder<InfusionRecipe>> RECIPE_TYPE =
-            RecipeType.createFromVanilla(TTRecipeTypes.INFUSION.get());
-    public static final RecipeType<RecipeHolder<InfusionEnchantmentRecipe>> ENCHANTMENT_RECIPE_TYPE =
-            RecipeType.createFromVanilla(TTRecipeTypes.INFUSION_ENCHANTMENT.get());
-    public static final RecipeType<RecipeHolder<InfusionRunicAugmentRecipe>> RUNIC_RECIPE_TYPE =
-            RecipeType.createFromVanilla(TTRecipeTypes.RUNIC_AUGMENT.get());
+public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> implements IRecipeCategory<R> {
+    public static final RecipeType<InfusionRecipe> RECIPE_TYPE =
+            new RecipeType<>(TTRecipeTypes.INFUSION.getId(), InfusionRecipe.class);
+    public static final RecipeType<InfusionEnchantmentRecipe> ENCHANTMENT_RECIPE_TYPE =
+            new RecipeType<>(TTRecipeTypes.INFUSION_ENCHANTMENT.getId(), InfusionEnchantmentRecipe.class);
+    public static final RecipeType<InfusionRunicAugmentRecipe> RUNIC_RECIPE_TYPE =
+            new RecipeType<>(TTRecipeTypes.RUNIC_AUGMENT.getId(), InfusionRunicAugmentRecipe.class);
 
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png");
@@ -77,17 +76,17 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
     private static final IDrawable BACKGROUND = new AlphaDrawable(TEXTURE, 413, 154, 86, 86, 40, 44, 30, 30);
     private static final IDrawable PLATE = new AlphaDrawable(TEXTURE, 40, 6, 32, 32);
     private final IDrawable icon;
-    private final RecipeType<RecipeHolder<R>> recipeType;
+    private final RecipeType<R> recipeType;
     private final Component title;
 
-    public InfusionCategory(IGuiHelper guiHelper, RecipeType<RecipeHolder<R>> recipeType, String titleKey) {
+    public InfusionCategory(IGuiHelper guiHelper, RecipeType<R> recipeType, String titleKey) {
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(TTItems.INFUSION_MATRIX.get()));
         this.recipeType = recipeType;
         this.title = Component.translatable(titleKey);
     }
 
     @Override
-    public RecipeType<RecipeHolder<R>> getRecipeType() {
+    public RecipeType<R> getRecipeType() {
         return recipeType;
     }
 
@@ -112,7 +111,7 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
     }
 
     private static void addIngredient(IRecipeSlotBuilder slot, Ingredient ingredient) {
-        if (ingredient.getCustomIngredient() instanceof SpellPartIngredient focus) {
+        if (ingredient instanceof SpellPartIngredient focus) {
             slot.addItemStacks(focus.displayStacks());
         } else {
             slot.addIngredients(ingredient);
@@ -120,18 +119,17 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<R> holder, IFocusGroup focuses) {
-        R recipe = holder.value();
+    public void setRecipe(IRecipeLayoutBuilder builder, R recipe, IFocusGroup focuses) {
         builder.addOutputSlot(OUTPUT_X, OUTPUT_Y).addItemStack(recipe.resultItem());
         addIngredient(builder.addInputSlot(CATALYST_X, CATALYST_Y), recipe.catalyst());
         float currentRotation = -90.0F;
-        for (Ingredient ingredient : holder.value().components()) {
+        for (Ingredient ingredient : recipe.components()) {
             addIngredient(
                     builder.addInputSlot(
                             30 + (int) (Mth.cos((float) (currentRotation / 180.0F * Math.PI)) * 40.0F) + 35,
                             (int) (Mth.sin(currentRotation / 180.0F * 3.1415927F) * 40.0F) + 75),
                     ingredient);
-            currentRotation += (360f / holder.value().components().size());
+            currentRotation += (360f / recipe.components().size());
         }
 
         int center = (recipe.aspects().size() * SPACE) / 2;
@@ -152,12 +150,12 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
     @Override
     public void getTooltip(
             ITooltipBuilder tooltip,
-            RecipeHolder<R> recipe,
+            R recipe,
             IRecipeSlotsView recipeSlotsView,
             double mouseX,
             double mouseY) {
-        Optional<ResearchGate> gate = recipe.value().researchGate();
-        boolean doesPassGate = recipe.value().doesPassGate(Minecraft.getInstance().player);
+        Optional<ResearchGate> gate = recipe.researchGate();
+        boolean doesPassGate = recipe.doesPassGate(Minecraft.getInstance().player);
         if (!doesPassGate && gate.isPresent() && mouseX > 92 && mouseX < 108 && mouseY > 9 && mouseY < 25) {
             tooltip.addAll(ResearchUtils.generateMissingResearchList(gate.get()));
         }
@@ -165,7 +163,7 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
 
     @Override
     public void draw(
-            RecipeHolder<R> recipe,
+            R recipe,
             IRecipeSlotsView recipeSlotsView,
             GuiGraphics guiGraphics,
             double mouseX,
@@ -174,12 +172,12 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
         Component header = Component.translatable("gui.thaumaturge.recipe_type.infusion");
         BACKGROUND.draw(guiGraphics);
         PLATE.draw(guiGraphics, 57, 0);
-        int level = Math.min(INSTABILITY_LEVEL_CAP, recipe.value().instability() / 2);
+        int level = Math.min(INSTABILITY_LEVEL_CAP, recipe.instability() / 2);
         Component levelName = Component.translatable("gui.thaumaturge.infusion.instability." + level)
                 .withStyle(INSTABILITY_COLORS[level]);
         Component label = Component.translatable("gui.thaumaturge.infusion.instability", levelName);
         guiGraphics.drawString(font, label, WIDTH / 2 - font.width(label) / 2, 158, PAGE_TEXT_COLOR, false);
-        boolean doesPassGate = recipe.value().doesPassGate(Minecraft.getInstance().player);
+        boolean doesPassGate = recipe.doesPassGate(Minecraft.getInstance().player);
         if (!doesPassGate) {
             guiGraphics.renderItem(Items.BARRIER.getDefaultInstance(), 92, 9);
         }

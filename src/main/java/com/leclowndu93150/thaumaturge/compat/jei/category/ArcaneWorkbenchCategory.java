@@ -37,11 +37,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 
-public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHolder<ArcaneCraftingRecipe>> {
-    public static final RecipeType<RecipeHolder<ArcaneCraftingRecipe>> RECIPE_TYPE =
-            RecipeType.createFromVanilla(TTRecipeTypes.ARCANE.get());
+public final class ArcaneWorkbenchCategory implements IRecipeCategory<ArcaneCraftingRecipe> {
+    public static final RecipeType<ArcaneCraftingRecipe> RECIPE_TYPE =
+            new RecipeType<>(TTRecipeTypes.ARCANE.getId(), ArcaneCraftingRecipe.class);
 
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png");
@@ -87,7 +86,7 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
     }
 
     @Override
-    public RecipeType<RecipeHolder<ArcaneCraftingRecipe>> getRecipeType() {
+    public RecipeType<ArcaneCraftingRecipe> getRecipeType() {
         return RECIPE_TYPE;
     }
 
@@ -113,8 +112,7 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
 
     @Override
     public void setRecipe(
-            IRecipeLayoutBuilder builder, RecipeHolder<ArcaneCraftingRecipe> holder, IFocusGroup focuses) {
-        ArcaneCraftingRecipe recipe = holder.value();
+            IRecipeLayoutBuilder builder, ArcaneCraftingRecipe recipe, IFocusGroup focuses) {
         ItemStack output;
 
         if (recipe instanceof ArcaneShapedCraftingRecipe shaped) {
@@ -180,7 +178,7 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
 
     @Override
     public void draw(
-            RecipeHolder<ArcaneCraftingRecipe> recipe,
+            ArcaneCraftingRecipe recipe,
             IRecipeSlotsView recipeSlotsView,
             GuiGraphics guiGraphics,
             double mouseX,
@@ -190,7 +188,7 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
         arrow.draw(guiGraphics, ARROW_X, ARROW_Y);
 
         Font font = Minecraft.getInstance().font;
-        String vis = Integer.toString(recipe.value().visCost());
+        String vis = Integer.toString(recipe.visCost());
         guiGraphics.drawString(
                 font,
                 vis,
@@ -199,7 +197,7 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
                 0xFF000000 | ChatFormatting.DARK_GRAY.getColor(),
                 false);
 
-        if (!recipe.value().doesPassGate(Minecraft.getInstance().player)) {
+        if (!recipe.doesPassGate(Minecraft.getInstance().player)) {
             guiGraphics.renderItem(Items.BARRIER.getDefaultInstance(), BARRIER_X, BARRIER_Y);
         }
     }
@@ -207,7 +205,7 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
     @Override
     public void getTooltip(
             ITooltipBuilder tooltip,
-            RecipeHolder<ArcaneCraftingRecipe> recipe,
+            ArcaneCraftingRecipe recipe,
             IRecipeSlotsView recipeSlotsView,
             double mouseX,
             double mouseY) {
@@ -217,12 +215,12 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
             tooltip.add(Component.translatable(
                     "jei.thaumaturge.arcane_workbench.vis_cost_wand", WandEconomy.CRYSTAL_SUBSTITUTE_VIS));
             tooltip.add(Component.translatable(
-                    "jei.thaumaturge.arcane_workbench.vis_cost_aura", WorkbenchPayment.crudeCost(recipe.value())));
+                    "jei.thaumaturge.arcane_workbench.vis_cost_aura", WorkbenchPayment.crudeCost(recipe)));
             return;
         }
 
-        Optional<ResearchGate> gate = recipe.value().researchGate();
-        boolean doesPassGate = recipe.value().doesPassGate(Minecraft.getInstance().player);
+        Optional<ResearchGate> gate = recipe.researchGate();
+        boolean doesPassGate = recipe.doesPassGate(Minecraft.getInstance().player);
         if (!doesPassGate
                 && gate.isPresent()
                 && inTopRow

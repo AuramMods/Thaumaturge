@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 
 public final class ResearchUtils {
 
@@ -27,7 +28,7 @@ public final class ResearchUtils {
                             .withStyle(ChatFormatting.RED));
                 } else {
                     IResearchEntry entry = access.registryOrThrow(IResearchEntry.REGISTRY_KEY)
-                            .getHolder(gate.entry())
+                            .getHolder(ResourceKey.create(IResearchEntry.REGISTRY_KEY, gate.entry()))
                             .map(Holder::value)
                             .orElse(null);
                     if (entry != null) {

@@ -34,13 +34,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import org.jspecify.annotations.Nullable;
 
-public final class DustTriggerCategory implements IRecipeCategory<RecipeHolder<DustTrigger>> {
-    public static final RecipeType<RecipeHolder<DustTrigger>> RECIPE_TYPE =
-            RecipeType.createFromVanilla(TTRecipeTypes.DUST_TRIGGER.get());
+public final class DustTriggerCategory implements IRecipeCategory<DustTrigger> {
+    public static final RecipeType<DustTrigger> RECIPE_TYPE =
+            new RecipeType<>(TTRecipeTypes.DUST_TRIGGER.getId(), DustTrigger.class);
 
     private static final int WIDTH = 144;
     private static final int HEIGHT = 54;
@@ -66,11 +65,11 @@ public final class DustTriggerCategory implements IRecipeCategory<RecipeHolder<D
     }
 
     @Override
-    public RecipeType<RecipeHolder<DustTrigger>> getRecipeType() {
+    public RecipeType<DustTrigger> getRecipeType() {
         return RECIPE_TYPE;
     }
 
-    public static RecipeType<RecipeHolder<DustTrigger>> type() {
+    public static RecipeType<DustTrigger> type() {
         return RECIPE_TYPE;
     }
 
@@ -95,14 +94,13 @@ public final class DustTriggerCategory implements IRecipeCategory<RecipeHolder<D
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<DustTrigger> holder, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, DustTrigger recipe, IFocusGroup focuses) {
 
         Component usage = Component.translatable("jei.thaumaturge.dust_trigger.usage");
         builder.addSlot(RecipeIngredientRole.INPUT, DUST_SLOT_X + 1, DUST_SLOT_Y + 1)
                 .addItemStack(new ItemStack(TTItems.SALIS_MUNDUS.get()))
                 .addRichTooltipCallback((view, tooltip) -> tooltip.add(usage));
 
-        DustTrigger recipe = holder.value();
         IRecipeSlotBuilder targetSlot =
                 builder.addSlot(RecipeIngredientRole.CATALYST, TARGET_SLOT_X + 1, TARGET_SLOT_Y + 1);
         if (recipe instanceof DustTriggerSimpleRecipe simple) {
@@ -138,7 +136,7 @@ public final class DustTriggerCategory implements IRecipeCategory<RecipeHolder<D
 
     @Override
     public void draw(
-            RecipeHolder<DustTrigger> recipe,
+            DustTrigger recipe,
             IRecipeSlotsView recipeSlotsView,
             GuiGraphics guiGraphics,
             double mouseX,
@@ -164,7 +162,7 @@ public final class DustTriggerCategory implements IRecipeCategory<RecipeHolder<D
                 false);
         guiGraphics.pose().popPose();
 
-        boolean doesPassGate = recipe.value().doesPassGate(Minecraft.getInstance().player);
+        boolean doesPassGate = recipe.doesPassGate(Minecraft.getInstance().player);
         if (!doesPassGate)
             guiGraphics.renderItem(
                     Items.BARRIER.getDefaultInstance(), ((TARGET_SLOT_X + 16) + RESULT_SLOT_X) / 2 - 8, 20);
@@ -173,12 +171,12 @@ public final class DustTriggerCategory implements IRecipeCategory<RecipeHolder<D
     @Override
     public void getTooltip(
             ITooltipBuilder tooltip,
-            RecipeHolder<DustTrigger> recipe,
+            DustTrigger recipe,
             IRecipeSlotsView recipeSlotsView,
             double mouseX,
             double mouseY) {
-        Optional<ResearchGate> gate = recipe.value().researchGate();
-        boolean doesPassGate = recipe.value().doesPassGate(Minecraft.getInstance().player);
+        Optional<ResearchGate> gate = recipe.researchGate();
+        boolean doesPassGate = recipe.doesPassGate(Minecraft.getInstance().player);
         if (!doesPassGate
                 && mouseX > (double) ((TARGET_SLOT_X + 16) + RESULT_SLOT_X) / 2 - 8
                 && mouseX < (double) ((TARGET_SLOT_X + 16) + RESULT_SLOT_X) / 2 + 10

@@ -117,9 +117,6 @@
     "client.iris.HandRendererMixin",
     "client.iris.ShaderInstanceMixin",
     "client.player.AbstractClientPlayerMixin",
-    "jei.gui.ingredients.IngredientFilterAccessor",
-    "jei.gui.ingredients.IngredientFilterApiAccessor",
-    "jei.gui.search.ElementSearchAccessor",
     "client.multiplayer.ClientLevelEntityTickMixin",
     "client.multiplayer.ClientPacketListenerEffectMixin"
   ],

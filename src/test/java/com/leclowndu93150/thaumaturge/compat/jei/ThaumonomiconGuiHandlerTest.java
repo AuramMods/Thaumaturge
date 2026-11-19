@@ -34,7 +34,7 @@ class ThaumonomiconGuiHandlerTest {
     @SuppressWarnings({"unchecked", "rawtypes"})
     void setUp() {
         IGuiHandlerRegistration registration = mock(IGuiHandlerRegistration.class);
-        new ThaumaturgeJEIPlugin().registerGuiHandlers(registration);
+        ThaumonomiconGuiHandler.register(registration);
         ArgumentCaptor<IScreenHandler<EntryDetailScreen>> capture =
                 ArgumentCaptor.forClass((Class) IScreenHandler.class);
         verify(registration).addGuiScreenHandler(eq(EntryDetailScreen.class), capture.capture());
@@ -53,13 +53,13 @@ class ThaumonomiconGuiHandlerTest {
         var properties = handler.apply(screen);
 
         assertNotNull(properties); // JEI skips all keyboard lookup when these are null.
-        assertEquals(EntryDetailScreen.class, properties.screenClass());
-        assertEquals(0, properties.guiLeft());
-        assertEquals(0, properties.guiTop());
-        assertEquals(properties.screenWidth(), properties.guiRight());
-        assertEquals(properties.screenHeight(), properties.guiBottom());
-        assertEquals(640, properties.screenWidth());
-        assertEquals(360, properties.screenHeight());
+        assertEquals(EntryDetailScreen.class, properties.getScreenClass());
+        assertEquals(0, properties.getGuiLeft());
+        assertEquals(0, properties.getGuiTop());
+        assertEquals(properties.getScreenWidth(), properties.getGuiLeft() + properties.getGuiXSize());
+        assertEquals(properties.getScreenHeight(), properties.getGuiTop() + properties.getGuiYSize());
+        assertEquals(640, properties.getScreenWidth());
+        assertEquals(360, properties.getScreenHeight());
     }
 
     @Test

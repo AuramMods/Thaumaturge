@@ -28,11 +28,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 
-public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<CrucibleRecipe>> {
-    public static final RecipeType<RecipeHolder<CrucibleRecipe>> RECIPE_TYPE =
-            RecipeType.createFromVanilla(TTRecipeTypes.CRUCIBLE.get());
+public final class CrucibleCategory implements IRecipeCategory<CrucibleRecipe> {
+    public static final RecipeType<CrucibleRecipe> RECIPE_TYPE =
+            new RecipeType<>(TTRecipeTypes.CRUCIBLE.getId(), CrucibleRecipe.class);
 
     public static final int ASPECT_Y = 66;
     public static final int ASPECT_X = 66;
@@ -62,7 +61,7 @@ public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<Cruc
     }
 
     @Override
-    public RecipeType<RecipeHolder<CrucibleRecipe>> getRecipeType() {
+    public RecipeType<CrucibleRecipe> getRecipeType() {
         return RECIPE_TYPE;
     }
 
@@ -87,8 +86,7 @@ public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<Cruc
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<CrucibleRecipe> holder, IFocusGroup focuses) {
-        CrucibleRecipe recipe = holder.value();
+    public void setRecipe(IRecipeLayoutBuilder builder, CrucibleRecipe recipe, IFocusGroup focuses) {
         builder.addOutputSlot(55, 8).addItemStack(recipe.rawResult());
         builder.addInputSlot(2, 2).addIngredients(recipe.catalyst());
 
@@ -111,12 +109,12 @@ public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<Cruc
     @Override
     public void getTooltip(
             ITooltipBuilder tooltip,
-            RecipeHolder<CrucibleRecipe> recipe,
+            CrucibleRecipe recipe,
             IRecipeSlotsView recipeSlotsView,
             double mouseX,
             double mouseY) {
-        Optional<ResearchGate> gate = recipe.value().researchGate();
-        boolean doesPassGate = recipe.value().doesPassGate(Minecraft.getInstance().player);
+        Optional<ResearchGate> gate = recipe.researchGate();
+        boolean doesPassGate = recipe.doesPassGate(Minecraft.getInstance().player);
         if (!doesPassGate && mouseX > 22 && mouseX < 40 && mouseY > 14 && mouseY < 30) {
             tooltip.addAll(ResearchUtils.generateMissingResearchList(gate.get()));
         }
@@ -124,14 +122,14 @@ public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<Cruc
 
     @Override
     public void draw(
-            RecipeHolder<CrucibleRecipe> recipe,
+            CrucibleRecipe recipe,
             IRecipeSlotsView recipeSlotsView,
             GuiGraphics guiGraphics,
             double mouseX,
             double mouseY) {
         background.draw(guiGraphics);
         arrow.draw(guiGraphics, 16, 6);
-        boolean doesPassGate = recipe.value().doesPassGate(Minecraft.getInstance().player);
+        boolean doesPassGate = recipe.doesPassGate(Minecraft.getInstance().player);
         if (!doesPassGate) guiGraphics.renderItem(Items.BARRIER.getDefaultInstance(), 22, 14);
     }
 }
