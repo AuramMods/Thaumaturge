@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.ai;
 
+import com.leclowndu93150.thaumaturge.compat.KnownMovement;
 import com.leclowndu93150.thaumaturge.content.entity.WispEntity;
 import com.leclowndu93150.thaumaturge.network.ClientboundWispZapPayload;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -99,7 +100,7 @@ public final class WispZapGoal extends Goal {
                 wisp.getZ(),
                 ARC_VIEW_RANGE,
                 new ClientboundWispZapPayload(wisp.getId(), target.getId()));
-        boolean still = isStill(target.getKnownMovement());
+        boolean still = isStill(KnownMovement.of(target));
         if (random.nextFloat() < hitChance(still)) {
             float damage =
                     (float) wisp.getAttributeValue(Attributes.ATTACK_DAMAGE) + (still ? STILL_DAMAGE_BONUS : 0.0F);

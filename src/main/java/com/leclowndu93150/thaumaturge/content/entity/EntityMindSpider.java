@@ -80,8 +80,8 @@ public final class EntityMindSpider extends Spider {
     }
 
     @Override
-    protected int getBaseExperienceReward() {
-        return isHarmless() ? 0 : super.getBaseExperienceReward();
+    public int getExperienceReward() {
+        return isHarmless() ? 0 : super.getExperienceReward();
     }
 
     @Override

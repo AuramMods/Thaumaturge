@@ -24,7 +24,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.AABB;
@@ -84,7 +83,7 @@ public final class ThaumicSlime extends Slime {
 
     @Override
     protected void dealDamage(LivingEntity target) {
-        if (this.level() instanceof ServerLevel server && this.isAlive()) {
+        if (this.level() instanceof ServerLevel && this.isAlive()) {
             int reach = this.getSize() + (isLaunched() ? LAUNCHED_BONUS_REACH : 0);
             double reachSq = ATTACK_REACH_FACTOR * reach * ATTACK_REACH_FACTOR * reach;
             if (this.distanceToSqr(target) < reachSq && this.hasLineOfSight(target)) {
@@ -94,7 +93,7 @@ public final class ThaumicSlime extends Slime {
                             SoundEvents.SLIME_ATTACK,
                             1.0F,
                             (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-                    EnchantmentHelper.doPostAttackEffects(server, target, source);
+                    this.doEnchantDamageEffects(this, target);
                 }
             }
         }
