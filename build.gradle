@@ -725,25 +725,25 @@ tasks.register('runBackgroundWindowSmoke', JavaExec) {
 }
 
 // Test settings are local to dedicated profiles.
+ext.writeBackgroundClientProfile = { File profile ->
+    profile.mkdirs()
+    def options = new File(profile, 'options.txt')
+    def settings = options.exists() ? options.readLines('UTF-8') : []
+    def overrides = [soundCategory_master: '0.0', narrator: '0', fullscreen: 'false',
+                     onboardAccessibility: 'false', pauseOnLostFocus: 'false']
+    settings.removeAll { line -> overrides.containsKey(line.split(':', 2)[0]) }
+    settings.addAll(overrides.collect { key, value -> "${key}:${value}" })
+    options.setText(settings.join('\n') + '\n', 'UTF-8')
+    def configDirectory = new File(profile, 'config')
+    configDirectory.mkdirs()
+    def fmlConfig = new File(configDirectory, 'fml.toml')
+    def fmlSettings = fmlConfig.exists() ? fmlConfig.readLines('UTF-8') : []
+    fmlSettings.removeAll { it ==~ /\s*earlyWindowControl\s*=.*/ }
+    fmlSettings.add('earlyWindowControl = false')
+    fmlConfig.setText(fmlSettings.join('\n') + '\n', 'UTF-8')
+}
 def prepareClientProfile = tasks.register('prepareClientProfile') {
-    doLast {
-        def profile = file('run/client')
-        profile.mkdirs()
-        def options = new File(profile, 'options.txt')
-        def settings = options.exists() ? options.readLines('UTF-8') : []
-        def overrides = [soundCategory_master: '0.0', narrator: '0', fullscreen: 'false',
-                         onboardAccessibility: 'false', pauseOnLostFocus: 'false']
-        settings.removeAll { line -> overrides.containsKey(line.split(':', 2)[0]) }
-        settings.addAll(overrides.collect { key, value -> "${key}:${value}" })
-        options.setText(settings.join('\n') + '\n', 'UTF-8')
-        def configDirectory = new File(profile, 'config')
-        configDirectory.mkdirs()
-        def fmlConfig = new File(configDirectory, 'fml.toml')
-        def fmlSettings = fmlConfig.exists() ? fmlConfig.readLines('UTF-8') : []
-        fmlSettings.removeAll { it ==~ /\s*earlyWindowControl\s*=.*/ }
-        fmlSettings.add('earlyWindowControl = false')
-        fmlConfig.setText(fmlSettings.join('\n') + '\n', 'UTF-8')
-    }
+    doLast { writeBackgroundClientProfile(file('run/client')) }
 }
 def prepareTestServers = tasks.register('prepareTestServers') {
     doLast {
@@ -763,6 +763,7 @@ tasks.matching { it.name in ['runServer', 'runGameTestServer'] }.configureEach {
 
 apply from: 'gradle/sable-forge.gradle'
 apply from: 'porting/testing/forge-tests.gradle'
+apply from: 'porting/testing/forge-original-tests.gradle'
 
 
 tasks.register('generateColorReference', JavaExec) {

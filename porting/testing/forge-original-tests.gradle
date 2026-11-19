@@ -1,0 +1,72 @@
+def profile = layout.buildDirectory.dir('forge-original-tests/client')
+def results = layout.buildDirectory.dir('test-results/forgeOriginalTest')
+def classList = layout.buildDirectory.file('forge-original-tests/classes.txt')
+def report = results.map { it.file('summary.txt') }
+def passed = results.map { it.file('passed') }
+
+configurations {
+    forgeOriginalTestLibraries
+}
+
+dependencies {
+    forgeOriginalTestLibraries platform('org.junit:junit-bom:5.11.4')
+    forgeOriginalTestLibraries 'org.junit.jupiter:junit-jupiter'
+    forgeOriginalTestLibraries 'org.junit.platform:junit-platform-launcher'
+    forgeOriginalTestLibraries 'org.junit.platform:junit-platform-reporting'
+    forgeOriginalTestLibraries 'org.mockito:mockito-core:5.15.2'
+}
+
+sourceSets {
+    forgeOriginalTestRunner {
+        java.srcDir 'porting/testing/forge-original-tests/java'
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath + configurations.forgeOriginalTestLibraries
+    }
+}
+
+// Load JUnit and Mockito beside the tests in Forge's game layer.
+tasks.named('processForgeOriginalTestRunnerResources') {
+    from({ configurations.forgeOriginalTestLibraries.files.collect { zipTree(it) } }) {
+        exclude 'META-INF/**', 'module-info.class'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+minecraft.runs.create('forgeOriginalTestClient') {
+    parent minecraft.runs.client
+    workingDirectory profile.get().asFile
+    property 'thaumaturge.testResourceRoot', file('src/main/resources').absolutePath
+    property 'thaumaturge.originalTestClasses', classList.get().asFile.absolutePath
+    property 'thaumaturge.originalTestResults', results.get().asFile.absolutePath
+    mods.getByName(mod_id).source(sourceSets.test)
+    mods.getByName(mod_id).source(sourceSets.forgeOriginalTestRunner)
+}
+
+def prepareOriginalTests = tasks.register('prepareForgeOriginalTests') {
+    dependsOn tasks.named('testClasses')
+    doLast {
+        writeBackgroundClientProfile(profile.get().asFile)
+        def resultDirectory = results.get().asFile
+        resultDirectory.mkdirs()
+        java.nio.file.Files.deleteIfExists(passed.get().asFile.toPath())
+        def tests = new TreeSet<String>()
+        sourceSets.test.output.classesDirs.each { directory ->
+            fileTree(directory) {
+                include '**/*Test.class'
+                exclude '**/*$*'
+            }.each { testClass ->
+                def relative = directory.toPath().relativize(testClass.toPath()).toString()
+                tests.add(relative.replace(File.separator, '.').replaceFirst(/\.class$/, ''))
+            }
+        }
+        classList.get().asFile.text = tests.join('\n') + '\n'
+    }
+}
+
+tasks.matching { it.name == 'runForgeOriginalTestClient' }.configureEach {
+    dependsOn prepareOriginalTests, tasks.named('forgeOriginalTestRunnerClasses'), tasks.named('backgroundAgentJar')
+    doLast {
+        if (!passed.get().asFile.exists()) {
+            throw new GradleException("The Forge original tests did not pass. See ${report.get().asFile}.")
+        }
+    }
+}

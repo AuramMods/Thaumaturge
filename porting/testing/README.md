@@ -61,6 +61,25 @@ Do not install the `*-background-test-agent.jar` as a mod or distribute it as th
 ported mod. Do not bring Minecraft to the foreground or send global key input
 for tests. Use only task-owned test profiles, worlds, and processes.
 
+## Complete original test suite
+
+Generate the mod's data after a clean checkout, then run the original suite in
+the initialized Forge client.
+
+```sh
+./gradlew runData
+./gradlew -PportHiddenWindow -PportIntegrations runForgeOriginalTestClient
+```
+
+This uses the separate profile under `build/forge-original-tests/client` with
+muted sound, narration off and the Forge splash disabled. With
+`-PportHiddenWindow`, the agent also keeps the game window hidden. The
+`-PportIntegrations` flag loads the pinned compatibility mods used by the
+existing tests. The runner launches JUnit after Forge finishes resource loading,
+writes the summary and XML to `build/test-results/forgeOriginalTest`, and closes
+the client. Gradle treats failed, skipped or aborted cases and an empty suite as
+a failed test run. The launcher and its dependencies live in test source sets.
+
 ## Headless Forge foundation tests
 
 ```sh
