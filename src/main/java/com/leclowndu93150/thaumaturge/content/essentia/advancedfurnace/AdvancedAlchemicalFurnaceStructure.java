@@ -35,19 +35,17 @@ public final class AdvancedAlchemicalFurnaceStructure {
                 }
                 boolean corner = x != 0 && z != 0;
                 cursor.setWithOffset(controller, x, 0, z);
-                if (!level.getBlockState(cursor)
-                        .is(
-                                corner
-                                        ? TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER
-                                        : TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE)) {
+                Block lower = corner
+                        ? TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get()
+                        : TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get();
+                if (!level.getBlockState(cursor).is(lower)) {
                     return false;
                 }
                 cursor.move(Direction.UP);
-                if (!level.getBlockState(cursor)
-                        .is(
-                                corner
-                                        ? TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER
-                                        : TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER)) {
+                Block upper = corner
+                        ? TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get()
+                        : TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get();
+                if (!level.getBlockState(cursor).is(upper)) {
                     return false;
                 }
             }

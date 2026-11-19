@@ -81,6 +81,7 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
     private static final String CURRENT_BURN_TIME_KEY = "CurrentItemBurnTime";
     private static final String SPEED_BOOST_KEY = "SpeedBoost";
     private static final int UNKNOWN_BELLOWS = -1;
+    private static final int HORIZONTAL_COUNT = 4;
 
     private final SmelterItems items = new SmelterItems();
     private boolean speedBoost;
@@ -298,7 +299,7 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
     }
 
     private Direction[] sidesWith(Direction facing, boolean aux) {
-        Direction[] found = new Direction[Direction.Plane.HORIZONTAL.length()];
+        Direction[] found = new Direction[HORIZONTAL_COUNT];
         int count = 0;
         for (Direction side : Direction.Plane.HORIZONTAL) {
             if (side != facing && isPartFacingBack(side, aux)) {
@@ -434,7 +435,7 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
             return;
         }
         Direction facing = getBlockState().getValue(BlockSmelter.FACING);
-        Direction[] sides = new Direction[Direction.Plane.HORIZONTAL.length() - 1];
+        Direction[] sides = new Direction[HORIZONTAL_COUNT - 1];
         int count = 0;
         for (Direction side : Direction.Plane.HORIZONTAL) {
             if (side != facing) {

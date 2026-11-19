@@ -1,15 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 
-import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
-
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
+import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
@@ -54,11 +52,13 @@ public final class BlockEntityThaumatoriumTop extends RegistryBlockEntity implem
 
     @Override
     public boolean connectsOn(Direction face) {
-        return lowerFor(face) instanceof BlockEntityThaumatorium machine && machine.connectsOn(face);
+        BlockEntityThaumatorium machine = lowerFor(face);
+        return machine != null && machine.connectsOn(face);
     }
 
     @Override
     public boolean receivesOn(Direction face) {
-        return lowerFor(face) instanceof BlockEntityThaumatorium machine && machine.receivesOn(face);
+        BlockEntityThaumatorium machine = lowerFor(face);
+        return machine != null && machine.receivesOn(face);
     }
 }
