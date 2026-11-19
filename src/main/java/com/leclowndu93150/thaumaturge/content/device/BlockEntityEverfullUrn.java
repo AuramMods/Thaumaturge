@@ -214,7 +214,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        output.put(TANK_KEY, tank.writeToNBT(registries, new CompoundTag()));
+        output.put(TANK_KEY, tank.writeToNBT(new CompoundTag()));
         int[] cells = new int[targets.size()];
         for (int i = 0; i < cells.length; i++) {
             cells[i] = targets.get(i);
@@ -226,7 +226,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         if (input.contains(TANK_KEY)) {
-            tank.readFromNBT(registries, input.getCompound(TANK_KEY));
+            tank.readFromNBT(input.getCompound(TANK_KEY));
         }
         targets.clear();
         for (int cell : input.getIntArray(HANDLERS_KEY)) {
@@ -243,7 +243,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
 
         @Override
         public boolean isFluidValid(FluidStack resource) {
-            return resource.is(Fluids.WATER);
+            return resource.getFluid() == Fluids.WATER;
         }
 
         @Override

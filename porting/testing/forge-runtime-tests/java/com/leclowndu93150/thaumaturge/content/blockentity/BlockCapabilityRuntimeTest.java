@@ -15,6 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -23,8 +26,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.ItemStackHandler;
 import org.junit.jupiter.api.Test;
@@ -116,6 +122,32 @@ class BlockCapabilityRuntimeTest {
         assertEquals(0, output.getSlots());
     }
 
+    @Test
+    void nativeFluidCapabilityRoundTripsTaggedContentsAndClearsAnEmptyTank() {
+        BlockState state = Blocks.FURNACE.defaultBlockState();
+        var machine = new Machine(BlockPos.ZERO, state);
+        var restored = new Machine(BlockPos.ZERO, state);
+        var fluidTag = new CompoundTag();
+        fluidTag.putString("origin", "fixture");
+        var fluid = new FluidStack(Fluids.LAVA, 740, fluidTag);
+        var input = machine.getCapability(ForgeCapabilities.FLUID_HANDLER).orElseThrow(AssertionError::new);
+        assertEquals(740, input.fill(fluid, FluidAction.EXECUTE));
+
+        var snapshot = machine.saveWithoutMetadata(RegistryAccess.EMPTY);
+        assertEquals("minecraft:lava", snapshot.getCompound("Tank").getString("FluidName"));
+        var output = restored.getCapability(ForgeCapabilities.FLUID_HANDLER).orElseThrow(AssertionError::new);
+        restored.loadWithComponents(snapshot, RegistryAccess.EMPTY);
+        var loaded = output.getFluidInTank(0);
+        assertSame(Fluids.LAVA, loaded.getFluid());
+        assertEquals(740, loaded.getAmount());
+        assertEquals(fluidTag, loaded.getTag());
+        assertEquals(snapshot, restored.saveWithoutMetadata(RegistryAccess.EMPTY));
+
+        input.drain(740, FluidAction.EXECUTE);
+        restored.loadWithComponents(machine.saveWithoutMetadata(RegistryAccess.EMPTY), RegistryAccess.EMPTY);
+        assertTrue(output.getFluidInTank(0).isEmpty());
+    }
+
     private static final class Machine extends RegistryBlockEntity {
         final ItemStackHandler items = new ItemStackHandler(1);
         final FluidTank tank = new FluidTank(1000);
@@ -128,6 +160,20 @@ class BlockCapabilityRuntimeTest {
             exposeCapability(ForgeCapabilities.FLUID_HANDLER, side -> tank);
             exposeCapability(ForgeCapabilities.ENERGY, side ->
                     side == getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING) ? energy : null);
+        }
+
+        @Override
+        protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+            super.saveAdditional(output, registries);
+            output.put("Tank", tank.writeToNBT(new CompoundTag()));
+        }
+
+        @Override
+        protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
+            super.loadAdditional(input, registries);
+            if (input.contains("Tank")) {
+                tank.readFromNBT(input.getCompound("Tank"));
+            }
         }
     }
 }

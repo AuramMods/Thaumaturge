@@ -7,6 +7,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -21,6 +22,8 @@ public final class TTFluidTagsProvider extends TagsProvider<Fluid> {
 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
-        tag(FluidTags.WATER).add(TTFluids.PURIFYING_SOURCE.getKey()).add(TTFluids.PURIFYING_FLOWING.getKey());
+        tag(FluidTags.WATER).add(
+                ResourceKey.create(Registries.FLUID, TTFluids.PURIFYING_SOURCE.getId()),
+                ResourceKey.create(Registries.FLUID, TTFluids.PURIFYING_FLOWING.getId()));
     }
 }

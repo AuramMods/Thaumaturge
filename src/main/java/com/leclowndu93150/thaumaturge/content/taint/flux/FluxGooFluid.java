@@ -13,8 +13,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
-import java.util.ArrayList;
-import java.util.List;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -165,7 +164,7 @@ public abstract class FluxGooFluid extends ForgeFlowingFluid {
         }
 
         int lowerThan = quantaRemaining - 1;
-        List<BlockPos> parties = new ArrayList<>(MAX_PARTIES);
+        var parties = new ObjectArrayList<BlockPos>(MAX_PARTIES);
         parties.add(pos);
         int total = quantaRemaining;
         for (Direction direction : Direction.Plane.HORIZONTAL) {

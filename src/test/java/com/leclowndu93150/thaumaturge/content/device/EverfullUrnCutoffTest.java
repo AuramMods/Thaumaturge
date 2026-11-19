@@ -29,7 +29,7 @@ class EverfullUrnCutoffTest {
         FluidTank oldTank = new FluidTank(BlockEntityEverfullUrn.CAPACITY);
         oldTank.fill(water, IFluidHandler.FluidAction.EXECUTE);
         CompoundTag oldSave = new CompoundTag();
-        oldSave.put("Tank", oldTank.writeToNBT(registries, new CompoundTag()));
+        oldSave.put("Tank", oldTank.writeToNBT(new CompoundTag()));
         oldSave.putIntArray("Handlers", new int[] {0, OWN_CELL, 74});
 
         urn.loadAdditional(oldSave, registries);

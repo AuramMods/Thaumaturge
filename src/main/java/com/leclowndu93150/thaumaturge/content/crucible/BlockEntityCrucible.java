@@ -167,7 +167,7 @@ public class BlockEntityCrucible extends AbstractSyncedBlockEntity implements Re
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         TTNbt.store(output, "Aspects", AspectList.CODEC, registries, aspects);
-        output.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
+        output.put("Tank", tank.writeToNBT(new CompoundTag()));
         output.putShort("Heat", heat);
     }
 
@@ -175,7 +175,7 @@ public class BlockEntityCrucible extends AbstractSyncedBlockEntity implements Re
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         if (input.contains("Tank")) {
-            tank.readFromNBT(registries, input.getCompound("Tank"));
+            tank.readFromNBT(input.getCompound("Tank"));
         }
         aspects = TTNbt.read(input, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         heat = (short) input.getShort("Heat");

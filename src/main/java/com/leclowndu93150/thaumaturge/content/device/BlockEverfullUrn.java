@@ -95,7 +95,9 @@ public final class BlockEverfullUrn extends BaseEntityBlock implements BlockInte
         if (stack.is(Items.GLASS_BOTTLE) && urn.waterAmount() >= BOTTLE_COST) {
             ItemStack bottle = new ItemStack(Items.POTION);
             ItemData.set(bottle, VanillaItemData.POTION_CONTENTS, new PotionData(Potions.WATER));
-            stack.consume(1, player);
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
             if (!player.getInventory().add(bottle)) {
                 player.drop(bottle, false);
             }

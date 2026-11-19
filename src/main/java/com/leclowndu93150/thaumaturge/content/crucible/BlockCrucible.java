@@ -108,7 +108,7 @@ public class BlockCrucible extends BaseEntityBlock implements BlockInteractions 
         if (!(level.getBlockEntity(pos) instanceof BlockEntityCrucible crucible))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         FluidStack fs = FluidUtil.getFluidContained(itemStack).orElse(FluidStack.EMPTY);
-        if (fs.is(Fluids.WATER) && fs.getAmount() >= BlockEntityCrucible.TANK_CAPACITY) {
+        if (fs.getFluid() == Fluids.WATER && fs.getAmount() >= BlockEntityCrucible.TANK_CAPACITY) {
             if (crucible.getTank().getFluidAmount() < BlockEntityCrucible.TANK_CAPACITY) {
                 if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hitResult.getDirection())) {
                     return ItemInteractionResult.SUCCESS;

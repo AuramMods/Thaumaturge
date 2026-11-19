@@ -122,7 +122,7 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
 
     private boolean hasIngredients() {
         if (mix) {
-            return tank.getFluid().is(Fluids.WATER)
+            return tank.getFluid().getFluid() == Fluids.WATER
                     && tank.getFluidAmount() >= FLUID_COST
                     && items.getStackInSlot(0).is(TTItems.BATH_SALTS.get());
         }
@@ -164,7 +164,7 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         output.putBoolean("Mix", mix);
-        output.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
+        output.put("Tank", tank.writeToNBT(new CompoundTag()));
         output.put("Items", items.serializeNBT());
     }
 
@@ -173,7 +173,7 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
         super.loadAdditional(input, registries);
         mix = (input.contains("Mix") ? input.getBoolean("Mix") : true);
         if (input.contains("Tank")) {
-            tank.readFromNBT(registries, input.getCompound("Tank"));
+            tank.readFromNBT(input.getCompound("Tank"));
         }
         if (input.contains("Items")) {
             items.deserializeNBT(input.getCompound("Items"));

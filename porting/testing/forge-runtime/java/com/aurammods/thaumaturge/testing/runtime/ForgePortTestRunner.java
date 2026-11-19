@@ -1,7 +1,9 @@
 package com.aurammods.thaumaturge.testing.runtime;
 
 import com.leclowndu93150.thaumaturge.registry.TTAttributes;
+import com.leclowndu93150.thaumaturge.registry.TTFluidTypes;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -98,6 +100,8 @@ public final class ForgePortTestRunner {
         var vanillaFluids = ForgeMod.class.getDeclaredField("VANILLA_FLUID_TYPES");
         vanillaFluids.setAccessible(true);
         ((DeferredRegister<?>) vanillaFluids.get(null)).register(bus);
+        TTFluidTypes.register(bus);
+        TTSounds.register(bus);
         var forgeAttributes = ForgeMod.class.getDeclaredField("ATTRIBUTES");
         forgeAttributes.setAccessible(true);
         ((DeferredRegister<?>) forgeAttributes.get(null)).register(bus);
@@ -112,6 +116,18 @@ public final class ForgePortTestRunner {
         var registry = (ForgeRegistry<?>) ForgeRegistries.FLUID_TYPES.get();
         var ctor = RegisterEvent.class.getDeclaredConstructor(ResourceKey.class, ForgeRegistry.class, Registry.class);
         ctor.setAccessible(true);
+        // Forge posts vanilla registries before custom ones. Flux goo refers to a registered sound.
+        var sounds = (ForgeRegistry<?>) ForgeRegistries.SOUND_EVENTS;
+        var vanillaSounds = (MappedRegistry<?>) BuiltInRegistries.SOUND_EVENT;
+        boolean soundsLocked = sounds.isLocked();
+        sounds.unfreeze();
+        vanillaSounds.unfreeze();
+        try {
+            bus.post(ctor.newInstance(ForgeRegistries.Keys.SOUND_EVENTS, sounds, vanillaSounds));
+        } finally {
+            if (soundsLocked) sounds.freeze();
+            vanillaSounds.freeze();
+        }
         bus.post(ctor.newInstance(ForgeRegistries.Keys.FLUID_TYPES, registry, null));
         registry.freeze();
         var attributes = (ForgeRegistry<?>) ForgeRegistries.ATTRIBUTES;

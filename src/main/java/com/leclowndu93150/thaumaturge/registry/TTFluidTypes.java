@@ -9,13 +9,13 @@ import net.minecraft.world.item.Rarity;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public final class TTFluidTypes {
     public static final DeferredRegister<FluidType> FLUID_TYPES =
-            DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, TTIds.MODID);
+            DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, TTIds.MODID);
 
     public static final RegistryObject<FluxGooFluidType> FLUX_GOO = FLUID_TYPES.register(
             "flux_goo",
