@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
-import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerInput;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerPlacement;
-import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerFx;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -28,14 +28,14 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class SalisMundusItem extends Item {
@@ -46,12 +46,10 @@ public final class SalisMundusItem extends Item {
     }
 
     @SubscribeEvent
-    public static void allowUseOnCraftingTable(UseItemOnBlockEvent event) {
-        if (event.getUsePhase() != UseItemOnBlockEvent.UsePhase.BLOCK) return;
-        if (!event.getItemStack().is(TTItems.SALIS_MUNDUS)) return;
-        if (event.getPlayer() == null) return;
-        if (!event.getPlayer().isCrouching()) return;
-        event.cancelWithResult(ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION);
+    public static void allowUseOnCraftingTable(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getEntity().isCrouching() && event.getItemStack().is(TTItems.SALIS_MUNDUS.get())) {
+            event.setUseBlock(Event.Result.DENY);
+        }
     }
 
     @Override

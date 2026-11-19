@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.recipe;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeSerializers;
@@ -14,7 +15,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -50,7 +51,7 @@ public final class SalisMundusRecipe extends CustomRecipe {
         boolean bowl = false;
         boolean flint = false;
         boolean redstone = false;
-        Set<ResourceLocation> crystals = new HashSet<>();
+        Set<ResourceKey<IAspect>> crystals = new HashSet<>();
         for (int slot = 0; slot < input.size(); slot++) {
             ItemStack stack = input.getItem(slot);
             if (stack.isEmpty()) {
@@ -76,8 +77,8 @@ public final class SalisMundusRecipe extends CustomRecipe {
                 if (!stack.is(TTItems.ESSENTIA_CRYSTAL.get()) || aspect == null) {
                     return false;
                 }
-                if (crystals.size() >= REQUIRED_CRYSTALS
-                        || !crystals.add(aspect.aspect().getKey().location())) {
+                var key = aspect.aspect().unwrapKey().orElse(null);
+                if (key == null || crystals.size() >= REQUIRED_CRYSTALS || !crystals.add(key)) {
                     return false;
                 }
             }
