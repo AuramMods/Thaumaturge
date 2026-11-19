@@ -34,11 +34,10 @@ public final class BlockArcanePressurePlate extends PressurePlateBlock implement
     public static final IntegerProperty MODE = IntegerProperty.create("mode", 0, 2);
 
     public BlockArcanePressurePlate(BlockBehaviour.Properties properties) {
-        super(BlockSetType.OAK, properties);
+        super(Sensitivity.EVERYTHING, properties, BlockSetType.OAK);
         registerDefaultState(defaultBlockState().setValue(MODE, 0));
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public MapCodec<PressurePlateBlock> codec() {
         return (MapCodec<PressurePlateBlock>) (MapCodec<?>) CODEC;

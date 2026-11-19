@@ -1527,7 +1527,7 @@ public final class TTBlocks {
 
     public static final RegistryObject<DoorBlock> DOOR_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "door_greatwood",
-            props -> new DoorBlock(BlockSetType.OAK, props),
+            props -> new DoorBlock(props, BlockSetType.OAK),
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .instrument(NoteBlockInstrument.BASS)
@@ -1538,7 +1538,7 @@ public final class TTBlocks {
 
     public static final RegistryObject<TrapDoorBlock> TRAPDOOR_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "trapdoor_greatwood",
-            props -> new TrapDoorBlock(BlockSetType.OAK, props),
+            props -> new TrapDoorBlock(props, BlockSetType.OAK),
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .instrument(NoteBlockInstrument.BASS)
@@ -1560,7 +1560,7 @@ public final class TTBlocks {
 
     public static final RegistryObject<FenceGateBlock> FENCE_GATE_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "fence_gate_greatwood",
-            props -> new FenceGateBlock(WoodType.OAK, props),
+            props -> new FenceGateBlock(props, WoodType.OAK),
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .forceSolidOn()
@@ -1570,12 +1570,12 @@ public final class TTBlocks {
 
     public static final RegistryObject<ButtonBlock> BUTTON_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "button_greatwood",
-            props -> new ButtonBlock(BlockSetType.OAK, WOODEN_BUTTON_PRESS_TICKS, props),
+            props -> new ButtonBlock(props, BlockSetType.OAK, WOODEN_BUTTON_PRESS_TICKS, true),
             BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY));
 
     public static final RegistryObject<PressurePlateBlock> PRESSURE_PLATE_GREATWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "pressure_plate_greatwood",
-            props -> new PressurePlateBlock(BlockSetType.OAK, props),
+            props -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props, BlockSetType.OAK),
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .forceSolidOn()
@@ -1587,7 +1587,7 @@ public final class TTBlocks {
 
     public static final RegistryObject<DoorBlock> DOOR_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "door_silverwood",
-            props -> new DoorBlock(BlockSetType.OAK, props),
+            props -> new DoorBlock(props, BlockSetType.OAK),
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.QUARTZ)
                     .instrument(NoteBlockInstrument.BASS)
@@ -1598,7 +1598,7 @@ public final class TTBlocks {
 
     public static final RegistryObject<TrapDoorBlock> TRAPDOOR_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "trapdoor_silverwood",
-            props -> new TrapDoorBlock(BlockSetType.OAK, props),
+            props -> new TrapDoorBlock(props, BlockSetType.OAK),
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.QUARTZ)
                     .instrument(NoteBlockInstrument.BASS)
@@ -1620,7 +1620,7 @@ public final class TTBlocks {
 
     public static final RegistryObject<FenceGateBlock> FENCE_GATE_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "fence_gate_silverwood",
-            props -> new FenceGateBlock(WoodType.OAK, props),
+            props -> new FenceGateBlock(props, WoodType.OAK),
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.QUARTZ)
                     .forceSolidOn()
@@ -1630,12 +1630,12 @@ public final class TTBlocks {
 
     public static final RegistryObject<ButtonBlock> BUTTON_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "button_silverwood",
-            props -> new ButtonBlock(BlockSetType.OAK, WOODEN_BUTTON_PRESS_TICKS, props),
+            props -> new ButtonBlock(props, BlockSetType.OAK, WOODEN_BUTTON_PRESS_TICKS, true),
             BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY));
 
     public static final RegistryObject<PressurePlateBlock> PRESSURE_PLATE_SILVERWOOD = ForgeRegistration.registerBlock(BLOCKS,
             "pressure_plate_silverwood",
-            props -> new PressurePlateBlock(BlockSetType.OAK, props),
+            props -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props, BlockSetType.OAK),
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.QUARTZ)
                     .forceSolidOn()

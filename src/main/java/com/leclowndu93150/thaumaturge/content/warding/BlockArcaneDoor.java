@@ -37,9 +37,6 @@ public final class BlockArcaneDoor extends DoorBlock implements BlockInteraction
     private static final BlockSetType ARCANE = new BlockSetType(
             "thaumaturge_arcane",
             false,
-            false,
-            true,
-            BlockSetType.PressurePlateSensitivity.EVERYTHING,
             SoundType.WOOD,
             SoundEvents.WOODEN_DOOR_CLOSE,
             SoundEvents.WOODEN_DOOR_OPEN,
@@ -51,7 +48,7 @@ public final class BlockArcaneDoor extends DoorBlock implements BlockInteraction
             SoundEvents.WOODEN_BUTTON_CLICK_ON);
 
     public BlockArcaneDoor(BlockBehaviour.Properties properties) {
-        super(ARCANE, properties);
+        super(properties, ARCANE);
     }
 
     public MapCodec<BlockArcaneDoor> codec() {

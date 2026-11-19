@@ -9,11 +9,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.TransparentBlock;
+import net.minecraft.world.level.block.AbstractGlassBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-/** A warded transparent block. TransparentBlock supplies seam-free same-block face culling. */
-public final class BlockWardedGlass extends TransparentBlock {
+/** A warded transparent block with seamless faces between adjacent blocks of the same type. */
+public final class BlockWardedGlass extends AbstractGlassBlock {
     public static final MapCodec<BlockWardedGlass> CODEC = simpleCodec(BlockWardedGlass::new);
 
     public BlockWardedGlass(BlockBehaviour.Properties properties) {
