@@ -16,16 +16,17 @@ class AdvancedFurnacePanelCutoffTest {
 
         AdvancedAlchemicalFurnaceRenderer.writePanel(buffer, pose, plane, 0.0F, 12);
 
-        verify(buffer, times(2)).addVertex(pose, 1.881F, 1.4375F, -0.375F);
-        verify(buffer, times(2)).addVertex(pose, 1.881F, 1.4375F, -0.625F);
-        verify(buffer, times(2)).addVertex(pose, 1.881F, 1.1875F, -0.625F);
-        verify(buffer, times(2)).addVertex(pose, 1.881F, 1.1875F, -0.375F);
-        verify(buffer, times(2)).setUv(0.0F, 1.0F);
-        verify(buffer, times(2)).setUv(1.0F, 1.0F);
-        verify(buffer, times(2)).setUv(1.0F, 0.0F);
-        verify(buffer, times(2)).setUv(0.0F, 0.0F);
-        verify(buffer, times(8)).setLight(12);
-        verify(buffer, times(8)).setColor(-1);
+        verify(buffer, times(2)).vertex(pose.pose(), 1.881F, 1.4375F, -0.375F);
+        verify(buffer, times(2)).vertex(pose.pose(), 1.881F, 1.4375F, -0.625F);
+        verify(buffer, times(2)).vertex(pose.pose(), 1.881F, 1.1875F, -0.625F);
+        verify(buffer, times(2)).vertex(pose.pose(), 1.881F, 1.1875F, -0.375F);
+        verify(buffer, times(2)).uv(0.0F, 1.0F);
+        verify(buffer, times(2)).uv(1.0F, 1.0F);
+        verify(buffer, times(2)).uv(1.0F, 0.0F);
+        verify(buffer, times(2)).uv(0.0F, 0.0F);
+        verify(buffer, times(8)).uv2(12);
+        verify(buffer, times(8)).color(-1);
+        verify(buffer, times(8)).endVertex();
     }
 
     @Test
@@ -36,10 +37,11 @@ class AdvancedFurnacePanelCutoffTest {
 
         AdvancedAlchemicalFurnaceRenderer.writePanel(buffer, pose, plane, 0.0F, 15);
 
-        verify(buffer, times(2)).addVertex(pose, 1.9435F, 0.5625F, 0.625F);
-        verify(buffer, times(2)).addVertex(pose, 1.9435F, 0.5625F, 0.375F);
-        verify(buffer, times(2)).addVertex(pose, 1.9435F, 0.4375F, 0.375F);
-        verify(buffer, times(2)).addVertex(pose, 1.9435F, 0.4375F, 0.625F);
-        verify(buffer, times(8)).setLight(15);
+        verify(buffer, times(2)).vertex(pose.pose(), 1.9435F, 0.5625F, 0.625F);
+        verify(buffer, times(2)).vertex(pose.pose(), 1.9435F, 0.5625F, 0.375F);
+        verify(buffer, times(2)).vertex(pose.pose(), 1.9435F, 0.4375F, 0.375F);
+        verify(buffer, times(2)).vertex(pose.pose(), 1.9435F, 0.4375F, 0.625F);
+        verify(buffer, times(8)).uv2(15);
+        verify(buffer, times(8)).endVertex();
     }
 }

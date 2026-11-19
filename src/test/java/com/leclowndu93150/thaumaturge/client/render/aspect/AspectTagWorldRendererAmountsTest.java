@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.RETURNS_SELF;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -66,21 +67,21 @@ final class AspectTagWorldRendererAmountsTest {
         AspectList aspects =
                 AspectList.of(new AspectInstance(Holder.direct(aer), 7), new AspectInstance(Holder.direct(ignis), 11));
         RenderType renderType = mock(RenderType.class);
-        VertexConsumer consumer = mock(VertexConsumer.class, invocation -> invocation.getMock());
+        VertexConsumer consumer = mock(VertexConsumer.class, RETURNS_SELF);
         when(buffers.getBuffer(renderType)).thenReturn(consumer);
         List<Vector3f> vertices = new ArrayList<>();
         List<Vector3f> amounts = new ArrayList<>();
         doAnswer(invocation -> {
-                    PoseStack.Pose pose = invocation.getArgument(0);
+                    Matrix4f position = invocation.getArgument(0);
                     vertices.add(new Vector3f(
                                     invocation.getArgument(1, Float.class),
                                     invocation.getArgument(2, Float.class),
                                     invocation.getArgument(3, Float.class))
-                            .mulPosition(pose.pose()));
+                            .mulPosition(position));
                     return consumer;
                 })
                 .when(consumer)
-                .addVertex(any(PoseStack.Pose.class), anyFloat(), anyFloat(), anyFloat());
+                .vertex(any(Matrix4f.class), anyFloat(), anyFloat(), anyFloat());
         doAnswer(invocation -> {
                     amounts.add(new Vector3f().mulPosition(invocation.getArgument(5, Matrix4f.class)));
                     return 0;
@@ -182,7 +183,7 @@ final class AspectTagWorldRendererAmountsTest {
         Holder<IAspect> holder = Holder.direct(aspect);
         AspectList aspects = AspectList.of(new AspectInstance(holder, 7));
         RenderType renderType = mock(RenderType.class);
-        VertexConsumer vertexConsumer = mock(VertexConsumer.class, invocation -> invocation.getMock());
+        VertexConsumer vertexConsumer = mock(VertexConsumer.class, RETURNS_SELF);
         when(buffers.getBuffer(renderType)).thenReturn(vertexConsumer);
 
         try (MockedStatic<TTFlatRenderTypes> renderTypes = mockStatic(TTFlatRenderTypes.class);

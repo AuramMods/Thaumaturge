@@ -24,6 +24,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.items.ItemStackHandler;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.Test;
 
@@ -85,7 +86,8 @@ class ResearchTablePaperPortTest {
 
         renderer.render(table, 0.0F, new PoseStack(), buffers, 15728880, 0);
 
-        verify(buffer, times(20)).addVertex(any(PoseStack.Pose.class), anyFloat(), anyFloat(), anyFloat());
+        verify(buffer, times(20)).vertex(any(Matrix4f.class), anyFloat(), anyFloat(), anyFloat());
+        verify(buffer, times(20)).endVertex();
     }
 
     @Test
