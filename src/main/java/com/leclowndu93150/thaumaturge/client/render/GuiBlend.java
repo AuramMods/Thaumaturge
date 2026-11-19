@@ -3,14 +3,21 @@ package com.leclowndu93150.thaumaturge.client.render;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
 public final class GuiBlend {
     private GuiBlend() {}
 
-    public static LayeredDraw.Layer alphaBlendedLayer(LayeredDraw.Layer layer) {
-        return (graphics, deltaTracker) -> withAlphaBlend(graphics, () -> layer.render(graphics, deltaTracker));
+    public static IGuiOverlay alphaBlendedOverlay(IGuiOverlay overlay) {
+        return (gui, graphics, partialTick, width, height) -> {
+            if (!gui.getMinecraft().options.hideGui) {
+                withAlphaBlend(graphics, () -> {
+                    RenderSystem.disableDepthTest();
+                    overlay.render(gui, graphics, partialTick, width, height);
+                });
+            }
+        };
     }
 
     public static void withAlphaBlend(GuiGraphics graphics, Runnable draw) {

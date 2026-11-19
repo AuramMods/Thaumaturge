@@ -10,18 +10,18 @@ import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.mojang.math.Axis;
 import java.util.EnumMap;
 import java.util.Map;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
-public final class RechargeHudOverlay implements LayeredDraw.Layer {
+public final class RechargeHudOverlay implements IGuiOverlay {
     private static final ResourceLocation HUD = TTIds.rl("textures/gui/hud.png");
     private static final int TEX_SIZE = 256;
 
@@ -53,8 +53,8 @@ public final class RechargeHudOverlay implements LayeredDraw.Layer {
     public RechargeHudOverlay() {}
 
     @Override
-    public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
-        Minecraft mc = Minecraft.getInstance();
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+        Minecraft mc = gui.getMinecraft();
         LocalPlayer player = mc.player;
         if (player == null || mc.options.hideGui) {
             return;

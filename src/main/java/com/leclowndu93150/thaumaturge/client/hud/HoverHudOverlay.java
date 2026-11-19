@@ -3,14 +3,14 @@ package com.leclowndu93150.thaumaturge.client.hud;
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
 import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import com.leclowndu93150.thaumaturge.content.equipment.hover.HoverManager;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
-public final class HoverHudOverlay implements LayeredDraw.Layer {
+public final class HoverHudOverlay implements IGuiOverlay {
     private static final int FILL_X = 6;
     private static final int FILL_BOTTOM_OFFSET = 24;
     private static final int FILL_U = 0;
@@ -30,8 +30,8 @@ public final class HoverHudOverlay implements LayeredDraw.Layer {
     private static final int SPARK_STRIP_W = SPARK_SIZE * SPARK_FRAMES;
 
     @Override
-    public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
-        Minecraft mc = Minecraft.getInstance();
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+        Minecraft mc = gui.getMinecraft();
         LocalPlayer player = mc.player;
         if (player == null || mc.options.hideGui || mc.screen != null) {
             return;

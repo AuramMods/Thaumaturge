@@ -3,15 +3,15 @@ package com.leclowndu93150.thaumaturge.debug.client;
 import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanRaycastHelper;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -19,7 +19,7 @@ import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
-public final class RaycastDebugOverlay implements LayeredDraw.Layer {
+public final class RaycastDebugOverlay implements IGuiOverlay {
 
     public static @Nullable HitResult serverHitResult = null;
     private static boolean enabled = false;
@@ -60,11 +60,12 @@ public final class RaycastDebugOverlay implements LayeredDraw.Layer {
     }
 
     @Override
-    public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
-        if (!enabled) return;
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+        Minecraft mc = gui.getMinecraft();
+        if (!enabled || mc.options.hideGui) return;
         graphics.drawString(
-                Minecraft.getInstance().font, "Client Raycast : " + formatResult(clientHitResult), 2, 2, 0xFFFFFFFF);
+                mc.font, "Client Raycast : " + formatResult(clientHitResult), 2, 2, 0xFFFFFFFF);
         graphics.drawString(
-                Minecraft.getInstance().font, "Server Raycast : " + formatResult(serverHitResult), 2, 12, 0xFFFFFFFF);
+                mc.font, "Server Raycast : " + formatResult(serverHitResult), 2, 12, 0xFFFFFFFF);
     }
 }

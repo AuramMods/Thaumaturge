@@ -12,16 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -29,7 +29,7 @@ import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
-public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
+public final class KnowledgeGainOverlay implements IGuiOverlay {
     private static final ResourceLocation BOOK = TTIds.rl("textures/item/thaumonomicon.png");
     private static final ResourceLocation KNOW_OBSERVATION = TTIds.rl("textures/research/knowledge_observation.png");
     private static final ResourceLocation KNOW_THEORY = TTIds.rl("textures/research/knowledge_theory.png");
@@ -55,12 +55,12 @@ public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
     private static final List<GuiSpark> SPARKS = new ArrayList<>();
 
     @Override
-    public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
-        Minecraft mc = Minecraft.getInstance();
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+        Minecraft mc = gui.getMinecraft();
         if (mc.player == null || mc.options.hideGui || (bookFade <= 0.0F && SPARKS.isEmpty())) {
             return;
         }
-        float partial = deltaTracker.getGameTimeDeltaPartialTick(false);
+        float partial = partialTick;
         int ww = graphics.guiWidth();
         int hh = graphics.guiHeight();
 

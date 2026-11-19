@@ -7,7 +7,6 @@ import com.leclowndu93150.thaumaturge.client.aura.ClientAuraCache;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import com.leclowndu93150.thaumaturge.network.ServerboundRequestAuraChunkPayload;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -86,7 +85,7 @@ public final class AuraHudOverlay implements LeftHudStack.Gauge {
     }
 
     @Override
-    public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
+    public void render(GuiGraphics graphics, float partialTick) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         ClientLevel level = mc.level;
@@ -110,7 +109,7 @@ public final class AuraHudOverlay implements LeftHudStack.Gauge {
         int fluxRows = Math.min(TUBE_ROWS - visRows, Math.round(fluxShare * TUBE_ROWS));
         int visTop = TUBE_BOTTOM - visRows;
         int fluxTop = visTop - fluxRows;
-        float clock = (level.getGameTime() % SCROLL_WRAP_TICKS) + deltaTracker.getGameTimeDeltaPartialTick(false);
+        float clock = (level.getGameTime() % SCROLL_WRAP_TICKS) + partialTick;
         drawBand(graphics, visTop, visRows, VIS_TINT, VIS_SHIMMER_U, VIS_SHIMMER_TINT, clock * VIS_SHIMMER_SPEED);
         drawBand(graphics, fluxTop, fluxRows, FLUX_TINT, FLUX_SHIMMER_U, FLUX_SHIMMER_TINT, clock * FLUX_SHIMMER_SPEED);
         GuiBlend.blitTinted(

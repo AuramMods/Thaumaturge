@@ -5,41 +5,33 @@ import com.leclowndu93150.thaumaturge.client.casters.RadialFocusOverlay;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import java.util.List;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = TTIds.MODID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = TTIds.MODID, bus = EventBusSubscriber.Bus.MOD)
 public final class TTHudEvents {
     private TTHudEvents() {}
 
     @SubscribeEvent
-    public static void registerLayers(RegisterGuiLayersEvent event) {
+    public static void registerOverlays(RegisterGuiOverlaysEvent event) {
+        // Forge draws the experience level in EXPERIENCE_BAR, followed by the item name or spectator tooltip.
+        var anchor = VanillaGuiOverlay.ITEM_NAME.id();
         event.registerAbove(
-                VanillaGuiLayers.EXPERIENCE_LEVEL,
-                TTIds.rl("hover_hud"),
-                GuiBlend.alphaBlendedLayer(new HoverHudOverlay()));
+                anchor, "hover_hud", GuiBlend.alphaBlendedOverlay(new HoverHudOverlay()));
         event.registerAbove(
-                VanillaGuiLayers.EXPERIENCE_LEVEL,
-                TTIds.rl("left_hud_stack"),
-                GuiBlend.alphaBlendedLayer(new LeftHudStack(
+                anchor,
+                "left_hud_stack",
+                GuiBlend.alphaBlendedOverlay(new LeftHudStack(
                         List.of(CasterHudOverlay.dialGauge(), new AuraHudOverlay(), new SanityHudOverlay()))));
         event.registerAbove(
-                VanillaGuiLayers.EXPERIENCE_LEVEL,
-                TTIds.rl("knowledge_gain"),
-                GuiBlend.alphaBlendedLayer(new KnowledgeGainOverlay()));
+                anchor, "knowledge_gain", GuiBlend.alphaBlendedOverlay(new KnowledgeGainOverlay()));
         event.registerAbove(
-                VanillaGuiLayers.EXPERIENCE_LEVEL,
-                TTIds.rl("caster_hud"),
-                GuiBlend.alphaBlendedLayer(new CasterHudOverlay()));
+                anchor, "caster_hud", GuiBlend.alphaBlendedOverlay(new CasterHudOverlay()));
         event.registerAbove(
-                VanillaGuiLayers.EXPERIENCE_LEVEL,
-                TTIds.rl("recharge_hud"),
-                GuiBlend.alphaBlendedLayer(new RechargeHudOverlay()));
+                anchor, "recharge_hud", GuiBlend.alphaBlendedOverlay(new RechargeHudOverlay()));
         event.registerAbove(
-                VanillaGuiLayers.EXPERIENCE_LEVEL,
-                TTIds.rl("radial_focus"),
-                GuiBlend.alphaBlendedLayer(new RadialFocusOverlay()));
+                anchor, "radial_focus", GuiBlend.alphaBlendedOverlay(new RadialFocusOverlay()));
     }
 }

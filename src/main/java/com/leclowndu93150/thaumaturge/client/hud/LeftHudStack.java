@@ -2,14 +2,14 @@ package com.leclowndu93150.thaumaturge.client.hud;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import org.jspecify.annotations.Nullable;
 
-public final class LeftHudStack implements LayeredDraw.Layer {
+public final class LeftHudStack implements IGuiOverlay {
     public interface Gauge {
         boolean visible(Minecraft mc, LocalPlayer player);
 
@@ -18,7 +18,7 @@ public final class LeftHudStack implements LayeredDraw.Layer {
         @Nullable
         String exclusiveGroup();
 
-        void render(GuiGraphics graphics, DeltaTracker deltaTracker);
+        void render(GuiGraphics graphics, float partialTick);
     }
 
     private final List<Gauge> gauges;
@@ -28,8 +28,8 @@ public final class LeftHudStack implements LayeredDraw.Layer {
     }
 
     @Override
-    public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
-        Minecraft mc = Minecraft.getInstance();
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+        Minecraft mc = gui.getMinecraft();
         LocalPlayer player = mc.player;
         if (player == null || mc.options.hideGui) {
             return;
@@ -48,9 +48,12 @@ public final class LeftHudStack implements LayeredDraw.Layer {
                 claimedGroups.add(group);
             }
             graphics.pose().pushPose();
-            graphics.pose().translate(0.0F, y, 0.0F);
-            gauge.render(graphics, deltaTracker);
-            graphics.pose().popPose();
+            try {
+                graphics.pose().translate(0.0F, y, 0.0F);
+                gauge.render(graphics, partialTick);
+            } finally {
+                graphics.pose().popPose();
+            }
             y += gauge.height();
         }
     }

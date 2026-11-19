@@ -21,10 +21,8 @@ import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.Util;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -33,8 +31,10 @@ import net.minecraft.resources.ResourceLocation;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
-public final class CasterHudOverlay implements LayeredDraw.Layer {
+public final class CasterHudOverlay implements IGuiOverlay {
     private static final ResourceLocation HUD = TTIds.rl("textures/gui/hud.png");
     private static final ResourceLocation HUD_WAND = TTIds.rl("textures/gui/hud_wand.png");
 
@@ -110,15 +110,15 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
             }
 
             @Override
-            public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
+            public void render(GuiGraphics graphics, float partialTick) {
                 renderDial(graphics, 0);
             }
         };
     }
 
     @Override
-    public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
-        Minecraft mc = Minecraft.getInstance();
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+        Minecraft mc = gui.getMinecraft();
         if (!isVisible(mc) || !ThaumaturgeClientConfig.dialBottom()) {
             return;
         }

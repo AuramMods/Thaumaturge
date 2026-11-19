@@ -15,14 +15,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import net.minecraft.Util;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -32,7 +32,7 @@ import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
-public final class RadialFocusOverlay implements LayeredDraw.Layer {
+public final class RadialFocusOverlay implements IGuiOverlay {
     private static final ResourceLocation RADIAL_1 = TTScreenTextures.RADIAL_INNER;
     private static final ResourceLocation RADIAL_2 = TTScreenTextures.RADIAL_OUTER;
 
@@ -85,8 +85,8 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
     }
 
     @Override
-    public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
-        Minecraft mc = Minecraft.getInstance();
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+        Minecraft mc = gui.getMinecraft();
         long time = Util.getMillis();
         if (mc.player != null && (CasterKeyHandler.radialActive || radialHudScale > 0.0F)) {
             if (CasterKeyHandler.radialActive) {
@@ -110,7 +110,7 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
                 lastState = false;
             }
 
-            renderRadialHud(graphics, mc, deltaTracker.getGameTimeDeltaPartialTick(false), time);
+            renderRadialHud(graphics, mc, partialTick, time);
 
             if (time > lastTime) {
                 if (centerHover && !CasterKeyHandler.radialActive && !CasterKeyHandler.radialLock) {
