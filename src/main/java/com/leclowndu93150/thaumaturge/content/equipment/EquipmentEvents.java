@@ -8,9 +8,9 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.event.VanillaGameEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class EquipmentEvents {
@@ -34,7 +34,7 @@ public final class EquipmentEvents {
 
     @SubscribeEvent
     public static void onVanillaGameEvent(VanillaGameEvent event) {
-        if (event.getVanillaEvent().is(GameEvent.ITEM_INTERACT_FINISH.key())
+        if (event.getVanillaEvent() == GameEvent.ITEM_INTERACT_FINISH
                 && event.getCause() instanceof LivingEntity living
                 && living.getUseItem().getItem() instanceof ElementalSwordItem) {
             event.setCanceled(true);
