@@ -34,7 +34,7 @@ public final class DonatorPerks {
         player.sendSystemMessage(Component.translatable(TITLE)
                 .withStyle(style -> style.withColor(TITLE_COLOR).withBold(true)));
         player.sendSystemMessage(
-                Component.translatable(THANKS, player.getDisplayName()).withColor(THANKS_COLOR));
+                Component.translatable(THANKS, player.getDisplayName()).withStyle(style -> style.withColor(THANKS_COLOR)));
         player.sendSystemMessage(Component.translatable(CAPE).withStyle(ChatFormatting.GRAY));
         player.sendSystemMessage(Component.translatable(SETTINGS).withStyle(ChatFormatting.GRAY));
         player.sendSystemMessage(

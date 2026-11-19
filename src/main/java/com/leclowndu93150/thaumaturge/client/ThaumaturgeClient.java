@@ -2,24 +2,23 @@ package com.leclowndu93150.thaumaturge.client;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.donator.DonatorCapeClient;
-import com.leclowndu93150.thaumaturge.client.donator.DonatorConfigFilter;
+import com.leclowndu93150.thaumaturge.client.screen.config.ThaumaturgeConfigScreen;
 import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.compat.sable.SableClientSpaces;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-@Mod(value = TTIds.MODID, dist = Dist.CLIENT)
 public final class ThaumaturgeClient {
-    public ThaumaturgeClient(IEventBus modBus, ModContainer container) {
+    private ThaumaturgeClient() {}
+
+    public static void register() {
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addListener(DonatorCapeClient::onConfigReloading);
-        container.registerExtensionPoint(
-                IConfigScreenFactory.class,
-                (mod, parent) -> new ConfigurationScreen(mod, parent, new DonatorConfigFilter()));
+        ModLoadingContext.get().registerExtensionPoint(
+                ConfigScreenFactory.class, () -> new ConfigScreenFactory(ThaumaturgeConfigScreen::new));
         if (ModList.get().isLoaded(TTIds.SABLE)) {
             ClientSpaces.install(new SableClientSpaces());
         }

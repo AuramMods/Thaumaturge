@@ -24,6 +24,7 @@ import com.leclowndu93150.thaumaturge.api.spell.Spells;
 import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.api.wands.WandAccess;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
+import com.leclowndu93150.thaumaturge.client.ThaumaturgeClient;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
 import com.leclowndu93150.thaumaturge.compat.sable.SableLevelSpaces;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
@@ -61,12 +62,13 @@ import com.leclowndu93150.thaumaturge.registry.TTSpellActions;
 import com.leclowndu93150.thaumaturge.registry.TTSpellBehaviors;
 import com.leclowndu93150.thaumaturge.registry.TTSpellFx;
 import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.common.MinecraftForge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,5 +156,6 @@ public final class Thaumaturge {
         LabyrinthHelper.bind(new LabyrinthBindings());
         if (ModList.get().isLoaded(TTIds.CURIOS)) ThaumaturgeCuriosCompat.init(modBus);
         if (ModList.get().isLoaded(TTIds.SABLE)) LevelSpaces.install(new SableLevelSpaces());
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ThaumaturgeClient::register);
     }
 }

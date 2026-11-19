@@ -170,6 +170,10 @@ final class ConfigLangEn {
     private ConfigLangEn() {}
 
     static void add(BiConsumer<String, String> output) {
+        output.accept(PREFIX + "server_local_only", "Open a private singleplayer world to edit server settings.");
+        output.accept(PREFIX + "not_loaded", "This config file has not loaded.");
+        output.accept(PREFIX + "save_failed", "Could not save settings.");
+        output.accept(PREFIX + "list_hint", "Separate entries with commas.");
         output.accept(PREFIX + "title", "Thaumaturge Configuration");
         Map<String, String> keys = new HashMap<>();
         Set<String> paths = new HashSet<>();
