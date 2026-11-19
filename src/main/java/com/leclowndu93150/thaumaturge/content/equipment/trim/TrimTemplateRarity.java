@@ -1,24 +1,17 @@
 package com.leclowndu93150.thaumaturge.content.equipment.trim;
 
-import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.registry.TTItems;
-import net.minecraft.core.component.DataComponents;
+import com.leclowndu93150.thaumaturge.mixin.world.item.ItemRarityAccessor;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Rarity;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
+import net.minecraft.world.item.SmithingTemplateItem;
+import net.minecraft.world.item.armortrim.TrimPattern;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID)
 public final class TrimTemplateRarity {
     private TrimTemplateRarity() {}
 
-    @SubscribeEvent
-    public static void onModifyDefaultComponents(ModifyDefaultComponentsEvent event) {
-        event.modify(
-                TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(),
-                builder -> builder.set(DataComponents.RARITY, Rarity.UNCOMMON));
-        event.modify(
-                TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(),
-                builder -> builder.set(DataComponents.RARITY, Rarity.RARE));
+    public static SmithingTemplateItem create(ResourceKey<TrimPattern> pattern, Rarity rarity) {
+        SmithingTemplateItem template = SmithingTemplateItem.createArmorTrimTemplate(pattern);
+        ((ItemRarityAccessor) template).thaumaturge$setRarity(rarity);
+        return template;
     }
 }

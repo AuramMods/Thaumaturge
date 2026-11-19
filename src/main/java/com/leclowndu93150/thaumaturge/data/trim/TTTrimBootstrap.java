@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.Util;
-import net.minecraft.data.models.ItemModelGenerators;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -17,7 +17,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.minecraft.world.item.armortrim.TrimPattern;
-import net.minecraft.world.item.armortrim.TrimPatterns;
 
 public final class TTTrimBootstrap {
     public static final String CRYSTAL_DESCRIPTION_KEY =
@@ -31,13 +30,11 @@ public final class TTTrimBootstrap {
     private static final float VOID_METAL_MODEL_INDEX = 0.033F;
     private static final float CRYSTAL_MODEL_INDEX = 0.034F;
 
-    public static final List<ItemModelGenerators.TrimModelData> MATERIAL_MODELS = List.of(
-            new ItemModelGenerators.TrimModelData(assetName(TTTrimMaterials.BRASS), BRASS_MODEL_INDEX, Map.of()),
-            new ItemModelGenerators.TrimModelData(assetName(TTTrimMaterials.THAUMIUM), THAUMIUM_MODEL_INDEX, Map.of()),
-            new ItemModelGenerators.TrimModelData(
-                    assetName(TTTrimMaterials.VOID_METAL), VOID_METAL_MODEL_INDEX, Map.of()),
-            new ItemModelGenerators.TrimModelData(
-                    TTTrimMaterials.ESSENTIA_CRYSTAL_ASSET, CRYSTAL_MODEL_INDEX, Map.of()));
+    public static final List<TrimItemModel> MATERIAL_MODELS = List.of(
+            new TrimItemModel(assetName(TTTrimMaterials.BRASS), BRASS_MODEL_INDEX),
+            new TrimItemModel(assetName(TTTrimMaterials.THAUMIUM), THAUMIUM_MODEL_INDEX),
+            new TrimItemModel(assetName(TTTrimMaterials.VOID_METAL), VOID_METAL_MODEL_INDEX),
+            new TrimItemModel(TTTrimMaterials.ESSENTIA_CRYSTAL_ASSET, CRYSTAL_MODEL_INDEX));
 
     private TTTrimBootstrap() {}
 
@@ -65,8 +62,13 @@ public final class TTTrimBootstrap {
     }
 
     public static void patterns(BootstapContext<TrimPattern> context) {
-        TrimPatterns.register(context, TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), TTTrimPatterns.ARCANE);
-        TrimPatterns.register(context, TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(), TTTrimPatterns.OCCULT);
+        pattern(context, TTTrimPatterns.ARCANE, TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get());
+        pattern(context, TTTrimPatterns.OCCULT, TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get());
+    }
+
+    private static void pattern(BootstapContext<TrimPattern> context, ResourceKey<TrimPattern> key, Item template) {
+        Component description = Component.translatable(Util.makeDescriptionId("trim_pattern", key.location()));
+        context.register(key, new TrimPattern(key.location(), BuiltInRegistries.ITEM.wrapAsHolder(template), description));
     }
 
     private static void material(

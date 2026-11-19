@@ -32,6 +32,7 @@ import com.leclowndu93150.thaumaturge.data.model.crystal.CrystalBlockstateGenera
 import com.leclowndu93150.thaumaturge.data.model.crystal.CrystalItemModelGenerator;
 import com.leclowndu93150.thaumaturge.data.model.crystal.EssentiaCrystalModelGenerator;
 import com.leclowndu93150.thaumaturge.data.trim.TTTrimBootstrap;
+import com.leclowndu93150.thaumaturge.data.trim.TrimItemModel;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -47,7 +48,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
@@ -116,9 +116,7 @@ public final class TTModelProvider implements DataProvider {
     private static final ResourceLocation PROPERTY_CELESTIAL_BODY = TTIds.rl("celestial_body");
     private static final ResourceLocation PROPERTY_WAND_IS_STAFF = TTIds.rl("wand_is_staff");
     private static final ResourceLocation PROPERTY_DAMAGE = ResourceLocation.withDefaultNamespace("damage");
-    private static final List<ItemModelGenerators.TrimModelData> TRIM_MODELS = Stream.concat(
-                    TTTrimBootstrap.MATERIAL_MODELS.stream(), ItemModelGenerators.GENERATED_TRIM_MODELS.stream())
-            .toList();
+    private static final List<TrimItemModel> TRIM_MODELS = TrimItemModel.withVanillaMaterials(TTTrimBootstrap.MATERIAL_MODELS);
 
     private final PackOutput.PathProvider blockStatePath;
     private final PackOutput.PathProvider modelPath;
@@ -1525,7 +1523,7 @@ public final class TTModelProvider implements DataProvider {
     private void trimmableItem(Item item, List<ResourceLocation> textures, ArmorItem.Type type) {
         ResourceLocation modelId = ModelLocationUtils.getModelLocation(item);
         List<ItemOverride> overrides = new ArrayList<>();
-        for (ItemModelGenerators.TrimModelData trim : TRIM_MODELS) {
+        for (TrimItemModel trim : TRIM_MODELS) {
             ResourceLocation trimModel = modelId.withSuffix("_" + trim.name() + "_trim");
             List<ResourceLocation> trimTextures = new ArrayList<>(textures);
             trimTextures.add(
@@ -1960,14 +1958,14 @@ public final class TTModelProvider implements DataProvider {
         registerTaintFibre();
         registerTaintSporeStalk();
 
-        delegateItem(TTBlocks.TAINT_ROCK.asItem(), TTIds.rl("block/taint_rock"));
-        delegateItem(TTBlocks.TAINT_SOIL.asItem(), TTIds.rl("block/taint_soil_0"));
-        delegateItem(TTBlocks.TAINT_CRUST.asItem(), TTIds.rl("block/taint_crust_0"));
-        delegateItem(TTBlocks.TAINT_GEYSER.asItem(), TTIds.rl("block/taint_geyser"));
-        delegateItem(TTBlocks.TAINT_LOG.asItem(), TTIds.rl("block/taint_log"));
-        delegateItem(TTBlocks.TAINT_FEATURE.asItem(), TTIds.rl("block/taint_orb_0"));
-        delegateItem(TTBlocks.TAINT_FIBRE.asItem(), TTIds.rl("block/taint_fibre"));
-        delegateItem(TTBlocks.TAINT_SPORE_STALK.asItem(), TTIds.rl("block/taint_spore_stalk_immature"));
+        delegateItem(TTBlocks.TAINT_ROCK.get().asItem(), TTIds.rl("block/taint_rock"));
+        delegateItem(TTBlocks.TAINT_SOIL.get().asItem(), TTIds.rl("block/taint_soil_0"));
+        delegateItem(TTBlocks.TAINT_CRUST.get().asItem(), TTIds.rl("block/taint_crust_0"));
+        delegateItem(TTBlocks.TAINT_GEYSER.get().asItem(), TTIds.rl("block/taint_geyser"));
+        delegateItem(TTBlocks.TAINT_LOG.get().asItem(), TTIds.rl("block/taint_log"));
+        delegateItem(TTBlocks.TAINT_FEATURE.get().asItem(), TTIds.rl("block/taint_orb_0"));
+        delegateItem(TTBlocks.TAINT_FIBRE.get().asItem(), TTIds.rl("block/taint_fibre"));
+        delegateItem(TTBlocks.TAINT_SPORE_STALK.get().asItem(), TTIds.rl("block/taint_spore_stalk_immature"));
     }
 
     private void registerTaintSporeStalk() {

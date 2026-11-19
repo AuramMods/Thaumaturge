@@ -48,6 +48,7 @@
     "world.level.block.entity.AbstractFurnaceBlockEntityAccessor",
     "world.level.block.piston.PistonBaseBlockMixin",
     "world.item.ItemDataDefaultsMixin",
+    "world.item.ItemRarityAccessor",
     "world.item.BowLootingMixin",
     "world.item.CrossbowLootingMixin",
     "world.item.BlockItemDataMixin",

@@ -49,6 +49,7 @@
     "forge.TierSortingRegistryMixin",
     "world.item.ItemStackDataPresenceMixin",
     "world.item.ItemDataDefaultsMixin",
+    "world.item.ItemRarityAccessor",
     "registry.MappedRegistryDataMapMixin",
     "registry.HolderReferenceDataMapMixin",
     "registry.RegistryLookupDataMapMixin",

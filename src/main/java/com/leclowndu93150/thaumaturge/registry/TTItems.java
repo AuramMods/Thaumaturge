@@ -33,6 +33,7 @@ import com.leclowndu93150.thaumaturge.content.equipment.GrappleGunItem;
 import com.leclowndu93150.thaumaturge.content.equipment.PrimalCrusherItem;
 import com.leclowndu93150.thaumaturge.content.equipment.RobeArmorItem;
 import com.leclowndu93150.thaumaturge.content.equipment.TTMaterials;
+import com.leclowndu93150.thaumaturge.content.equipment.trim.TrimTemplateRarity;
 import com.leclowndu93150.thaumaturge.content.equipment.TravellerBootsItem;
 import com.leclowndu93150.thaumaturge.content.equipment.VoidAxeItem;
 import com.leclowndu93150.thaumaturge.content.equipment.VoidGearItem;
@@ -648,10 +649,10 @@ public final class TTItems {
 
     public static final RegistryObject<SmithingTemplateItem> ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE = ITEMS.register(
             "arcane_armor_trim_smithing_template",
-            () -> SmithingTemplateItem.createArmorTrimTemplate(TTTrimPatterns.ARCANE));
+            () -> TrimTemplateRarity.create(TTTrimPatterns.ARCANE, Rarity.UNCOMMON));
     public static final RegistryObject<SmithingTemplateItem> OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE = ITEMS.register(
             "occult_armor_trim_smithing_template",
-            () -> SmithingTemplateItem.createArmorTrimTemplate(TTTrimPatterns.OCCULT));
+            () -> TrimTemplateRarity.create(TTTrimPatterns.OCCULT, Rarity.RARE));
 
     public static final RegistryObject<BlockItem> LOOT_URN_COMMON =
             ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.LOOT_URN_COMMON);

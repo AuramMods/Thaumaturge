@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.mixin.world.item.armortrim;
 import com.leclowndu93150.thaumaturge.content.equipment.trim.CrystalTrimMaterials;
 import java.util.Optional;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.minecraft.world.item.armortrim.TrimMaterials;
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class TrimMaterialsMixin {
     @Inject(method = "getFromIngredient", at = @At("HEAD"), cancellable = true)
     private static void thaumaturge$crystalTrimMaterial(
-            HolderLookup.Provider registries,
+            RegistryAccess registries,
             ItemStack ingredient,
             CallbackInfoReturnable<Optional<Holder.Reference<TrimMaterial>>> cir) {
         if (CrystalTrimMaterials.isCrystal(ingredient)) {
