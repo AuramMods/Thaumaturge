@@ -1377,13 +1377,13 @@ public final class TTBlocks {
     public static final RegistryObject<FlowerPotBlock> POTTED_VISHROOM = pottedPlant("potted_vishroom", PLANT_VISHROOM);
 
     public static final RegistryObject<BlockGrassAmbient> GRASS_AMBIENT = ForgeRegistration.registerBlock(BLOCKS,
-            "grass_ambient", BlockGrassAmbient::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK));
+            "grass_ambient", BlockGrassAmbient::new, BlockBehaviour.Properties.copy(Blocks.GRASS_BLOCK));
 
     private static RegistryObject<FlowerPotBlock> pottedPlant(String name, RegistryObject<? extends Block> plant) {
         return ForgeRegistration.registerBlock(BLOCKS,
                 name,
                 properties -> new FlowerPotBlock(() -> (FlowerPotBlock) Blocks.FLOWER_POT, plant, properties),
-                BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_OAK_SAPLING));
+                BlockBehaviour.Properties.copy(Blocks.POTTED_OAK_SAPLING));
     }
 
     private static void registerPottedPlants() {

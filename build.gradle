@@ -553,6 +553,9 @@ processResources {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.compilerArgs.addAll(['-Xmaxerrs', providers.gradleProperty('portMaxErrors').getOrElse('2000')])
+}
+
+tasks.named('compileJava', JavaCompile) {
     if (providers.gradleProperty('portCommandLineCompiler').isPresent()) {
         // External javac reports its exit status without serializing thousands
         // of Compiler API diagnostics back through the Gradle client.
