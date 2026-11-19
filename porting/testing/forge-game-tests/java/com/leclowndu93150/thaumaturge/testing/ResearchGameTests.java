@@ -7,7 +7,10 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
+import com.leclowndu93150.thaumaturge.api.research.pool.AspectPoolAccess;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScannedBlock;
 import com.leclowndu93150.thaumaturge.content.aura.AuraManager;
+import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.content.workbench.BlockEntityArcaneWorkbench;
@@ -21,6 +24,7 @@ import com.leclowndu93150.thaumaturge.registry.TTWandParts;
 import com.mojang.authlib.GameProfile;
 import java.util.Objects;
 import java.util.UUID;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -33,6 +37,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.WrittenBookItem;
@@ -40,6 +45,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -119,7 +125,7 @@ public final class ResearchGameTests {
     }
 
     @GameTest(template = ROOM, timeoutTicks = 180)
-    public static void firstStepsUnlockTheThaumometer(GameTestHelper test) {
+    public static void firstStepsCompleteThroughCraftingAndScanning(GameTestHelper test) {
         var player = survivalPlayer(test);
         var research = PlayerResearchAccess.of(player);
         var firstSteps = TTIds.rl("first_steps");
@@ -153,7 +159,7 @@ public final class ResearchGameTests {
         }).thenWaitUntil(() -> {
             test.assertTrue(test.getBlockState(CENTER).is(TTBlocks.ARCANE_WORKBENCH.get()),
                     "Waiting for the crafting table transformation");
-        }).thenExecute(() -> craftThaumometer(test, player)).thenSucceed();
+        }).thenExecute(() -> finishFirstSteps(test, player, craftThaumometer(test, player))).thenSucceed();
     }
 
     private static ItemStack craftSalisMundus(GameTestHelper test, FakePlayer player) {
@@ -183,7 +189,7 @@ public final class ResearchGameTests {
         }
     }
 
-    private static void craftThaumometer(GameTestHelper test, FakePlayer player) {
+    private static ItemStack craftThaumometer(GameTestHelper test, FakePlayer player) {
         var workbench = (BlockEntityArcaneWorkbench) test.getBlockEntity(CENTER);
         var grid = workbench.getInventory();
         var menu = (MenuArcaneWorkbench) workbench.createMenu(2, player.getInventory(), player);
@@ -224,10 +230,63 @@ public final class ResearchGameTests {
             test.assertTrue(grid.isEmpty() && aura.getVis() == 0 && research.knows(madeThaumometer),
                     "The craft did not consume its ingredients, all six crystals and exactly 25 vis or record research");
             test.assertFalse(ResearchManager.advanceStage(player, firstSteps), "First Steps completed without observations");
+            var thaumometer = menu.getCarried();
+            menu.setCarried(ItemStack.EMPTY);
+            return thaumometer;
         } finally {
             aura.setVis(originalVis);
             menu.removed(player);
         }
+    }
+
+    private static void finishFirstSteps(GameTestHelper test, FakePlayer player, ItemStack thaumometer) {
+        test.setBlock(BOOKCASE, Blocks.CHEST);
+        var chest = (ChestBlockEntity) test.getBlockEntity(BOOKCASE);
+        // The scanner must retry advanced subjects after their components are discovered.
+        Item[] subjects = {Items.GOLDEN_APPLE, Items.BOOK, Items.SOUL_TORCH, Items.BONE,
+                Items.REDSTONE, Items.TORCH, Items.MUSHROOM_STEW};
+        for (int index = 0; index < subjects.length; index++) {
+            chest.setItem(index, new ItemStack(subjects[index]));
+        }
+        var eyeLine = Vec3.atBottomCenterOf(test.absolutePos(BOOKCASE.north().north()));
+        player.moveTo(eyeLine.x, eyeLine.y, eyeLine.z);
+        player.lookAt(EntityAnchorArgument.Anchor.EYES, Vec3.atCenterOf(test.absolutePos(BOOKCASE)));
+        player.setItemInHand(InteractionHand.OFF_HAND, thaumometer);
+        var target = ThaumometerItem.resolveTarget(test.getLevel(), player);
+        test.assertTrue(target instanceof ScannedBlock block && block.pos().equals(test.absolutePos(BOOKCASE)),
+                "The Thaumometer raycast did not hit the placed chest");
+
+        var magic = Objects.requireNonNull(Aspects.resolve(test.getLevel(), TTAspects.PRAECANTATIO));
+        var mind = Objects.requireNonNull(Aspects.resolve(test.getLevel(), TTAspects.COGNITIO));
+        scanChest(test, player, thaumometer, 1);
+        test.assertTrue(AspectPoolAccess.amount(player, magic) == 0 && AspectPoolAccess.amount(player, mind) == 0,
+                "Releasing immediately granted scan points");
+        scanChest(test, player, thaumometer, ThaumometerItem.SCAN_COMPLETE_ELAPSED_TICKS);
+        int magicPoints = AspectPoolAccess.amount(player, magic);
+        int mindPoints = AspectPoolAccess.amount(player, mind);
+        test.assertTrue(magicPoints >= 2 && mindPoints >= 2, "The completed scan did not grant both required aspects");
+
+        scanChest(test, player, thaumometer, ThaumometerItem.SCAN_COMPLETE_ELAPSED_TICKS);
+        test.assertTrue(AspectPoolAccess.amount(player, magic) == magicPoints
+                        && AspectPoolAccess.amount(player, mind) == mindPoints,
+                "Rescanning the same inventory awarded duplicate points");
+
+        var firstSteps = TTIds.rl("first_steps");
+        var research = PlayerResearchAccess.of(player);
+        test.assertTrue(ResearchManager.advanceStage(player, firstSteps) && research.hasCompleted(firstSteps),
+                "The earned scan points did not complete First Steps");
+        test.assertTrue(AspectPoolAccess.amount(player, magic) == magicPoints - 2
+                        && AspectPoolAccess.amount(player, mind) == mindPoints - 2,
+                "Completing First Steps charged the wrong observation cost");
+    }
+
+    private static void scanChest(GameTestHelper test, FakePlayer player, ItemStack thaumometer, int heldTicks) {
+        var scanner = (ThaumometerItem) thaumometer.getItem();
+        test.assertTrue(scanner.use(test.getLevel(), player, InteractionHand.OFF_HAND).getResult()
+                        == InteractionResult.CONSUME,
+                "The Thaumometer did not begin scanning the chest");
+        scanner.releaseUsing(thaumometer, test.getLevel(), player, scanner.getUseDuration(thaumometer) - heldTicks);
+        player.stopUsingItem();
     }
 
     private static InteractionResult useDust(GameTestHelper test, FakePlayer player, BlockPos target) {
