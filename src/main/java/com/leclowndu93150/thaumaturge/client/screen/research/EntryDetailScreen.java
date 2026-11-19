@@ -61,6 +61,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -2459,7 +2460,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
 
     private @Nullable ResourceLocation findRecipeProducing(Item item) {
         if (minecraft == null || minecraft.level == null) return null;
-        HolderLookup.Provider reg = minecraft.level.registryAccess();
+        RegistryAccess reg = minecraft.level.registryAccess();
         ResourceLocation fallback = null;
         for (RecipeHolder<?> holder : RecipeAccess.of(minecraft.level.getRecipeManager()).getRecipes()) {
             ItemStack result = RecipeDisplayWidget.resultOf(holder.value(), reg);
@@ -2712,9 +2713,9 @@ public final class EntryDetailScreen extends AbstractTTScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (scrollY == 0.0) {
-            return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+            return super.mouseScrolled(mouseX, mouseY, scrollY);
         }
         int step = scrollY < 0.0 ? 1 : -1;
         if (showingAspects) {
@@ -2726,7 +2727,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
             return true;
         }
         if (insertOpen()) {
-            return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+            return super.mouseScrolled(mouseX, mouseY, scrollY);
         }
         boolean overStages = canNavigateStageHistory() && overStageStrip(mouseX, mouseY);
         if (overStages || hasShiftDown()) {

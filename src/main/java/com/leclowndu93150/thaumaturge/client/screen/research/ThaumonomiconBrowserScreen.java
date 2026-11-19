@@ -496,7 +496,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double x, double y, double scrollY) {
         if (!searching) {
             if (scrollY != 0.0 && categoryScrollVisible() && x >= width - CATEGORY_BUTTON_X_RIGHT_MARGIN) {
                 shiftCategoryScroll(scrollY < 0.0 ? 1 : -1);
@@ -510,7 +510,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
             screenZoom = Mth.clamp(screenZoom, MIN_ZOOM, MAX_ZOOM);
             return true;
         }
-        return super.mouseScrolled(x, y, scrollX, scrollY);
+        return super.mouseScrolled(x, y, scrollY);
     }
 
     @Override

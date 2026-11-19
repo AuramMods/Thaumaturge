@@ -50,9 +50,9 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -67,7 +67,6 @@ import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.item.crafting.SmithingRecipe;
-import net.minecraft.world.item.crafting.SmithingRecipeInput;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.client.model.data.ModelData;
@@ -304,7 +303,7 @@ public final class RecipeDisplayWidget {
         return null;
     }
 
-    private static HolderLookup.Provider registries() {
+    private static @Nullable RegistryAccess registries() {
         Minecraft mc = Minecraft.getInstance();
         return mc.level == null ? null : mc.level.registryAccess();
     }
@@ -412,7 +411,8 @@ public final class RecipeDisplayWidget {
         addHit(hits, template, cx + SMITHING_TEMPLATE_X, cy + SMITHING_INPUT_Y);
         addHit(hits, base, cx + SMITHING_BASE_X, cy + SMITHING_INPUT_Y);
         addHit(hits, addition, cx + SMITHING_ADDITION_X, cy + SMITHING_INPUT_Y);
-        addHit(hits, smithingResult(recipe, template, base, addition), cx + OUTPUT_OFFSET_X, cy + OUTPUT_OFFSET_Y);
+        addHit(hits, RecipePreview.smithingResult(recipe, registries(), template, base, addition),
+                cx + OUTPUT_OFFSET_X, cy + OUTPUT_OFFSET_Y);
         return hits;
     }
 
@@ -434,16 +434,6 @@ public final class RecipeDisplayWidget {
                     transform.thaumaturge$getAddition());
         }
         return null;
-    }
-
-    private static ItemStack smithingResult(
-            SmithingRecipe recipe, ItemStack template, ItemStack base, ItemStack addition) {
-        HolderLookup.Provider reg = registries();
-        if (reg == null || template.isEmpty() || base.isEmpty() || addition.isEmpty()) {
-            return resultOf(recipe, reg);
-        }
-        ItemStack assembled = recipe.assemble(new SmithingRecipeInput(template, base, addition), reg);
-        return assembled.isEmpty() ? resultOf(recipe, reg) : assembled;
     }
 
     private static void drawVisOverlay(GuiGraphics graphics, int cx, int cy) {
@@ -553,7 +543,7 @@ public final class RecipeDisplayWidget {
         return null;
     }
 
-    private static Layout collect(RecipeHolder<?> holder, HolderLookup.Provider reg) {
+    private static Layout collect(RecipeHolder<?> holder, @Nullable RegistryAccess reg) {
         Recipe<?> recipe = holder.value();
         if (recipe instanceof ArcaneShapedCraftingRecipe arcane) {
             return collectArcaneShaped(arcane, reg);
@@ -578,23 +568,12 @@ public final class RecipeDisplayWidget {
         return new Layout(Kind.UNKNOWN, new ArrayList<>(), resultOf(recipe, reg), 0, List.of());
     }
 
-    public static ItemStack resultOf(Recipe<?> recipe, HolderLookup.Provider reg) {
-        if (reg == null) {
-            return ItemStack.EMPTY;
-        }
-        try {
-            ItemStack result = recipe.getResultItem(reg);
-            return result == null ? ItemStack.EMPTY : result;
-        } catch (RuntimeException ignored) {
-            return ItemStack.EMPTY;
-        }
+    public static ItemStack resultOf(Recipe<?> recipe, @Nullable RegistryAccess reg) {
+        return RecipePreview.resultOf(recipe, reg);
     }
 
     private static List<ItemStack> cycle(Ingredient ingredient) {
-        if (ingredient == null || ingredient.hasNoItems()) {
-            return List.of();
-        }
-        return resolveCycle(List.of(ingredient.getItems()));
+        return ingredient == null ? List.of() : resolveCycle(List.of(ingredient.getItems()));
     }
 
     private static List<ItemStack> resolveCycle(List<ItemStack> cycle) {
@@ -638,7 +617,7 @@ public final class RecipeDisplayWidget {
         return list;
     }
 
-    private static Layout collectShaped(ShapedRecipe shaped, HolderLookup.Provider reg) {
+    private static Layout collectShaped(ShapedRecipe shaped, @Nullable RegistryAccess reg) {
         int rw = shaped.getWidth();
         int rh = shaped.getHeight();
         NonNullList<Ingredient> ingredients = shaped.getIngredients();
@@ -646,19 +625,19 @@ public final class RecipeDisplayWidget {
         return new Layout(Kind.WORKBENCH_SHAPED, slots, resultOf(shaped, reg), 0, List.of());
     }
 
-    private static Layout collectShapeless(ShapelessRecipe shapeless, HolderLookup.Provider reg) {
+    private static Layout collectShapeless(ShapelessRecipe shapeless, @Nullable RegistryAccess reg) {
         List<Slot> slots = linearSlots(shapeless.getIngredients());
         return new Layout(Kind.WORKBENCH_SHAPELESS, slots, resultOf(shapeless, reg), 0, List.of());
     }
 
-    private static Layout collectArcaneShaped(ArcaneShapedCraftingRecipe arcane, HolderLookup.Provider reg) {
+    private static Layout collectArcaneShaped(ArcaneShapedCraftingRecipe arcane, @Nullable RegistryAccess reg) {
         int rw = arcane.getWidth();
         int rh = arcane.getHeight();
         List<Slot> slots = gridSlots(rw, rh, arcane.getIngredients());
         return new Layout(Kind.ARCANE_SHAPED, slots, resultOf(arcane, reg), arcane.visCost(), crystals(arcane));
     }
 
-    private static Layout collectArcaneShapeless(ArcaneShapelessCraftingRecipe arcane, HolderLookup.Provider reg) {
+    private static Layout collectArcaneShapeless(ArcaneShapelessCraftingRecipe arcane, @Nullable RegistryAccess reg) {
         List<Slot> slots = linearSlots(arcane.ingredients());
         return new Layout(Kind.ARCANE_SHAPELESS, slots, resultOf(arcane, reg), arcane.visCost(), crystals(arcane));
     }
@@ -806,7 +785,7 @@ public final class RecipeDisplayWidget {
     }
 
     public static void renderBookmarkIcon(
-            GuiGraphics graphics, int x, int y, Recipe<?> recipe, HolderLookup.Provider registries) {
+            GuiGraphics graphics, int x, int y, Recipe<?> recipe, @Nullable RegistryAccess registries) {
         if (recipe instanceof DustTriggerMultiblockRecipe multiblock) {
             if (multiblock.result().is(TTBlocks.THAUMATORIUM.get().asItem())) {
                 renderDisplayItem(graphics, multiblock.result(), x, y);
@@ -879,7 +858,7 @@ public final class RecipeDisplayWidget {
         graphics.renderItem(stack, x, y);
     }
 
-    public static ItemStack displayResultOf(Recipe<?> recipe, HolderLookup.Provider registries) {
+    public static ItemStack displayResultOf(Recipe<?> recipe, @Nullable RegistryAccess registries) {
         if (recipe instanceof IInfusionRecipe infusion) {
             return infusion.resultItem();
         }
@@ -1147,7 +1126,7 @@ public final class RecipeDisplayWidget {
 
     private static List<AspectInstance> sortedAspects(AspectList aspects) {
         return aspects.entries().stream()
-                .sorted(Comparator.comparing(e -> e.aspect().getKey().location().toString()))
+                .sorted(Comparator.comparing(e -> e.aspect().unwrapKey().orElseThrow().location().toString()))
                 .toList();
     }
 

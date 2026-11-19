@@ -450,6 +450,8 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/client/equipment/ArmorTrimSprites.java'
         java.include 'com/leclowndu93150/thaumaturge/client/render/WorldRenderPose.java'
         java.include 'com/leclowndu93150/thaumaturge/client/render/GuiBlend.java'
+        java.include 'com/leclowndu93150/thaumaturge/client/render/research/RecipePreview.java'
+        java.include 'com/leclowndu93150/thaumaturge/client/screen/AbstractTTScreen.java'
         java.include 'com/leclowndu93150/thaumaturge/client/trait/MobTraitParticles.java'
         java.include 'com/leclowndu93150/thaumaturge/client/trait/MobTraitVisuals.java'
         java.include 'com/leclowndu93150/thaumaturge/client/hud/LeftHudStack.java'

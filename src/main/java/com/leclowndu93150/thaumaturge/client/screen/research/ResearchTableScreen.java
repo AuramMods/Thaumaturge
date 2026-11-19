@@ -898,7 +898,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (scrollY != 0.0) {
             int step = scrollY < 0.0 ? 1 : -1;
             if (helperOpen && inRect(mouseX, mouseY, leftPos + SHEET_X, topPos + SHEET_Y, SHEET_SIZE, SHEET_SIZE)) {
@@ -910,7 +910,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                 return true;
             }
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     private boolean handleCombineButton(double mx, double my) {

@@ -321,12 +321,12 @@ public final class GolemLogisticsScreen extends AbstractTTContainerScreen<MenuGo
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (scrollY != 0.0) {
             clickButton(scrollY < 0.0 ? MenuGolemLogistics.BUTTON_PAGE_DOWN : MenuGolemLogistics.BUTTON_PAGE_UP);
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     @Override

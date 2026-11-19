@@ -318,12 +318,12 @@ public final class FocalManipulatorScreen extends AbstractContainerScreen<MenuFo
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (palette.mouseScrolled(layout, mouseX, mouseY, scrollY)
                 || canvas.mouseScrolled(layout, mouseX, mouseY, scrollY)) {
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     @Override
