@@ -1,11 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class MenuTurretAdvanced extends MenuTurretBasic {
@@ -15,7 +16,7 @@ public final class MenuTurretAdvanced extends MenuTurretBasic {
     public static final int BUTTON_PLAYER = 3;
     public static final int BUTTON_FRIENDLY = 4;
 
-    public MenuTurretAdvanced(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuTurretAdvanced(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         super(
                 TTMenus.TURRET_ADVANCED.get(),
                 containerId,
@@ -34,7 +35,8 @@ public final class MenuTurretAdvanced extends MenuTurretBasic {
 
     public static void open(Player player, EntityTurretCrossbowAdvanced turret) {
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(
+            NetworkHooks.openScreen(
+                    serverPlayer,
                     new SimpleMenuProvider(
                             (id, inv, p) -> new MenuTurretAdvanced(id, inv, turret), turret.getDisplayName()),
                     buf -> buf.writeVarInt(turret.getId()));

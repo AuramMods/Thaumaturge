@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.BlockPos;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -28,7 +28,7 @@ public final class MenuPotionSprayer extends AbstractTTMenu {
     private final BlockPos pos;
     private final ContainerLevelAccess access;
 
-    public MenuPotionSprayer(int containerId, Inventory inventory, RegistryFriendlyByteBuf buf) {
+    public MenuPotionSprayer(int containerId, Inventory inventory, FriendlyByteBuf buf) {
         this(containerId, inventory, buf.readBlockPos(), new SimpleContainer(POTION_SLOTS), ContainerLevelAccess.NULL);
     }
 

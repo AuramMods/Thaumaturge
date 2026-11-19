@@ -11,6 +11,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockGolemBuilder extends BaseEntityBlock implements BlockInteractions {
@@ -89,8 +91,9 @@ public final class BlockGolemBuilder extends BaseEntityBlock implements BlockInt
             return InteractionResult.SUCCESS;
         }
         if (DeviceGate.passes(player, RESEARCH)
+                && player instanceof ServerPlayer serverPlayer
                 && level.getBlockEntity(core) instanceof BlockEntityGolemBuilder builder) {
-            player.openMenu(builder, buf -> buf.writeBlockPos(core));
+            NetworkHooks.openScreen(serverPlayer, builder, buf -> buf.writeBlockPos(core));
         }
         return InteractionResult.CONSUME;
     }

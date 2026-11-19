@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -54,7 +54,7 @@ public final class MenuSealBase extends AbstractTTMenu {
     private final DataSlot areaZ = DataSlot.standalone();
     private final DataSlot color = DataSlot.standalone();
 
-    public MenuSealBase(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuSealBase(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(
                 containerId,
                 playerInventory,

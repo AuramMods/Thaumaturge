@@ -27,6 +27,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class ThaumostaticHarnessItem extends ArmorItem implements IHoverGear, IVisDiscountGear {
@@ -96,7 +97,8 @@ public final class ThaumostaticHarnessItem extends ArmorItem implements IHoverGe
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(
+            NetworkHooks.openScreen(
+                    serverPlayer,
                     new SimpleMenuProvider(
                             (containerId, inventory, menuPlayer) ->
                                     new MenuThaumostaticHarness(containerId, inventory, hand),

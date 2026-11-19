@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.content.workbench.BlockArcaneWorkbench;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockFocalManipulator extends BaseEntityBlock implements BlockInteractions {
@@ -79,8 +81,9 @@ public final class BlockFocalManipulator extends BaseEntityBlock implements Bloc
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (level.getBlockEntity(pos) instanceof BlockEntityFocalManipulator table) {
-            player.openMenu(table, buf -> buf.writeBlockPos(pos));
+        if (player instanceof ServerPlayer serverPlayer
+                && level.getBlockEntity(pos) instanceof BlockEntityFocalManipulator table) {
+            NetworkHooks.openScreen(serverPlayer, table, buf -> buf.writeBlockPos(pos));
         }
         return InteractionResult.SUCCESS;
     }

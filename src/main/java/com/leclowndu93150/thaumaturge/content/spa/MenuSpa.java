@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -28,7 +28,7 @@ public final class MenuSpa extends AbstractTTMenu {
     private final ItemStackHandler items;
     private final ContainerLevelAccess access;
 
-    public MenuSpa(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuSpa(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(
                 containerId,
                 playerInventory,

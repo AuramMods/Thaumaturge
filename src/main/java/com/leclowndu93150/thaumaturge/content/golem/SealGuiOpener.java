@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.NetworkHooks;
 
 public final class SealGuiOpener {
     private SealGuiOpener() {}
@@ -14,7 +15,8 @@ public final class SealGuiOpener {
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return;
         }
-        serverPlayer.openMenu(
+        NetworkHooks.openScreen(
+                serverPlayer,
                 new SimpleMenuProvider(
                         (containerId, inventory, menuPlayer) -> new MenuSealBase(containerId, inventory, seal),
                         Component.translatable("gui.thaumaturge.seal")),

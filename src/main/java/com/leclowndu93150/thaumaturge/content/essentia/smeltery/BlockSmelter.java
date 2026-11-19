@@ -13,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -35,6 +36,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public class BlockSmelter extends BaseEntityBlock implements BlockInteractions {
@@ -149,8 +151,9 @@ public class BlockSmelter extends BaseEntityBlock implements BlockInteractions {
         if (!DeviceGate.passes(player, GATE_ID)) {
             return InteractionResult.SUCCESS;
         }
-        if (level.getBlockEntity(pos) instanceof BlockEntitySmelter menuProvider) {
-            player.openMenu(menuProvider, buf -> buf.writeBlockPos(pos));
+        if (player instanceof ServerPlayer serverPlayer
+                && level.getBlockEntity(pos) instanceof BlockEntitySmelter menuProvider) {
+            NetworkHooks.openScreen(serverPlayer, menuProvider, buf -> buf.writeBlockPos(pos));
         }
         return InteractionResult.CONSUME;
     }

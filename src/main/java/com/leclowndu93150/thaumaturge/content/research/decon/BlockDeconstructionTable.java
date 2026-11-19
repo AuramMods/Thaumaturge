@@ -27,6 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockDeconstructionTable extends BaseEntityBlock implements BlockInteractions {
@@ -84,8 +85,9 @@ public final class BlockDeconstructionTable extends BaseEntityBlock implements B
                                 .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
                 return InteractionResult.SUCCESS;
             }
-            if (level.getBlockEntity(pos) instanceof BlockEntityDeconstructionTable table) {
-                player.openMenu(table, pos);
+            if (player instanceof ServerPlayer serverPlayer
+                    && level.getBlockEntity(pos) instanceof BlockEntityDeconstructionTable table) {
+                NetworkHooks.openScreen(serverPlayer, table, pos);
             }
         }
         return InteractionResult.SUCCESS;

@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.DataSlot;
@@ -23,7 +23,7 @@ public final class MenuVoidSiphon extends AbstractTTMenu {
     private final @Nullable BlockEntityVoidSiphon blockEntity;
     private final DataSlot progress = DataSlot.standalone();
 
-    public MenuVoidSiphon(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuVoidSiphon(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, (BlockEntityVoidSiphon) null);
         buf.readBlockPos();
     }

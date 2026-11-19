@@ -18,7 +18,7 @@ import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -81,7 +81,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
     private int lastVis = -1;
     private boolean displayingArcane;
 
-    public MenuArcaneWorkbench(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuArcaneWorkbench(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(
                 containerId,
                 playerInventory,

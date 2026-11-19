@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.pech;
 import com.leclowndu93150.thaumaturge.content.entity.EntityPech;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.stream.IntStream;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -37,7 +37,7 @@ public final class MenuPech extends AbstractContainerMenu {
     private final @Nullable EntityPech pech;
     private final SimpleContainer table = new SimpleContainer(TABLE_SLOTS);
 
-    public MenuPech(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuPech(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(
                 containerId,
                 playerInventory,

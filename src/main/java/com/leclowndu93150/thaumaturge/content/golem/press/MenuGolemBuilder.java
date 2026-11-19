@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.BlockPos;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
@@ -30,7 +30,7 @@ public final class MenuGolemBuilder extends AbstractTTMenu implements BlockMenu<
     private final DataSlot costSlot = DataSlot.standalone();
     private final DataSlot maxCostSlot = DataSlot.standalone();
 
-    public MenuGolemBuilder(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuGolemBuilder(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, buf.readBlockPos(), new ItemStackHandler(SLOT_COUNT));
     }
 

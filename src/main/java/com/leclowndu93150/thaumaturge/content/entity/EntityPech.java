@@ -46,6 +46,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, ItemCollector {
@@ -382,7 +383,8 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
         }
         if (this.isDomesticated()) {
             if (player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.openMenu(
+                NetworkHooks.openScreen(
+                        serverPlayer,
                         new SimpleMenuProvider(
                                 (id, inventory, p) -> new MenuPech(id, inventory, this), this.getDisplayName()),
                         buf -> buf.writeVarInt(this.getId()));

@@ -11,7 +11,7 @@ import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,7 +42,7 @@ public final class MenuThaumatorium extends AbstractTTMenu implements BlockMenu<
     private @Nullable ItemStack lastCatalyst;
     private int lastQueueSize = QUEUE_UNSENT;
 
-    public MenuThaumatorium(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuThaumatorium(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, clientBlockEntity(playerInventory, buf.readBlockPos()));
     }
 

@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockPotionSprayer extends BaseEntityBlock implements BlockInteractions {
@@ -117,7 +118,8 @@ public final class BlockPotionSprayer extends BaseEntityBlock implements BlockIn
             return InteractionResult.SUCCESS;
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(
+            NetworkHooks.openScreen(
+                    serverPlayer,
                     new MenuProvider() {
                         @Override
                         public Component getDisplayName() {

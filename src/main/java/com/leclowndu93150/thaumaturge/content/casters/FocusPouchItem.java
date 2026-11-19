@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import com.leclowndu93150.thaumaturge.itemdata.ItemContents;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusPouchItem extends Item {
@@ -64,7 +65,8 @@ public final class FocusPouchItem extends Item {
             return new InteractionResultHolder<>(InteractionResult.CONSUME, player.getItemInHand(hand));
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(
+            NetworkHooks.openScreen(
+                    serverPlayer,
                     new MenuProvider() {
                         @Override
                         public Component getDisplayName() {

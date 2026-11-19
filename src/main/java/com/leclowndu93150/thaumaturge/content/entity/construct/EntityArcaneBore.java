@@ -13,7 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -241,7 +241,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
     }
 
     @Override
-    public void writeBoreRef(RegistryFriendlyByteBuf buf) {
+    public void writeBoreRef(FriendlyByteBuf buf) {
         buf.writeBoolean(false);
         buf.writeVarInt(getId());
     }

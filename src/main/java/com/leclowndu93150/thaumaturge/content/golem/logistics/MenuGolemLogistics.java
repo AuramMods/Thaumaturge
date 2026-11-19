@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -56,7 +56,7 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
     private final DataSlot end = DataSlot.standalone();
     private String searchText = "";
 
-    public MenuGolemLogistics(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuGolemLogistics(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, (LogisticsTarget) null);
     }
 

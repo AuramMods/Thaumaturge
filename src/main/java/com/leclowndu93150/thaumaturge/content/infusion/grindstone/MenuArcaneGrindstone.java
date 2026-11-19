@@ -8,7 +8,7 @@ import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -45,7 +45,7 @@ public final class MenuArcaneGrindstone extends AbstractTTMenu {
     private final Container result = new ResultContainer();
     private final ContainerLevelAccess access;
 
-    public MenuArcaneGrindstone(int containerId, Inventory inventory, RegistryFriendlyByteBuf extraData) {
+    public MenuArcaneGrindstone(int containerId, Inventory inventory, FriendlyByteBuf extraData) {
         this(containerId, inventory, ContainerLevelAccess.NULL);
     }
 

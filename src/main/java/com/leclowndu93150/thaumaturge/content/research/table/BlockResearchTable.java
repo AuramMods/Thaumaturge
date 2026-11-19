@@ -10,6 +10,7 @@ import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -37,6 +38,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockResearchTable extends BaseEntityBlock implements BlockInteractions {
@@ -166,8 +168,8 @@ public final class BlockResearchTable extends BaseEntityBlock implements BlockIn
         if (!level.isClientSide()) {
             BlockPos main = mainPos(state, pos);
             MenuProvider provider = getMenuProvider(state, level, pos);
-            if (provider != null) {
-                player.openMenu(provider, buf -> buf.writeBlockPos(main));
+            if (provider != null && player instanceof ServerPlayer serverPlayer) {
+                NetworkHooks.openScreen(serverPlayer, provider, buf -> buf.writeBlockPos(main));
             }
         }
         return InteractionResult.SUCCESS;

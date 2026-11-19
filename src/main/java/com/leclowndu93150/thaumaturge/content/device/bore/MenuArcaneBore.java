@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.bore;
 
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -10,6 +10,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class MenuArcaneBore extends AbstractContainerMenu {
@@ -21,7 +22,7 @@ public final class MenuArcaneBore extends AbstractContainerMenu {
 
     private final @Nullable ArcaneBoreHost host;
 
-    public MenuArcaneBore(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuArcaneBore(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, resolve(playerInventory.player.level(), buf));
     }
 
@@ -45,7 +46,7 @@ public final class MenuArcaneBore extends AbstractContainerMenu {
         }
     }
 
-    private static @Nullable ArcaneBoreHost resolve(Level level, RegistryFriendlyByteBuf buf) {
+    private static @Nullable ArcaneBoreHost resolve(Level level, FriendlyByteBuf buf) {
         if (buf.readBoolean()) {
             return level.getBlockEntity(buf.readBlockPos()) instanceof ArcaneBoreHost blockHost ? blockHost : null;
         }
@@ -54,7 +55,8 @@ public final class MenuArcaneBore extends AbstractContainerMenu {
 
     public static void open(Player player, ArcaneBoreHost host) {
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(
+            NetworkHooks.openScreen(
+                    serverPlayer,
                     new SimpleMenuProvider((id, inv, p) -> new MenuArcaneBore(id, inv, host), host.boreDisplayName()),
                     host::writeBoreRef);
         }

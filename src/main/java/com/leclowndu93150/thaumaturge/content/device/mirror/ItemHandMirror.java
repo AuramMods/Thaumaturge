@@ -28,6 +28,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class ItemHandMirror extends Item {
@@ -87,7 +88,7 @@ public final class ItemHandMirror extends Item {
             serverPlayer.sendSystemMessage(Component.translatable("message.thaumaturge.hand_mirror.missing"));
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
         }
-        serverPlayer.openMenu(new MenuProvider() {
+        NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
             @Override
             public Component getDisplayName() {
                 return Component.translatable("item.thaumaturge.hand_mirror");

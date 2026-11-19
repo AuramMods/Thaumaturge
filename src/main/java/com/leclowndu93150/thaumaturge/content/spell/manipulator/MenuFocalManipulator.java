@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -39,7 +39,7 @@ public final class MenuFocalManipulator extends AbstractContainerMenu {
     private final BlockPos pos;
     private final @Nullable BlockEntityFocalManipulator table;
 
-    public MenuFocalManipulator(int containerId, Inventory inventory, RegistryFriendlyByteBuf buf) {
+    public MenuFocalManipulator(int containerId, Inventory inventory, FriendlyByteBuf buf) {
         this(
                 containerId,
                 inventory,

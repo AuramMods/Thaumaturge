@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.equipment.hover;
 
 import com.leclowndu93150.thaumaturge.content.menu.AbstractHeldItemMenu;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
@@ -21,7 +21,7 @@ public final class MenuThaumostaticHarness extends AbstractHeldItemMenu {
 
     private final SimpleContainer jarContainer = new SimpleContainer(JAR_SLOTS);
 
-    public MenuThaumostaticHarness(int containerId, Inventory inventory, RegistryFriendlyByteBuf buf) {
+    public MenuThaumostaticHarness(int containerId, Inventory inventory, FriendlyByteBuf buf) {
         this(containerId, inventory, buf.readBoolean() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
     }
 

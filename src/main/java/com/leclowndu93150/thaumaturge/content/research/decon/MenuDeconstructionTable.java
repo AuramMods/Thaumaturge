@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.content.menu.BlockMenu;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.BlockPos;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -29,7 +29,7 @@ public final class MenuDeconstructionTable extends AbstractTTMenu implements Blo
     private final BlockPos pos;
     private final DataSlot breakTime = DataSlot.standalone();
 
-    public MenuDeconstructionTable(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuDeconstructionTable(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, clientBlockEntity(playerInventory, buf.readBlockPos()));
     }
 

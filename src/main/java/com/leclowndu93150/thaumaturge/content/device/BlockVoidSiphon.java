@@ -32,6 +32,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockVoidSiphon extends BaseEntityBlock implements BlockInteractions {
@@ -103,7 +104,8 @@ public final class BlockVoidSiphon extends BaseEntityBlock implements BlockInter
         }
         if (player instanceof ServerPlayer serverPlayer
                 && level.getBlockEntity(pos) instanceof BlockEntityVoidSiphon siphon) {
-            serverPlayer.openMenu(
+            NetworkHooks.openScreen(
+                    serverPlayer,
                     new MenuProvider() {
                         @Override
                         public Component getDisplayName() {

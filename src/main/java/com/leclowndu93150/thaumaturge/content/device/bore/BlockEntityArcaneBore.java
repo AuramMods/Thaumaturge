@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -205,7 +205,7 @@ public final class BlockEntityArcaneBore extends AbstractSyncedBlockEntity imple
     }
 
     @Override
-    public void writeBoreRef(RegistryFriendlyByteBuf buf) {
+    public void writeBoreRef(FriendlyByteBuf buf) {
         buf.writeBoolean(true);
         buf.writeBlockPos(worldPosition);
     }

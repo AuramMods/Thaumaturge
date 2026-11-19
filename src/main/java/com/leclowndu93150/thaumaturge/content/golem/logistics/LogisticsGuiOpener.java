@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class LogisticsGuiOpener {
@@ -22,7 +23,8 @@ public final class LogisticsGuiOpener {
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return;
         }
-        serverPlayer.openMenu(
+        NetworkHooks.openScreen(
+                serverPlayer,
                 new SimpleMenuProvider(
                         (containerId, inventory, menuPlayer) -> new MenuGolemLogistics(containerId, inventory, target),
                         Component.translatable("gui.thaumaturge.logistics")),

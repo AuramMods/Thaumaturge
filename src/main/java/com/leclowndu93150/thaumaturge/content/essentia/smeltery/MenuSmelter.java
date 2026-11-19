@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.BlockPos;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -30,7 +30,7 @@ public final class MenuSmelter extends AbstractTTMenu {
     private final BlockPos pos;
     private final ItemStackHandler items;
 
-    public MenuSmelter(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+    public MenuSmelter(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, buf.readBlockPos(), new ItemStackHandler(SLOT_COUNT));
     }
 

@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device.mirror;
 
 import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
-import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -25,7 +25,7 @@ public final class MenuHandMirror extends AbstractTTMenu {
     public final int mirrorHotbarSlot;
     private boolean transporting;
 
-    public MenuHandMirror(int containerId, Inventory inventory, RegistryFriendlyByteBuf buf) {
+    public MenuHandMirror(int containerId, Inventory inventory, FriendlyByteBuf buf) {
         this(containerId, inventory);
     }
 
