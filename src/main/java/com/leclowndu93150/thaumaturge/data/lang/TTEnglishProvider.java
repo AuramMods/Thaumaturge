@@ -18,6 +18,7 @@ public final class TTEnglishProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         add("itemGroup.thaumaturge", "Thaumaturge");
+        add("attribute.name.generic.scale", "Scale");
 
         addJade();
         add("jade.thaumaturge.essentia.combined", "Essentia: %s %s/%s");

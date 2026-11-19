@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import java.util.Map;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -93,7 +94,7 @@ public final class TaintedTrait implements MobTrait {
         modifiers.setBase(Attributes.MAX_HEALTH, 5.0);
         modifiers.setBase(Attributes.ATTACK_DAMAGE, 2.0);
         modifiers.setBase(Attributes.FOLLOW_RANGE, 12.0);
-        modifiers.setBase(Attributes.SCALE, 0.4);
+        modifiers.setBase(TTAttributes.SCALE.get(), 0.4);
     }
 
     @Override

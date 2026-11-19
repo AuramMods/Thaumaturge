@@ -41,6 +41,9 @@ public final class TTAttributes {
     public static final RegistryObject<Attribute> MAX_ABSORPTION = VANILLA_ATTRIBUTES.register(
             "generic.max_absorption",
             () -> new RangedAttribute("attribute.name.generic.max_absorption", 0.0, 0.0, 2048.0).setSyncable(true));
+    public static final RegistryObject<Attribute> SCALE = VANILLA_ATTRIBUTES.register(
+            "generic.scale",
+            () -> new RangedAttribute("attribute.name.generic.scale", 1.0, 0.0625, 16.0).setSyncable(true));
 
     public static final RegistryObject<Attribute> VIS_DISCOUNT = ATTRIBUTES.register(
             "vis_discount",
@@ -102,6 +105,9 @@ public final class TTAttributes {
         for (EntityType<? extends LivingEntity> type : event.getTypes()) {
             if (!event.has(type, MAX_ABSORPTION.get())) {
                 event.add(type, MAX_ABSORPTION.get());
+            }
+            if (!event.has(type, SCALE.get())) {
+                event.add(type, SCALE.get());
             }
             if (type != EntityType.PLAYER) {
                 if (!event.has(type, Attributes.ATTACK_DAMAGE)) {

@@ -4,6 +4,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitModifiers;
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,6 @@ class TaintedTraitLegacySpiderTest {
         verify(modifiers).setBase(Attributes.MAX_HEALTH, 5.0);
         verify(modifiers).setBase(Attributes.ATTACK_DAMAGE, 2.0);
         verify(modifiers).setBase(Attributes.FOLLOW_RANGE, 12.0);
-        verify(modifiers).setBase(Attributes.SCALE, 0.4);
+        verify(modifiers).setBase(TTAttributes.SCALE.get(), 0.4);
     }
 }

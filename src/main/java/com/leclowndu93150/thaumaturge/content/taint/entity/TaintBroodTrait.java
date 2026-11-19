@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.taint.entity;
 
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitModifiers;
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
@@ -18,7 +19,7 @@ public final class TaintBroodTrait implements MobTrait {
 
     @Override
     public void modifiers(LivingEntity mob, MobTraitModifiers modifiers) {
-        modifiers.setBase(Attributes.SCALE, SCALE);
+        modifiers.setBase(TTAttributes.SCALE.get(), SCALE);
         modifiers.setBase(Attributes.MAX_HEALTH, MAX_HEALTH);
         modifiers.setBase(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE);
         modifiers.setBase(Attributes.FOLLOW_RANGE, FOLLOW_RANGE);

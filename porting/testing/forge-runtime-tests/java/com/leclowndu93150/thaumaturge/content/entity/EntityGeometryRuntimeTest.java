@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import java.util.Map;
 import java.util.function.Consumer;
 import net.minecraft.core.MappedRegistry;
@@ -119,10 +120,12 @@ class EntityGeometryRuntimeTest {
     }
 
     @Test
-    void vanillaBabyZombieAndSleepingEyeHeightStillTakePrecedence() throws Exception {
+    void babyAndAuthoredAdultGeometryScaleOnceWhileSleepingSizeStaysFixed() throws Exception {
         var type = zombieType.get();
         var attributes = attributes();
-        new EntityAttributeCreationEvent(attributes).put(type, DefaultAttributes.getSupplier(EntityType.ZOMBIE));
+        var scale = TTAttributes.SCALE.get();
+        var supplier = new AttributeSupplier.Builder(DefaultAttributes.getSupplier(EntityType.ZOMBIE)).add(scale);
+        new EntityAttributeCreationEvent(attributes).put(type, supplier.build());
         try {
             var zombie = new Zombie(type, mock(Level.class));
             assertEquals(1.7F, zombie.getEyeHeight());
@@ -131,8 +134,18 @@ class EntityGeometryRuntimeTest {
             assertEquals(0.93F, zombie.getEyeHeight());
             assertEquals(0.93F, zombie.getEyeHeight(Pose.STANDING));
             assertEquals(0.2F, zombie.getEyeHeight(Pose.SLEEPING));
+            float babyWidth = zombie.getBbWidth();
+            zombie.getAttribute(scale).setBaseValue(2.5);
+            zombie.refreshDimensions();
+            assertEquals(babyWidth * 2.5F, zombie.getBbWidth());
+            assertEquals(0.93F * 2.5F, zombie.getEyeHeight());
+            assertEquals(0.93F * 2.5F, zombie.getEyeHeight(Pose.STANDING));
+            zombie.setPose(Pose.SLEEPING);
+            assertEquals(0.2F, zombie.getEyeHeight());
+            zombie.setPose(Pose.STANDING);
             zombie.setBaby(false);
-            assertEquals(1.7F, zombie.getEyeHeight());
+            assertEquals(type.getWidth() * 2.5F, zombie.getBbWidth());
+            assertEquals(1.7F * 2.5F, zombie.getEyeHeight());
         } finally {
             attributes.remove(type);
         }

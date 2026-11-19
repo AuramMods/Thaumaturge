@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -65,7 +66,7 @@ public final class EntityGiantBrainyZombie extends EntityBrainyZombie implements
         if (anger > 1.0F) {
             setAnger(anger - ANGER_DECAY);
         }
-        AttributeInstance scale = this.getAttribute(Attributes.SCALE);
+        AttributeInstance scale = this.getAttribute(TTAttributes.SCALE.get());
         if (scale != null) {
             scale.setBaseValue(1.0 + getAnger());
         }
