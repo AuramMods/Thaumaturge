@@ -1,9 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.encounter;
 
-import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterRole;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MazeId;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -19,7 +20,8 @@ public record LabyrinthBinding(int maze, EncounterRole role, boolean sharedBar) 
             .apply(instance, LabyrinthBinding::new));
 
     public static Optional<LabyrinthBinding> on(Entity entity) {
-        return entity.getExistingData(TTAttachments.LABYRINTH_BINDING).filter(LabyrinthBinding::bound);
+        return Optional.ofNullable(AttachmentData.getExistingDataOrNull(entity, TTAttachments.LABYRINTH_BINDING))
+                .filter(LabyrinthBinding::bound);
     }
 
     public static LabyrinthBinding of(MazeId maze, EncounterRole role) {

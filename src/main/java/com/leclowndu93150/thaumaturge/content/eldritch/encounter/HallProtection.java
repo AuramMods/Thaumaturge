@@ -65,7 +65,7 @@ public final class HallProtection {
         if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
-        Vec3 center = event.getExplosion().center();
+        Vec3 center = event.getExplosion().getPosition();
         Guard.at(level, BlockPos.containing(center))
                 .ifPresent(guard -> event.getAffectedBlocks().removeIf(guard::protects));
     }

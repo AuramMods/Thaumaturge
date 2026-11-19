@@ -9,8 +9,6 @@ import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -131,14 +129,9 @@ public final class BlockEldritchCrabSpawner extends BaseEntityBlock {
 
     @Override
     public int getExpDrop(
-            BlockState state,
-            LevelAccessor level,
-            BlockPos pos,
-            @Nullable BlockEntity blockEntity,
-            @Nullable Entity breaker,
-            ItemStack tool) {
-        RandomSource random = level.getRandom();
-        return XP_BASE + random.nextInt(XP_ROLL) + random.nextInt(XP_ROLL);
+            BlockState state, LevelReader level, RandomSource random, BlockPos pos, int fortune, int silkTouch) {
+        int experience = XP_BASE + random.nextInt(XP_ROLL) + random.nextInt(XP_ROLL);
+        return silkTouch == 0 ? experience : 0;
     }
 
     @Override

@@ -82,7 +82,7 @@ final class ReliquaryClaims {
                 PARTICLE_SPREAD,
                 PARTICLE_SPREAD,
                 PARTICLE_SPEED);
-        level.playSound(null, pos, SoundEvents.VAULT_OPEN_SHUTTER, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, pos, SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.BLOCKS, 1.0F, 1.0F);
         TTActionBar.sendPurple(player, "gui.thaumaturge.reliquary.claimed");
     }
 

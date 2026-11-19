@@ -3,9 +3,11 @@ package com.leclowndu93150.thaumaturge.content.eldritch.block;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.PipeBlock;
@@ -17,12 +19,20 @@ public class BlockEldritchInset extends DropExperienceBlock {
     public static final Map<Direction, BooleanProperty> EXPOSED = PipeBlock.PROPERTY_BY_DIRECTION;
 
     public BlockEldritchInset(IntProvider xpRange, Properties properties) {
-        super(xpRange, properties);
+        super(properties, xpRange);
         BlockState state = this.stateDefinition.any();
         for (BooleanProperty property : EXPOSED.values()) {
             state = state.setValue(property, false);
         }
         this.registerDefaultState(state);
+    }
+
+    @Override
+    public int getExpDrop(
+            BlockState state, LevelReader level, RandomSource random, BlockPos pos, int fortune, int silkTouch) {
+        // NeoForge samples the block reward before applying the tool's experience effects.
+        int experience = super.getExpDrop(state, level, random, pos, fortune, 0);
+        return silkTouch == 0 ? experience : 0;
     }
 
     @Override
