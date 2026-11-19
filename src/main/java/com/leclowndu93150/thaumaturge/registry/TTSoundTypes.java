@@ -1,44 +1,19 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import java.util.function.Supplier;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.SoundType;
-import net.neoforged.neoforge.common.util.DeferredSoundType;
+import net.minecraftforge.common.util.ForgeSoundType;
 
 public final class TTSoundTypes {
-    public static final SoundType GORE = new DeferredSoundType(
-            0.5F,
-            1.0F,
-            TTSounds.GORE::value,
-            TTSounds.GORE::value,
-            TTSounds.GORE::value,
-            TTSounds.GORE::value,
-            TTSounds.GORE::value);
-
-    public static final SoundType CRYSTAL = new DeferredSoundType(
-            0.5F,
-            1.0F,
-            TTSounds.CRYSTAL::value,
-            TTSounds.CRYSTAL::value,
-            TTSounds.CRYSTAL::value,
-            TTSounds.CRYSTAL::value,
-            TTSounds.CRYSTAL::value);
-
-    public static final SoundType JAR = new DeferredSoundType(
-            0.5F,
-            1.0F,
-            TTSounds.JAR::value,
-            TTSounds.JAR::value,
-            TTSounds.JAR::value,
-            TTSounds.JAR::value,
-            TTSounds.JAR::value);
-
-    public static final SoundType URN = new DeferredSoundType(
-            0.5F,
-            1.5F,
-            TTSounds.URNBREAK::value,
-            TTSounds.URNBREAK::value,
-            TTSounds.URNBREAK::value,
-            TTSounds.URNBREAK::value,
-            TTSounds.URNBREAK::value);
+    public static final SoundType GORE = soundType(TTSounds.GORE, 1.0F);
+    public static final SoundType CRYSTAL = soundType(TTSounds.CRYSTAL, 1.0F);
+    public static final SoundType JAR = soundType(TTSounds.JAR, 1.0F);
+    public static final SoundType URN = soundType(TTSounds.URNBREAK, 1.5F);
 
     private TTSoundTypes() {}
+
+    private static SoundType soundType(Supplier<SoundEvent> sound, float pitch) {
+        return new ForgeSoundType(0.5F, pitch, sound, sound, sound, sound, sound);
+    }
 }
