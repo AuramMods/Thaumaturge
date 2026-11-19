@@ -213,7 +213,7 @@ public class MoundPiece extends ScatteredFeaturePiece {
             case MoundLayout.DIRT -> Blocks.DIRT.defaultBlockState();
             case MoundLayout.GRASS_BLOCK -> Blocks.GRASS_BLOCK.defaultBlockState();
             case MoundLayout.MOSSY_COBBLESTONE -> Blocks.MOSSY_COBBLESTONE.defaultBlockState();
-            case MoundLayout.SHORT_GRASS -> Blocks.SHORT_GRASS.defaultBlockState();
+            case MoundLayout.SHORT_GRASS -> Blocks.GRASS.defaultBlockState();
             case MoundLayout.STAIRS_EAST -> stairs(Direction.EAST, Half.BOTTOM);
             case MoundLayout.STAIRS_NORTH -> stairs(Direction.NORTH, Half.BOTTOM);
             case MoundLayout.STAIRS_WEST -> stairs(Direction.WEST, Half.BOTTOM);

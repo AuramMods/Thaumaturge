@@ -382,7 +382,7 @@ public final class TTConfiguredFeatures {
                                                 FLORA_TALL_GRASS_ATTEMPTS,
                                                 1),
                                         new MagicForestFloraConfig.PlantPatch(
-                                                BlockStateProvider.simple(Blocks.SHORT_GRASS),
+                                                BlockStateProvider.simple(Blocks.GRASS),
                                                 FLORA_SHORT_GRASS_ATTEMPTS,
                                                 1),
                                         new MagicForestFloraConfig.PlantPatch(

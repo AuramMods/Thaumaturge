@@ -33,7 +33,7 @@ public final class TaintGrazeGoal extends Goal {
             return false;
         }
         BlockPos pos = sheep.blockPosition();
-        return level.getBlockState(pos).is(Blocks.SHORT_GRASS)
+        return level.getBlockState(pos).is(Blocks.GRASS)
                 || level.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK);
     }
 
@@ -67,7 +67,7 @@ public final class TaintGrazeGoal extends Goal {
         }
         BlockPos pos = sheep.blockPosition();
         int grassId = Block.getId(Blocks.GRASS_BLOCK.defaultBlockState());
-        if (level.getBlockState(pos).is(Blocks.SHORT_GRASS)) {
+        if (level.getBlockState(pos).is(Blocks.GRASS)) {
             level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, grassId);
             level.removeBlock(pos, false);
             infect(level, pos);

@@ -8,11 +8,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.VineBlock;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -87,7 +87,7 @@ public final class HilltopStonesFeature extends Feature<NoneFeatureConfiguration
 
     private static boolean isCover(BlockState state) {
         return state.is(Blocks.SNOW)
-                || state.is(Blocks.SHORT_GRASS)
+                || state.is(Blocks.GRASS)
                 || state.is(Blocks.TALL_GRASS)
                 || state.is(Blocks.FERN)
                 || state.is(Blocks.LARGE_FERN);
@@ -175,6 +175,6 @@ public final class HilltopStonesFeature extends Feature<NoneFeatureConfiguration
         level.setBlock(centre.above(), TTBlocks.OBSIDIAN_TILE.get().defaultBlockState(), PLACE_FLAGS);
         BlockPos chest = centre.above(CHEST_HEIGHT);
         level.setBlock(chest, Blocks.CHEST.defaultBlockState(), PLACE_FLAGS);
-        RandomizableContainer.setBlockEntityLootTable(level, random, chest, BuiltInLootTables.SIMPLE_DUNGEON);
+        RandomizableContainerBlockEntity.setLootTable(level, random, chest, BuiltInLootTables.SIMPLE_DUNGEON);
     }
 }

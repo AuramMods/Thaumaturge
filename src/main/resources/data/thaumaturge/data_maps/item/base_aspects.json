@@ -2938,6 +2938,16 @@
         "amount": 5
       }
     ],
+    "minecraft:grass": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:aer",
+        "amount": 1
+      }
+    ],
     "minecraft:grass_block": [
       {
         "aspect": "thaumaturge:terra",
@@ -4420,16 +4430,6 @@
       {
         "aspect": "thaumaturge:praemunio",
         "amount": 20
-      }
-    ],
-    "minecraft:short_grass": [
-      {
-        "aspect": "thaumaturge:herba",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:aer",
-        "amount": 1
       }
     ],
     "minecraft:shroomlight": [

@@ -49,7 +49,7 @@ final class CrownTreeCompatibilityTest {
         assertEquals(-16_777_218, CrownRule.REPLACEABLE.clusterCoordinate(-16_777_217, -0.25));
         assertEquals(-1, CrownRule.OPEN_AIR.lineCoordinate(-4, 9, 3, 9, true));
         assertFalse(CrownRule.OPEN_AIR.isOpen(Blocks.BIRCH_LEAVES.defaultBlockState(), Blocks.OAK_LEAVES));
-        assertTrue(CrownRule.REPLACEABLE.isOpen(Blocks.SHORT_GRASS.defaultBlockState(), Blocks.OAK_LEAVES));
+        assertTrue(CrownRule.REPLACEABLE.isOpen(Blocks.GRASS.defaultBlockState(), Blocks.OAK_LEAVES));
     }
 
     @Test

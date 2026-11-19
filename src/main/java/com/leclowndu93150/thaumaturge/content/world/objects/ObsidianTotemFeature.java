@@ -38,7 +38,7 @@ public final class ObsidianTotemFeature extends Feature<NoneFeatureConfiguration
             }
         }
         BlockState groundState = level.getBlockState(ground);
-        if (groundState.is(Blocks.SNOW) || groundState.is(Blocks.SHORT_GRASS)) {
+        if (groundState.is(Blocks.SNOW) || groundState.is(Blocks.GRASS)) {
             ground.move(Direction.DOWN);
             groundState = level.getBlockState(ground);
         }
@@ -88,7 +88,7 @@ public final class ObsidianTotemFeature extends Feature<NoneFeatureConfiguration
 
     private static boolean isClear(WorldGenLevel level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        return state.isAir() || state.is(Blocks.SNOW) || state.is(Blocks.SHORT_GRASS);
+        return state.isAir() || state.is(Blocks.SNOW) || state.is(Blocks.GRASS);
     }
 
     private static void placeCapNode(WorldGenLevel level, BlockPos pos, RandomSource random) {

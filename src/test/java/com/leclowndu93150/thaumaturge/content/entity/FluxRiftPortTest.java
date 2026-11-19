@@ -120,7 +120,7 @@ class FluxRiftPortTest {
         when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.damageSources()).thenReturn(mock(DamageSources.class));
         when(level.getEntities(eq(rift), any(AABB.class))).thenReturn(List.of());
-        BlockState shortGrass = Blocks.SHORT_GRASS.defaultBlockState();
+        BlockState shortGrass = Blocks.GRASS.defaultBlockState();
         assertTrue(shortGrass.getCollisionShape(level, BlockPos.ZERO).isEmpty());
         when(level.clip(any(ClipContext.class))).thenAnswer(invocation -> {
             ClipContext context = invocation.getArgument(0);

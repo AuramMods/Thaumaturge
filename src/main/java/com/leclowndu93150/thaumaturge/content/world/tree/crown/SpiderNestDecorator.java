@@ -11,11 +11,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
@@ -78,7 +78,7 @@ public final class SpiderNestDecorator extends TreeDecorator {
         }
         BlockPos chestPos = foot.below(2);
         context.setBlock(chestPos, Blocks.CHEST.defaultBlockState());
-        RandomizableContainer.setBlockEntityLootTable(level, random, chestPos, BuiltInLootTables.SIMPLE_DUNGEON);
+        RandomizableContainerBlockEntity.setLootTable(level, random, chestPos, BuiltInLootTables.SIMPLE_DUNGEON);
     }
 
     private boolean clingsToTree(TreeDecorator.Context context, BlockPos web) {
