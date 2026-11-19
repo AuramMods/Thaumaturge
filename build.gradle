@@ -357,6 +357,7 @@ sourceSets {
     portDfuReference { java.srcDir 'porting/testing/dfu-reference/java' }
     portMixins {
         java.include 'com/leclowndu93150/thaumaturge/mixin/registry/**'
+        java.include 'com/leclowndu93150/thaumaturge/content/legacy/LegacyRegistryAliases.java'
         java.srcDir 'src/main/java'
         java.include 'com/leclowndu93150/thaumaturge/content/spell/action/WindBurstExplosion.java'
         java.include 'com/leclowndu93150/thaumaturge/content/spell/action/WindBurstLanding.java'
