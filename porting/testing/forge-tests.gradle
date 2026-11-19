@@ -24,6 +24,7 @@ sourceSets {
 tasks.named('compilePortClientTestJava', JavaCompile) {
     source fileTree('src/test/java') {
         include 'com/leclowndu93150/thaumaturge/client/particle/*Test.java'
+        include 'com/leclowndu93150/thaumaturge/client/effect/FloatyLineRendererTest.java'
         include 'com/leclowndu93150/thaumaturge/client/effect/geometry/TubeMeshTest.java'
         include 'com/leclowndu93150/thaumaturge/client/entity/EldritchOrbRayGeometryTest.java'
     }

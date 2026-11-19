@@ -13,6 +13,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 import org.junit.jupiter.api.Test;
 
 class FloatyLineRendererTest {
@@ -23,7 +24,7 @@ class FloatyLineRendererTest {
             assertTrue(vertices.size() >= 16);
             assertEquals(0.0, vertices.get(0).add(vertices.get(1)).scale(0.5).length(), 0.00001);
             Vec3 lastCenter =
-                    vertices.get(vertices.size() - 2).add(vertices.getLast()).scale(0.5);
+                    vertices.get(vertices.size() - 2).add(vertices.get(vertices.size() - 1)).scale(0.5);
             assertEquals(0.0, lastCenter.distanceTo(end), 0.00001);
             assertTrue(vertices.stream()
                     .allMatch(v -> Double.isFinite(v.x) && Double.isFinite(v.y) && Double.isFinite(v.z)));
@@ -36,7 +37,7 @@ class FloatyLineRendererTest {
         assertTrue(vertices(new Vec3(0, 0, 5), 0.0F).isEmpty());
         List<Vec3> vertices = vertices(new Vec3(0, 0, 5), 0.5F);
         Vec3 lastCenter =
-                vertices.get(vertices.size() - 2).add(vertices.getLast()).scale(0.5);
+                vertices.get(vertices.size() - 2).add(vertices.get(vertices.size() - 1)).scale(0.5);
         assertEquals(2.5, lastCenter.z, 0.00001);
     }
 
@@ -51,7 +52,7 @@ class FloatyLineRendererTest {
                     return buffer;
                 })
                 .when(buffer)
-                .addVertex(any(PoseStack.Pose.class), anyFloat(), anyFloat(), anyFloat());
+                .vertex(any(Matrix4f.class), anyFloat(), anyFloat(), anyFloat());
         FloatyLineRenderer.write(new PoseStack().last(), buffer, end, 14.5F, 0xAAEEFF, -0.02F, progress, 0.15F);
         return vertices;
     }

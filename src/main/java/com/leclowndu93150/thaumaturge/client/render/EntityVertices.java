@@ -12,15 +12,15 @@ public final class EntityVertices {
 
     public static void finish(VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float z) {
         var position = pose.pose();
-        if ((position.properties() & Matrix4fc.PROPERTY_ORTHONORMAL) != 0 && position.determinant3x3() > 0.0F) {
-            buffer.normal(pose.normal(), x, y, z).endVertex();
-            return;
-        }
-
-        // The position matrix retains the full scale and reflection lost by the older normal-matrix approximation.
-        var direction = position.normal(new Matrix3f()).transform(x, y, z, new Vector3f());
-        if (direction.lengthSquared() > 0.0F) {
-            direction.normalize();
+        var direction = new Vector3f();
+        if ((position.properties() & Matrix4fc.PROPERTY_ORTHONORMAL) != 0) {
+            position.transformDirection(x, y, z, direction);
+        } else {
+            // Rebuild the normal matrix to account for reflected scales in the legacy pose stack.
+            position.normal(new Matrix3f()).transform(x, y, z, direction);
+            if (direction.lengthSquared() > 0.0F) {
+                direction.normalize();
+            }
         }
         buffer.normal(direction.x, direction.y, direction.z).endVertex();
     }
