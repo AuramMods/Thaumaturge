@@ -1018,16 +1018,24 @@
         "amount": 5
       }
     ],
-    "minecraft:armadillo_scute": [
-      {
-        "aspect": "thaumaturge:praemunio",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:bestia",
-        "amount": 5
-      }
-    ],
+    "minecraft:armadillo_scute": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:armadillo_scute"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:praemunio",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:bestia",
+          "amount": 5
+        }
+      ]
+    },
     "minecraft:arrow": [
       {
         "aspect": "thaumaturge:aversio",
@@ -1338,20 +1346,28 @@
         "amount": 1
       }
     ],
-    "minecraft:breeze_rod": [
-      {
-        "aspect": "thaumaturge:aer",
-        "amount": 10
-      },
-      {
-        "aspect": "thaumaturge:motus",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:praecantatio",
-        "amount": 5
-      }
-    ],
+    "minecraft:breeze_rod": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:breeze_rod"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:aer",
+          "amount": 10
+        },
+        {
+          "aspect": "thaumaturge:motus",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:praecantatio",
+          "amount": 5
+        }
+      ]
+    },
     "minecraft:brewing_stand": [
       {
         "aspect": "thaumaturge:fabrico",
@@ -1884,48 +1900,72 @@
         "amount": 1
       }
     ],
-    "minecraft:copper_bulb": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 20
-      },
-      {
-        "aspect": "thaumaturge:permutatio",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:lux",
-        "amount": 5
-      }
-    ],
-    "minecraft:copper_door": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 10
-      },
-      {
-        "aspect": "thaumaturge:vinculum",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:permutatio",
-        "amount": 2
-      }
-    ],
-    "minecraft:copper_trapdoor": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 10
-      },
-      {
-        "aspect": "thaumaturge:motus",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:permutatio",
-        "amount": 2
-      }
-    ],
+    "minecraft:copper_bulb": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:copper_bulb"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 20
+        },
+        {
+          "aspect": "thaumaturge:permutatio",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:lux",
+          "amount": 5
+        }
+      ]
+    },
+    "minecraft:copper_door": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:copper_door"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 10
+        },
+        {
+          "aspect": "thaumaturge:vinculum",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:permutatio",
+          "amount": 2
+        }
+      ]
+    },
+    "minecraft:copper_trapdoor": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:copper_trapdoor"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 10
+        },
+        {
+          "aspect": "thaumaturge:motus",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:permutatio",
+          "amount": 2
+        }
+      ]
+    },
     "minecraft:crafting_table": [
       {
         "aspect": "thaumaturge:fabrico",
@@ -2560,42 +2600,58 @@
         "amount": 1
       }
     ],
-    "minecraft:exposed_copper_door": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 10
-      },
-      {
-        "aspect": "thaumaturge:vinculum",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:permutatio",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:perditio",
-        "amount": 1
-      }
-    ],
-    "minecraft:exposed_copper_trapdoor": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 10
-      },
-      {
-        "aspect": "thaumaturge:motus",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:permutatio",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:perditio",
-        "amount": 1
-      }
-    ],
+    "minecraft:exposed_copper_door": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:exposed_copper_door"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 10
+        },
+        {
+          "aspect": "thaumaturge:vinculum",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:permutatio",
+          "amount": 2
+        },
+        {
+          "aspect": "thaumaturge:perditio",
+          "amount": 1
+        }
+      ]
+    },
+    "minecraft:exposed_copper_trapdoor": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:exposed_copper_trapdoor"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 10
+        },
+        {
+          "aspect": "thaumaturge:motus",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:permutatio",
+          "amount": 2
+        },
+        {
+          "aspect": "thaumaturge:perditio",
+          "amount": 1
+        }
+      ]
+    },
     "minecraft:farmland": [
       {
         "aspect": "thaumaturge:terra",
@@ -2708,20 +2764,28 @@
         "amount": 5
       }
     ],
-    "minecraft:flow_banner_pattern": [
-      {
-        "aspect": "thaumaturge:cognitio",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:sensus",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:motus",
-        "amount": 2
-      }
-    ],
+    "minecraft:flow_banner_pattern": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:flow_banner_pattern"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:cognitio",
+          "amount": 2
+        },
+        {
+          "aspect": "thaumaturge:sensus",
+          "amount": 2
+        },
+        {
+          "aspect": "thaumaturge:motus",
+          "amount": 2
+        }
+      ]
+    },
     "minecraft:flower_pot": [
       {
         "aspect": "thaumaturge:vacuos",
@@ -2958,20 +3022,28 @@
         "amount": 2
       }
     ],
-    "minecraft:guster_banner_pattern": [
-      {
-        "aspect": "thaumaturge:cognitio",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:sensus",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:aer",
-        "amount": 2
-      }
-    ],
+    "minecraft:guster_banner_pattern": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:guster_banner_pattern"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:cognitio",
+          "amount": 2
+        },
+        {
+          "aspect": "thaumaturge:sensus",
+          "amount": 2
+        },
+        {
+          "aspect": "thaumaturge:aer",
+          "amount": 2
+        }
+      ]
+    },
     "minecraft:hanging_roots": [
       {
         "aspect": "thaumaturge:herba",
@@ -2996,24 +3068,32 @@
         "amount": 10
       }
     ],
-    "minecraft:heavy_core": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 15
-      },
-      {
-        "aspect": "thaumaturge:praemunio",
-        "amount": 10
-      },
-      {
-        "aspect": "thaumaturge:potentia",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:terra",
-        "amount": 5
-      }
-    ],
+    "minecraft:heavy_core": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:heavy_core"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 15
+        },
+        {
+          "aspect": "thaumaturge:praemunio",
+          "amount": 10
+        },
+        {
+          "aspect": "thaumaturge:potentia",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:terra",
+          "amount": 5
+        }
+      ]
+    },
     "minecraft:heavy_weighted_pressure_plate": [
       {
         "aspect": "thaumaturge:machina",
@@ -3678,38 +3758,54 @@
         "amount": 2
       }
     ],
-    "minecraft:ominous_bottle": [
-      {
-        "aspect": "thaumaturge:potentia",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:vitium",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:alkimia",
-        "amount": 5
-      }
-    ],
-    "minecraft:ominous_trial_key": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:vinculum",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:desiderium",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:vitium",
-        "amount": 5
-      }
-    ],
+    "minecraft:ominous_bottle": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:ominous_bottle"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:potentia",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:vitium",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:alkimia",
+          "amount": 5
+        }
+      ]
+    },
+    "minecraft:ominous_trial_key": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:ominous_trial_key"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:vinculum",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:desiderium",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:vitium",
+          "amount": 5
+        }
+      ]
+    },
     "minecraft:oxidized_copper": [
       {
         "aspect": "thaumaturge:metallum",
@@ -3724,42 +3820,58 @@
         "amount": 3
       }
     ],
-    "minecraft:oxidized_copper_door": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 10
-      },
-      {
-        "aspect": "thaumaturge:vinculum",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:permutatio",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:perditio",
-        "amount": 3
-      }
-    ],
-    "minecraft:oxidized_copper_trapdoor": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 10
-      },
-      {
-        "aspect": "thaumaturge:motus",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:permutatio",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:perditio",
-        "amount": 3
-      }
-    ],
+    "minecraft:oxidized_copper_door": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:oxidized_copper_door"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 10
+        },
+        {
+          "aspect": "thaumaturge:vinculum",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:permutatio",
+          "amount": 2
+        },
+        {
+          "aspect": "thaumaturge:perditio",
+          "amount": 3
+        }
+      ]
+    },
+    "minecraft:oxidized_copper_trapdoor": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:oxidized_copper_trapdoor"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 10
+        },
+        {
+          "aspect": "thaumaturge:motus",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:permutatio",
+          "amount": 2
+        },
+        {
+          "aspect": "thaumaturge:perditio",
+          "amount": 3
+        }
+      ]
+    },
     "minecraft:packed_ice": [
       {
         "aspect": "thaumaturge:gelum",
@@ -4882,20 +4994,28 @@
         "amount": 40
       }
     ],
-    "minecraft:trial_key": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:vinculum",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:desiderium",
-        "amount": 5
-      }
-    ],
+    "minecraft:trial_key": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:trial_key"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:vinculum",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:desiderium",
+          "amount": 5
+        }
+      ]
+    },
     "minecraft:trident": [
       {
         "aspect": "thaumaturge:aqua",
@@ -5036,7 +5156,7 @@
         "amount": 5
       }
     ],
-    "minecraft:turtle_scute": [
+    "minecraft:scute": [
       {
         "aspect": "thaumaturge:bestia",
         "amount": 5
@@ -5050,6 +5170,28 @@
         "amount": 2
       }
     ],
+    "minecraft:turtle_scute": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:turtle_scute"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:bestia",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:praemunio",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:aqua",
+          "amount": 2
+        }
+      ]
+    },
     "minecraft:twisting_vines": [
       {
         "aspect": "thaumaturge:herba",
@@ -5156,42 +5298,58 @@
         "amount": 2
       }
     ],
-    "minecraft:weathered_copper_door": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 10
-      },
-      {
-        "aspect": "thaumaturge:vinculum",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:permutatio",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:perditio",
-        "amount": 2
-      }
-    ],
-    "minecraft:weathered_copper_trapdoor": [
-      {
-        "aspect": "thaumaturge:metallum",
-        "amount": 10
-      },
-      {
-        "aspect": "thaumaturge:motus",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:permutatio",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:perditio",
-        "amount": 2
-      }
-    ],
+    "minecraft:weathered_copper_door": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:weathered_copper_door"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 10
+        },
+        {
+          "aspect": "thaumaturge:vinculum",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:permutatio",
+          "amount": 2
+        },
+        {
+          "aspect": "thaumaturge:perditio",
+          "amount": 2
+        }
+      ]
+    },
+    "minecraft:weathered_copper_trapdoor": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:weathered_copper_trapdoor"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:metallum",
+          "amount": 10
+        },
+        {
+          "aspect": "thaumaturge:motus",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:permutatio",
+          "amount": 2
+        },
+        {
+          "aspect": "thaumaturge:perditio",
+          "amount": 2
+        }
+      ]
+    },
     "minecraft:weeping_vines": [
       {
         "aspect": "thaumaturge:herba",
@@ -5236,20 +5394,28 @@
         "amount": 1
       }
     ],
-    "minecraft:wind_charge": [
-      {
-        "aspect": "thaumaturge:aer",
-        "amount": 10
-      },
-      {
-        "aspect": "thaumaturge:motus",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:potentia",
-        "amount": 3
-      }
-    ],
+    "minecraft:wind_charge": {
+      "forge:conditions": [
+        {
+          "type": "forge:item_exists",
+          "item": "minecraft:wind_charge"
+        }
+      ],
+      "forge:value": [
+        {
+          "aspect": "thaumaturge:aer",
+          "amount": 10
+        },
+        {
+          "aspect": "thaumaturge:motus",
+          "amount": 5
+        },
+        {
+          "aspect": "thaumaturge:potentia",
+          "amount": 3
+        }
+      ]
+    },
     "minecraft:wither_skeleton_skull": [
       {
         "aspect": "thaumaturge:mortuus",

@@ -26,7 +26,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.resources.MultiPackResourceManager;
+import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagLoader;
+import net.minecraft.tags.TagManager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
@@ -44,13 +46,25 @@ import org.junit.jupiter.api.io.TempDir;
 
 class RecipeIngredientRuntimeTest {
     @Test
-    void packagedTagsProvideVanillaIngredientsAndUseOptionalForgeMetalTags(@TempDir Path optionalMetals)
+    void packagedTagsProvideVanillaIngredientsAndUseOptionalForgeMetalTags(@TempDir Path temporary)
             throws Exception {
         var source = Path.of(System.getProperty("thaumaturge.testResourceRoot"));
+        var isolatedTags = temporary.resolve("thaumaturge");
+        var optionalMetals = temporary.resolve("metals");
+        for (var tag : List.<TagKey<?>>of(TTItemTags.CRAFTING_TABLES, TTItemTags.FURNACES,
+                TTItemTags.CACTUS, TTItemTags.SUGAR_CANE, TTItemTags.EMPTY_BUCKETS, TTItemTags.WATER_BUCKETS,
+                TTItemTags.MILK_BUCKETS, TTItemTags.STONES, TTItemTags.NUGGETS_COPPER, TTItemTags.NUGGETS_SILVER,
+                TTBlockTags.CRAFTING_TABLES, TTBlockTags.STONES)) {
+            var id = tag.location();
+            var relative = Path.of("data", id.getNamespace(), TagManager.getTagDir(tag.registry()), id.getPath() + ".json");
+            var destination = isolatedTags.resolve(relative);
+            Files.createDirectories(destination.getParent());
+            Files.copy(source.resolve(relative), destination);
+        }
         var items = new TagLoader<>(BuiltInRegistries.ITEM::getOptional, "tags/items");
         var blocks = new TagLoader<>(BuiltInRegistries.BLOCK::getOptional, "tags/blocks");
         try (var manager = new MultiPackResourceManager(PackType.SERVER_DATA,
-                List.of(new PathPackResources("thaumaturge", source, false)))) {
+                List.of(new PathPackResources("thaumaturge", isolatedTags, false)))) {
             var tags = items.loadAndBuild(manager);
             assertEquals(Set.of(Items.CRAFTING_TABLE), Set.copyOf(tags.get(TTItemTags.CRAFTING_TABLES.location())));
             assertEquals(Set.of(Items.FURNACE), Set.copyOf(tags.get(TTItemTags.FURNACES.location())));
@@ -75,7 +89,7 @@ class RecipeIngredientRuntimeTest {
         Path forgeBlocks = Files.createDirectories(optionalMetals.resolve("data/forge/tags/blocks"));
         Files.writeString(forgeBlocks.resolve("stone.json"), "{\"values\":[\"minecraft:polished_andesite\"]}");
         try (var manager = new MultiPackResourceManager(PackType.SERVER_DATA, List.of(
-                new PathPackResources("thaumaturge", source, false),
+                new PathPackResources("thaumaturge", isolatedTags, false),
                 new PathPackResources("metal-fixture", optionalMetals, false)))) {
             var tags = items.loadAndBuild(manager);
             assertEquals(Set.of(Items.IRON_NUGGET), Set.copyOf(tags.get(TTItemTags.NUGGETS_COPPER.location())));

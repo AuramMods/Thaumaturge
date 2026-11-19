@@ -219,7 +219,8 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
 
         copy(TTBlockTags.ORES_AMBER, TTItemTags.ORES_AMBER);
         copy(TTBlockTags.ORES_CINNABAR, TTItemTags.ORES_CINNABAR);
-        tag(TTItemTags.ORES_QUARTZ).add(TTItems.ORE_QUARTZ.get()).add(TTItems.DEEPSLATE_ORE_QUARTZ.get());
+        tag(Tags.Items.ORES_QUARTZ).add(TTItems.ORE_QUARTZ.get()).add(TTItems.DEEPSLATE_ORE_QUARTZ.get());
+        tag(TTItemTags.ORES_QUARTZ).addTag(Tags.Items.ORES_QUARTZ);
         copy(Tags.Blocks.ORES_IN_GROUND_STONE, Tags.Items.ORES_IN_GROUND_STONE);
         copy(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE, Tags.Items.ORES_IN_GROUND_DEEPSLATE);
         tag(Tags.Items.ORES).addTags(TTItemTags.ORES_AMBER, TTItemTags.ORES_CINNABAR, TTItemTags.ORES_QUARTZ);

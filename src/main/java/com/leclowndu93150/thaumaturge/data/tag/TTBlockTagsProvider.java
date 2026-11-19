@@ -433,6 +433,7 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
         tag(TTBlockTags.ORES_AMBER).add(TTBlocks.ORE_AMBER.get()).add(TTBlocks.DEEPSLATE_ORE_AMBER.get());
         tag(TTBlockTags.ORES_CINNABAR).add(TTBlocks.ORE_CINNABAR.get()).add(TTBlocks.DEEPSLATE_ORE_CINNABAR.get());
         tag(Tags.Blocks.ORES_QUARTZ).add(TTBlocks.ORE_QUARTZ.get()).add(TTBlocks.DEEPSLATE_ORE_QUARTZ.get());
+        tag(TTBlockTags.ORES_QUARTZ).addTag(Tags.Blocks.ORES_QUARTZ);
         tag(Tags.Blocks.ORES_IN_GROUND_STONE)
                 .add(TTBlocks.ORE_AMBER.get())
                 .add(TTBlocks.ORE_CINNABAR.get())
