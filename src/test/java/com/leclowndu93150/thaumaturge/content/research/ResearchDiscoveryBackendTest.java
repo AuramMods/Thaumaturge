@@ -18,6 +18,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -32,9 +33,11 @@ public final class ResearchDiscoveryBackendTest {
     @Test
     void nonEntryScanLearnsAndCompletesTheSyntheticResearchOnce() {
         ServerPlayer player = mock(ServerPlayer.class);
+        ServerLevel level = mock(ServerLevel.class);
         RegistryAccess registries = mock(RegistryAccess.class);
         TestResearchLookup entries = mock(TestResearchLookup.class);
-        when(player.registryAccess()).thenReturn(registries);
+        when(player.level()).thenReturn(level);
+        when(level.registryAccess()).thenReturn(registries);
         when(registries.lookupOrThrow(IResearchEntry.REGISTRY_KEY)).thenReturn(entries);
         when(entries.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, NON_ENTRY_SCAN)))
                 .thenReturn(Optional.empty());
@@ -56,8 +59,10 @@ public final class ResearchDiscoveryBackendTest {
     @Test
     void craftReferenceDiscoveryLearnsTheItemKeyAndIgnoresIneligibleItems() {
         ServerPlayer player = mock(ServerPlayer.class);
+        ServerLevel level = mock(ServerLevel.class);
         RegistryAccess registries = mock(RegistryAccess.class);
-        when(player.registryAccess()).thenReturn(registries);
+        when(player.level()).thenReturn(level);
+        when(level.registryAccess()).thenReturn(registries);
         PlayerKnowledge backend = new PlayerKnowledge();
         ResourceLocation craftedKey = ResearchManager.craftedKey(BuiltInRegistries.ITEM.getKey(Items.DIAMOND));
 

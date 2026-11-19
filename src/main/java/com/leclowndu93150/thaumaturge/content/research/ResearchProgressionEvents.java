@@ -1,7 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
-import com.leclowndu93150.thaumaturge.event.combat.DamagePhaseEvent;
-import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
@@ -9,17 +7,17 @@ import com.leclowndu93150.thaumaturge.api.crucible.CrucibleEvent;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
+import com.leclowndu93150.thaumaturge.event.combat.DamagePhaseEvent;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.Filterable;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.DamageTypeTags;
@@ -29,17 +27,17 @@ import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.LlamaSpit;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.WrittenBookContent;
+import net.minecraft.world.item.WrittenBookItem;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.common.util.FakePlayer;
-import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TTIds.MODID)
@@ -68,7 +66,7 @@ public final class ResearchProgressionEvents {
     @SubscribeEvent
     public static void onCrucibleCraft(CrucibleEvent.Crafted event) {
         if (event.getPlayer() instanceof ServerPlayer player) {
-            recordCrafted(player, event.getResult());
+            recordCrafted(player, event.getOutput());
         }
     }
 
@@ -97,9 +95,10 @@ public final class ResearchProgressionEvents {
     }
 
     @SubscribeEvent
-    public static void onItemPickup(ItemEntityPickupEvent.Post event) {
-        if (!(event.getPlayer() instanceof ServerPlayer player)) return;
-        ItemStack stack = event.getOriginalStack();
+    public static void onItemPickup(PlayerEvent.ItemPickupEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        ItemStack stack = event.getStack();
+        if (stack.isEmpty()) return;
         recordCrafted(player, stack);
         PlayerKnowledge knowledge = (PlayerKnowledge) PlayerResearchAccess.of(player);
         if (stack.is(TTItems.ESSENTIA_CRYSTAL.get())) {
@@ -149,18 +148,16 @@ public final class ResearchProgressionEvents {
         knowledge.markComplete(GOT_DREAM);
         knowledge.queueSync(player);
         ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
-        book.set(
-                DataComponents.WRITTEN_BOOK_CONTENT,
-                new WrittenBookContent(
-                        Filterable.passThrough(Component.translatable("book.thaumaturge.start.title")
-                                .getString()),
-                        player.getName().getString(),
-                        WrittenBookContent.MAX_GENERATION,
-                        List.of(
-                                Filterable.passThrough(Component.translatable("book.thaumaturge.start.1")),
-                                Filterable.passThrough(Component.translatable("book.thaumaturge.start.2")),
-                                Filterable.passThrough(Component.translatable("book.thaumaturge.start.3"))),
-                        false));
+        var tag = book.getOrCreateTag();
+        tag.putString(WrittenBookItem.TAG_TITLE, Component.translatable("book.thaumaturge.start.title").getString());
+        tag.putString(WrittenBookItem.TAG_AUTHOR, player.getName().getString());
+        tag.putInt(WrittenBookItem.TAG_GENERATION, WrittenBookItem.MAX_GENERATION);
+        ListTag pages = new ListTag();
+        for (String page : new String[] {"book.thaumaturge.start.1", "book.thaumaturge.start.2", "book.thaumaturge.start.3"}) {
+            pages.add(StringTag.valueOf(Component.Serializer.toJson(Component.translatable(page))));
+        }
+        tag.put(WrittenBookItem.TAG_PAGES, pages);
+        tag.putBoolean(WrittenBookItem.TAG_RESOLVED, false);
         if (!player.getInventory().add(book)) {
             player.drop(book, false);
         }

@@ -10,7 +10,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.event.level.BlockEvent;
 
 /**
- * Fired on the NeoForge game event bus when an item thrown into a crucible is processed. Both subtypes run on the logical server only, once per item in the thrown stack.
+ * Fired on the Forge game event bus when an item thrown into a crucible is processed. Both subtypes run on the logical server only, once per item in the thrown stack.
  *
  * @see Crafted
  * @see Dissolve
@@ -88,7 +88,7 @@ public abstract class CrucibleEvent extends BlockEvent {
          *
          * @return a copy of the result
          */
-        public ItemStack getResult() {
+        public ItemStack getOutput() {
             return result;
         }
 
