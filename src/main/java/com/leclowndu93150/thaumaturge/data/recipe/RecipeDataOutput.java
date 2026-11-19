@@ -8,9 +8,11 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import java.util.function.Consumer;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -37,7 +39,31 @@ public final class RecipeDataOutput {
     public static void save(
             Consumer<FinishedRecipe> output, ResourceLocation id, RecipeSerializer<?> serializer,
             JsonObject fields, @Nullable Unlock advancement) {
-        output.accept(new Finished(id, serializer, fields, advancement));
+        output.accept(new Finished(id, serializer, fields, advancement == null ? null : advancement.id(),
+                advancement == null ? null : advancement.builder().serializeToJson()));
+    }
+
+    public static Consumer<FinishedRecipe> withStackResult(Consumer<FinishedRecipe> output, ItemStack stack) {
+        JsonObject result = stackResult(stack);
+        return recipe -> {
+            JsonObject fields = new JsonObject();
+            recipe.serializeRecipeData(fields);
+            fields.add("result", result);
+            output.accept(new Finished(recipe.getId(), recipe.getType(), fields,
+                    recipe.getAdvancementId(), recipe.serializeAdvancement()));
+        };
+    }
+
+    static JsonObject stackResult(ItemStack stack) {
+        JsonObject result = new JsonObject();
+        result.addProperty("item", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
+        if (stack.getCount() != 1) {
+            result.addProperty("count", stack.getCount());
+        }
+        if (stack.hasTag()) {
+            result.addProperty("nbt", stack.getTag().toString());
+        }
+        return result;
     }
 
     public static Consumer<FinishedRecipe> withCondition(Consumer<FinishedRecipe> output, ICondition condition) {
@@ -53,7 +79,8 @@ public final class RecipeDataOutput {
     public record Unlock(ResourceLocation id, Advancement.Builder builder) {}
 
     private record Finished(
-            ResourceLocation id, RecipeSerializer<?> serializer, JsonObject fields, @Nullable Unlock advancement)
+            ResourceLocation id, RecipeSerializer<?> serializer, JsonObject fields,
+            @Nullable ResourceLocation advancementId, @Nullable JsonObject advancement)
             implements FinishedRecipe {
         @Override
         public ResourceLocation getId() {
@@ -72,12 +99,12 @@ public final class RecipeDataOutput {
 
         @Override
         public @Nullable JsonObject serializeAdvancement() {
-            return advancement == null ? null : advancement.builder().serializeToJson();
+            return advancement;
         }
 
         @Override
         public @Nullable ResourceLocation getAdvancementId() {
-            return advancement == null ? null : advancement.id();
+            return advancementId;
         }
     }
 }

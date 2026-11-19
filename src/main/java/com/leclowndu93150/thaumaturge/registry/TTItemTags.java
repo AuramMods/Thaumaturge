@@ -25,6 +25,15 @@ public final class TTItemTags {
     public static final TagKey<Item> MEAT_CHUNKS = key("meat_chunks");
     public static final TagKey<Item> SCANNABLE_DYNAMIC_TREE_BRANCHES = key("scan/dynamic_tree_branches");
 
+    public static final TagKey<Item> STONES = common("stones");
+    public static final TagKey<Item> CRAFTING_TABLES = common("player_workstations/crafting_tables");
+    public static final TagKey<Item> FURNACES = common("player_workstations/furnaces");
+    public static final TagKey<Item> CACTUS = common("crops/cactus");
+    public static final TagKey<Item> SUGAR_CANE = common("crops/sugar_cane");
+    public static final TagKey<Item> EMPTY_BUCKETS = common("buckets/empty");
+    public static final TagKey<Item> WATER_BUCKETS = common("buckets/water");
+    public static final TagKey<Item> MILK_BUCKETS = common("buckets/milk");
+
     public static final TagKey<Item> GREATWOOD_LOGS = key("greatwood_logs");
     public static final TagKey<Item> SILVERWOOD_LOGS = key("silverwood_logs");
     public static final TagKey<Item> PLANKS = common("planks");
