@@ -37,6 +37,7 @@ public final class TTItemTags {
     public static final TagKey<Item> STRIPPED_LOGS = common("stripped_logs");
     public static final TagKey<Item> STRIPPED_WOODS = common("stripped_woods");
     public static final TagKey<Item> SHIELDS = common("tools/shield");
+    public static final TagKey<Item> SHEARS = common("tools/shear");
     public static final TagKey<Item> MELEE_WEAPONS = common("tools/melee_weapon");
     public static final TagKey<Item> MINING_TOOLS = common("tools/mining_tool");
 

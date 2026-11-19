@@ -19,7 +19,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -44,7 +43,7 @@ public final class TaintedAbilityEvents {
             event.setCancellationResult(harvest);
             return;
         }
-        if (MobTraitEngine.suppressesNativeAi(living) && !event.getItemStack().is(Tags.Items.TOOLS_SHEAR)) {
+        if (MobTraitEngine.suppressesNativeAi(living) && !TaintedShearing.canShear(event.getItemStack())) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.PASS);
         }

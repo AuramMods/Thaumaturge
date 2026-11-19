@@ -20,8 +20,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -32,17 +30,14 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
-import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class TaintCreatureEvents {
-    private static final float BLAST_STRENGTH = 1.5F;
     private static final double POISON_RANGE = 6.0;
     private static final int BLAST_DURATION = 100;
     private static final float SPLOSION_SPREAD = 5.0F;
     private static final float INFECTION_HEALTH = 2.0F;
     private static final int BROOD_EXPERIENCE = 2;
-    private static final double BODY_MIDDLE = 0.5;
 
     private TaintCreatureEvents() {}
 
@@ -51,19 +46,11 @@ public final class TaintCreatureEvents {
         if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
-        Creeper creeper = findBlastingCreeper(event.getExplosion());
+        Creeper creeper = TaintCreeperBlast.replace(level, event,
+                source -> MobTraits.has(source, TTMobTraits.key(TTMobTraits.TAINT_BLAST)));
         if (creeper == null) {
             return;
         }
-        event.setCanceled(true);
-        level.explode(
-                creeper,
-                creeper.getX(),
-                creeper.getY(BODY_MIDDLE),
-                creeper.getZ(),
-                BLAST_STRENGTH,
-                false,
-                Level.ExplosionInteraction.NONE);
         AABB area = creeper.getBoundingBox().inflate(POISON_RANGE);
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, area)) {
             if (living.distanceTo(creeper) <= POISON_RANGE && !FluxTaintExposure.isImmune(living)) {
@@ -141,13 +128,6 @@ public final class TaintCreatureEvents {
         if (MobTraits.has(event.getEntity(), TTMobTraits.key(TTMobTraits.TAINT_BROOD))) {
             event.setDroppedExperience(BROOD_EXPERIENCE);
         }
-    }
-
-    private static @Nullable Creeper findBlastingCreeper(Explosion explosion) {
-        if (explosion.radius() == BLAST_STRENGTH || !(explosion.getDirectSourceEntity() instanceof Creeper creeper)) {
-            return null;
-        }
-        return MobTraits.has(creeper, TTMobTraits.key(TTMobTraits.TAINT_BLAST)) ? creeper : null;
     }
 
     private static ItemEntity dropOf(ServerLevel level, LivingEntity source, ItemStack stack) {

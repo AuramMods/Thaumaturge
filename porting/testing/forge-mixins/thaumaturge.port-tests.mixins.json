@@ -48,6 +48,7 @@
     "world.item.VisDiscountTooltipMixin",
     "world.level.loot.LootContextParamSetsMixin",
     "world.level.WindBurstExplosionMixin",
+    "world.level.ExplosionRadiusAccessor",
     "world.level.block.ButtonBlockSoundInvoker",
     "world.level.block.FenceGateBlockSoundsAccessor",
     "world.level.block.TrapDoorBlockAccess",

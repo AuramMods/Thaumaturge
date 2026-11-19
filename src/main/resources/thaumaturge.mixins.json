@@ -38,6 +38,7 @@
     "world.item.crafting.SmithingTrimRecipeAccessor",
     "world.level.block.FireBlockMixin",
     "world.level.WindBurstExplosionMixin",
+    "world.level.ExplosionRadiusAccessor",
     "world.level.block.ButtonBlockSoundInvoker",
     "world.level.block.FenceGateBlockSoundsAccessor",
     "world.level.block.TrapDoorBlockAccess",
