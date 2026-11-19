@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.effect;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.render.WorldRenderPose;
 import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
@@ -18,7 +18,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import org.joml.Matrix4fStack;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class LateWorldRenderQueue {
@@ -106,7 +105,7 @@ public final class LateWorldRenderQueue {
                 OccludingEffectRenderer.render(event);
             }
             render(event, AFTER_LEVEL);
-            renderOwnShader(event);
+            renderOwnShader();
             return;
         }
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
@@ -132,7 +131,7 @@ public final class LateWorldRenderQueue {
             buffers.endBatch();
         }
         Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
-        PoseStack poseStack = renderPose(event);
+        PoseStack poseStack = WorldRenderPose.forStage(event);
         for (Entry entry : queue) {
             poseStack.pushPose();
             Vec3 origin = ClientSpaces.renderPosition(mc.level, entry.origin);
@@ -150,17 +149,14 @@ public final class LateWorldRenderQueue {
                 : IrisCompat.entityEffectBuffers(buffers);
     }
 
-    private static void renderOwnShader(RenderLevelStageEvent event) {
+    private static void renderOwnShader() {
         if (OWN_SHADER.isEmpty()) {
             return;
         }
         MultiBufferSource.BufferSource buffers =
                 Minecraft.getInstance().renderBuffers().bufferSource();
         buffers.endBatch();
-        Matrix4fStack modelView = RenderSystem.getModelViewStack();
-        modelView.pushMatrix();
-        modelView.mul(event.getModelViewMatrix());
-        RenderSystem.applyModelViewMatrix();
+        // The queued Forge entity and block-entity poses already include the camera rotation.
         PoseStack poseStack = new PoseStack();
         for (OwnShaderDraw draw : OWN_SHADER) {
             poseStack.pushPose();
@@ -171,17 +167,5 @@ public final class LateWorldRenderQueue {
         }
         OWN_SHADER.clear();
         buffers.endBatch();
-        modelView.popMatrix();
-        RenderSystem.applyModelViewMatrix();
-    }
-
-    static PoseStack renderPose(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL) {
-            return event.getPoseStack();
-        }
-        // AFTER_LEVEL has an empty pose stack and no longer has the world's model-view state.
-        PoseStack poseStack = new PoseStack();
-        poseStack.mulPose(event.getModelViewMatrix());
-        return poseStack;
     }
 }

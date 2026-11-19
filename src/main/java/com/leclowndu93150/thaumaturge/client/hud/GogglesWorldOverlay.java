@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
+import com.leclowndu93150.thaumaturge.client.render.WorldRenderPose;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
@@ -80,7 +81,7 @@ public final class GogglesWorldOverlay {
             resetAnimation();
             return;
         }
-        double now = mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false);
+        double now = mc.level.getGameTime() + event.getPartialTick();
         float scale = advanceAnimation(pos, now);
 
         boolean spaceAbove = mc.level.getBlockState(pos.above()).isAir();
@@ -93,7 +94,7 @@ public final class GogglesWorldOverlay {
             y += JAR_READOUT_LIFT - scale * 2.0F;
         }
         drawTags(
-                event.getPoseStack(),
+                WorldRenderPose.forStage(event),
                 mc,
                 pos.getX(),
                 y,

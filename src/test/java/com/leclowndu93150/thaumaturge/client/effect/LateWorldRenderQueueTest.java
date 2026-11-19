@@ -1,13 +1,17 @@
 package com.leclowndu93150.thaumaturge.client.effect;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.client.render.WorldRenderPose;
 import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +20,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderBuffers;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -50,9 +56,11 @@ class LateWorldRenderQueueTest {
 
         try (var client = mockStatic(Minecraft.class);
                 var iris = mockStatic(IrisCompat.class);
+                var renderSystem = mockStatic(RenderSystem.class);
                 var sable = mockStatic(ClientSpaces.class)) {
             client.when(Minecraft::getInstance).thenReturn(minecraft);
             iris.when(() -> IrisCompat.blockEntityEffectBuffers(buffers)).thenReturn(buffers);
+            renderSystem.when(RenderSystem::getInverseViewRotationMatrix).thenReturn(new Matrix3f());
             sable.when(() -> ClientSpaces.renderPosition(null, Vec3.ZERO)).thenReturn(Vec3.ZERO);
             iris.when(IrisCompat::shadersActive).thenReturn(false);
             LateWorldRenderQueue.enqueueBlockEntityAfterTranslucent(Vec3.ZERO, (pose, source) -> draws.add("vanilla"));
@@ -77,9 +85,15 @@ class LateWorldRenderQueueTest {
     @Test
     void finalOverlayRestoresWorldViewWithoutChangingTheEventPose() {
         RenderLevelStageEvent event = event(RenderLevelStageEvent.Stage.AFTER_LEVEL);
-        Matrix4f view = new Matrix4f().rotationY(0.7F).rotateX(-0.2F);
-        when(event.getModelViewMatrix()).thenReturn(view);
-        PoseStack pose = LateWorldRenderQueue.renderPose(event);
+        Matrix4f view = new Matrix4f().rotationZ(0.3F).rotateY(0.7F).rotateX(-0.2F);
+        var inverse = new Matrix3f(view).invert();
+        var projection = new Matrix4f(event.getPoseStack().last().pose());
+        PoseStack pose;
+        try (var renderSystem = mockStatic(RenderSystem.class)) {
+            renderSystem.when(RenderSystem::getInverseViewRotationMatrix).thenReturn(inverse);
+            pose = WorldRenderPose.forStage(event);
+        }
+        assertTrue(pose.last().normal().equals(new Matrix3f(view), 0.00001F));
         Vec3 relative = new Vec3(3, 4, 5);
         pose.translate(relative.x, relative.y, relative.z);
         pose.mulPose(view.getUnnormalizedRotation(new Quaternionf()).conjugate());
@@ -92,14 +106,71 @@ class LateWorldRenderQueueTest {
         assertEquals(1.0F, pose.last().pose().m00(), 0.00001F);
         assertEquals(1.0F, pose.last().pose().m11(), 0.00001F);
         assertEquals(1.0F, pose.last().pose().m22(), 0.00001F);
-        assertTrue(event.getPoseStack().last().pose().equals(new Matrix4f()));
+        assertEquals(projection, event.getPoseStack().last().pose());
+        assertEquals(new Matrix3f(view).invert(), inverse);
+    }
+
+    @Test
+    void weatherUsesTheExistingGpuCameraAndEarlierPassesUseTheEventPose() {
+        var weather = event(RenderLevelStageEvent.Stage.AFTER_WEATHER);
+        var camera = new Matrix4f(weather.getPoseStack().last().pose());
+        var overlay = WorldRenderPose.forStage(weather);
+        overlay.translate(3, 4, 5);
+        var projected = new Matrix4f(camera).mul(overlay.last().pose()).transformPosition(new Vector3f());
+        assertTrue(projected.equals(camera.transformPosition(new Vector3f(3, 4, 5)), 0.00001F));
+        assertEquals(camera, weather.getPoseStack().last().pose());
+
+        var particles = event(RenderLevelStageEvent.Stage.AFTER_PARTICLES);
+        assertSame(particles.getPoseStack(), WorldRenderPose.forStage(particles));
+    }
+
+    @Test
+    void deferredShaderReplaysTheSubmittedForgePoseWithoutApplyingAnotherCamera() {
+        var minecraft = mock(Minecraft.class);
+        var renderBuffers = mock(RenderBuffers.class);
+        var buffers = mock(MultiBufferSource.BufferSource.class);
+        var target = mock(RenderTarget.class);
+        var type = mock(RenderType.class);
+        var vertex = mock(VertexConsumer.class);
+        when(minecraft.renderBuffers()).thenReturn(renderBuffers);
+        when(renderBuffers.bufferSource()).thenReturn(buffers);
+        when(minecraft.getMainRenderTarget()).thenReturn(target);
+        when(buffers.getBuffer(type)).thenReturn(vertex);
+
+        var submitted = event(RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES).getPoseStack();
+        var camera = new Matrix4f(submitted.last().pose());
+        submitted.translate(3, 4, 5);
+        var actual = new ArrayList<Vector3f>();
+        var expected = camera.transformPosition(new Vector3f(4, 6, 8));
+        try (var client = mockStatic(Minecraft.class);
+                var iris = mockStatic(IrisCompat.class);
+                var renderSystem = mockStatic(RenderSystem.class)) {
+            client.when(Minecraft::getInstance).thenReturn(minecraft);
+            iris.when(IrisCompat::shadersActive).thenReturn(true);
+            LateWorldRenderQueue.drawOwnShader(submitted, buffers, type, (pose, consumer) -> {
+                assertSame(vertex, consumer);
+                actual.add(pose.pose().transformPosition(new Vector3f(1, 2, 3)));
+            });
+            submitted.setIdentity();
+            assertTrue(actual.isEmpty());
+            var lateStage = event(RenderLevelStageEvent.Stage.AFTER_LEVEL);
+            LateWorldRenderQueue.onRender(lateStage);
+            LateWorldRenderQueue.onRender(lateStage);
+
+            assertEquals(1, actual.size());
+            assertTrue(actual.get(0).equals(expected, 0.00001F));
+            renderSystem.verify(RenderSystem::applyModelViewMatrix, never());
+        }
     }
 
     private static RenderLevelStageEvent event(RenderLevelStageEvent.Stage stage) {
-        RenderLevelStageEvent event = mock(RenderLevelStageEvent.class);
-        when(event.getStage()).thenReturn(stage);
-        when(event.getPoseStack()).thenReturn(new PoseStack());
-        when(event.getModelViewMatrix()).thenReturn(new Matrix4f());
-        return event;
+        var projection = new Matrix4f().perspective(1.0F, 1.5F, 0.05F, 128.0F);
+        var pose = new PoseStack();
+        if (stage == RenderLevelStageEvent.Stage.AFTER_LEVEL) {
+            pose.mulPoseMatrix(projection);
+        } else {
+            pose.mulPose(new Quaternionf().rotationY(0.7F).rotateX(-0.2F));
+        }
+        return new RenderLevelStageEvent(stage, null, pose, projection, 1, 0.25F, new Camera(), null);
     }
 }

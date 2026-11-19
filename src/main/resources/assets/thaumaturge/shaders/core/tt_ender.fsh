@@ -2,7 +2,7 @@
 
 uniform sampler2D Sampler0;
 
-uniform mat4 ModelViewMat;
+uniform mat3 IViewRotMat;
 uniform float GameTime;
 
 in vec3 eyePos;
@@ -53,6 +53,6 @@ vec3 starfield(vec3 look, float scroll) {
 }
 
 void main() {
-    vec3 look = normalize(transpose(mat3(ModelViewMat)) * normalize(-eyePos));
+    vec3 look = normalize(IViewRotMat * normalize(-eyePos));
     fragColor = vec4(starfield(look, GameTime * 24000.0 * SCROLL_RATE), 1.0);
 }

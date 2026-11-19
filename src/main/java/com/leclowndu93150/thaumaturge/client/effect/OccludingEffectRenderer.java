@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.effect;
 import com.leclowndu93150.thaumaturge.client.render.EntityVertices;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.WorldRenderPose;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -74,7 +75,7 @@ public final class OccludingEffectRenderer {
         MultiBufferSource effectBuffers = event.getStage() == RenderLevelStageEvent.Stage.AFTER_LEVEL
                 ? buffers
                 : IrisCompat.entityEffectBuffers(buffers);
-        PoseStack poseStack = LateWorldRenderQueue.renderPose(event);
+        PoseStack poseStack = WorldRenderPose.forStage(event);
         Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
         try {
             renderBeams(poseStack, effectBuffers, camera, WISPY);

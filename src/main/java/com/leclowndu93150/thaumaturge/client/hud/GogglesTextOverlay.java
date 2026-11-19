@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.hud;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.items.IGogglesReadout;
+import com.leclowndu93150.thaumaturge.client.render.WorldRenderPose;
 import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -62,11 +63,12 @@ public final class GogglesTextOverlay {
         }
         Vec3 offset = display.readoutAnchor();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+        PoseStack poseStack = WorldRenderPose.forStage(event);
         for (int i = 0; i < lines.size(); i++) {
             float lineShift = (i - lines.size() / 2.0F) / LINE_SPACING_DIVISOR;
             double y = pos.getY() + offset.y + (blockForm ? lineShift : -lineShift);
             drawTextInAir(
-                    event.getPoseStack(), mc, buffers, pos.getX() + offset.x, y, pos.getZ() + offset.z, lines.get(i));
+                    poseStack, mc, buffers, pos.getX() + offset.x, y, pos.getZ() + offset.z, lines.get(i));
         }
         buffers.endBatch();
     }
