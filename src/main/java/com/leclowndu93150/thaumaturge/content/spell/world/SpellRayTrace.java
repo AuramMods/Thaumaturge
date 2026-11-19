@@ -14,7 +14,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jspecify.annotations.Nullable;
 
 public final class SpellRayTrace {
@@ -23,8 +22,7 @@ public final class SpellRayTrace {
     private SpellRayTrace() {}
 
     public static BlockHitResult clipBlocks(Level level, @Nullable Entity source, Vec3 from, Vec3 to) {
-        CollisionContext context = source != null ? CollisionContext.of(source) : CollisionContext.empty();
-        return level.clip(new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, context));
+        return level.clip(new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, source));
     }
 
     public static List<EntityHitResult> entitiesAlong(Level level, @Nullable Entity source, Vec3 from, Vec3 to) {

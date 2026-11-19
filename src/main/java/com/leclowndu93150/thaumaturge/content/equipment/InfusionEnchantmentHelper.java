@@ -4,22 +4,19 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
-import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.List;
 import java.util.Set;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public final class InfusionEnchantmentHelper {
     private InfusionEnchantmentHelper() {}
 
     public static InfusionEnchantments get(ItemStack stack) {
-        return ItemData.getOrDefault(stack, TTDataComponents.INFUSION_ENCHANTMENTS.get(), InfusionEnchantments.EMPTY);
+        return ItemData.getOrDefault(stack, InfusionEnchantments.ITEM_DATA, InfusionEnchantments.EMPTY);
     }
 
     public static int level(ItemStack stack, InfusionEnchantment enchantment) {
@@ -42,7 +39,7 @@ public final class InfusionEnchantmentHelper {
         if (current.level(enchantment) >= level) {
             return;
         }
-        ItemData.set(stack, TTDataComponents.INFUSION_ENCHANTMENTS.get(), current.with(enchantment, level));
+        ItemData.set(stack, InfusionEnchantments.ITEM_DATA, current.with(enchantment, level));
     }
 
     public static boolean canApply(ItemStack stack, InfusionEnchantment enchantment) {
@@ -74,18 +71,11 @@ public final class InfusionEnchantmentHelper {
                 return true;
             }
         }
-        return RechargeAccess.isRechargeable(stack) && classes.contains("chargable");
+        return classes.contains("chargable") && RechargeAccess.isRechargeable(stack);
     }
 
     private static boolean dealsAttackDamage(ItemStack stack) {
-        ItemAttributeModifiers modifiers =
-                stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
-        for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
-            if (entry.attribute().is(Attributes.ATTACK_DAMAGE) && entry.slot().test(EquipmentSlot.MAINHAND)) {
-                return true;
-            }
-        }
-        return false;
+        return stack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(Attributes.ATTACK_DAMAGE);
     }
 
     private static String armorSlotToken(EquipmentSlot slot) {

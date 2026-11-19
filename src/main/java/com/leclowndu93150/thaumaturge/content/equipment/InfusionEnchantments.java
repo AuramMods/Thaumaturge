@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
 import com.mojang.serialization.Codec;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
@@ -20,6 +22,10 @@ public record InfusionEnchantments(Map<InfusionEnchantment, Integer> levels) {
             ByteBufCodecs.<RegistryFriendlyByteBuf, InfusionEnchantment, Integer, Map<InfusionEnchantment, Integer>>map(
                             LinkedHashMap::new, InfusionEnchantment.STREAM_CODEC, ByteBufCodecs.VAR_INT)
                     .map(InfusionEnchantments::new, InfusionEnchantments::levels);
+
+    public static final ItemDataKey<InfusionEnchantments> ITEM_DATA = new ItemDataKey<>(
+            TTIds.rl("infusion_enchantments"),
+            ItemDataKey.<InfusionEnchantments>builder().persistent(CODEC).networkSynchronized(STREAM_CODEC));
 
     public InfusionEnchantments {
         EnumMap<InfusionEnchantment, Integer> copy = new EnumMap<>(InfusionEnchantment.class);

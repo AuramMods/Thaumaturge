@@ -5,7 +5,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -14,7 +13,7 @@ public final class SourceIgnoringClipContext extends ClipContext {
 
     public SourceIgnoringClipContext(
             BlockPos source, Vec3 from, Vec3 to, ClipContext.Block block, ClipContext.Fluid fluid) {
-        super(from, to, block, fluid, CollisionContext.empty());
+        super(from, to, block, fluid, null);
         this.source = source.immutable();
     }
 

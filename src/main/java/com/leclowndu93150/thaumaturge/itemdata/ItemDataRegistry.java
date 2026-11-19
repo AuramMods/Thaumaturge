@@ -18,7 +18,14 @@ public final class ItemDataRegistry {
     public <T> Supplier<ItemDataKey<T>> registerComponentType(String path, UnaryOperator<ItemDataKey.Builder<T>> factory) {
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, path);
         // Resolve codecs lazily, just as the original deferred registration did.
-        Supplier<ItemDataKey<T>> key = Suppliers.memoize(() -> new ItemDataKey<>(id, factory.apply(ItemDataKey.builder())));
+        return register(id, Suppliers.memoize(() -> new ItemDataKey<>(id, factory.apply(ItemDataKey.builder()))));
+    }
+
+    public <T> Supplier<ItemDataKey<T>> registerComponentType(ItemDataKey<T> key) {
+        return register(key.id(), () -> key);
+    }
+
+    private <T> Supplier<ItemDataKey<T>> register(ResourceLocation id, Supplier<ItemDataKey<T>> key) {
         if (keys.putIfAbsent(id, key) != null) throw new IllegalArgumentException("Duplicate item data key " + id);
         return key;
     }

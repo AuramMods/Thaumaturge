@@ -21,7 +21,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -134,7 +133,7 @@ public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
             Vec3 to = rift.position();
             from = from.add(to.subtract(from).normalize());
             HitResult hit = level.clip(new ClipContext(
-                    from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
+                    from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null));
             if (hit.getType() == HitResult.Type.MISS) {
                 found.add(rift);
             }

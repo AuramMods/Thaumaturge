@@ -16,7 +16,7 @@ public final class ItemDataKey<T> {
     private final StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec;
     private final NativeAccess<T> nativeAccess;
 
-    ItemDataKey(ResourceLocation id, Builder<T> builder) {
+    public ItemDataKey(ResourceLocation id, Builder<T> builder) {
         this.id = id;
         this.codec = Objects.requireNonNull(builder.codec, "Item data needs a persistent codec: " + id);
         this.streamCodec = builder.streamCodec;

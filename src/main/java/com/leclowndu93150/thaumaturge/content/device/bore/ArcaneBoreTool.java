@@ -2,15 +2,13 @@ package com.leclowndu93150.thaumaturge.content.device.bore;
 
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantmentHelper;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ToolActions;
 
 public final class ArcaneBoreTool {
     private static final int MIN_RADIUS = 2;
@@ -23,25 +21,7 @@ public final class ArcaneBoreTool {
     private ArcaneBoreTool() {}
 
     public static boolean isPickaxe(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return false;
-        }
-        if (stack.is(ItemTags.PICKAXES)) {
-            return true;
-        }
-        Tool tool = stack.get(DataComponents.TOOL);
-        if (tool == null) {
-            return false;
-        }
-        for (Tool.Rule rule : tool.rules()) {
-            if (rule.blocks()
-                    .unwrapKey()
-                    .map(key -> key.equals(BlockTags.MINEABLE_WITH_PICKAXE))
-                    .orElse(false)) {
-                return true;
-            }
-        }
-        return false;
+        return !stack.isEmpty() && (stack.is(ItemTags.PICKAXES) || stack.canPerformAction(ToolActions.PICKAXE_DIG));
     }
 
     public static boolean valid(ItemStack stack) {
@@ -69,8 +49,7 @@ public final class ArcaneBoreTool {
         if (!valid(stack)) {
             return 0;
         }
-        int fortune = stack.getEnchantmentLevel(
-                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE));
+        int fortune = stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE);
         return Math.max(fortune, InfusionEnchantmentHelper.level(stack, InfusionEnchantment.SOUNDING));
     }
 
@@ -79,8 +58,7 @@ public final class ArcaneBoreTool {
             return 0;
         }
         int speed = (int) (stack.getDestroySpeed(state) / DESTROY_SPEED_DIVISOR);
-        speed += stack.getEnchantmentLevel(
-                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.EFFICIENCY));
+        speed += stack.getEnchantmentLevel(Enchantments.BLOCK_EFFICIENCY);
         return speed;
     }
 
@@ -89,10 +67,14 @@ public final class ArcaneBoreTool {
     }
 
     public static boolean silkTouch(Level level, ItemStack stack) {
-        return !stack.isEmpty()
-                && stack.getEnchantmentLevel(level.registryAccess()
-                                .lookupOrThrow(Registries.ENCHANTMENT)
-                                .getOrThrow(Enchantments.SILK_TOUCH))
-                        > 0;
+        return !stack.isEmpty() && stack.getEnchantmentLevel(Enchantments.SILK_TOUCH) > 0;
+    }
+
+    static boolean damageStationaryTool(ItemStack tool, RandomSource random) {
+        if (tool.hurt(1, random, null)) {
+            tool.shrink(1);
+            return true;
+        }
+        return false;
     }
 }

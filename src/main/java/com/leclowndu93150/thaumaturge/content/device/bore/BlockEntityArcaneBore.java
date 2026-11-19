@@ -127,7 +127,12 @@ public final class BlockEntityArcaneBore extends AbstractSyncedBlockEntity imple
     @Override
     public void hurtBoreTool() {
         if (level instanceof ServerLevel serverLevel) {
-            tool.hurtAndBreak(1, serverLevel, null, item -> setBoreTool(ItemStack.EMPTY));
+            int damage = tool.getDamageValue();
+            if (ArcaneBoreTool.damageStationaryTool(tool, serverLevel.getRandom())) {
+                setBoreTool(ItemStack.EMPTY);
+            } else if (tool.getDamageValue() != damage) {
+                setChanged();
+            }
         }
     }
 

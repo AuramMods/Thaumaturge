@@ -177,7 +177,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
 
     @Override
     public void hurtBoreTool() {
-        getMainHandItem().hurtAndBreak(1, this, EquipmentSlot.MAINHAND);
+        getMainHandItem().hurtAndBreak(1, this, bore -> bore.broadcastBreakEvent(EquipmentSlot.MAINHAND));
     }
 
     @Override

@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public final class BlockEntityLampArcane extends RegistryBlockEntity {
@@ -82,7 +81,7 @@ public final class BlockEntityLampArcane extends RegistryBlockEntity {
                 Vec3.atCenterOf(to),
                 ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE,
-                CollisionContext.empty());
+                null);
         BlockHitResult hit = BlockGetter.traverseBlocks(
                 context.getFrom(),
                 context.getTo(),

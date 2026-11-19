@@ -21,7 +21,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -293,23 +292,15 @@ public final class ArcaneBoreCore {
         Direction facing = host.boreFacing();
         ItemStack tool = host.boreTool();
         BlockPos end = scanPoint.relative(facing, ArcaneBoreTool.digDepth(tool));
-        BlockHitResult hit = level.clip(new ClipContext(
+        BlockHitResult hit = level.clip(host.boreClip(
                 LevelSpaces.toWorld(level, Vec3.atCenterOf(scanPoint)),
-                LevelSpaces.toWorld(level, Vec3.atCenterOf(end)),
-                ClipContext.Block.COLLIDER,
-                ClipContext.Fluid.NONE,
-                host.boreCollisionContext()));
+                LevelSpaces.toWorld(level, Vec3.atCenterOf(end))));
         if (hit.getType() == HitResult.Type.MISS) {
             return false;
         }
         Vec3 digger =
                 LevelSpaces.toWorld(level, host.boreEye()).add(LevelSpaces.faceNormal(level, host.borePos(), facing));
-        hit = level.clip(new ClipContext(
-                digger,
-                LevelSpaces.worldCenter(level, hit.getBlockPos()),
-                ClipContext.Block.COLLIDER,
-                ClipContext.Fluid.NONE,
-                host.boreCollisionContext()));
+        hit = level.clip(host.boreClip(digger, LevelSpaces.worldCenter(level, hit.getBlockPos())));
         if (hit.getType() == HitResult.Type.MISS) {
             return false;
         }

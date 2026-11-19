@@ -120,10 +120,7 @@ public final class TTDataComponents {
                     builder -> builder.persistent(ChargeProfile.CODEC).networkSynchronized(ChargeProfile.STREAM_CODEC));
 
     public static final Supplier<ItemDataKey<InfusionEnchantments>>
-            INFUSION_ENCHANTMENTS = DATA_COMPONENTS.registerComponentType(
-                    "infusion_enchantments",
-                    builder -> builder.persistent(InfusionEnchantments.CODEC)
-                            .networkSynchronized(InfusionEnchantments.STREAM_CODEC));
+            INFUSION_ENCHANTMENTS = DATA_COMPONENTS.registerComponentType(InfusionEnchantments.ITEM_DATA);
 
     public static final Supplier<ItemDataKey<Integer>> STACK_WARP =
             DATA_COMPONENTS.registerComponentType(

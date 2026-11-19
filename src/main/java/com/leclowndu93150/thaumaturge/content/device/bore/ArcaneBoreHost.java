@@ -8,9 +8,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.FakePlayer;
 
 public interface ArcaneBoreHost {
@@ -61,5 +65,15 @@ public interface ArcaneBoreHost {
     default Vec3 boreEye() {
         Vec3 position = borePosition();
         return new Vec3(position.x, position.y + boreEyeHeight(), position.z);
+    }
+
+    default ClipContext boreClip(Vec3 from, Vec3 to) {
+        CollisionContext collision = boreCollisionContext();
+        return new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null) {
+            @Override
+            public VoxelShape getBlockShape(BlockState state, BlockGetter level, BlockPos pos) {
+                return state.getCollisionShape(level, pos, collision);
+            }
+        };
     }
 }
