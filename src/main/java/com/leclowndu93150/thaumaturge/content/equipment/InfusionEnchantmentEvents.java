@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFollowingItem;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
+import com.leclowndu93150.thaumaturge.event.block.BlockDropsEvent;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -21,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -53,7 +53,6 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action;
-import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
@@ -96,8 +95,8 @@ public final class InfusionEnchantmentEvents {
             }
             float damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
             if (living.hurt(level.damageSources().playerAttack(player), damage * ARCING_DAMAGE_FRACTION)) {
-                EnchantmentHelper.doPostAttackEffects(
-                        level, living, level.damageSources().playerAttack(player));
+                EnchantmentHelper.doPostHurtEffects(living, player);
+                EnchantmentHelper.doPostDamageEffects(player, living);
                 float yaw = player.getYRot() * ((float) Math.PI / 180.0F);
                 living.push(-Mth.sin(yaw) * 0.5F, 0.1, Mth.cos(yaw) * 0.5F);
                 Effects.slash(
@@ -162,7 +161,8 @@ public final class InfusionEnchantmentEvents {
         held.hurtAndBreak(
                 SOUNDING_DAMAGE,
                 serverPlayer,
-                event.getHand() == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
+                holder -> holder.broadcastBreakEvent(
+                        event.getHand() == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND));
         float pitch = 0.45F + level.getRandom().nextFloat() * 0.1F;
         level.playSound(
                 null,
@@ -197,7 +197,7 @@ public final class InfusionEnchantmentEvents {
         }
         event.setCanceled(true);
         EnchantMining.breakFurthest(level, pos, state, player);
-        held.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+        held.hurtAndBreak(1, player, holder -> holder.broadcastBreakEvent(EquipmentSlot.MAINHAND));
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -353,7 +353,7 @@ public final class InfusionEnchantmentEvents {
                     BlockState neighbour = level.getBlockState(offset);
                     if (neighbour.getDestroySpeed(level, offset) >= 0.0F && held.getDestroySpeed(neighbour) > 1.0F) {
                         if (!player.isCreative()) {
-                            held.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+                            held.hurtAndBreak(1, player, holder -> holder.broadcastBreakEvent(EquipmentSlot.MAINHAND));
                         }
                         EnchantMining.harvestBlock(level, player, offset, false);
                     }
@@ -448,7 +448,7 @@ public final class InfusionEnchantmentEvents {
     }
 
     private static void addRareNugget(BlockDropsEvent event, ServerLevel level, BlockState state) {
-        if (event.getBreaker() instanceof Player player && hasSilkTouch(level, player.getMainHandItem())) {
+        if (event.getBreaker() instanceof Player player && hasSilkTouch(player.getMainHandItem())) {
             return;
         }
         double chance = rareNuggetChance(state);
@@ -465,11 +465,8 @@ public final class InfusionEnchantmentEvents {
                         new ItemStack(TTItems.NUGGET_QUARTZ.get())));
     }
 
-    private static boolean hasSilkTouch(ServerLevel level, ItemStack stack) {
-        return stack.getEnchantmentLevel(level.registryAccess()
-                        .lookupOrThrow(Registries.ENCHANTMENT)
-                        .getOrThrow(Enchantments.SILK_TOUCH))
-                > 0;
+    private static boolean hasSilkTouch(ItemStack stack) {
+        return stack.getEnchantmentLevel(Enchantments.SILK_TOUCH) > 0;
     }
 
     private static double rareNuggetChance(BlockState state) {

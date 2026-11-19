@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "port-mixins.refmap.json",
   "mixins": [
+    "world.level.block.BlockDropsMixin",
     "server.level.ServerLevelEntityTickMixin",
     "server.level.PlayerRespawnLogicInvoker",
     "server.level.ServerPlayerKnownMovementMixin",
