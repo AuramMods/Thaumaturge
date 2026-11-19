@@ -1,6 +1,7 @@
 {
     "vertex": "thaumaturge:void_stream",
     "fragment": "thaumaturge:void_stream",
+    "attributes": ["Position", "UV0", "Color"],
     "samplers": [
         { "name": "Sampler0" }
     ],

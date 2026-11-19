@@ -1,6 +1,7 @@
 {
   "vertex": "thaumaturge:ward_add",
   "fragment": "thaumaturge:ward_add",
+  "attributes": ["Position", "UV0", "Color"],
   "samplers": [
     { "name": "Sampler0" }
   ],

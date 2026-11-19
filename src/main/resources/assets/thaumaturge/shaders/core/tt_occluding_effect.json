@@ -1,6 +1,7 @@
 {
     "vertex": "rendertype_entity_translucent_emissive",
     "fragment": "thaumaturge:tt_occluding_effect",
+    "attributes": ["Position", "Color", "UV0", "UV1", "UV2", "Normal"],
     "samplers": [
         { "name": "Sampler0" },
         { "name": "Sampler1" }
