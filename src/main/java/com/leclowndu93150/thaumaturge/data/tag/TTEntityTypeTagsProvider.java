@@ -11,7 +11,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -34,22 +33,46 @@ public final class TTEntityTypeTagsProvider extends TagsProvider<EntityType<?>> 
                 .add(key(TTEntities.TAINTACLE.get()))
                 .add(key(TTEntities.TAINTACLE_SMALL.get()))
                 .add(key(TTEntities.TAINTACLE_GIANT.get()));
-        tag(EntityTypeTags.CAN_BREATHE_UNDER_WATER)
+        tag(TTEntityTags.CAN_BREATHE_UNDER_WATER)
+                .addTag(TTEntityTags.UNDEAD)
+                .add(key(EntityType.AXOLOTL))
+                .add(key(EntityType.FROG))
+                .add(key(EntityType.GUARDIAN))
+                .add(key(EntityType.ELDER_GUARDIAN))
+                .add(key(EntityType.TURTLE))
+                .add(key(EntityType.GLOW_SQUID))
+                .add(key(EntityType.COD))
+                .add(key(EntityType.PUFFERFISH))
+                .add(key(EntityType.SALMON))
+                .add(key(EntityType.SQUID))
+                .add(key(EntityType.TROPICAL_FISH))
+                .add(key(EntityType.TADPOLE))
+                .add(key(EntityType.ARMOR_STAND))
                 .add(key(TTEntities.CULTIST_LEADER.get()))
                 .add(key(TTEntities.CULTIST_PORTAL_GREATER.get()))
                 .add(key(TTEntities.ELDRITCH_GOLEM.get()))
                 .add(key(TTEntities.ELDRITCH_WARDEN.get()))
                 .add(key(TTEntities.ELDRITCH_HIEROPHANT.get()))
                 .add(key(TTEntities.TAINTACLE_GIANT.get()));
-        tag(EntityTypeTags.SENSITIVE_TO_BANE_OF_ARTHROPODS).add(key(TTEntities.ELDRITCH_CRAB.get()));
-        tag(EntityTypeTags.SENSITIVE_TO_SMITE)
+        tag(TTEntityTags.ARTHROPOD)
+                .add(key(EntityType.BEE))
+                .add(key(EntityType.ENDERMITE))
+                .add(key(EntityType.SILVERFISH))
+                .add(key(EntityType.SPIDER))
+                .add(key(EntityType.CAVE_SPIDER));
+        tag(TTEntityTags.SENSITIVE_TO_BANE_OF_ARTHROPODS)
+                .addTag(TTEntityTags.ARTHROPOD)
+                .add(key(TTEntities.ELDRITCH_CRAB.get()));
+        tag(TTEntityTags.SENSITIVE_TO_SMITE)
+                .addTag(TTEntityTags.UNDEAD)
                 .add(key(TTEntities.ELDRITCH_GUARDIAN.get()))
                 .add(key(TTEntities.INHABITED_ZOMBIE.get()))
                 .add(key(TTEntities.BRAINY_ZOMBIE.get()))
                 .add(key(TTEntities.GIANT_BRAINY_ZOMBIE.get()))
                 .add(key(TTEntities.BRAINY_DROWNED.get()))
                 .add(key(TTEntities.BRAINY_HUSK.get()));
-        tag(EntityTypeTags.INVERTED_HEALING_AND_HARM)
+        tag(TTEntityTags.INVERTED_HEALING_AND_HARM)
+                .addTag(TTEntityTags.UNDEAD)
                 .add(key(TTEntities.ELDRITCH_GUARDIAN.get()))
                 .add(key(TTEntities.INHABITED_ZOMBIE.get()))
                 .add(key(TTEntities.BRAINY_ZOMBIE.get()))
@@ -76,7 +99,10 @@ public final class TTEntityTypeTagsProvider extends TagsProvider<EntityType<?>> 
                 .add(key(TTEntities.TAINTACLE.get()))
                 .add(key(TTEntities.TAINTACLE_SMALL.get()))
                 .add(key(TTEntities.TAINTACLE_GIANT.get()));
-        tag(EntityTypeTags.WITHER_FRIENDS).add(key(TTEntities.ELDRITCH_GUARDIAN.get()));
+        tag(TTEntityTags.IGNORES_POISON_AND_REGEN).addTag(TTEntityTags.UNDEAD);
+        tag(TTEntityTags.WITHER_FRIENDS)
+                .addTag(TTEntityTags.UNDEAD)
+                .add(key(TTEntities.ELDRITCH_GUARDIAN.get()));
     }
 
     private static ResourceKey<EntityType<?>> key(EntityType<?> type) {

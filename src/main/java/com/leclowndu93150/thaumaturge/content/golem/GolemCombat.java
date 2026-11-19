@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
+import com.leclowndu93150.thaumaturge.content.entity.EntityEnchantmentDamage;
 import com.leclowndu93150.thaumaturge.content.entity.ProjectileLooting;
 import java.util.function.Consumer;
 import net.minecraft.server.level.ServerLevel;
@@ -29,6 +30,9 @@ final class GolemCombat {
         MobType targetType = target instanceof LivingEntity living ? living.getMobType() : MobType.UNDEFINED;
         float damage = (float) attacker.getAttributeValue(Attributes.ATTACK_DAMAGE)
                 + EnchantmentHelper.getDamageBonus(weapon, targetType);
+        if (target instanceof LivingEntity living) {
+            damage += EntityEnchantmentDamage.additionalBonus(weapon, targetType, living.getType());
+        }
         if (!target.hurt(source, damage)) {
             return false;
         }
