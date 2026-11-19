@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.compat.iris;
 
 import com.leclowndu93150.thaumaturge.client.render.NodeTexture;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.irisshaders.iris.Iris;
 import net.irisshaders.iris.api.v0.IrisApi;
 import net.irisshaders.iris.layer.BlockEntityRenderStateShard;
-import net.irisshaders.iris.layer.BufferSourceWrapper;
 import net.irisshaders.iris.layer.EntityRenderStateShard;
 import net.irisshaders.iris.layer.OuterWrappedRenderType;
 import net.irisshaders.iris.pathways.HandRenderer;
@@ -16,8 +16,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 
-/** Iris-only implementation loaded reflectively by {@link IrisCompat}. */
-public final class IrisCompatImpl {
+/** Oculus render hooks, reached only after Forge confirms Oculus is loaded. */
+final class IrisCompatImpl {
     private static final String ALPHA_TEST_UNIFORM = "AlphaTestValue";
     private static final ResourceLocation NODE_TEXTURE = NodeTexture.TEXTURE;
 
@@ -61,23 +61,20 @@ public final class IrisCompatImpl {
             return;
         }
         ShaderInstance shader = particleTranslucentShader();
-        if (shader.getUniform(ALPHA_TEST_UNIFORM) != null) {
-            shader.getUniform(ALPHA_TEST_UNIFORM).set(threshold);
+        Uniform alphaTest = shader == null ? null : shader.getUniform(ALPHA_TEST_UNIFORM);
+        if (alphaTest != null) {
+            alphaTest.set(threshold);
         }
     }
 
     public static MultiBufferSource entityEffectBuffers(MultiBufferSource buffers) {
-        return new BufferSourceWrapper(
-                buffers,
-                renderType -> OuterWrappedRenderType.wrapExactlyOnce(
-                        "iris:thaumaturge_entity_effect", renderType, EntityRenderStateShard.INSTANCE));
+        return renderType -> buffers.getBuffer(OuterWrappedRenderType.wrapExactlyOnce(
+                "iris:thaumaturge_entity_effect", renderType, EntityRenderStateShard.INSTANCE));
     }
 
     public static MultiBufferSource blockEntityEffectBuffers(MultiBufferSource buffers) {
-        return new BufferSourceWrapper(
-                buffers,
-                renderType -> OuterWrappedRenderType.wrapExactlyOnce(
-                        "iris:thaumaturge_block_entity_effect", renderType, BlockEntityRenderStateShard.INSTANCE));
+        return renderType -> buffers.getBuffer(OuterWrappedRenderType.wrapExactlyOnce(
+                "iris:thaumaturge_block_entity_effect", renderType, BlockEntityRenderStateShard.INSTANCE));
     }
 
     private static int nodeTextureId() {

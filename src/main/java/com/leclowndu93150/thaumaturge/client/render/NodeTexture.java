@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.mojang.blaze3d.platform.NativeImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,10 +14,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID, value = Dist.CLIENT)
 public final class NodeTexture {
     public static final ResourceLocation TEXTURE = TTIds.rl("textures/misc/auranodes.png");
+    private static final Logger LOGGER = LoggerFactory.getLogger(TTIds.MODID);
     private static final int GRID = 32;
 
     private NodeTexture() {}
@@ -34,13 +36,13 @@ public final class NodeTexture {
             try {
                 premultiplyGlowStrips(image);
                 Minecraft.getInstance().getTextureManager().register(TEXTURE, new DynamicTexture(image));
-                Thaumaturge.LOGGER.debug("Prepared premultiplied node glow strips from {}", TEXTURE);
+                LOGGER.debug("Prepared premultiplied node glow strips from {}", TEXTURE);
             } catch (RuntimeException | Error e) {
                 image.close();
                 throw e;
             }
         } catch (IOException e) {
-            Thaumaturge.LOGGER.error("Could not prepare node glow texture {}", TEXTURE, e);
+            LOGGER.error("Could not prepare node glow texture {}", TEXTURE, e);
         }
     }
 

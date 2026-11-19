@@ -1,12 +1,15 @@
 package com.leclowndu93150.thaumaturge.mixin.client.iris;
 
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import java.util.List;
+import java.util.function.Consumer;
+import net.irisshaders.iris.gl.blending.BlendModeOverride;
+import net.irisshaders.iris.gl.blending.BufferBlendOverride;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * Iris's translucent-particle program uses a 0.1 alpha test. The node atlas deliberately uses alpha 0.1 for its
@@ -22,7 +25,7 @@ public abstract class ExtendedShaderMixin {
     private static final float NODE_ALPHA_TEST = 0.0001F;
 
     @ModifyArg(
-            method = "apply",
+            method = {"apply()V", "m_173363_()V"},
             at =
                     @At(
                             value = "INVOKE",
@@ -32,10 +35,20 @@ public abstract class ExtendedShaderMixin {
         return IrisCompat.isNodeParticleShaderPass(this) ? Math.min(irisAlphaTest, NODE_ALPHA_TEST) : irisAlphaTest;
     }
 
-    @Inject(method = "applyBlendModes", at = @At("HEAD"), cancellable = true)
-    private void thaumaturge$preserveNodeBlendMode(CallbackInfo ci) {
-        if (IrisCompat.isNodeParticleShaderPass(this)) {
-            ci.cancel();
-        }
+    @WrapWithCondition(
+            method = {"apply()V", "m_173363_()V"},
+            at = @At(value = "INVOKE", target = "Lnet/irisshaders/iris/gl/blending/BlendModeOverride;apply()V"),
+            remap = false)
+    private boolean thaumaturge$allowBlendOverride(BlendModeOverride override) {
+        return !IrisCompat.isNodeParticleShaderPass(this);
+    }
+
+    @WrapWithCondition(
+            method = {"apply()V", "m_173363_()V"},
+            at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V"),
+            remap = false)
+    private boolean thaumaturge$allowBufferBlendOverrides(
+            List<BufferBlendOverride> overrides, Consumer<BufferBlendOverride> apply) {
+        return !IrisCompat.isNodeParticleShaderPass(this);
     }
 }
