@@ -1,15 +1,16 @@
 package com.leclowndu93150.thaumaturge.data.loot;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.content.entity.loot.AddTableLootModifier;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
-import net.neoforged.neoforge.common.loot.AddTableLootModifier;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 
 public final class TTGlobalLootModifierProvider extends GlobalLootModifierProvider {
@@ -53,13 +54,11 @@ public final class TTGlobalLootModifierProvider extends GlobalLootModifierProvid
         return new AddTableLootModifier(conditions, table);
     }
 
-    @SafeVarargs
-    private static LootItemCondition anyOf(ResourceKey<LootTable>... targets) {
-        AnyOfCondition.Builder builder = null;
-        for (ResourceKey<LootTable> target : targets) {
-            LootTableIdCondition.Builder condition = LootTableIdCondition.builder(target.location());
-            builder = builder == null ? AnyOfCondition.anyOf(condition) : builder.or(condition);
+    private static LootItemCondition anyOf(ResourceLocation... targets) {
+        LootItemCondition.Builder[] conditions = new LootItemCondition.Builder[targets.length];
+        for (int index = 0; index < targets.length; index++) {
+            conditions[index] = LootTableIdCondition.builder(targets[index]);
         }
-        return builder.build();
+        return AnyOfCondition.anyOf(conditions).build();
     }
 }
