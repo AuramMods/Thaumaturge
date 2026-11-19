@@ -64,6 +64,8 @@ import com.leclowndu93150.thaumaturge.content.item.CelestialNotesItem;
 import com.leclowndu93150.thaumaturge.content.item.LabelItem;
 import com.leclowndu93150.thaumaturge.content.item.PhialItem;
 import com.leclowndu93150.thaumaturge.content.item.PrimordialPearlItem;
+import com.leclowndu93150.thaumaturge.content.item.RenderedBlockItem;
+import com.leclowndu93150.thaumaturge.content.item.RenderedBlockItem.Renderer;
 import com.leclowndu93150.thaumaturge.content.item.SalisMundusItem;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import com.leclowndu93150.thaumaturge.content.item.ThrowableItem;
@@ -117,9 +119,10 @@ public final class TTItems {
 
     public static final RegistryObject<BlockItem> FOCAL_MANIPULATOR =
             ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.FOCAL_MANIPULATOR);
-    public static final RegistryObject<BlockItem> RESEARCH_TABLE = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.RESEARCH_TABLE);
+    public static final RegistryObject<BlockItem> RESEARCH_TABLE =
+            registerRenderedBlockItem(TTBlocks.RESEARCH_TABLE, Renderer.RESEARCH_TABLE);
     public static final RegistryObject<BlockItem> DECONSTRUCTION_TABLE =
-            ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.DECONSTRUCTION_TABLE);
+            registerRenderedBlockItem(TTBlocks.DECONSTRUCTION_TABLE, Renderer.DECONSTRUCTION_TABLE);
 
     public static final RegistryObject<BlockItem> ARCANE_WORKBENCH =
             ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.ARCANE_WORKBENCH);
@@ -267,7 +270,8 @@ public final class TTItems {
     public static final RegistryObject<BlockItem> LAMP_GROWTH = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.LAMP_GROWTH);
     public static final RegistryObject<BlockItem> LAMP_FERTILITY = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.LAMP_FERTILITY);
     public static final RegistryObject<BlockItem> CENTRIFUGE = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.CENTRIFUGE);
-    public static final RegistryObject<BlockItem> HUNGRY_CHEST = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.HUNGRY_CHEST);
+    public static final RegistryObject<BlockItem> HUNGRY_CHEST =
+            registerRenderedBlockItem(TTBlocks.HUNGRY_CHEST, Renderer.HUNGRY_CHEST);
     public static final RegistryObject<BlockItem> MATRIX_SPEED = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.MATRIX_SPEED);
     public static final RegistryObject<BlockItem> MATRIX_COST = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.MATRIX_COST);
     public static final RegistryObject<BlockItem> VIS_BATTERY = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.VIS_BATTERY);
@@ -720,7 +724,7 @@ public final class TTItems {
 
     static {
         for (DyeColor dye : DyeColor.values()) {
-            NITORS.put(dye, ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.NITORS.get(dye)));
+            NITORS.put(dye, registerRenderedBlockItem(TTBlocks.NITORS.get(dye), Renderer.NITOR));
         }
     }
 
@@ -1009,11 +1013,11 @@ public final class TTItems {
 
     public static final RegistryObject<BlockItem> VIS_RELAY = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.VIS_RELAY);
     public static final RegistryObject<BlockItem> NODE_STABILIZER =
-            ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.NODE_STABILIZER);
+            registerRenderedBlockItem(TTBlocks.NODE_STABILIZER, Renderer.NODE_STABILIZER);
     public static final RegistryObject<BlockItem> NODE_STABILIZER_ADVANCED =
-            ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.NODE_STABILIZER_ADVANCED);
+            registerRenderedBlockItem(TTBlocks.NODE_STABILIZER_ADVANCED, Renderer.NODE_STABILIZER_ADVANCED);
     public static final RegistryObject<BlockItem> NODE_TRANSDUCER =
-            ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.NODE_TRANSDUCER);
+            registerRenderedBlockItem(TTBlocks.NODE_TRANSDUCER, Renderer.NODE_TRANSDUCER);
     public static final RegistryObject<JarNodeItem> JAR_NODE =
             ForgeRegistration.registerItem(ITEMS, "jar_node", props -> new JarNodeItem(TTBlocks.JAR_NODE.get(), props));
 
@@ -1198,7 +1202,7 @@ public final class TTItems {
     public static final RegistryObject<BlockItem> ELDRITCH_TRAP = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.ELDRITCH_TRAP);
     public static final RegistryObject<BlockItem> ELDRITCH_ALTAR = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.ELDRITCH_ALTAR);
     public static final RegistryObject<BlockItem> ELDRITCH_OBELISK =
-            ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.ELDRITCH_OBELISK);
+            registerRenderedBlockItem(TTBlocks.ELDRITCH_OBELISK, Renderer.ELDRITCH_OBELISK);
     public static final RegistryObject<BlockItem> ELDRITCH_PILLAR =
             ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.ELDRITCH_PILLAR);
     public static final RegistryObject<BlockItem> ELDRITCH_CAPSTONE =
@@ -1325,6 +1329,11 @@ public final class TTItems {
                 block.getId().getPath(),
                 p -> constructor.apply(block.get(), p),
                 new Item.Properties());
+    }
+
+    private static RegistryObject<BlockItem> registerRenderedBlockItem(
+            RegistryObject<? extends Block> block, Renderer renderer) {
+        return registerSimpleBlockItem(block, (value, properties) -> new RenderedBlockItem(value, properties, renderer));
     }
 
     public static final RegistryObject<BlockItem> WALL_ARCANE_STONE =

@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
+import com.leclowndu93150.thaumaturge.client.extensions.TTItemRenderExtensions;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.List;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -17,11 +19,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jspecify.annotations.Nullable;
 
 public final class JarNodeItem extends BlockItem {
     public JarNodeItem(Block block, Item.Properties properties) {
         super(block, properties);
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(TTItemRenderExtensions.JAR_NODE);
     }
 
     @Override

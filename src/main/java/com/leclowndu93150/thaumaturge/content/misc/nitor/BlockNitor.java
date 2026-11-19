@@ -2,9 +2,11 @@ package com.leclowndu93150.thaumaturge.content.misc.nitor;
 
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.propertiesCodec;
 
+import com.leclowndu93150.thaumaturge.client.extensions.NitorClientExtensions;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.client.extensions.common.IClientBlockExtensions;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockNitor extends BaseEntityBlock {
@@ -37,6 +40,11 @@ public final class BlockNitor extends BaseEntityBlock {
     public BlockNitor(DyeColor dye, BlockBehaviour.Properties properties) {
         super(properties);
         this.dye = dye;
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientBlockExtensions> consumer) {
+        consumer.accept(NitorClientExtensions.INSTANCE);
     }
 
     public DyeColor dye() {

@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.client.extensions;
 
-import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.AdvancedAlchemicalFurnaceItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.DeconTableItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.EldritchObeliskItemSpecialRenderer;
@@ -14,47 +13,39 @@ import com.leclowndu93150.thaumaturge.client.model.NitorItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.NodeStabilizerItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.ResearchTableItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.WandItemSpecialRenderer;
-import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.content.item.RenderedBlockItem;
 import java.util.function.Supplier;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.core.Holder;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.minecraftforge.common.util.Lazy;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID, value = Dist.CLIENT)
 public final class TTItemRenderExtensions {
+    public static final IClientItemExtensions JAR = lazy(JarItemSpecialRenderer::new);
+    public static final IClientItemExtensions JAR_BRAIN = lazy(JarBrainItemSpecialRenderer::new);
+    public static final IClientItemExtensions JAR_NODE = lazy(JarNodeItemSpecialRenderer::new);
+    public static final IClientItemExtensions ADVANCED_ALCHEMICAL_FURNACE =
+            lazy(AdvancedAlchemicalFurnaceItemSpecialRenderer::new);
+    public static final IClientItemExtensions GOLEM_BUILDER = lazy(GolemBuilderItemSpecialRenderer::new);
+    public static final IClientItemExtensions GOLEM_PLACER = lazy(GolemItemSpecialRenderer::new);
+    public static final IClientItemExtensions WAND = lazy(WandItemSpecialRenderer::new);
+
     private TTItemRenderExtensions() {}
 
-    @SubscribeEvent
-    public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
-        register(event, JarItemSpecialRenderer::new, TTItems.JAR_NORMAL, TTItems.JAR_VOID, TTItems.JAR_CREATIVE);
-        register(event, JarBrainItemSpecialRenderer::new, TTItems.JAR_BRAIN);
-        register(event, JarNodeItemSpecialRenderer::new, TTItems.JAR_NODE);
-        register(event, AdvancedAlchemicalFurnaceItemSpecialRenderer::new, TTItems.ADVANCED_ALCHEMICAL_FURNACE);
-        register(event, GolemBuilderItemSpecialRenderer::new, TTItems.GOLEM_BUILDER);
-        register(event, GolemItemSpecialRenderer::new, TTItems.GOLEM_PLACER);
-        register(event, DeconTableItemSpecialRenderer::new, TTItems.DECONSTRUCTION_TABLE);
-        register(event, ResearchTableItemSpecialRenderer::new, TTItems.RESEARCH_TABLE);
-        register(event, WandItemSpecialRenderer::new, TTItems.WAND);
-        register(event, () -> new NodeStabilizerItemSpecialRenderer(false), TTItems.NODE_STABILIZER);
-        register(event, () -> new NodeStabilizerItemSpecialRenderer(true), TTItems.NODE_STABILIZER_ADVANCED);
-        register(event, () -> new NodeStabilizerItemSpecialRenderer(false, true), TTItems.NODE_TRANSDUCER);
-        register(event, HungryChestItemSpecialRenderer::new, TTItems.HUNGRY_CHEST);
-        register(event, EldritchObeliskItemSpecialRenderer::new, TTItems.ELDRITCH_OBELISK);
-        TTItems.NITORS.values().forEach(item -> register(event, NitorItemSpecialRenderer::new, item));
+    public static IClientItemExtensions forBlock(Supplier<RenderedBlockItem.Renderer> renderer) {
+        return lazy(() -> switch (renderer.get()) {
+            case DECONSTRUCTION_TABLE -> new DeconTableItemSpecialRenderer();
+            case RESEARCH_TABLE -> new ResearchTableItemSpecialRenderer();
+            case NODE_STABILIZER -> new NodeStabilizerItemSpecialRenderer(false);
+            case NODE_STABILIZER_ADVANCED -> new NodeStabilizerItemSpecialRenderer(true);
+            case NODE_TRANSDUCER -> new NodeStabilizerItemSpecialRenderer(false, true);
+            case HUNGRY_CHEST -> new HungryChestItemSpecialRenderer();
+            case ELDRITCH_OBELISK -> new EldritchObeliskItemSpecialRenderer();
+            case NITOR -> new NitorItemSpecialRenderer();
+        });
     }
 
-    @SafeVarargs
-    private static void register(
-            RegisterClientExtensionsEvent event,
-            Supplier<BlockEntityWithoutLevelRenderer> factory,
-            Holder<Item>... items) {
-        event.registerItem(new BewlrExtension(factory), items);
+    private static IClientItemExtensions lazy(Supplier<BlockEntityWithoutLevelRenderer> factory) {
+        return new BewlrExtension(factory);
     }
 
     private static final class BewlrExtension implements IClientItemExtensions {

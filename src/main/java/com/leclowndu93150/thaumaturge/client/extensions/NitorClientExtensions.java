@@ -1,36 +1,21 @@
 package com.leclowndu93150.thaumaturge.client.extensions;
 
-import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
 import com.leclowndu93150.thaumaturge.content.misc.nitor.BlockNitor;
-import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.extensions.common.IClientBlockExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID, value = Dist.CLIENT)
 public final class NitorClientExtensions implements IClientBlockExtensions {
-    private static final NitorClientExtensions INSTANCE = new NitorClientExtensions();
+    public static final NitorClientExtensions INSTANCE = new NitorClientExtensions();
 
     private NitorClientExtensions() {}
-
-    @SubscribeEvent
-    public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
-        Block[] nitors =
-                TTBlocks.NITORS.values().stream().map(b -> (Block) b.get()).toArray(Block[]::new);
-        event.registerBlock(INSTANCE, nitors);
-    }
 
     @Override
     public boolean addDestroyEffects(BlockState state, Level level, BlockPos pos, ParticleEngine manager) {

@@ -1295,7 +1295,7 @@ public final class TTModelProvider implements DataProvider {
         modelOutput.accept(
                 ModelLocationUtils.getModelLocation(TTItems.NITORS.get(dye).get()), () -> {
                     JsonObject model = new JsonObject();
-                    model.addProperty("loader", "neoforge:separate_transforms");
+                    model.addProperty("loader", "forge:separate_transforms");
                     JsonObject flat = new JsonObject();
                     flat.addProperty("parent", TTIds.rl("item/nitor").toString());
                     model.add("base", flat);

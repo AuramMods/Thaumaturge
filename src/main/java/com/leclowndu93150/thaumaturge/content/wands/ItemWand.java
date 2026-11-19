@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
+import com.leclowndu93150.thaumaturge.client.extensions.TTItemRenderExtensions;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -38,6 +39,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -64,6 +66,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings("removal")
@@ -75,6 +78,11 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
 
     public ItemWand(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(TTItemRenderExtensions.WAND);
     }
 
     public static ItemStack create(Item wandItem, WandCap cap, WandRod rod, boolean sceptre) {

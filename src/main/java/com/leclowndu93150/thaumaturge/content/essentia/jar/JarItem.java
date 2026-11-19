@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
+import com.leclowndu93150.thaumaturge.client.extensions.TTItemRenderExtensions;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
@@ -15,6 +16,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -30,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jspecify.annotations.Nullable;
 
@@ -40,6 +43,11 @@ public class JarItem extends BlockItem {
 
     public JarItem(Block block, Item.Properties properties) {
         super(block, properties);
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(TTItemRenderExtensions.JAR);
     }
 
     @Override
