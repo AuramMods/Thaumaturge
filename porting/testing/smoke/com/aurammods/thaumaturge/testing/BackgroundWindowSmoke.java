@@ -8,6 +8,8 @@ public final class BackgroundWindowSmoke {
     private BackgroundWindowSmoke() {}
 
     public static void main(String[] arguments) {
+        boolean hidden = arguments.length > 0 && "hidden".equals(arguments[0]);
+        int expectedVisibility = hidden ? GLFW.GLFW_FALSE : GLFW.GLFW_TRUE;
         GLFWErrorCallback errors = GLFWErrorCallback.createPrint(System.err).set();
         long window = 0;
         try {
@@ -16,7 +18,7 @@ public final class BackgroundWindowSmoke {
             }
             GLFW.glfwDefaultWindowHints();
             GLFW.glfwWindowHint(GLFW.GLFW_CLIENT_API, GLFW.GLFW_NO_API);
-            GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
+            GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, hidden ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
             // Exercise caller attempts to override focus; the agent must win.
             GLFW.glfwWindowHint(GLFW.GLFW_FOCUSED, GLFW.GLFW_TRUE);
             GLFW.glfwWindowHint(GLFW.GLFW_FOCUS_ON_SHOW, GLFW.GLFW_TRUE);
@@ -36,10 +38,14 @@ public final class BackgroundWindowSmoke {
                 if (GLFW.glfwGetWindowAttrib(window, GLFW.GLFW_FOCUS_ON_SHOW) != GLFW.GLFW_FALSE) {
                     throw new AssertionError("Background test window has focus-on-show enabled");
                 }
+                if (GLFW.glfwGetWindowAttrib(window, GLFW.GLFW_VISIBLE) != expectedVisibility) {
+                    throw new AssertionError("Background test window has the wrong visibility");
+                }
                 samples++;
                 GLFW.glfwWaitEventsTimeout(0.05);
             }
-            System.out.println("Background GLFW window stayed unfocused for " + samples + " samples");
+            System.out.println("Background GLFW window stayed " + (hidden ? "hidden and " : "")
+                    + "unfocused for " + samples + " samples");
         } finally {
             if (window != 0) {
                 GLFW.glfwDestroyWindow(window);

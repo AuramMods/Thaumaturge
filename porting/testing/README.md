@@ -16,11 +16,17 @@ explicit GLFW focus requests within this test JVM. This covers a game or loading
 window using that GLFW instance. No shell backgrounding or application activation
 is needed.
 
+Use `./gradlew -PportHiddenWindow runClient` for unattended client testing.
+The agent forces GLFW's hidden window hint even when the game requests visibility
+and intercepts explicit show and focus requests. The isolated sound, narrator,
+fullscreen and early-window settings still apply.
+
 The window controls can be exercised before the mod compiles:
 
 ```sh
 ./gradlew backgroundAgentJar backgroundSmokeClasses prepareClientProfile
 ./gradlew runBackgroundWindowSmoke
+./gradlew -PportHiddenWindow runBackgroundWindowSmoke
 ```
 
 Use a supported Gradle JVM (Java 17 or 21 with the pinned Gradle 8.14.3). On the
@@ -37,9 +43,9 @@ build/focus-monitor 15 > build/focus.log &
 ./gradlew runBackgroundWindowSmoke
 ```
 
-The smoke test creates and shows a small GLFW 3.3.1 window, attempts to request
-focus, checks its real focus attributes for three seconds, then destroys the
-window and terminates GLFW. It does not initialize audio. The monitor samples
+The smoke test requests visibility and focus for a small GLFW 3.3.1 window.
+It checks native focus and visibility attributes for three seconds, then destroys
+the window and terminates GLFW. It does not initialize audio. The monitor samples
 the foreground application's process identity every 20 ms, without activating
 or controlling it. A user-initiated app switch also appears in its output and
 must be distinguished from test-induced focus changes.

@@ -711,12 +711,16 @@ def backgroundAgentJar = tasks.register('backgroundAgentJar', Zip) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+def hideTestWindow = providers.gradleProperty('portHiddenWindow').isPresent()
+def backgroundAgentOption = "-javaagent:${backgroundAgentJar.get().archiveFile.get().asFile}${hideTestWindow ? '=hidden' : ''}"
+
 tasks.register('runBackgroundWindowSmoke', JavaExec) {
     dependsOn backgroundAgentJar
     classpath = sourceSets.backgroundSmoke.runtimeClasspath
     mainClass = 'com.aurammods.thaumaturge.testing.BackgroundWindowSmoke'
     javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(17) }
-    doFirst { jvmArgs "-javaagent:${backgroundAgentJar.get().archiveFile.get().asFile}" }
+    jvmArgs backgroundAgentOption
+    if (hideTestWindow) args 'hidden'
     jvmArgs '-XstartOnFirstThread', '-Dapple.awt.UIElement=true'
 }
 
@@ -751,7 +755,7 @@ def prepareTestServers = tasks.register('prepareTestServers') {
     }
 }
 // This run configuration is solely for background testing on the user's Mac.
-minecraft.runs.client.jvmArg "-javaagent:${backgroundAgentJar.get().archiveFile.get().asFile}"
+minecraft.runs.client.jvmArg backgroundAgentOption
 tasks.matching { it.name == 'runClient' }.configureEach {
     dependsOn prepareClientProfile, backgroundAgentJar
 }

@@ -16,6 +16,7 @@ public final class BackgroundTestAgent {
     private BackgroundTestAgent() {}
 
     public static void premain(String arguments, Instrumentation instrumentation) {
+        boolean hidden = "hidden".equals(arguments);
         System.setProperty("apple.awt.UIElement", "true");
         instrumentation.addTransformer(new ClassFileTransformer() {
             @Override
@@ -24,13 +25,13 @@ public final class BackgroundTestAgent {
                 if (!GLFW.equals(name)) {
                     return null;
                 }
-                return instrumentGlfw(bytes);
+                return instrumentGlfw(bytes, hidden);
             }
         });
         System.err.println("[background-test] GLFW focus suppression installed");
     }
 
-    static byte[] instrumentGlfw(byte[] bytes) {
+    private static byte[] instrumentGlfw(byte[] bytes, boolean hidden) {
         ClassReader reader = new ClassReader(bytes);
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
         reader.accept(new ClassVisitor(Opcodes.ASM9, writer) {
@@ -38,9 +39,8 @@ public final class BackgroundTestAgent {
             public MethodVisitor visitMethod(int access, String name, String descriptor,
                     String signature, String[] exceptions) {
                 MethodVisitor target = super.visitMethod(access, name, descriptor, signature, exceptions);
-                if (name.equals("glfwFocusWindow") && descriptor.equals("(J)V")) {
-                    // Minecraft can explicitly request focus after showing its window.
-                    // The testing JVM deliberately leaves the current application active.
+                if (descriptor.equals("(J)V")
+                        && (name.equals("glfwFocusWindow") || (hidden && name.equals("glfwShowWindow")))) {
                     target.visitCode();
                     target.visitInsn(Opcodes.RETURN);
                     target.visitMaxs(0, 2);
@@ -56,6 +56,9 @@ public final class BackgroundTestAgent {
                         }
                         if (name.equals("nglfwCreateWindow") && descriptor.equals("(IIJJJ)J")) {
                             // Apply after all caller hints, including loading-window hints.
+                            if (hidden) {
+                                hint("GLFW_VISIBLE", "glfwWindowHint");
+                            }
                             hint("GLFW_FOCUSED", "glfwWindowHint");
                             hint("GLFW_FOCUS_ON_SHOW", "glfwWindowHint");
                         }
@@ -69,7 +72,9 @@ public final class BackgroundTestAgent {
                 };
             }
         }, 0);
-        System.err.println("[background-test] Instrumented GLFW window creation and explicit focus requests");
+        System.err.println(hidden
+                ? "[background-test] Instrumented GLFW to keep windows hidden and unfocused"
+                : "[background-test] Instrumented GLFW window creation and explicit focus requests");
         return writer.toByteArray();
     }
 }
