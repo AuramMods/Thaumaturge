@@ -161,7 +161,7 @@ class PechStateTest {
         NonNullList<ItemStack> contents = PechHoard.empty();
         contents.set(3, new ItemStack(Items.EMERALD, 6));
         CompoundTag nativeInventory = new CompoundTag();
-        ContainerHelper.saveAllItems(nativeInventory, contents, registries);
+        ContainerHelper.saveAllItems(nativeInventory, contents);
         CompoundTag source = new CompoundTag();
         source.put("hoard", nativeInventory.getList("Items", Tag.TAG_COMPOUND));
 
@@ -177,7 +177,7 @@ class PechStateTest {
         CompoundTag legacy = new CompoundTag();
         NonNullList<ItemStack> oldHoard = PechHoard.empty();
         oldHoard.set(4, new ItemStack(Items.EMERALD, 3));
-        ContainerHelper.saveAllItems(legacy, oldHoard, registries);
+        ContainerHelper.saveAllItems(legacy, oldHoard);
 
         List<ItemStack> restored = PechHoard.load(legacy, registries);
         assertEquals(3, restored.get(4).getCount());
@@ -212,7 +212,7 @@ class PechStateTest {
         legacy.putByte("PechType", (byte) EntityPech.TYPE_MAGE);
         NonNullList<ItemStack> oldHoard = PechHoard.empty();
         oldHoard.set(5, new ItemStack(Items.EMERALD, 4));
-        ContainerHelper.saveAllItems(legacy, oldHoard, registries);
+        ContainerHelper.saveAllItems(legacy, oldHoard);
 
         PechSavedState.State restored = PechSavedState.load(legacy, registries);
         assertTrue(restored.domesticated());

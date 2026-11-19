@@ -52,12 +52,12 @@ class ZombiePlateTextureParityTest {
         Entity ordinaryEntity = mock(Entity.class);
 
         assertEquals(
-                TTIds.rl("textures/models/armor/zombie_plate_layer_1.png"),
-                leggings.getArmorTexture(ItemStack.EMPTY, zombie, EquipmentSlot.CHEST, null, false));
+                TTIds.rl("textures/models/armor/zombie_plate_layer_1.png").toString(),
+                leggings.getArmorTexture(ItemStack.EMPTY, zombie, EquipmentSlot.CHEST, null));
         assertEquals(
-                TTIds.rl("textures/models/armor/zombie_plate_layer_2.png"),
-                leggings.getArmorTexture(ItemStack.EMPTY, zombie, EquipmentSlot.LEGS, null, true));
-        assertNull(leggings.getArmorTexture(ItemStack.EMPTY, ordinaryEntity, EquipmentSlot.LEGS, null, true));
+                TTIds.rl("textures/models/armor/zombie_plate_layer_2.png").toString(),
+                leggings.getArmorTexture(ItemStack.EMPTY, zombie, EquipmentSlot.LEGS, null));
+        assertNull(leggings.getArmorTexture(ItemStack.EMPTY, ordinaryEntity, EquipmentSlot.LEGS, null));
     }
 
     private static byte[] readResource(String path) throws IOException {

@@ -20,7 +20,6 @@ import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.work.Thaumat
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
-import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.Lifecycle;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +44,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.Blocks;
@@ -75,7 +73,7 @@ class ThaumatoriumCompatibilityTest {
                                 .toList())
                 .freeze();
         level = mock(ServerLevel.class);
-        recipes = mock(RecipeManager.class);
+        recipes = new RecipeManager();
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRecipeManager()).thenReturn(recipes);
         when(level.getRandom()).thenReturn(mock(RandomSource.class));
@@ -99,7 +97,11 @@ class ThaumatoriumCompatibilityTest {
     }
 
     private void offer(ResourceLocation id, CrucibleRecipe recipe) {
-        when(recipes.byKey(id)).thenReturn(Optional.of(new RecipeHolder<>(id, recipe)));
+        recipe.bindRecipeId(id);
+        var offered = new ArrayList<>(recipes.getRecipes());
+        offered.removeIf(existing -> existing.getId().equals(id));
+        offered.add(recipe);
+        recipes.replaceRecipes(offered);
     }
 
     private void tick(BlockEntityThaumatorium machine) {
@@ -323,8 +325,8 @@ class ThaumatoriumCompatibilityTest {
         CrucibleRecipe denied = spy(recipe(AspectList.EMPTY.add(fire, 1)));
         doReturn(false).when(denied).doesPassGate(player);
         ResourceLocation lockedId = RECIPE.withSuffix("_locked");
-        when(recipes.getAllRecipesFor(TTRecipeTypes.CRUCIBLE.get()))
-                .thenReturn(List.of(new RecipeHolder<>(RECIPE, allowed), new RecipeHolder<>(lockedId, denied)));
+        offer(RECIPE, allowed);
+        offer(lockedId, denied);
         machine.catalyst().setStackInSlot(0, new ItemStack(Items.DIRT));
         List<ResourceLocation> ids = new ArrayList<>();
         assertEquals(List.of(allowed), machine.candidateRecipes(level, player, ids));

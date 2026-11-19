@@ -1,7 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
-import com.leclowndu93150.thaumaturge.state.AttachmentData;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -17,6 +15,7 @@ import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpawnParticlePay
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
+import com.leclowndu93150.thaumaturge.testing.AttachmentFixture;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import io.netty.buffer.Unpooled;
@@ -68,7 +67,6 @@ class AuraCompatibilityTest {
         when(level.getChunkSource()).thenReturn(chunkSource);
         when(level.getRandom()).thenReturn(random);
         when(level.getGameTime()).thenReturn(20L);
-        when(level.tickRateManager().runsNormally()).thenReturn(true);
         when(chunkSource.getChunkNow(anyInt(), anyInt()))
                 .thenAnswer(call -> chunks.get(new ChunkPos(call.getArgument(0), call.getArgument(1))));
         MappedRegistry<Biome> biomes = new MappedRegistry<>(Registries.BIOME, Lifecycle.stable());
@@ -85,8 +83,7 @@ class AuraCompatibilityTest {
     private LevelChunk attach(ChunkPos pos, AuraData data) {
         LevelChunk chunk = mock(LevelChunk.class);
         when(chunk.getPos()).thenReturn(pos);
-        when(AttachmentData.get(chunk, TTAttachments.AURA)).thenReturn(data);
-        when(AttachmentData.getExistingDataOrNull(chunk, TTAttachments.AURA)).thenReturn(data);
+        AttachmentFixture.attach(chunk, level::registryAccess).set(TTAttachments.AURA, data);
         chunks.put(pos, chunk);
         return chunk;
     }
@@ -371,15 +368,14 @@ class AuraCompatibilityTest {
     }
 
     @Test
-    void tickGatingPreventsWorkWhenPausedOrBetweenSecondBoundaries() {
+    void tickGatingRequiresACompletedTickOnASecondBoundary() {
         AuraData data = new AuraData((short) 100, 30, 0);
         LevelChunk chunk = attach(new ChunkPos(0, 0), data);
         AuraManager.onChunkLoaded(level, chunk.getPos());
         when(level.getGameTime()).thenReturn(19L);
         tick(0);
         when(level.getGameTime()).thenReturn(20L);
-        when(level.tickRateManager().runsNormally()).thenReturn(false);
-        tick(0);
+        AuraTickHandler.onLevelTick(new LevelTickEvent(LogicalSide.SERVER, TickEvent.Phase.START, level, () -> true));
         assertEquals(30.0F, data.getVis());
         verifyNoInteractions(chunkSource);
     }

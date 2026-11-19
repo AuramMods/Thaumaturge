@@ -1,7 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
-import com.leclowndu93150.thaumaturge.state.AttachmentData;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -16,6 +14,7 @@ import com.leclowndu93150.thaumaturge.api.research.ResearchEvent;
 import com.leclowndu93150.thaumaturge.api.research.ResearchParent;
 import com.leclowndu93150.thaumaturge.content.research.link.ResearchLinkData;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.testing.AttachmentFixture;
 import com.mojang.serialization.Lifecycle;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +25,7 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import org.junit.jupiter.api.AfterEach;
@@ -134,7 +134,7 @@ final class ResearchManagerIntegrationTest {
                 event.setCanceled(true);
             }
         };
-        MinecraftForge.EVENT_BUS.addListener(ResearchEvent.Completed.class, veto);
+        MinecraftForge.EVENT_BUS.addListener(veto);
         try {
             assertFalse(ResearchManager.complete(player, CHILD));
             assertTrue(knowledge.knows(CHILD));
@@ -161,9 +161,11 @@ final class ResearchManagerIntegrationTest {
         Registry.register(entries, PARENT, parent);
         Registry.register(entries, CHILD, child);
         ServerPlayer player = mock(ServerPlayer.class);
+        ServerLevel level = mock(ServerLevel.class);
         when(player.getUUID()).thenReturn(new UUID(1L, 2L));
-        when(player.registryAccess()).thenReturn(new RegistryAccess.ImmutableRegistryAccess(List.of(entries)));
-        when(AttachmentData.get(player, TTAttachments.KNOWLEDGE)).thenReturn(knowledge);
+        when(player.level()).thenReturn(level);
+        when(level.registryAccess()).thenReturn(new RegistryAccess.ImmutableRegistryAccess(List.of(entries)));
+        AttachmentFixture.attach(player, level::registryAccess).set(TTAttachments.KNOWLEDGE, knowledge);
         return player;
     }
 }

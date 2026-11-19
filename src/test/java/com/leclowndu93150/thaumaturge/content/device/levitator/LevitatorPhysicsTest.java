@@ -14,10 +14,9 @@ import org.mockito.ArgumentCaptor;
 
 class LevitatorPhysicsTest {
     @Test
-    void horizontalFlightCountersTheRidersGravity() {
+    void horizontalFlightSuppliesLiftToAnAirborneRider() {
         Entity rider = mock(Entity.class);
         when(rider.getDeltaMovement()).thenReturn(Vec3.ZERO);
-        when(rider.getGravity()).thenReturn(0.08);
         when(rider.onGround()).thenReturn(false);
 
         BlockEntityLevitator.push(rider, Direction.EAST);

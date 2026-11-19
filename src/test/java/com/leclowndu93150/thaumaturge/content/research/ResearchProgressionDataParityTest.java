@@ -1,7 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
-import com.leclowndu93150.thaumaturge.state.AttachmentData;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,6 +24,7 @@ import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
+import com.leclowndu93150.thaumaturge.testing.AttachmentFixture;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import java.io.InputStream;
@@ -87,7 +86,7 @@ final class ResearchProgressionDataParityTest {
                 .listOf()
                 .parse(JsonOps.INSTANCE, auromancyJson.getAsJsonArray("meta")));
         assertTrue(auromancy.get(1).craft().stream()
-                .anyMatch(requirement -> requirement.items().contains(TTItems.WAND.getDelegate())));
+                .anyMatch(requirement -> requirement.items().contains(BuiltInRegistries.ITEM.wrapAsHolder(TTItems.WAND.get()))));
 
         JsonObject oreJson = loadResearch("ore");
         List<ResearchEntryMeta> oreMeta = Codecs.getOrThrow(ResearchEntryMeta.CODEC
@@ -116,7 +115,7 @@ final class ResearchProgressionDataParityTest {
                 ORE,
                 new ScanEntry(
                         ORE,
-                        Optional.of(HolderSet.direct(TTBlocks.ORE_AMBER.getDelegate())),
+                        Optional.of(HolderSet.direct(BuiltInRegistries.BLOCK.wrapAsHolder(TTBlocks.ORE_AMBER.get()))),
                         Optional.empty(),
                         Optional.empty()));
         RegistryAccess registries = new RegistryAccess.ImmutableRegistryAccess(List.of(entries, scans));
@@ -126,13 +125,12 @@ final class ResearchProgressionDataParityTest {
         Inventory inventory = mock(Inventory.class);
         Level level = mock(Level.class);
         when(player.getUUID()).thenReturn(new UUID(1L, 2L));
-        when(player.registryAccess()).thenReturn(registries);
-        when(AttachmentData.get(player, TTAttachments.KNOWLEDGE)).thenReturn(knowledge);
         when(player.getInventory()).thenReturn(inventory);
         when(inventory.getContainerSize()).thenReturn(1);
         when(inventory.getItem(0)).thenReturn(ItemStack.EMPTY);
         when(player.level()).thenReturn(level);
         when(level.registryAccess()).thenReturn(registries);
+        AttachmentFixture.attach(player, level::registryAccess).set(TTAttachments.KNOWLEDGE, knowledge);
 
         CraftReferenceHolder.rebuild(registries);
         assertFalse(ResearchManager.stageRequirementsMet(player, knowledge, auromancyEntry, AUROMANCY, 1));

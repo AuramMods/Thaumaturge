@@ -45,7 +45,7 @@ class WarpSpawnParityTest {
         ServerPlayer player = mock(ServerPlayer.class);
         MobEffectInstance gaze = mock(MobEffectInstance.class);
         when(player.level()).thenReturn(level);
-        when(player.getEffect(TTMobEffects.DEATH_GAZE)).thenReturn(gaze);
+        when(player.getEffect(TTMobEffects.DEATH_GAZE.get())).thenReturn(gaze);
         when(player.getBoundingBox()).thenReturn(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
         when(gaze.getAmplifier()).thenReturn(0);
         when(level.getEntitiesOfClass(eq(LivingEntity.class), any(AABB.class), any()))

@@ -17,6 +17,7 @@ import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.Lifecycle;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -43,7 +44,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.Level;
@@ -74,7 +74,7 @@ class ThaumatoriumCutoffTest {
                                 .toList())
                 .freeze();
         level = mock(ServerLevel.class);
-        recipes = mock(RecipeManager.class);
+        recipes = new RecipeManager();
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRecipeManager()).thenReturn(recipes);
         when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
@@ -93,7 +93,11 @@ class ThaumatoriumCutoffTest {
     }
 
     private void offer(ResourceLocation id, CrucibleRecipe recipe) {
-        when(recipes.byKey(id)).thenReturn(Optional.of(new RecipeHolder<>(id, recipe)));
+        recipe.bindRecipeId(id);
+        var offered = new ArrayList<>(recipes.getRecipes());
+        offered.removeIf(existing -> existing.getId().equals(id));
+        offered.add(recipe);
+        recipes.replaceRecipes(offered);
     }
 
     private BlockEntityThaumatorium prepared() {

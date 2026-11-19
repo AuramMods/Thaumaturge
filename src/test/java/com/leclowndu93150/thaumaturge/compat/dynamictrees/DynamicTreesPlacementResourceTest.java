@@ -4,6 +4,7 @@ import static com.leclowndu93150.thaumaturge.compat.dynamictrees.DynamicTreesJoC
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 
 class DynamicTreesPlacementResourceTest {
@@ -12,6 +13,7 @@ class DynamicTreesPlacementResourceTest {
         ClassLoader loader = getClass().getClassLoader();
         assertNull(loader.getResource("trees/thaumaturge/world_gen/default.json"));
         assertNull(loader.getResource("data/thaumaturge/neoforge/biome_modifier/dynamic_trees_worldgen.json"));
+        assertNull(loader.getResource("data/thaumaturge/forge/biome_modifier/dynamic_trees_worldgen.json"));
         for (String tree : new String[] {"greatwood", "silverwood"}) {
             assertEquals(
                     "thaumaturge:compat_tree",

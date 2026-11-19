@@ -74,7 +74,8 @@ class StageIngredientHoverTest {
         HolderLookup.RegistryLookup<IResearchEntry> entries = mock(HolderLookup.RegistryLookup.class);
         Holder.Reference<IResearchEntry> entry = mock(Holder.Reference.class);
         IResearchEntry research = mock(IResearchEntry.class);
-        when(minecraft.player.registryAccess()).thenReturn(registries);
+        when(minecraft.player.level()).thenReturn(minecraft.level);
+        when(minecraft.level.registryAccess()).thenReturn(registries);
         when(registries.lookup(IResearchEntry.REGISTRY_KEY)).thenReturn(Optional.of(entries));
         when(entries.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, prerequisite)))
                 .thenReturn(Optional.of(entry));
