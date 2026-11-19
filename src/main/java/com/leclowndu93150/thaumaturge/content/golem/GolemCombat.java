@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
+import com.leclowndu93150.thaumaturge.content.entity.ProjectileLooting;
 import java.util.function.Consumer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -12,7 +13,6 @@ import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 
 final class GolemCombat {
     private static final float LOOT_CHANCE = 0.3F;
@@ -50,11 +50,7 @@ final class GolemCombat {
 
     static void rollComponentDrops(
             Iterable<ItemStack> components, DamageSource source, RandomSource random, Consumer<ItemStack> drop) {
-        // Component recovery uses the damage source's weapon, independent of the wielder's other drops.
-        int looting = source.getDirectEntity() instanceof LivingEntity attacker
-                ? EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MOB_LOOTING, attacker.getMainHandItem())
-                : 0;
-        float chance = LOOT_CHANCE + LOOTING_BONUS_PER_LEVEL * looting;
+        float chance = LOOT_CHANCE + LOOTING_BONUS_PER_LEVEL * ProjectileLooting.levelFor(source);
         for (ItemStack stack : components) {
             ItemStack copy = stack.copy();
             if (random.nextFloat() < chance) {

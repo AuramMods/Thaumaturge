@@ -12,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import com.leclowndu93150.thaumaturge.content.entity.ProjectileLooting;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -27,6 +28,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -109,13 +111,26 @@ class GolemCombatRuntimeTest {
         assertEquals(component.getTag(), drops.get(1).getTag());
         assertNotSame(component.getTag(), drops.get(1).getTag());
 
-        drops.clear();
-        Entity projectile = mock(Entity.class);
-        RandomSource rangedRandom = mock(RandomSource.class);
-        when(rangedRandom.nextFloat()).thenReturn(0.5F);
-        GolemCombat.rollComponentDrops(
-                List.of(component), new DamageSource(DAMAGE, projectile, attacker), rangedRandom, drops::add);
+    }
+
+    @Test
+    void componentRecoveryUsesTheArrowSnapshot() {
+        Zombie attacker = attacker(mock(Level.class), Enchantments.MOB_LOOTING, 2);
+        Arrow arrow = new Arrow(EntityType.ARROW, attacker.level());
+        DamageSource shot = new DamageSource(DAMAGE, arrow, attacker);
+        ItemStack component = new ItemStack(Items.IRON_INGOT, 4);
+        RandomSource random = mock(RandomSource.class);
+        when(random.nextFloat()).thenReturn(0.5F);
+        when(random.nextInt(4)).thenReturn(3);
+        List<ItemStack> drops = new ArrayList<>();
+
+        GolemCombat.rollComponentDrops(List.of(component), shot, random, drops::add);
         assertTrue(drops.isEmpty());
+
+        ProjectileLooting.remember(arrow, 2);
+        GolemCombat.rollComponentDrops(List.of(component), shot, random, drops::add);
+        assertEquals(1, drops.size());
+        assertEquals(1, drops.get(0).getCount());
     }
 
     private static Zombie attacker(Level level, Enchantment enchantment, int rank) {
