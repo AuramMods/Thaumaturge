@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
 
 public final class NodeJarRitual {
     public static final ResourceLocation RESEARCH_NODE_JAR = TTIds.rl("node_jar");
@@ -124,7 +124,7 @@ public final class NodeJarRitual {
                         continue;
                     }
                     BlockState state = level.getBlockState(nodePos.offset(xx, yy, zz));
-                    if (!state.is(Tags.Blocks.GLASS_BLOCKS)) {
+                    if (!state.is(TTBlockTags.GLASS_BLOCKS)) {
                         return false;
                     }
                 }

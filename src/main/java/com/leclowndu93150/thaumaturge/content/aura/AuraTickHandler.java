@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.aura.pressure.FluxPressureEvents;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraFloor;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxOutbreaks;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -62,8 +63,7 @@ public final class AuraTickHandler {
     }
 
     private static void tickLevel(ServerLevel level) {
-        if (level.getGameTime() % TICKS_PER_SECOND != 0
-                || !level.tickRateManager().runsNormally()) {
+        if (level.getGameTime() % TICKS_PER_SECOND != 0) {
             return;
         }
         MoonProfile profile = moonProfile(level);
@@ -210,19 +210,19 @@ public final class AuraTickHandler {
 
     private static @Nullable AuraData pickVisReceiver(
             List<AuraData> neighbours, float capacityMultiplier, RandomSource random) {
-        List<AuraData> roomy = neighbours.stream()
+        ObjectArrayList<AuraData> roomy = neighbours.stream()
                 .filter(neighbour ->
                         neighbour.getVis() + neighbour.getFlux() < neighbour.getBase() * capacityMultiplier)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toCollection(ObjectArrayList::new));
         return pickLowest(roomy, AuraData::getVis, random);
     }
 
     private static @Nullable AuraData pickFluxReceiver(List<AuraData> neighbours, RandomSource random) {
-        return pickLowest(new ArrayList<>(neighbours), AuraData::getFlux, random);
+        return pickLowest(new ObjectArrayList<>(neighbours), AuraData::getFlux, random);
     }
 
     private static @Nullable AuraData pickLowest(
-            List<AuraData> candidates, ToDoubleFunction<AuraData> pool, RandomSource random) {
+            ObjectArrayList<AuraData> candidates, ToDoubleFunction<AuraData> pool, RandomSource random) {
         Util.shuffle(candidates, random);
         return candidates.stream().min(Comparator.comparingDouble(pool)).orElse(null);
     }

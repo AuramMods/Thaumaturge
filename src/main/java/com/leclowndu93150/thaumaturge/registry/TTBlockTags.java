@@ -17,6 +17,7 @@ public final class TTBlockTags {
     public static final TagKey<Block> SCAN_CLAY = key("scan/f_matclay");
     public static final TagKey<Block> CRAFTING_TABLES = common("player_workstations/crafting_tables");
     public static final TagKey<Block> STONES = common("stones");
+    public static final TagKey<Block> GLASS_BLOCKS = common("glass_blocks");
     public static final TagKey<Block> STRIPPED_LOGS = common("stripped_logs");
     public static final TagKey<Block> STRIPPED_WOODS = common("stripped_woods");
 

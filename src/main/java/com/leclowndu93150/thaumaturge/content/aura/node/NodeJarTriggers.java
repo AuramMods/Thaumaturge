@@ -4,13 +4,13 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.CasterBlockAction;
 import com.leclowndu93150.thaumaturge.api.casters.CasterBlockActions;
 import com.leclowndu93150.thaumaturge.api.casters.CasterBlockUse;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.common.Tags;
 import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID)
@@ -19,7 +19,7 @@ public final class NodeJarTriggers implements CasterBlockAction {
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        CasterBlockActions.onTag(Tags.Blocks.GLASS_BLOCKS, new NodeJarTriggers());
+        CasterBlockActions.onTag(TTBlockTags.GLASS_BLOCKS, new NodeJarTriggers());
     }
 
     @Override
