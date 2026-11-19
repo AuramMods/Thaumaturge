@@ -1171,7 +1171,7 @@ public final class TTModelProvider implements DataProvider {
                                 "parent",
                                 "minecraft:block/block",
                                 "loader",
-                                "neoforge:composite",
+                                "forge:composite",
                                 "children",
                                 children)));
     }
@@ -1192,7 +1192,7 @@ public final class TTModelProvider implements DataProvider {
                                 "parent",
                                 "minecraft:block/block",
                                 "loader",
-                                "neoforge:composite",
+                                "forge:composite",
                                 "children",
                                 Map.of(
                                         "frame",
@@ -1609,7 +1609,7 @@ public final class TTModelProvider implements DataProvider {
                                 "parent",
                                 "minecraft:block/block",
                                 "loader",
-                                "neoforge:composite",
+                                "forge:composite",
                                 "children",
                                 Map.of(
                                         "housing",
