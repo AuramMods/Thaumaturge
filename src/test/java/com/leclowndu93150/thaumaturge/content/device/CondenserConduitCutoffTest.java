@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
@@ -190,8 +191,7 @@ class CondenserConduitCutoffTest {
         verify(level, never()).getBlockState(unloaded);
         assertEquals(587, machine.interval());
         var source = mock(IEssentiaConduit.class);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.north(), Direction.SOUTH))
-                .thenReturn(source);
+        BlockCapabilityFixture.expose(level, BlockPos.ZERO.north(), EssentiaCapabilities.CONDUIT, Direction.SOUTH, source);
         when(source.releasesOn(Direction.SOUTH)).thenReturn(true);
         when(source.heldAmount(Direction.SOUTH)).thenReturn(1);
         when(source.heldAspect(Direction.SOUTH)).thenReturn(vitium);
@@ -208,10 +208,8 @@ class CondenserConduitCutoffTest {
         lattice(BlockPos.ZERO.above());
         var willing = mock(IEssentiaConduit.class);
         var blocked = mock(IEssentiaConduit.class);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.north(), Direction.SOUTH))
-                .thenReturn(willing);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.south(), Direction.NORTH))
-                .thenReturn(blocked);
+        BlockCapabilityFixture.expose(level, BlockPos.ZERO.north(), EssentiaCapabilities.CONDUIT, Direction.SOUTH, willing);
+        BlockCapabilityFixture.expose(level, BlockPos.ZERO.south(), EssentiaCapabilities.CONDUIT, Direction.NORTH, blocked);
         when(willing.releasesOn(Direction.SOUTH)).thenReturn(true);
         when(willing.heldAmount(Direction.SOUTH)).thenReturn(1);
         when(willing.heldAspect(Direction.SOUTH)).thenReturn(cleanAspect);

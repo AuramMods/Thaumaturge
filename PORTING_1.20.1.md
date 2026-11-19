@@ -4,7 +4,7 @@
 
 Port the complete Thaumaturge feature set at the pinned 1.21.1 baseline to Minecraft **1.20.1 on Forge**, preserving gameplay, progression, content, visuals, persistence, and multiplayer behavior. Compilation or reaching the title screen does not constitute completion.
 
-**Implementation is in progress.** Java 17 production compilation, full datagen, and reobfuscated packaging pass on Forge 47.4.29. The development server and the packaged JAR in a clean Forge installation both open fresh worlds. The original test suite has 156 compilation errors across 35 files. Client, multiplayer, and full gameplay acceptance remain pending. See [cycle 170](#cycle-170-evidence-and-next-work) and [cycle 172](#cycle-172-evidence-and-next-work).
+**Implementation is in progress.** Java 17 production compilation, full datagen, and reobfuscated packaging pass on Forge 47.4.29. The development server and the packaged JAR in a clean Forge installation both open fresh worlds. The original test suite has 132 compilation errors across 27 files. Packaged client, multiplayer, and full gameplay acceptance remain pending. See [cycle 170](#cycle-170-evidence-and-next-work) and [cycle 173](#cycle-173-checkpoint).
 
 To build the runtime JAR, run `./gradlew runData`, then `./gradlew jarJar` in a separate invocation. The first command populates the ignored generated-resource tree. The second packages it alongside the authored resources.
 
@@ -1526,3 +1526,9 @@ For each following cycle, record the subsystem, changes, exact commands and outc
 - `env JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home ./gradlew -I build/port-evidence/cycle-172/compile-vertex-original-tests.gradle -I build/port-evidence/cycle-172/forge-vertex-tests.gradle runForgePortClientTests --console=plain` passes **nine original tests** with the actual Forge client distribution and compiled production classes. The fixture covers the furnace panel positions, golem press lava winding and brightness, research table paper rendering, and aspect icon and text placement. The run uses the silent headless launcher. Live client visuals remain pending.
 - `env JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home ./gradlew compileTestJava --console=plain` reaches **156 errors in 35 files**, clearing all 28 vertex API diagnostics. Continue with the original tests that still use NeoForge's block capability access and sided event APIs. Evidence is in `build/port-evidence/cycle-172/`.
 - The standard `env JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home ./gradlew runForgePortTests runForgePortClientTests --console=plain` passes **626 server and 725 client tests** with zero failures, skips or aborts.
+
+## Cycle 173 checkpoint
+
+- Updated 11 original test classes to expose sided essentia capabilities through Forge block entities and `LazyOptional`. The fixture binds providers to their world positions, and the unloaded-position checks verify that the block-entity lookup is skipped.
+- `env JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home ./gradlew compileTestJava --console=plain` reports **132 errors in 27 files**, down from **156 in 35 files**. The compiler still reports 22 world capability lookup errors across the goggles readout, port and resonator, essentia intake, and essentia sources tests. Evidence is in `build/port-evidence/cycle-173-checkpoint.log`.
+- The adapted cases are pending execution. Resume with the four remaining world capability fixtures, then run the changed cases with Forge initialization.

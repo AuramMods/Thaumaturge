@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -381,10 +382,8 @@ class SmelteryCutoffTest {
         when(context.getClickedPos()).thenReturn(BlockPos.ZERO);
         var north = mock(IEssentiaConduit.class);
         var east = mock(IEssentiaConduit.class);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.north(), Direction.SOUTH))
-                .thenReturn(north);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.east(), Direction.WEST))
-                .thenReturn(east);
+        var northEntity = BlockCapabilityFixture.expose(level, BlockPos.ZERO.north(), EssentiaCapabilities.CONDUIT, Direction.SOUTH, north);
+        BlockCapabilityFixture.expose(level, BlockPos.ZERO.east(), EssentiaCapabilities.CONDUIT, Direction.WEST, east);
         when(north.connectsOn(Direction.SOUTH)).thenReturn(true);
         when(level.hasChunk(-1, 0)).thenReturn(false);
         var state = block.getStateForPlacement(context);
@@ -392,8 +391,8 @@ class SmelteryCutoffTest {
         assertFalse(state.getValue(BlockAlembic.EAST));
         assertFalse(state.getValue(BlockAlembic.SOUTH));
         assertFalse(state.getValue(BlockAlembic.WEST));
-        verify(level).getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.north(), Direction.SOUTH);
-        verify(level, never()).getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.west(), Direction.EAST);
+        verify(northEntity).getCapability(EssentiaCapabilities.CONDUIT, Direction.SOUTH);
+        verify(level, never()).getBlockEntity(BlockPos.ZERO.west());
         when(north.connectsOn(Direction.SOUTH)).thenReturn(false);
         assertFalse(block.updateShape(
                         state,

@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
@@ -120,8 +121,7 @@ class CentrifugeCompatibilityTest {
     void pullsOnlyCompoundStockFromLoadedLowerNeighborsWithWeakerSuction() {
         var machine = machine();
         var source = mock(IEssentiaConduit.class);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.below(), Direction.UP))
-                .thenReturn(source);
+        BlockCapabilityFixture.expose(level, BlockPos.ZERO.below(), EssentiaCapabilities.CONDUIT, Direction.UP, source);
         when(source.connectsOn(Direction.UP)).thenReturn(true);
         when(source.releasesOn(Direction.UP)).thenReturn(true);
         when(source.pull(Direction.UP)).thenReturn(EssentiaPull.NONE);
@@ -251,8 +251,7 @@ class CentrifugeCompatibilityTest {
     void sourceConnectionRegistrationAndPullThresholdPreventExtraction() {
         var machine = machine();
         var source = mock(IEssentiaConduit.class);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.below(), Direction.UP))
-                .thenReturn(source);
+        BlockCapabilityFixture.expose(level, BlockPos.ZERO.below(), EssentiaCapabilities.CONDUIT, Direction.UP, source);
         when(source.releasesOn(Direction.UP)).thenReturn(true);
         when(source.heldAspect(Direction.UP)).thenReturn(compound);
         when(source.heldAmount(Direction.UP)).thenReturn(1);

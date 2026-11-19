@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.device.sprayer;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -163,8 +164,7 @@ class PotionSprayerConduitCutoffTest {
         configure(machine, new ItemStack(Items.POTION), AspectList.EMPTY.add(aspect, 2));
         BlockPos sourcePos = BlockPos.ZERO.above().east();
         var source = mock(IEssentiaConduit.class);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, sourcePos, Direction.WEST))
-                .thenReturn(source);
+        BlockCapabilityFixture.expose(level, sourcePos, EssentiaCapabilities.CONDUIT, Direction.WEST, source);
         when(source.releasesOn(Direction.WEST)).thenReturn(true);
         when(source.heldAmount(Direction.WEST)).thenReturn(1);
         when(source.heldAspect(Direction.WEST)).thenReturn(other);
@@ -190,7 +190,7 @@ class PotionSprayerConduitCutoffTest {
         assertEquals(EssentiaPull.of(aspect, 128), machine.pull(null));
         assertEquals(EssentiaPull.NONE, machine.pull(Direction.EAST));
         verify(source, never()).extract(any(), anyInt(), any(), anyBoolean());
-        verify(level, never()).getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.east(), Direction.WEST);
+        verify(level, never()).getBlockEntity(BlockPos.ZERO.east());
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -44,6 +45,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -58,7 +60,7 @@ class ThaumatoriumCutoffTest {
     private RecipeManager recipes;
     private Holder<IAspect> order;
     private Holder<IAspect> fire;
-    private final Map<BlockPos, IEssentiaConduit> peers = new HashMap<>();
+    private final Map<BlockPos, BlockEntity> peers = new HashMap<>();
 
     @BeforeEach
     void setUp() {
@@ -83,8 +85,7 @@ class ThaumatoriumCutoffTest {
         RandomSource random = mock(RandomSource.class);
         when(random.nextFloat()).thenReturn(0.5F);
         when(level.getRandom()).thenReturn(random);
-        when(level.getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class)))
-                .thenAnswer(call -> peers.get(call.getArgument(1)));
+        when(level.getBlockEntity(any(BlockPos.class))).thenAnswer(call -> peers.get(call.getArgument(0)));
     }
 
     private CrucibleRecipe recipe(Ingredient catalyst, AspectList cost) {
@@ -118,7 +119,7 @@ class ThaumatoriumCutoffTest {
         when(source.heldAmount(face)).thenReturn(1);
         when(source.pull(face)).thenReturn(EssentiaPull.NONE);
         when(source.extract(order, 1, face, false)).thenReturn(1);
-        peers.put(pos, source);
+        peers.put(pos, BlockCapabilityFixture.provider(EssentiaCapabilities.CONDUIT, face, source));
         return source;
     }
 

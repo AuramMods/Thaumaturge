@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.press;
 
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,6 +41,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +55,7 @@ class GolemBuilderCutoffTest {
     private Player player;
     private Holder<IAspect> machina;
     private Holder<IAspect> order;
-    private final Map<BlockPos, IEssentiaConduit> peers = new HashMap<>();
+    private final Map<BlockPos, BlockEntity> peers = new HashMap<>();
 
     @BeforeEach
     void setUp() {
@@ -86,8 +88,7 @@ class GolemBuilderCutoffTest {
         when(random.nextDouble()).thenReturn(0.5D);
         when(random.nextInt(anyInt())).thenReturn(1);
         when(player.level()).thenReturn(level);
-        when(level.getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class)))
-                .thenAnswer(call -> peers.get(call.getArgument(1)));
+        when(level.getBlockEntity(any(BlockPos.class))).thenAnswer(call -> peers.get(call.getArgument(0)));
     }
 
     private BlockEntityGolemBuilder builder() {
@@ -154,7 +155,7 @@ class GolemBuilderCutoffTest {
         when(source.releasesOn(face)).thenReturn(releases);
         when(source.pull(face)).thenReturn(EssentiaPull.NONE);
         when(source.extract(machina, 1, face, false)).thenReturn(1);
-        peers.put(BlockPos.ZERO.relative(side), source);
+        peers.put(BlockPos.ZERO.relative(side), BlockCapabilityFixture.provider(EssentiaCapabilities.CONDUIT, face, source));
         return source;
     }
 
@@ -290,7 +291,7 @@ class GolemBuilderCutoffTest {
         tick(builder, 1);
         assertEquals(before, builder.cost());
         verifyNoInteractions(down);
-        verify(level, never()).getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.below(), Direction.UP);
+        verify(level, never()).getBlockEntity(BlockPos.ZERO.below());
         verify(north, never()).extract(any(), anyInt(), any(), anyBoolean());
     }
 

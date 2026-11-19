@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -143,8 +144,7 @@ class JarCompatibilityTest {
     void pullWaitsFiveTicksAndTransfersOneTypedUnit() {
         BlockEntityJar jar = jar();
         IEssentiaConduit source = mock(IEssentiaConduit.class);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.above(), Direction.DOWN))
-                .thenReturn(source);
+        BlockCapabilityFixture.expose(level, BlockPos.ZERO.above(), EssentiaCapabilities.CONDUIT, Direction.DOWN, source);
         when(source.releasesOn(Direction.DOWN)).thenReturn(true);
         when(source.pull(Direction.DOWN)).thenReturn(EssentiaPull.NONE);
         when(source.heldAspect(Direction.DOWN)).thenReturn(order);
@@ -162,8 +162,7 @@ class JarCompatibilityTest {
         when(level.hasChunk(0, 0)).thenReturn(false);
         BlockEntityJar jar = jar();
         for (int i = 0; i < 5; i++) BlockEntityJar.serverTick(level, BlockPos.ZERO, jar.getBlockState(), jar);
-        verify(level, never())
-                .getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class));
+        verify(level, never()).getBlockEntity(any(BlockPos.class));
         assertEquals(0, jar.amount());
     }
 

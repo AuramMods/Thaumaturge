@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.crystalizer;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
@@ -133,8 +134,7 @@ class CrystalizerCompatibilityTest {
     void drawUsesWorldTimeAndDoesNotQueryAnUnloadedNeighbor() {
         var machine = machine();
         var source = mock(IEssentiaConduit.class);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.east(), Direction.WEST))
-                .thenReturn(source);
+        BlockCapabilityFixture.expose(level, BlockPos.ZERO.east(), EssentiaCapabilities.CONDUIT, Direction.WEST, source);
         when(source.releasesOn(Direction.WEST)).thenReturn(true);
         when(source.pull(Direction.WEST)).thenReturn(EssentiaPull.NONE);
         when(source.heldAspect(Direction.WEST)).thenReturn(fire);

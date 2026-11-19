@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.tube;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -26,6 +27,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +38,7 @@ class TubeCompatibilityTest {
     private RegistryAccess registries;
     private Holder<IAspect> order;
     private Holder<IAspect> fire;
-    private final Map<BlockPos, IEssentiaConduit> peers = new HashMap<>();
+    private final Map<BlockPos, BlockEntity> peers = new HashMap<>();
 
     @BeforeEach
     void setUp() throws Exception {
@@ -50,8 +52,7 @@ class TubeCompatibilityTest {
         when(level.registryAccess()).thenReturn(registries);
         when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any(BlockPos.class))).thenReturn(Blocks.AIR.defaultBlockState());
-        when(level.getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class)))
-                .thenAnswer(call -> peers.get(call.getArgument(1)));
+        when(level.getBlockEntity(any(BlockPos.class))).thenAnswer(call -> peers.get(call.getArgument(0)));
         var random = Level.class.getDeclaredField("random");
         random.setAccessible(true);
         random.set(level, RandomSource.create(0));
@@ -93,7 +94,7 @@ class TubeCompatibilityTest {
         when(peer.heldAspect(back)).thenReturn(aspect);
         when(peer.heldAmount(back)).thenReturn(amount);
         when(peer.pull(back)).thenReturn(EssentiaPull.of(aspect, strength));
-        peers.put(BlockPos.ZERO.relative(side), peer);
+        peers.put(BlockPos.ZERO.relative(side), BlockCapabilityFixture.provider(EssentiaCapabilities.CONDUIT, back, peer));
         return peer;
     }
 
@@ -253,8 +254,7 @@ class TubeCompatibilityTest {
     void unloadedNeighbourDoesNotQueryCapabilities() {
         when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         assertNull(EssentiaFlowHandler.conduit(level, new BlockPos(32, 10, 32), Direction.UP));
-        verify(level, never())
-                .getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class));
+        verify(level, never()).getBlockEntity(any(BlockPos.class));
     }
 
     @Test

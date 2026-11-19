@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.tube;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
@@ -25,6 +26,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +38,7 @@ class TubeConduitCutoffTest {
     private RegistryAccess registries;
     private Holder<IAspect> order;
     private Holder<IAspect> fire;
-    private final Map<BlockPos, IEssentiaConduit> peers = new HashMap<>();
+    private final Map<BlockPos, BlockEntity> peers = new HashMap<>();
 
     @BeforeEach
     void setUp() {
@@ -51,8 +53,7 @@ class TubeConduitCutoffTest {
         when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any())).thenReturn(Blocks.AIR.defaultBlockState());
         when(level.getRandom()).thenReturn(RandomSource.create(0));
-        when(level.getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class)))
-                .thenAnswer(call -> peers.get(call.getArgument(1)));
+        when(level.getBlockEntity(any(BlockPos.class))).thenAnswer(call -> peers.get(call.getArgument(0)));
     }
 
     private BlockEntityTube tube() {
@@ -77,7 +78,7 @@ class TubeConduitCutoffTest {
         when(peer.pull(back)).thenReturn(EssentiaPull.of(aspect, strength));
         when(peer.heldAspect(back)).thenReturn(aspect);
         when(peer.heldAmount(back)).thenReturn(amount);
-        peers.put(BlockPos.ZERO.relative(side), peer);
+        peers.put(BlockPos.ZERO.relative(side), BlockCapabilityFixture.provider(EssentiaCapabilities.CONDUIT, back, peer));
         return peer;
     }
 
@@ -96,10 +97,7 @@ class TubeConduitCutoffTest {
     void unloadedLookupNeverQueriesEitherCapability() {
         when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         assertNull(EssentiaFlowHandler.conduit(level, BlockPos.ZERO.above(), Direction.DOWN));
-        verify(level, never())
-                .getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class));
-        verify(level, never())
-                .getCapability(eq(EssentiaCapabilities.TRANSPORT), any(BlockPos.class), any(Direction.class));
+        verify(level, never()).getBlockEntity(any(BlockPos.class));
     }
 
     @Test

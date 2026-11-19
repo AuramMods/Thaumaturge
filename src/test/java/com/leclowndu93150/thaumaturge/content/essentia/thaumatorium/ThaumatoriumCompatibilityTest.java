@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -46,6 +47,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -59,7 +61,7 @@ class ThaumatoriumCompatibilityTest {
     private Holder<IAspect> order;
     private Holder<IAspect> fire;
     private RecipeManager recipes;
-    private final Map<BlockPos, IEssentiaConduit> peers = new HashMap<>();
+    private final Map<BlockPos, BlockEntity> peers = new HashMap<>();
 
     @BeforeEach
     void setUp() {
@@ -82,8 +84,7 @@ class ThaumatoriumCompatibilityTest {
         BlockState heat = mock(BlockState.class);
         when(heat.is(TTBlockTags.CRUCIBLE_HEAT_SOURCES)).thenReturn(true);
         when(level.getBlockState(BlockPos.ZERO.below(2))).thenReturn(heat);
-        when(level.getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class)))
-                .thenAnswer(call -> peers.get(call.getArgument(1)));
+        when(level.getBlockEntity(any(BlockPos.class))).thenAnswer(call -> peers.get(call.getArgument(0)));
     }
 
     private BlockEntityThaumatorium machine() {
@@ -110,7 +111,7 @@ class ThaumatoriumCompatibilityTest {
         when(peer.releasesOn(face)).thenReturn(true);
         when(peer.heldAmount(face)).thenReturn(4);
         when(peer.pull(face)).thenReturn(EssentiaPull.NONE);
-        peers.put(pos, peer);
+        peers.put(pos, BlockCapabilityFixture.provider(EssentiaCapabilities.CONDUIT, face, peer));
         return peer;
     }
 
@@ -202,8 +203,7 @@ class ThaumatoriumCompatibilityTest {
         clearInvocations(level);
         when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         assertEquals(0, puller.drawOne(level, BlockPos.ZERO, Direction.NORTH, order));
-        verify(level, never())
-                .getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class));
+        verify(level, never()).getBlockEntity(any(BlockPos.class));
     }
 
     @Test
