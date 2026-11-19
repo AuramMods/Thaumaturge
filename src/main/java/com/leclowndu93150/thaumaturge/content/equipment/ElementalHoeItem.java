@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.HoeItem;
@@ -23,7 +22,7 @@ public final class ElementalHoeItem extends HoeItem {
     private static final float PUFF_HEIGHT = 1.05F;
 
     public ElementalHoeItem(Properties properties) {
-        super(TTMaterials.TOOL_ELEMENTAL, properties);
+        super(TTMaterials.TOOL_ELEMENTAL, -3, 0.0F, properties);
     }
 
     @Override
@@ -67,7 +66,7 @@ public final class ElementalHoeItem extends HoeItem {
         }
         if (!level.isClientSide()) {
             context.getItemInHand()
-                    .hurtAndBreak(BONEMEAL_DAMAGE, player, LivingEntity.getSlotForHand(context.getHand()));
+                    .hurtAndBreak(BONEMEAL_DAMAGE, player, entity -> entity.broadcastBreakEvent(context.getHand()));
             level.levelEvent(LEVEL_EVENT_BONEMEAL, pos, BONEMEAL_EVENT_DATA);
         }
         return InteractionResult.sidedSuccess(level.isClientSide());

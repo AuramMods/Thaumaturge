@@ -43,6 +43,11 @@ public class JarItem extends BlockItem {
     }
 
     @Override
+    public boolean isFoil(ItemStack stack) {
+        return getBlock() instanceof BlockJarCreative || super.isFoil(stack);
+    }
+
+    @Override
     public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         if (!(getBlock() instanceof AbstractBlockJar jar) || !(jar instanceof BlockJar || jar instanceof BlockJarVoid)) {
             return super.initCapabilities(stack, nbt);

@@ -22,7 +22,7 @@ public class CrimsonBladeItem extends SwordItem {
     private static final int HUNGER_TICKS = 120;
 
     public CrimsonBladeItem(Properties properties) {
-        super(TTMaterials.TOOL_CRIMSON_VOID, GearWarp.with(properties, CRIMSON_BLADE_WARP));
+        super(TTMaterials.TOOL_CRIMSON_VOID, 3, -2.4F, GearWarp.with(properties, CRIMSON_BLADE_WARP));
     }
 
     @Override

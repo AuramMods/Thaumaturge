@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 
 public final class VoidAxeItem extends AxeItem {
     public VoidAxeItem(Properties properties) {
-        super(TTMaterials.TOOL_VOID, GearWarp.with(properties, VoidGearItem.VOID_GEAR_WARP));
+        super(TTMaterials.TOOL_VOID, 4.0F, -3.0F, GearWarp.with(properties, VoidGearItem.VOID_GEAR_WARP));
     }
 
     @Override

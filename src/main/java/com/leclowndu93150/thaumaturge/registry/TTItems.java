@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.registry;
 
-import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.content.equipment.ArmorTypes;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataDefaults;
@@ -92,23 +91,18 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Unit;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.DoubleHighBlockItem;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -154,10 +148,7 @@ public final class TTItems {
 
     public static final RegistryObject<BlockItem> JAR_VOID = registerSimpleBlockItem(TTBlocks.JAR_VOID, JarItem::new);
 
-    public static final RegistryObject<BlockItem> JAR_CREATIVE = ForgeRegistration.registerItem(ITEMS,
-            "jar_creative",
-            props -> new JarItem(TTBlocks.JAR_CREATIVE.get(), props),
-            new Item.Properties().component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true));
+    public static final RegistryObject<BlockItem> JAR_CREATIVE = registerSimpleBlockItem(TTBlocks.JAR_CREATIVE, JarItem::new);
 
     public static final RegistryObject<BlockItem> TUBE = ForgeRegistration.registerSimpleBlockItem(ITEMS, TTBlocks.TUBE);
 
@@ -285,29 +276,19 @@ public final class TTItems {
 
     public static final RegistryObject<Item> THAUMIUM_SWORD = ForgeRegistration.registerItem(ITEMS,
             "thaumium_sword",
-            props -> new SwordItem(
-                    TTMaterials.TOOL_THAUMIUM,
-                    props.attributes(SwordItem.createAttributes(TTMaterials.TOOL_THAUMIUM, 3.0F, -2.4F))));
+            props -> new SwordItem(TTMaterials.TOOL_THAUMIUM, 3, -2.4F, props));
     public static final RegistryObject<Item> THAUMIUM_PICKAXE = ForgeRegistration.registerItem(ITEMS,
             "thaumium_pickaxe",
-            props -> new PickaxeItem(
-                    TTMaterials.TOOL_THAUMIUM,
-                    props.attributes(DiggerItem.createAttributes(TTMaterials.TOOL_THAUMIUM, 1.0F, -2.8F))));
+            props -> new PickaxeItem(TTMaterials.TOOL_THAUMIUM, 1, -2.8F, props));
     public static final RegistryObject<Item> THAUMIUM_AXE = ForgeRegistration.registerItem(ITEMS,
             "thaumium_axe",
-            props -> new AxeItem(
-                    TTMaterials.TOOL_THAUMIUM,
-                    props.attributes(DiggerItem.createAttributes(TTMaterials.TOOL_THAUMIUM, 4.5F, -3.0F))));
+            props -> new AxeItem(TTMaterials.TOOL_THAUMIUM, 4.5F, -3.0F, props));
     public static final RegistryObject<Item> THAUMIUM_SHOVEL = ForgeRegistration.registerItem(ITEMS,
             "thaumium_shovel",
-            props -> new ShovelItem(
-                    TTMaterials.TOOL_THAUMIUM,
-                    props.attributes(DiggerItem.createAttributes(TTMaterials.TOOL_THAUMIUM, 1.5F, -3.0F))));
+            props -> new ShovelItem(TTMaterials.TOOL_THAUMIUM, 1.5F, -3.0F, props));
     public static final RegistryObject<HoeItem> THAUMIUM_HOE = ForgeRegistration.registerItem(ITEMS,
             "thaumium_hoe",
-            props -> new HoeItem(
-                    TTMaterials.TOOL_THAUMIUM,
-                    props.attributes(HoeItem.createAttributes(TTMaterials.TOOL_THAUMIUM, -3.0F, 0.0F))));
+            props -> new HoeItem(TTMaterials.TOOL_THAUMIUM, -3, 0.0F, props));
     public static final RegistryObject<Item> THAUMIUM_HELM = ForgeRegistration.registerItem(ITEMS,
             "thaumium_helm",
             props -> new ArmorItem(
@@ -344,23 +325,19 @@ public final class TTItems {
 
     public static final RegistryObject<VoidSwordItem> VOID_SWORD = ForgeRegistration.registerItem(ITEMS,
             "void_sword",
-            props -> new VoidSwordItem(
-                    props.attributes(SwordItem.createAttributes(TTMaterials.TOOL_VOID, 3.0F, -2.4F))));
+            VoidSwordItem::new);
     public static final RegistryObject<VoidPickaxeItem> VOID_PICKAXE = ForgeRegistration.registerItem(ITEMS,
             "void_pickaxe",
-            props -> new VoidPickaxeItem(
-                    props.attributes(DiggerItem.createAttributes(TTMaterials.TOOL_VOID, 1.0F, -2.8F))));
+            VoidPickaxeItem::new);
     public static final RegistryObject<VoidAxeItem> VOID_AXE = ForgeRegistration.registerItem(ITEMS,
             "void_axe",
-            props ->
-                    new VoidAxeItem(props.attributes(DiggerItem.createAttributes(TTMaterials.TOOL_VOID, 4.0F, -3.0F))));
+            VoidAxeItem::new);
     public static final RegistryObject<VoidShovelItem> VOID_SHOVEL = ForgeRegistration.registerItem(ITEMS,
             "void_shovel",
-            props -> new VoidShovelItem(
-                    props.attributes(DiggerItem.createAttributes(TTMaterials.TOOL_VOID, 1.5F, -3.0F))));
+            VoidShovelItem::new);
     public static final RegistryObject<VoidHoeItem> VOID_HOE = ForgeRegistration.registerItem(ITEMS,
             "void_hoe",
-            props -> new VoidHoeItem(props.attributes(HoeItem.createAttributes(TTMaterials.TOOL_VOID, -3.0F, 0.0F))));
+            VoidHoeItem::new);
     public static final RegistryObject<VoidGearItem> VOID_HELM = ForgeRegistration.registerItem(ITEMS,
             "void_helm",
             props -> new VoidGearItem(
@@ -390,40 +367,33 @@ public final class TTItems {
 
     public static final RegistryObject<ElementalSwordItem> ELEMENTAL_SWORD = ForgeRegistration.registerItem(ITEMS,
             "elemental_sword",
-            props -> new ElementalSwordItem(
-                    props.attributes(SwordItem.createAttributes(TTMaterials.TOOL_ELEMENTAL, 3.0F, -2.4F))
-                            .rarity(Rarity.RARE)));
+            ElementalSwordItem::new,
+            new Item.Properties().rarity(Rarity.RARE));
     public static final RegistryObject<ElementalPickaxeItem> ELEMENTAL_PICKAXE = ForgeRegistration.registerItem(ITEMS,
             "elemental_pickaxe",
-            props -> new ElementalPickaxeItem(
-                    props.attributes(DiggerItem.createAttributes(TTMaterials.TOOL_ELEMENTAL, 1.0F, -2.8F))
-                            .rarity(Rarity.RARE)));
+            ElementalPickaxeItem::new,
+            new Item.Properties().rarity(Rarity.RARE));
     public static final RegistryObject<ElementalAxeItem> ELEMENTAL_AXE = ForgeRegistration.registerItem(ITEMS,
             "elemental_axe",
-            props -> new ElementalAxeItem(
-                    props.attributes(DiggerItem.createAttributes(TTMaterials.TOOL_ELEMENTAL, 5.0F, -3.0F))
-                            .rarity(Rarity.RARE)));
+            ElementalAxeItem::new,
+            new Item.Properties().rarity(Rarity.RARE));
     public static final RegistryObject<ElementalShovelItem> ELEMENTAL_SHOVEL = ForgeRegistration.registerItem(ITEMS,
             "elemental_shovel",
-            props -> new ElementalShovelItem(
-                    props.attributes(DiggerItem.createAttributes(TTMaterials.TOOL_ELEMENTAL, 1.5F, -3.0F))
-                            .rarity(Rarity.RARE)));
+            ElementalShovelItem::new,
+            new Item.Properties().rarity(Rarity.RARE));
     public static final RegistryObject<ElementalHoeItem> ELEMENTAL_HOE = ForgeRegistration.registerItem(ITEMS,
             "elemental_hoe",
-            props -> new ElementalHoeItem(
-                    props.attributes(HoeItem.createAttributes(TTMaterials.TOOL_ELEMENTAL, -3.0F, 0.0F))
-                            .rarity(Rarity.RARE)));
+            ElementalHoeItem::new,
+            new Item.Properties().rarity(Rarity.RARE));
     public static final RegistryObject<PrimalCrusherItem> PRIMAL_CRUSHER = ForgeRegistration.registerItem(ITEMS,
             "primal_crusher",
-            props -> new PrimalCrusherItem(
-                    props.attributes(DiggerItem.createAttributes(TTMaterials.TOOL_PRIMAL_VOID, 3.5F, -2.8F))
-                            .rarity(Rarity.RARE)));
+            PrimalCrusherItem::new,
+            new Item.Properties().rarity(Rarity.RARE));
 
     public static final RegistryObject<CrimsonBladeItem> CRIMSON_BLADE = ForgeRegistration.registerItem(ITEMS,
             "crimson_blade",
-            props -> new CrimsonBladeItem(
-                    props.attributes(SwordItem.createAttributes(TTMaterials.TOOL_CRIMSON_VOID, 3.0F, -2.4F))
-                            .rarity(Rarity.EPIC)));
+            CrimsonBladeItem::new,
+            new Item.Properties().rarity(Rarity.EPIC));
     public static final RegistryObject<Item> CRIMSON_PLATE_HELM = ForgeRegistration.registerItem(ITEMS,
             "crimson_plate_helm",
             props -> new CultistPlateItem(
@@ -591,8 +561,8 @@ public final class TTItems {
             new Item.Properties()
                     .food(new FoodProperties.Builder()
                             .nutrition(1)
-                            .saturationModifier(0.5F)
-                            .alwaysEdible()
+                            .saturationMod(0.5F)
+                            .alwaysEat()
                             .fast()
                             .build()));
 
@@ -602,8 +572,8 @@ public final class TTItems {
             new Item.Properties()
                     .food(new FoodProperties.Builder()
                             .nutrition(4)
-                            .saturationModifier(0.2F)
-                            .alwaysEdible()
+                            .saturationMod(0.2F)
+                            .alwaysEat()
                             .effect(() -> EffectCodecs.instance(MobEffects.HUNGER, 30, 0), 0.8F)
                             .build()));
 
@@ -696,7 +666,7 @@ public final class TTItems {
     private static RegistryObject<SpawnEggItem> registerSpawnEgg(
             String name, Supplier<? extends EntityType<? extends Mob>> type) {
         return ForgeRegistration.registerItem(ITEMS,
-                name, properties -> new DeferredSpawnEggItem(type, SPAWN_EGG_BASE, SPAWN_EGG_HIGHLIGHT, properties));
+                name, properties -> new ForgeSpawnEggItem(type, SPAWN_EGG_BASE, SPAWN_EGG_HIGHLIGHT, properties));
     }
 
     //
@@ -781,8 +751,8 @@ public final class TTItems {
             "triple_meat_treat",
             props -> new Item(props.food(new FoodProperties.Builder()
                     .nutrition(6)
-                    .saturationModifier(0.8F)
-                    .alwaysEdible()
+                    .saturationMod(0.8F)
+                    .alwaysEat()
                     .effect(() -> EffectCodecs.instance(MobEffects.REGENERATION, 100, 0), 0.66F)
                     .build())));
 
@@ -791,7 +761,7 @@ public final class TTItems {
                 id,
                 props -> new Item(props.food(new FoodProperties.Builder()
                         .nutrition(1)
-                        .saturationModifier(0.3F)
+                        .saturationMod(0.3F)
                         .fast()
                         .build())));
     }
@@ -1072,27 +1042,15 @@ public final class TTItems {
 
     public static final int GOGGLES_ENCHANTMENT_VALUE = 25;
 
-    public static final ResourceLocation GOGGLES_REVEALING_ID = TTIds.rl("goggles_revealing");
+    public static final ResourceLocation GOGGLES_REVEALING_ID = GogglesItem.ID;
 
     public static final RegistryObject<GogglesItem> GOGGLES_REVEALING = ForgeRegistration.registerItem(ITEMS,
-            "goggles_revealing",
+            GOGGLES_REVEALING_ID.getPath(),
             GogglesItem::new,
             new Item.Properties()
                     .stacksTo(1)
                     .durability(GOGGLES_DURABILITY)
-                    .rarity(Rarity.RARE)
-                    .attributes(ItemAttributeModifiers.builder()
-                            .add(
-                                    Attributes.ARMOR,
-                                    NamedAttributeModifiers.create(
-                                            GOGGLES_REVEALING_ID, 1, AttributeModifier.Operation.ADDITION),
-                                    EquipmentSlotGroup.HEAD)
-                            .add(
-                                    Attributes.ARMOR_TOUGHNESS,
-                                    NamedAttributeModifiers.create(
-                                            GOGGLES_REVEALING_ID, 1, AttributeModifier.Operation.ADDITION),
-                                    EquipmentSlotGroup.HEAD)
-                            .build()));
+                    .rarity(Rarity.RARE));
 
     public static final RegistryObject<FortressArmorItem> FORTRESS_HELM = ForgeRegistration.registerItem(ITEMS,
             "fortress_helm",

@@ -4,7 +4,6 @@ import com.leclowndu93150.thaumaturge.api.items.IChanneledItem;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -19,7 +18,7 @@ public final class ElementalAxeItem extends AxeItem implements IChanneledItem {
     private static final double MAGNET_RANGE = 10.0;
 
     public ElementalAxeItem(Properties properties) {
-        super(TTMaterials.TOOL_ELEMENTAL, properties);
+        super(TTMaterials.TOOL_ELEMENTAL, 5.0F, -3.0F, properties);
     }
 
     @Override
@@ -28,7 +27,7 @@ public final class ElementalAxeItem extends AxeItem implements IChanneledItem {
     }
 
     @Override
-    public int getUseDuration(ItemStack stack, LivingEntity user) {
+    public int getUseDuration(ItemStack stack) {
         return USE_DURATION_TICKS;
     }
 
@@ -47,16 +46,6 @@ public final class ElementalAxeItem extends AxeItem implements IChanneledItem {
     public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
         return TTMaterials.TOOL_ELEMENTAL.getRepairIngredient().test(repair)
                 || super.isValidRepairItem(toRepair, repair);
-    }
-
-    @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        return true;
-    }
-
-    @Override
-    public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        stack.hurtAndBreak(2, attacker, EquipmentSlot.MAINHAND);
     }
 
     @Override

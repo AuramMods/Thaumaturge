@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import com.leclowndu93150.thaumaturge.registry.TTItemTags;
 import java.util.LinkedHashMap;
@@ -11,12 +12,18 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.TierSortingRegistry;
@@ -47,7 +54,9 @@ public class ToolTierRuntimeTest {
         registry.unfreeze();
         try {
             for (Tier tier : production) {
-                var tool = new PickaxeItem(tier, 1, -2.8F, new Item.Properties());
+                var tool = tier == TTMaterials.TOOL_ELEMENTAL
+                        ? new ElementalPickaxeItem(new Item.Properties().rarity(Rarity.RARE))
+                        : new PickaxeItem(tier, 1, -2.8F, new Item.Properties());
                 ForgeRegistries.ITEMS.register(new ResourceLocation("port_tool_tier", TierSortingRegistry.getName(tier).getPath()), tool);
                 TOOLS.put(tier, tool);
             }
@@ -133,5 +142,38 @@ public class ToolTierRuntimeTest {
         assertTrue(TTMaterials.TOOL_THAUMIUM.getRepairIngredient().test(new ItemStack(Items.IRON_INGOT)));
         assertFalse(TTMaterials.TOOL_THAUMIUM.getRepairIngredient().test(new ItemStack(Items.NETHERITE_INGOT)));
         assertTrue(TTMaterials.TOOL_VOID.getRepairIngredient().test(new ItemStack(Items.NETHERITE_INGOT)));
+    }
+
+    @Test
+    void elementalPickaxeSuppliesTheSourceNativeAttributesOnlyInTheMainHand() {
+        var tool = assertInstanceOf(ElementalPickaxeItem.class, TOOLS.get(TTMaterials.TOOL_ELEMENTAL));
+        var mainHand = tool.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND);
+        assertEquals(4.0, mainHand.get(Attributes.ATTACK_DAMAGE).iterator().next().getAmount());
+        assertEquals(-2.8F, mainHand.get(Attributes.ATTACK_SPEED).iterator().next().getAmount());
+        assertTrue(tool.getDefaultAttributeModifiers(EquipmentSlot.OFFHAND).isEmpty());
+        assertEquals(Rarity.RARE, tool.getRarity(new ItemStack(tool)));
+    }
+
+    @Test
+    void elementalPickaxeUsesServerIgnitionAndRespectsPlayerProtection() {
+        var tool = assertInstanceOf(ElementalPickaxeItem.class, TOOLS.get(TTMaterials.TOOL_ELEMENTAL));
+        var stack = new ItemStack(tool);
+        var attacker = mock(Player.class);
+        var target = mock(Player.class);
+        var mob = mock(Entity.class);
+        var level = mock(Level.class);
+        when(attacker.level()).thenReturn(level);
+
+        assertFalse(tool.onLeftClickEntity(stack, attacker, target));
+        verify(target, never()).setSecondsOnFire(anyInt());
+        when(attacker.canHarmPlayer(target)).thenReturn(true);
+        assertFalse(tool.onLeftClickEntity(stack, attacker, target));
+        verify(target).setSecondsOnFire(2);
+        when(level.isClientSide()).thenReturn(true);
+        assertFalse(tool.onLeftClickEntity(stack, attacker, mob));
+        verify(mob, never()).setSecondsOnFire(anyInt());
+        when(level.isClientSide()).thenReturn(false);
+        assertFalse(tool.onLeftClickEntity(stack, attacker, mob));
+        verify(mob).setSecondsOnFire(2);
     }
 }

@@ -18,7 +18,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -43,7 +42,7 @@ public final class ElementalSwordItem extends SwordItem implements IChanneledIte
     private static final int PULSE_INTERVAL_TICKS = 20;
 
     public ElementalSwordItem(Properties properties) {
-        super(TTMaterials.TOOL_ELEMENTAL, properties);
+        super(TTMaterials.TOOL_ELEMENTAL, 3, -2.4F, properties);
     }
 
     @Override
@@ -58,7 +57,7 @@ public final class ElementalSwordItem extends SwordItem implements IChanneledIte
     }
 
     @Override
-    public int getUseDuration(ItemStack stack, LivingEntity user) {
+    public int getUseDuration(ItemStack stack) {
         return USE_DURATION;
     }
 
@@ -154,12 +153,8 @@ public final class ElementalSwordItem extends SwordItem implements IChanneledIte
         }
 
         if (!level.isClientSide() && ticks % PULSE_INTERVAL_TICKS == 0) {
-            stack.hurtAndBreak(
-                    1,
-                    player,
-                    player.getUsedItemHand() == InteractionHand.OFF_HAND
-                            ? EquipmentSlot.OFFHAND
-                            : EquipmentSlot.MAINHAND);
+            InteractionHand hand = player.getUsedItemHand();
+            stack.hurtAndBreak(1, player, entity -> entity.broadcastBreakEvent(hand));
         }
     }
 
@@ -179,7 +174,8 @@ public final class ElementalSwordItem extends SwordItem implements IChanneledIte
                         && candidate.isAlive())) {
             Vec3 away = target.position().subtract(origin);
             double distance = away.length();
-            target.push(away.scale(1.0 / (FIELD_REACH * (distance + DISTANCE_SOFTENING))));
+            Vec3 impulse = away.scale(1.0 / (FIELD_REACH * (distance + DISTANCE_SOFTENING)));
+            target.push(impulse.x, impulse.y, impulse.z);
         }
     }
 }

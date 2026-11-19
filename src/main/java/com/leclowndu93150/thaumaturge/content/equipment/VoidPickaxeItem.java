@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 
 public final class VoidPickaxeItem extends PickaxeItem {
     public VoidPickaxeItem(Properties properties) {
-        super(TTMaterials.TOOL_VOID, GearWarp.with(properties, VoidGearItem.VOID_GEAR_WARP));
+        super(TTMaterials.TOOL_VOID, 1, -2.8F, GearWarp.with(properties, VoidGearItem.VOID_GEAR_WARP));
     }
 
     @Override

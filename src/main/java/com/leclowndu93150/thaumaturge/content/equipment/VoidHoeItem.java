@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 
 public final class VoidHoeItem extends HoeItem {
     public VoidHoeItem(Properties properties) {
-        super(TTMaterials.TOOL_VOID, GearWarp.with(properties, VoidGearItem.VOID_GEAR_WARP));
+        super(TTMaterials.TOOL_VOID, -3, 0.0F, GearWarp.with(properties, VoidGearItem.VOID_GEAR_WARP));
     }
 
     @Override

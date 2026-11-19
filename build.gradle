@@ -90,6 +90,8 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/content/equipment/ArmorTypes.java'
         java.include 'com/leclowndu93150/thaumaturge/content/equipment/ToolTierData.java'
         java.include 'com/leclowndu93150/thaumaturge/content/equipment/TTMaterials.java'
+        java.include 'com/leclowndu93150/thaumaturge/content/equipment/ElementalPickaxeItem.java'
+        java.include 'com/leclowndu93150/thaumaturge/content/equipment/EquipmentCombat.java'
         java.include 'com/leclowndu93150/thaumaturge/content/decor/BlockAmber.java'
         java.include 'com/leclowndu93150/thaumaturge/registry/TTItemTags.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/RegistryBlockEntity.java'

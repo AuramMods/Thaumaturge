@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 
 public final class VoidShovelItem extends ShovelItem {
     public VoidShovelItem(Properties properties) {
-        super(TTMaterials.TOOL_VOID, GearWarp.with(properties, VoidGearItem.VOID_GEAR_WARP));
+        super(TTMaterials.TOOL_VOID, 1.5F, -3.0F, GearWarp.with(properties, VoidGearItem.VOID_GEAR_WARP));
     }
 
     @Override

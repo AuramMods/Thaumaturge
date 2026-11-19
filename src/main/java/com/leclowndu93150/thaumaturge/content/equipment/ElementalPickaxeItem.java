@@ -9,13 +9,13 @@ public final class ElementalPickaxeItem extends PickaxeItem {
     private static final int IGNITE_SECONDS = 2;
 
     public ElementalPickaxeItem(Properties properties) {
-        super(TTMaterials.TOOL_ELEMENTAL, properties);
+        super(TTMaterials.TOOL_ELEMENTAL, 1, -2.8F, properties);
     }
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
         if (!player.level().isClientSide() && EquipmentCombat.canAffect(player, entity)) {
-            entity.igniteForSeconds(IGNITE_SECONDS);
+            entity.setSecondsOnFire(IGNITE_SECONDS);
         }
         return super.onLeftClickEntity(stack, player, entity);
     }

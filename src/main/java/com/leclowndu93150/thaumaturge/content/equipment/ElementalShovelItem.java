@@ -43,7 +43,7 @@ public final class ElementalShovelItem extends ShovelItem implements AreaPreview
     private static final double FALLBACK_REACH = 4.5;
 
     public ElementalShovelItem(Item.Properties properties) {
-        super(TTMaterials.TOOL_ELEMENTAL, properties);
+        super(TTMaterials.TOOL_ELEMENTAL, 1.5F, -3.0F, properties);
     }
 
     public static int getOrientation(ItemStack stack) {
@@ -93,7 +93,7 @@ public final class ElementalShovelItem extends ShovelItem implements AreaPreview
                     .side(context.getClickedFace())
                     .send();
             player.swing(context.getHand(), true);
-            shovel.hurtAndBreak(1, player, LivingEntity.getSlotForHand(context.getHand()));
+            shovel.hurtAndBreak(1, player, entity -> entity.broadcastBreakEvent(context.getHand()));
             if (shovel.isEmpty()) {
                 break;
             }
@@ -112,7 +112,7 @@ public final class ElementalShovelItem extends ShovelItem implements AreaPreview
     }
 
     private static @Nullable BlockState pay(Player player, BlockState source) {
-        if (player.hasInfiniteMaterials()) {
+        if (player.getAbilities().instabuild) {
             return source;
         }
         if (take(player, source.getBlock().asItem())) {
@@ -178,7 +178,7 @@ public final class ElementalShovelItem extends ShovelItem implements AreaPreview
 
     @Override
     public @Nullable HitResult traceAnchor(ItemStack stack, Level level, LivingEntity caster) {
-        double reach = caster instanceof Player player ? player.blockInteractionRange() : FALLBACK_REACH;
+        double reach = caster instanceof Player player ? player.getBlockReach() : FALLBACK_REACH;
         return caster.pick(reach, 1.0F, false);
     }
 
