@@ -9,13 +9,17 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterSettings;
+import com.leclowndu93150.thaumaturge.itemdata.BlockItemData;
+import com.leclowndu93150.thaumaturge.itemdata.CopyItemDataFunction;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataContext;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataLoot;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataRegistry;
 import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.registry.TTLootTypes;
 import com.leclowndu93150.thaumaturge.registry.TTStructureTags;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import java.nio.file.Path;
@@ -34,6 +38,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -53,12 +58,16 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -72,7 +81,9 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.functions.ExplorationMapFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
@@ -278,6 +289,74 @@ class NativeLootTypesRuntimeTest {
     }
 
     @Test
+    void generatedBlockLootKeepsSilkTouchFortuneAndExplosionRulesTogether(@TempDir Path directory) throws Exception {
+        var blockTables = new BlockLootSubProvider(Set.of(), FeatureFlags.DEFAULT_FLAGS) {
+            @Override
+            protected Iterable<Block> getKnownBlocks() {
+                return List.of(Blocks.STONE);
+            }
+
+            @Override
+            protected void generate() {
+                add(Blocks.STONE, LootTable.lootTable()
+                        .withPool(applyExplosionCondition(Blocks.STONE, single(LootItem.lootTableItem(Blocks.STONE))))
+                        .withPool(applyExplosionCondition(Blocks.STONE, single(LootItem.lootTableItem(Items.AMETHYST_SHARD))
+                                .when(HAS_NO_SILK_TOUCH)
+                                .when(BonusLevelTableCondition.bonusLevelFlatChance(
+                                        Enchantments.BLOCK_FORTUNE, 1.0F / 15.0F, 2.0F / 15.0F, 1.0F)))));
+            }
+        };
+        var id = Blocks.STONE.getLootTable();
+        var provider = new LootTableProvider(new PackOutput(directory), Set.of(id),
+                List.of(new LootTableProvider.SubProviderEntry(() -> blockTables, LootContextParamSets.BLOCK)));
+        provider.run(CachedOutput.NO_CACHE).join();
+        var tables = reloadLootTables(directory, "block-loot");
+        var loot = tables.getLootTable(id);
+        assertNotSame(LootTable.EMPTY, loot);
+        var server = mock(MinecraftServer.class);
+        when(server.getLootData()).thenReturn(tables);
+        var level = mock(ServerLevel.class);
+        when(level.getServer()).thenReturn(server);
+
+        var pick = new ItemStack(Items.DIAMOND_PICKAXE);
+        var plain = blockLootParams(level, pick, null);
+        int crystals = 0;
+        var seeds = RandomSource.create(37L);
+        for (int attempt = 0; attempt < 256; attempt++) {
+            if (roll(loot, plain, seeds.nextLong()).contains(Items.AMETHYST_SHARD)) crystals++;
+        }
+        assertTrue(crystals > 0 && crystals < 256);
+
+        var fortune = pick.copy();
+        fortune.enchant(Enchantments.BLOCK_FORTUNE, 7);
+        assertEquals(List.of(Items.STONE, Items.AMETHYST_SHARD), roll(loot, blockLootParams(level, fortune, null), 42));
+        assertTrue(roll(loot, blockLootParams(level, fortune, Float.MAX_VALUE), 42).isEmpty());
+        fortune.enchant(Enchantments.SILK_TOUCH, 1);
+        assertEquals(List.of(Items.STONE), roll(loot, blockLootParams(level, fortune, null), 42));
+    }
+
+    @Test
+    void nativeCopyItemDataFunctionRetainsOnlySelectedBlockEntityData() {
+        var data = new ItemDataRegistry("port_loot_types");
+        var copied = data.<Integer>registerComponentType("copied", builder -> builder.persistent(Codec.INT)).get();
+        var other = data.<Integer>registerComponentType("other", builder -> builder.persistent(Codec.INT)).get();
+        var entity = mock(BlockEntity.class, withSettings().extraInterfaces(BlockItemData.class));
+        when(entity.getPersistentData()).thenReturn(new CompoundTag());
+        when(((BlockItemData) entity).collectItemData()).thenReturn(ItemDataPatch.builder().set(copied, 11).set(other, 12).build());
+        var context = mock(LootContext.class);
+        when(context.getParamOrNull(LootContextParams.BLOCK_ENTITY)).thenReturn(entity);
+        var level = mock(ServerLevel.class);
+        when(level.registryAccess()).thenReturn(RegistryAccess.EMPTY);
+        when(context.getLevel()).thenReturn(level);
+        var function = roundTripFunction(CopyItemDataFunction.copyBlockEntity().include(copied).build(), "thaumaturge:copy_item_data");
+        var stack = new ItemStack(Items.PAPER);
+        ItemData.set(stack, other, 4);
+        var drop = function.apply(stack, context);
+        assertEquals(11, ItemData.get(drop, copied));
+        assertEquals(4, ItemData.get(drop, other));
+    }
+
+    @Test
     void nativeEquipmentTablesResolveWeightedKitReferencesAfterDatagenAndReload(@TempDir Path directory)
             throws Exception {
         var parent = id("knight");
@@ -302,12 +381,7 @@ class NativeLootTypesRuntimeTest {
                 }, MobSpawnEquipment.PARAMETERS)));
         provider.run(CachedOutput.NO_CACHE).join();
 
-        var tables = new LootDataManager();
-        try (var resources = new MultiPackResourceManager(PackType.SERVER_DATA,
-                List.of(new PathPackResources("equipment-references", false, directory)))) {
-            SimpleReloadInstance.of(resources, List.of(tables), Runnable::run, Runnable::run,
-                    CompletableFuture.completedFuture(Unit.INSTANCE)).done().get(10, TimeUnit.SECONDS);
-        }
+        var tables = reloadLootTables(directory, "equipment-references");
         var server = mock(MinecraftServer.class);
         var level = mock(ServerLevel.class);
         when(server.getLootData()).thenReturn(tables);
@@ -381,10 +455,28 @@ class NativeLootTypesRuntimeTest {
         return LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(entry);
     }
 
+    private static LootDataManager reloadLootTables(Path directory, String packName) throws Exception {
+        var tables = new LootDataManager();
+        try (var resources = new MultiPackResourceManager(PackType.SERVER_DATA,
+                List.of(new PathPackResources(packName, false, directory)))) {
+            SimpleReloadInstance.of(resources, List.of(tables), Runnable::run, Runnable::run,
+                    CompletableFuture.completedFuture(Unit.INSTANCE)).done().get(10, TimeUnit.SECONDS);
+        }
+        return tables;
+    }
+
     private static List<Item> roll(LootTable table, LootParams params, long seed) {
         var drops = new ArrayList<ItemStack>();
         table.getRandomItemsRaw(new LootContext.Builder(params).withOptionalRandomSeed(seed).create(null), drops::add);
         return drops.stream().map(ItemStack::getItem).toList();
+    }
+
+    private static LootParams blockLootParams(ServerLevel level, ItemStack tool, Float explosionRadius) {
+        return new LootParams.Builder(level).withParameter(LootContextParams.ORIGIN, Vec3.ZERO)
+                .withParameter(LootContextParams.BLOCK_STATE, Blocks.STONE.defaultBlockState())
+                .withParameter(LootContextParams.TOOL, tool)
+                .withOptionalParameter(LootContextParams.EXPLOSION_RADIUS, explosionRadius)
+                .create(LootContextParamSets.BLOCK);
     }
 
     private static ResourceLocation id(String path) {

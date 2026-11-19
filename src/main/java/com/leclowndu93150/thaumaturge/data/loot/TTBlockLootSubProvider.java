@@ -8,6 +8,8 @@ import com.leclowndu93150.thaumaturge.content.decor.HeldCandle;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockEntityManaPod;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockManaPod;
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
+import com.leclowndu93150.thaumaturge.itemdata.CopyItemDataFunction;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataLoot;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -15,7 +17,6 @@ import java.util.Set;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.DyeColor;
@@ -29,8 +30,6 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
-import com.leclowndu93150.thaumaturge.itemdata.CopyItemDataFunction;
-import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
@@ -94,10 +93,8 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
     }
 
     private LootTable.Builder crystalTable(BlockCrystal block) {
-        Holder<IAspect> aspect = registries.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(block.aspect());
-        LootPoolSingletonContainer.Builder<?> entry = LootItem.lootTableItem(TTItems.ESSENTIA_CRYSTAL.get())
-                .apply(SetComponentsFunction.setComponent(
-                        TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1)));
+        Holder<IAspect> aspect = lookupProvider.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(block.aspect());
+        LootPoolSingletonContainer.Builder<?> entry = aspectCrystal(aspect);
         for (int size = 1; size <= 3; size++) {
             entry = entry.apply(SetItemCountFunction.setCount(ConstantValue.exactly(size + 1), false)
                     .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
@@ -111,10 +108,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
     }
 
     private LootTable.Builder taintRockTable() {
-        Holder<IAspect> vitium = registries.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.VITIUM);
-        LootItem.Builder<?> crystal = LootItem.lootTableItem(TTItems.ESSENTIA_CRYSTAL.get())
-                .apply(SetComponentsFunction.setComponent(
-                        TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(vitium, 1)));
+        Holder<IAspect> vitium = lookupProvider.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.VITIUM);
         return LootTable.lootTable()
                 .withPool(this.applyExplosionCondition(
                         TTBlocks.TAINT_ROCK.get(),
@@ -125,13 +119,17 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
                         TTBlocks.TAINT_ROCK.get(),
                         LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
-                                .when(this.doesNotHaveSilkTouch())
+                                .when(HAS_NO_SILK_TOUCH)
                                 .when(BonusLevelTableCondition.bonusLevelFlatChance(
-                                        lookupProvider
-                                                .lookupOrThrow(Registries.ENCHANTMENT)
-                                                .getOrThrow(Enchantments.FORTUNE),
-                                        TAINT_ROCK_CRYSTAL_CHANCES))
-                                .add(crystal)));
+                                        Enchantments.BLOCK_FORTUNE, TAINT_ROCK_CRYSTAL_CHANCES))
+                                .add(aspectCrystal(vitium))));
+    }
+
+    private LootPoolSingletonContainer.Builder<?> aspectCrystal(Holder<IAspect> aspect) {
+        Item crystal = TTItems.ESSENTIA_CRYSTAL.get();
+        return LootItem.lootTableItem(crystal)
+                .apply(ItemDataLoot.setData(crystal, TTDataComponents.CRYSTAL_ASPECT.get(),
+                        new AspectInstance(aspect, 1), lookupProvider));
     }
 
     private static final float SECOND_BEAN_CHANCE = 0.67F;
@@ -190,24 +188,24 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
         return LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))
-                        .when(this.hasSilkTouch())
+                        .when(HAS_SILK_TOUCH)
                         .add(LootItem.lootTableItem(block)))
                 .withPool(TreasureLootPools.treasurePool(
                                 lookupProvider, rarity, UniformGenerator.between(1.0F + rarity, 3.0F + rarity))
-                        .when(this.doesNotHaveSilkTouch()));
+                        .when(HAS_NO_SILK_TOUCH));
     }
 
     private final HolderLookup.Provider lookupProvider;
 
     public TTBlockLootSubProvider(HolderLookup.Provider lookupProvider) {
-        super(Set.of(), FeatureFlags.DEFAULT_FLAGS, lookupProvider);
+        super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
         this.lookupProvider = lookupProvider;
     }
 
     @Override
     protected Iterable<Block> getKnownBlocks() {
         return TTBlocks.BLOCKS.getEntries().stream()
-                .map(holder -> (Block) holder.value())
+                .map(RegistryObject::get)
                 .toList();
     }
 
@@ -382,10 +380,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1))
                                 .when(BonusLevelTableCondition.bonusLevelFlatChance(
-                                        lookupProvider
-                                                .lookupOrThrow(Registries.ENCHANTMENT)
-                                                .getOrThrow(Enchantments.FORTUNE),
-                                        VENT_CURIO_CHANCES))
+                                        Enchantments.BLOCK_FORTUNE, VENT_CURIO_CHANCES))
                                 .add(LootItem.lootTableItem(TTItems.CURIO_PRESERVED.get()))));
         add(TTBlocks.ORE_CINNABAR.get(), b -> createOreDrop(b, TTItems.RAW_CINNABAR.get()));
         add(TTBlocks.DEEPSLATE_ORE_CINNABAR.get(), b -> createOreDrop(b, TTItems.RAW_CINNABAR.get()));
@@ -516,7 +511,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
         return createOreDrop(block, TTItems.AMBER.get())
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))
-                        .when(this.doesNotHaveSilkTouch())
+                        .when(HAS_NO_SILK_TOUCH)
                         .when(LootItemRandomChanceCondition.randomChance(AMBER_CURIO_CHANCE))
                         .add(LootItem.lootTableItem(TTItems.CURIO_PRESERVED.get())));
     }
