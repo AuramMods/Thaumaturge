@@ -57,6 +57,7 @@ public final class ItemNbt {
         return switch (id) {
             case "minecraft:damage" -> tag.contains("Damage", Tag.TAG_ANY_NUMERIC);
             case "minecraft:custom_name" -> tag.getCompound("display").contains("Name", Tag.TAG_STRING);
+            case "minecraft:item_name" -> tag.contains(VanillaItemData.ITEM_NAME_TAG, Tag.TAG_STRING);
             case "minecraft:enchantments" -> tag.contains("Enchantments", Tag.TAG_LIST);
             case "minecraft:stored_enchantments" -> tag.contains("StoredEnchantments", Tag.TAG_LIST);
             case "minecraft:trim" -> tag.contains(ArmorTrimData.TAG);

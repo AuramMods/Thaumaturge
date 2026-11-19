@@ -25,7 +25,7 @@ public final class CopyItemDataFunction extends LootItemConditionalFunction {
         this.selection = selection;
     }
 
-    @Override public LootItemFunctionType getType() { return BlockItemDataLoot.COPY_ITEM_DATA.get(); }
+    @Override public LootItemFunctionType getType() { return ItemDataLoot.COPY_ITEM_DATA.get(); }
     @Override public Set<LootContextParam<?>> getReferencedContextParams() { return Set.of(LootContextParams.BLOCK_ENTITY); }
 
     @Override

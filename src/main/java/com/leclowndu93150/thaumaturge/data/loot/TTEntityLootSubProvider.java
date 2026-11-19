@@ -5,8 +5,11 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.entity.loot.LabyrinthBoundCondition;
 import com.leclowndu93150.thaumaturge.content.entity.loot.LootingChanceValue;
+import com.leclowndu93150.thaumaturge.content.entity.loot.LootingCountFunction;
 import com.leclowndu93150.thaumaturge.content.entity.loot.NoNearbyKinCondition;
 import com.leclowndu93150.thaumaturge.content.entity.loot.NumberChanceCondition;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataLoot;
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
@@ -24,16 +27,13 @@ import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
+import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.EnchantedCountIncreaseFunction;
 import net.minecraft.world.level.storage.loot.functions.ExplorationMapFunction;
-import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
-import net.minecraft.world.level.storage.loot.functions.SetNameFunction;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
@@ -221,9 +221,10 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
     private LootItem.Builder<?> vitiumCrystal() {
         Holder<IAspect> vitium =
                 this.registries.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.VITIUM);
-        return LootItem.lootTableItem(TTItems.ESSENTIA_CRYSTAL.get())
-                .apply(SetComponentsFunction.setComponent(
-                        TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(vitium, 1)));
+        var crystal = TTItems.ESSENTIA_CRYSTAL.get();
+        return LootItem.lootTableItem(crystal)
+                .apply(ItemDataLoot.setData(crystal, TTDataComponents.CRYSTAL_ASPECT.get(),
+                        new AspectInstance(vitium, 1), registries));
     }
 
     private LootPool.Builder curioPool(ItemLike curio) {
@@ -244,10 +245,10 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
                 .add(LootItem.lootTableItem(Items.MAP)
                         .apply(ExplorationMapFunction.makeExplorationMap()
                                 .setDestination(TTStructureTags.ON_CULT_MAPS)
-                                .setMapDecoration(MapDecorationTypes.RED_X)
+                                .setMapDecoration(MapDecoration.Type.RED_X)
                                 .setZoom(CULT_MAP_ZOOM))
-                        .apply(SetNameFunction.setName(
-                                Component.translatable(CULT_MAP_NAME), SetNameFunction.Target.ITEM_NAME)))
+                        .apply(ItemDataLoot.setData(Items.MAP, VanillaItemData.ITEM_NAME,
+                                Component.translatable(CULT_MAP_NAME), registries)))
                 .when(LootItemKilledByPlayerCondition.killedByPlayer());
     }
 
@@ -256,8 +257,7 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
                 .setRolls(ConstantValue.exactly(1))
                 .add(LootItem.lootTableItem(Items.GOLD_NUGGET)
                         .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(
-                                this.registries, UniformGenerator.between(0.0F, 1.0F))));
+                        .apply(LootingCountFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))));
     }
 
     private LootPool.Builder fleshPool() {
@@ -265,8 +265,7 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
                 .setRolls(ConstantValue.exactly(1))
                 .add(LootItem.lootTableItem(Items.ROTTEN_FLESH)
                         .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(
-                                this.registries, UniformGenerator.between(0.0F, 1.0F))));
+                        .apply(LootingCountFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))));
     }
 
     private LootPool.Builder zombieRareDropsPool() {

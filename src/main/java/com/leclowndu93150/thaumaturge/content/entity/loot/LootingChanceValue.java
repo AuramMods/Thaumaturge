@@ -55,11 +55,15 @@ public final class LootingChanceValue implements NumberProvider {
 
     @Override
     public float getFloat(LootContext context) {
-        int looting = 0;
-        if (context.getParamOrNull(LootContextParams.KILLER_ENTITY) instanceof LivingEntity attacker) {
-            looting = EnchantmentHelper.getEnchantmentLevel(Enchantments.MOB_LOOTING, attacker);
-        }
+        int looting = lootingLevel(context);
         return looting > 0 ? enchantedChance.chance(looting) : unenchantedChance;
+    }
+
+    static int lootingLevel(LootContext context) {
+        if (context.getParamOrNull(LootContextParams.KILLER_ENTITY) instanceof LivingEntity attacker) {
+            return EnchantmentHelper.getEnchantmentLevel(Enchantments.MOB_LOOTING, attacker);
+        }
+        return 0;
     }
 
     private sealed interface Curve permits Linear, ByLevel {

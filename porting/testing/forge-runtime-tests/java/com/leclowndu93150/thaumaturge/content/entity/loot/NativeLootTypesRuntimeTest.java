@@ -5,9 +5,19 @@ import static org.mockito.Mockito.*;
 
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterSettings;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataContext;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataLoot;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataRegistry;
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.registry.TTLootTypes;
+import com.leclowndu93150.thaumaturge.registry.TTStructureTags;
 import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.Lifecycle;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,13 +26,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -41,7 +56,10 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootDataManager;
@@ -52,10 +70,13 @@ import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
+import net.minecraft.world.level.storage.loot.functions.ExplorationMapFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -73,6 +94,7 @@ class NativeLootTypesRuntimeTest {
         TTLootTypes.register(bus);
         register(bus, Registries.LOOT_CONDITION_TYPE, BuiltInRegistries.LOOT_CONDITION_TYPE);
         register(bus, Registries.LOOT_NUMBER_PROVIDER_TYPE, BuiltInRegistries.LOOT_NUMBER_PROVIDER_TYPE);
+        register(bus, Registries.LOOT_FUNCTION_TYPE, BuiltInRegistries.LOOT_FUNCTION_TYPE);
     }
 
     private static <T> void register(IEventBus bus, ResourceKey<Registry<T>> key, Registry<T> registry)
@@ -175,6 +197,87 @@ class NativeLootTypesRuntimeTest {
     }
 
     @Test
+    void nativeLootingCountRoundsOnceAndSkipsTheSampleWithoutLooting() {
+        var context = mock(LootContext.class);
+        var killer = mock(LivingEntity.class);
+        var random = mock(RandomSource.class);
+        when(context.getRandom()).thenReturn(random);
+        when(random.nextFloat()).thenReturn(0.5F);
+        var function = roundTripFunction(LootingCountFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))
+                .build(), "thaumaturge:looting_count");
+        assertEquals(Set.of(LootContextParams.KILLER_ENTITY), function.getReferencedContextParams());
+        assertEquals(2, function.apply(new ItemStack(Items.ROTTEN_FLESH, 2), context).getCount());
+        when(context.getParamOrNull(LootContextParams.KILLER_ENTITY)).thenReturn(killer);
+        equipLootingSword(killer, 0);
+        assertEquals(2, function.apply(new ItemStack(Items.ROTTEN_FLESH, 2), context).getCount());
+        verify(random, never()).nextFloat();
+        equipLootingSword(killer, 3);
+        assertEquals(4, function.apply(new ItemStack(Items.ROTTEN_FLESH, 2), context).getCount());
+        verify(random).nextFloat();
+    }
+
+    @Test
+    void generatedCrystalTagRetainsAspectIdentityInTheActiveRegistry() {
+        var key = new ItemDataRegistry("thaumaturge").<AspectInstance>registerComponentType(
+                "crystal_aspect", builder -> builder.persistent(AspectInstance.CODEC)).get();
+        var generatorRegistries = vitiumRegistry();
+        var generatorVitium = generatorRegistries.registryOrThrow(IAspect.REGISTRY_KEY).getHolderOrThrow(TTAspects.VITIUM);
+        var function = roundTripFunction(ItemDataLoot.setData(Items.AMETHYST_SHARD, key,
+                new AspectInstance(generatorVitium, 1), generatorRegistries).build(), "minecraft:set_nbt");
+        var stack = new ItemStack(Items.AMETHYST_SHARD);
+        stack.getOrCreateTag().putInt("another_tag", 3);
+        var drop = function.apply(stack, mock(LootContext.class));
+        assertEquals(3, drop.getTag().getInt("another_tag"));
+        var worldRegistries = vitiumRegistry();
+        var aspect = ItemDataContext.withRegistries(worldRegistries, () -> ItemData.get(drop, key));
+        assertEquals(1, aspect.amount());
+        assertNotSame(generatorVitium, aspect.aspect());
+        assertSame(worldRegistries.registryOrThrow(IAspect.REGISTRY_KEY).getHolderOrThrow(TTAspects.VITIUM), aspect.aspect());
+    }
+
+    @Test
+    void nativeExplorationMapKeepsItsMarkerAndUsesANonCustomName() {
+        var map = roundTripFunction(ExplorationMapFunction.makeExplorationMap().setDestination(TTStructureTags.ON_CULT_MAPS)
+                .setMapDecoration(MapDecoration.Type.RED_X).setZoom((byte) 2).build(), "minecraft:exploration_map");
+        String nameKey = "filled_map.thaumaturge.cult";
+        Component name = Component.translatable(nameKey);
+        var setName = roundTripFunction(ItemDataLoot.setData(Items.MAP, VanillaItemData.ITEM_NAME, name, RegistryAccess.EMPTY)
+                .build(), "minecraft:set_nbt");
+        var context = mock(LootContext.class);
+        var level = mock(ServerLevel.class);
+        when(context.getLevel()).thenReturn(level);
+        when(context.getParamOrNull(LootContextParams.ORIGIN)).thenReturn(Vec3.ZERO);
+        when(level.dimension()).thenReturn(Level.OVERWORLD);
+        when(level.getFreeMapId()).thenReturn(81);
+
+        var blank = setName.apply(map.apply(new ItemStack(Items.MAP), context), context);
+        assertTrue(blank.is(Items.MAP));
+        assertEquals(name, blank.getHoverName());
+        var target = new BlockPos(120, 64, -180);
+        when(level.findNearestMapStructure(TTStructureTags.ON_CULT_MAPS, BlockPos.ZERO, 50, true)).thenReturn(target);
+        var filled = setName.apply(map.apply(new ItemStack(Items.MAP), context), context);
+        assertTrue(filled.is(Items.FILLED_MAP));
+        assertEquals(81, MapItem.getMapId(filled));
+        verify(level).setMapData(eq("map_81"), argThat(data -> data.scale == 2));
+        var marker = filled.getTag().getList("Decorations", Tag.TAG_COMPOUND).getCompound(0);
+        assertEquals(MapDecoration.Type.RED_X.getIcon(), marker.getByte("type"));
+        assertEquals(120.0, marker.getDouble("x"));
+        assertEquals(-180.0, marker.getDouble("z"));
+
+        assertEquals(name, filled.getHoverName());
+        assertFalse(filled.hasCustomHoverName());
+        assertEquals(name, ItemData.snapshot(filled).get(VanillaItemData.ITEM_NAME));
+        var loaded = ItemStack.of(filled.save(new CompoundTag()));
+        assertEquals(name, loaded.getHoverName());
+        loaded.setHoverName(Component.literal("Renamed"));
+        assertEquals("Renamed", loaded.getHoverName().getString());
+        assertTrue(loaded.hasCustomHoverName());
+        loaded.resetHoverName();
+        assertEquals(name, loaded.getHoverName());
+        assertFalse(loaded.hasCustomHoverName());
+    }
+
+    @Test
     void nativeEquipmentTablesResolveWeightedKitReferencesAfterDatagenAndReload(@TempDir Path directory)
             throws Exception {
         var parent = id("knight");
@@ -246,6 +349,19 @@ class NativeLootTypesRuntimeTest {
         assertInstanceOf(LootingChanceValue.class, chance.chance());
         assertEquals(Set.of(LootContextParams.KILLER_ENTITY), chance.getReferencedContextParams());
         return chance;
+    }
+
+    private static LootItemFunction roundTripFunction(LootItemFunction function, String id) {
+        var gson = Deserializers.createLootTableSerializer().create();
+        var json = gson.toJson(function, LootItemFunction.class);
+        assertEquals(id, JsonParser.parseString(json).getAsJsonObject().get("function").getAsString());
+        return gson.fromJson(json, LootItemFunction.class);
+    }
+
+    private static RegistryAccess vitiumRegistry() {
+        var aspects = new MappedRegistry<IAspect>(IAspect.REGISTRY_KEY, Lifecycle.stable());
+        aspects.register(TTAspects.VITIUM, mock(IAspect.class), Lifecycle.stable());
+        return new RegistryAccess.ImmutableRegistryAccess(List.of(aspects)).freeze();
     }
 
     private static void equipLootingSword(LivingEntity killer, int level) {

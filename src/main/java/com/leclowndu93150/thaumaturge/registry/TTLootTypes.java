@@ -4,10 +4,13 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.loot.DifficultyValue;
 import com.leclowndu93150.thaumaturge.content.entity.loot.LabyrinthBoundCondition;
 import com.leclowndu93150.thaumaturge.content.entity.loot.LootingChanceValue;
+import com.leclowndu93150.thaumaturge.content.entity.loot.LootingCountFunction;
 import com.leclowndu93150.thaumaturge.content.entity.loot.NoNearbyKinCondition;
 import com.leclowndu93150.thaumaturge.content.entity.loot.NumberChanceCondition;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataLoot;
 import com.leclowndu93150.thaumaturge.serialization.LootJsonSerializer;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.level.storage.loot.providers.number.LootNumberProviderType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -33,12 +36,17 @@ public final class TTLootTypes {
     public static final RegistryObject<LootNumberProviderType> LOOTING_CHANCE =
             NUMBER_PROVIDERS.register("looting_chance", () -> new LootNumberProviderType(
                     new LootJsonSerializer<>(LootingChanceValue.MAP_CODEC)));
+    private static final DeferredRegister<LootItemFunctionType> FUNCTIONS =
+            DeferredRegister.create(Registries.LOOT_FUNCTION_TYPE, TTIds.MODID);
+    public static final RegistryObject<LootItemFunctionType> LOOTING_COUNT =
+            FUNCTIONS.register("looting_count", () -> new LootItemFunctionType(new LootingCountFunction.Serializer()));
 
     private TTLootTypes() {}
 
     public static void register(IEventBus modBus) {
-        com.leclowndu93150.thaumaturge.itemdata.BlockItemDataLoot.register(modBus);
+        ItemDataLoot.register(modBus);
         CONDITIONS.register(modBus);
         NUMBER_PROVIDERS.register(modBus);
+        FUNCTIONS.register(modBus);
     }
 }

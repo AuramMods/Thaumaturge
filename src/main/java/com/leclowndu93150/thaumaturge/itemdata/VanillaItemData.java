@@ -1,8 +1,10 @@
 package com.leclowndu93150.thaumaturge.itemdata;
 
+import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ExtraCodecs;
@@ -11,11 +13,28 @@ import net.minecraft.world.item.Items;
 
 /** Native 1.20.1 NBT access for vanilla fields referenced by recipe/research patches. */
 public final class VanillaItemData {
+    public static final String ITEM_NAME_TAG = "thaumaturge:item_name";
     public static final ItemDataKey<Component> CUSTOM_NAME = ItemDataKey.nativeKey(id("custom_name"),
             ExtraCodecs.COMPONENT, new ItemDataKey.NativeAccess<>() {
                 public Component get(ItemStack stack) { return stack.hasCustomHoverName() ? stack.getHoverName() : null; }
                 public void set(ItemStack stack, Component value) { stack.setHoverName(value); }
                 public void remove(ItemStack stack) { stack.resetHoverName(); }
+            });
+    public static final ItemDataKey<Component> ITEM_NAME = ItemDataKey.nativeKey(id("item_name"),
+            ExtraCodecs.COMPONENT, new ItemDataKey.NativeAccess<>() {
+                public Component get(ItemStack stack) {
+                    CompoundTag tag = stack.getTag();
+                    if (tag == null || !tag.contains(ITEM_NAME_TAG, Tag.TAG_STRING)) return null;
+                    try {
+                        return Component.Serializer.fromJson(tag.getString(ITEM_NAME_TAG));
+                    } catch (JsonParseException invalidName) {
+                        return null;
+                    }
+                }
+                public void set(ItemStack stack, Component value) {
+                    stack.getOrCreateTag().putString(ITEM_NAME_TAG, Component.Serializer.toJson(value));
+                }
+                public void remove(ItemStack stack) { stack.removeTagKey(ITEM_NAME_TAG); }
             });
     public static final ItemDataKey<Integer> DAMAGE = ItemDataKey.nativeKey(id("damage"),
             Codec.intRange(0, Integer.MAX_VALUE), new ItemDataKey.NativeAccess<>() {
@@ -45,13 +64,13 @@ public final class VanillaItemData {
                 public void remove(ItemStack stack) { ArmorTrimData.remove(stack); }
             });
     private static final Map<ResourceLocation, ItemDataKey<?>> KEYS = Map.of(
-            DAMAGE.id(), DAMAGE, CUSTOM_NAME.id(), CUSTOM_NAME,
+            DAMAGE.id(), DAMAGE, CUSTOM_NAME.id(), CUSTOM_NAME, ITEM_NAME.id(), ITEM_NAME,
             ENCHANTMENTS.id(), ENCHANTMENTS, STORED_ENCHANTMENTS.id(), STORED_ENCHANTMENTS,
             POTION_CONTENTS.id(), POTION_CONTENTS, TRIM.id(), TRIM);
 
     private VanillaItemData() {}
     public static java.util.List<ItemDataKey<?>> keys() {
-        return java.util.List.of(DAMAGE, CUSTOM_NAME, ENCHANTMENTS, STORED_ENCHANTMENTS, POTION_CONTENTS, TRIM);
+        return java.util.List.of(DAMAGE, CUSTOM_NAME, ITEM_NAME, ENCHANTMENTS, STORED_ENCHANTMENTS, POTION_CONTENTS, TRIM);
     }
     private static ResourceLocation id(String path) { return ResourceLocation.withDefaultNamespace(path); }
 
@@ -83,6 +102,7 @@ public final class VanillaItemData {
     static void canonicalFields(ItemStack stack, java.util.Map<String, net.minecraft.nbt.Tag> fields) {
         fields.remove("nbt:Damage");
         fields.remove("display:Name");
+        fields.remove("nbt:" + ITEM_NAME_TAG);
         fields.remove("nbt:Enchantments");
         fields.remove("nbt:StoredEnchantments");
         boolean hasTrim = fields.remove("nbt:Trim") != null;
@@ -106,6 +126,7 @@ public final class VanillaItemData {
     static void stripNativeStorage(CompoundTag tag) {
         boolean hasTrim = tag.contains(ArmorTrimData.TAG);
         tag.remove(ArmorTrimData.TAG);
+        tag.remove(ITEM_NAME_TAG);
         for (String name : java.util.List.of("Damage", "Enchantments", "StoredEnchantments", "Potion", "CustomPotionColor", "CustomPotionEffects", PotionData.REMOVED_TAG)) tag.remove(name);
         if (tag.contains("display", net.minecraft.nbt.Tag.TAG_COMPOUND)) {
             CompoundTag display = tag.getCompound("display").copy();
