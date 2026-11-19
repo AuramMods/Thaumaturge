@@ -157,7 +157,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob {
         if (result) {
             int difficultyId = this.level().getDifficulty().getId();
             if (this.getMainHandItem().isEmpty() && this.isOnFire() && this.random.nextFloat() < difficultyId * 0.3F) {
-                target.igniteForSeconds(2 * difficultyId);
+                EntityIgnition.igniteForSeconds(target, 2 * difficultyId);
             }
         }
         return result;

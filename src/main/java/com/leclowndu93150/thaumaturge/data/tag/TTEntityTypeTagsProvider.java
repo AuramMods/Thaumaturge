@@ -42,13 +42,6 @@ public final class TTEntityTypeTagsProvider extends TagsProvider<EntityType<?>> 
                 .add(key(TTEntities.ELDRITCH_HIEROPHANT.get()))
                 .add(key(TTEntities.TAINTACLE_GIANT.get()));
         tag(EntityTypeTags.SENSITIVE_TO_BANE_OF_ARTHROPODS).add(key(TTEntities.ELDRITCH_CRAB.get()));
-        tag(EntityTypeTags.UNDEAD)
-                .add(key(TTEntities.ELDRITCH_GUARDIAN.get()))
-                .add(key(TTEntities.INHABITED_ZOMBIE.get()))
-                .add(key(TTEntities.BRAINY_ZOMBIE.get()))
-                .add(key(TTEntities.GIANT_BRAINY_ZOMBIE.get()))
-                .add(key(TTEntities.BRAINY_DROWNED.get()))
-                .add(key(TTEntities.BRAINY_HUSK.get()));
         tag(EntityTypeTags.SENSITIVE_TO_SMITE)
                 .add(key(TTEntities.ELDRITCH_GUARDIAN.get()))
                 .add(key(TTEntities.INHABITED_ZOMBIE.get()))

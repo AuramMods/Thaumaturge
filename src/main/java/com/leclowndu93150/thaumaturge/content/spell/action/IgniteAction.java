@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellAction;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.SpellActionType;
+import com.leclowndu93150.thaumaturge.content.entity.EntityIgnition;
 import com.leclowndu93150.thaumaturge.registry.TTSpellActions;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -24,6 +25,7 @@ public record IgniteAction(float seconds, float perDuration) implements SpellAct
     public void apply(ActionContext ctx) {
         ActionTargets.entity(ctx)
                 .filter(entity -> !entity.fireImmune())
-                .ifPresent(entity -> entity.igniteForSeconds(ActionTargets.lasting(seconds, perDuration, ctx)));
+                .ifPresent(entity -> EntityIgnition.igniteForSeconds(
+                        entity, ActionTargets.lasting(seconds, perDuration, ctx)));
     }
 }

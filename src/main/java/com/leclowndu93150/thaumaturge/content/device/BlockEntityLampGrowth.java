@@ -192,7 +192,7 @@ public final class BlockEntityLampGrowth extends AbstractSyncedBlockEntity imple
             return state.getValue(NetherWartBlock.AGE) >= NETHER_WART_MATURE_AGE;
         }
         return block instanceof BonemealableBlock bonemealable
-                && !bonemealable.isValidBonemealTarget(level, pos, state);
+                && !bonemealable.isValidBonemealTarget(level, pos, state, level.isClientSide());
     }
 
     private void showFeedback(ServerLevel level) {

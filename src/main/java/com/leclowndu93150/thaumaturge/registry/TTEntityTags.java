@@ -7,6 +7,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 
 public final class TTEntityTags {
+    public static final TagKey<EntityType<?>> UNDEAD = TagKey.create(
+            Registries.ENTITY_TYPE, ResourceLocation.withDefaultNamespace("undead"));
     public static final TagKey<EntityType<?>> TAINT_CONVERSION_IMMUNE = key("taint_conversion/immune");
     public static final TagKey<EntityType<?>> SABLE_RETAIN_IN_SUB_LEVEL = TagKey.create(
             Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(TTIds.SABLE, "retain_in_sub_level"));

@@ -41,9 +41,10 @@ public final class BlockEntityBarrierStone extends RegistryBlockEntity {
         AABB guarded = new AABB(pos).expandTowards(0.0, GUARDED_HEIGHT - 1, 0.0).inflate(GUARD_MARGIN);
         for (LivingEntity mob :
                 level.getEntitiesOfClass(LivingEntity.class, guarded, BlockEntityBarrierStone::isRepelled)) {
-            mob.push(Vec3.directionFromRotation(0.0F, mob.getYRot())
+            Vec3 shove = Vec3.directionFromRotation(0.0F, mob.getYRot())
                     .scale(-SHOVE_SPEED)
-                    .subtract(0.0, SHOVE_SINK, 0.0));
+                    .subtract(0.0, SHOVE_SINK, 0.0);
+            mob.push(shove.x, shove.y, shove.z);
         }
     }
 

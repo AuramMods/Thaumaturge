@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.taint.effect;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
-import net.minecraft.tags.EntityTypeTags;
+import com.leclowndu93150.thaumaturge.registry.TTEntityTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,7 +17,7 @@ public final class FluxTaintExposure {
     private FluxTaintExposure() {}
 
     public static boolean isImmune(LivingEntity living) {
-        return MobTraits.isTainted(living) || living.getType().is(EntityTypeTags.UNDEAD);
+        return MobTraits.isTainted(living) || living.getType().is(TTEntityTags.UNDEAD);
     }
 
     public static void expose(LivingEntity living, int duration, boolean ambient, boolean particles) {

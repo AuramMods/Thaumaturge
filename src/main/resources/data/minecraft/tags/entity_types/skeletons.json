@@ -1,0 +1,6 @@
+{
+  "values": [
+    "minecraft:skeleton_horse",
+    { "id": "minecraft:bogged", "required": false }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "values": [
+    "#minecraft:skeletons",
+    "#minecraft:zombies",
+    "minecraft:wither",
+    "minecraft:phantom",
+    "thaumaturge:eldritch_guardian",
+    "thaumaturge:inhabited_zombie",
+    "thaumaturge:brainy_zombie",
+    "thaumaturge:giant_brainy_zombie",
+    "thaumaturge:brainy_drowned",
+    "thaumaturge:brainy_husk"
+  ]
+}

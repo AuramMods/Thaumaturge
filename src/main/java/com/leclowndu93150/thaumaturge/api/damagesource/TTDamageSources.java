@@ -35,14 +35,14 @@ public final class TTDamageSources {
      * Produces a {@link DamageSource} for tentacle damage with an optional attributed attacker.
      */
     public static DamageSource tentacle(Level level, @Nullable Entity attacker) {
-        return new DamageSource(holder(level, TTDamageTypes.TENTACLE), attacker);
+        return source(level, TTDamageTypes.TENTACLE, attacker);
     }
 
     /**
      * Produces a {@link DamageSource} for swarm damage with an optional attributed attacker.
      */
     public static DamageSource swarm(Level level, @Nullable Entity attacker) {
-        return new DamageSource(holder(level, TTDamageTypes.SWARM), attacker);
+        return source(level, TTDamageTypes.SWARM, attacker);
     }
 
     /**
@@ -61,7 +61,12 @@ public final class TTDamageSources {
     }
 
     public static DamageSource eldritchSpell(Level level, @Nullable Entity caster) {
-        return new DamageSource(holder(level, TTDamageTypes.ELDRITCH_SPELL), caster);
+        return source(level, TTDamageTypes.ELDRITCH_SPELL, caster);
+    }
+
+    /** Produces registered damage directly attributed to the supplied attacker, if present. */
+    public static DamageSource source(Level level, ResourceKey<DamageType> key, @Nullable Entity attacker) {
+        return new DamageSource(holder(level, key), attacker);
     }
 
     private static DamageSource source(Level level, ResourceKey<DamageType> key) {

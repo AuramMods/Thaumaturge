@@ -18,7 +18,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.EntityTypeTags;
+import com.leclowndu93150.thaumaturge.registry.TTEntityTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -128,7 +128,7 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
         for (LivingEntity target : server.getEntitiesOfClass(
                 LivingEntity.class,
                 box,
-                e -> !MobTraits.isTainted(e) && !e.getType().is(EntityTypeTags.UNDEAD))) {
+                e -> !MobTraits.isTainted(e) && !e.getType().is(TTEntityTags.UNDEAD))) {
             target.addEffect(EffectCodecs.instance(TTMobEffects.FLUX_TAINT.get(), FLUX_TAINT_TICKS, 0, false, true));
         }
     }

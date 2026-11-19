@@ -14,7 +14,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.EntityTypeTags;
+import com.leclowndu93150.thaumaturge.registry.TTEntityTags;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -305,7 +305,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
 
     private static boolean resists(LivingEntity living) {
         return MobTraits.isTainted(living)
-                || living.getType().is(EntityTypeTags.UNDEAD)
+                || living.getType().is(TTEntityTags.UNDEAD)
                 || FluxImmunityHelper.isImmune(living)
                 || living.hasEffect(TTMobEffects.VIS_EXHAUST.get())
                 || living.hasEffect(MobEffects.CONFUSION);

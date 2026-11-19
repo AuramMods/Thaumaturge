@@ -41,7 +41,7 @@ public record GrowAction(float base, float perPower) implements SpellAction {
             for (int pulse = 0; pulse < pulses; pulse++) {
                 BlockState state = level.getBlockState(pos);
                 if (!(state.getBlock() instanceof BonemealableBlock growable)
-                        || !growable.isValidBonemealTarget(level, pos, state)) {
+                        || !growable.isValidBonemealTarget(level, pos, state, false)) {
                     break;
                 }
                 if (growable.isBonemealSuccess(level, level.getRandom(), pos, state)) {

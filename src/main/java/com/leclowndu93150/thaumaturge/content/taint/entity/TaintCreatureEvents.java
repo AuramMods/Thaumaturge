@@ -13,7 +13,7 @@ import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.EntityTypeTags;
+import com.leclowndu93150.thaumaturge.registry.TTEntityTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -82,7 +82,7 @@ public final class TaintCreatureEvents {
             return;
         }
         if (victim.getHealth() < INFECTION_HEALTH
-                && !victim.getType().is(EntityTypeTags.UNDEAD)
+                && !victim.getType().is(TTEntityTags.UNDEAD)
                 && victim.isAlive()
                 && !(victim instanceof EntityOwnedConstruct)
                 && victim.hasEffect(TTMobEffects.FLUX_TAINT.get())

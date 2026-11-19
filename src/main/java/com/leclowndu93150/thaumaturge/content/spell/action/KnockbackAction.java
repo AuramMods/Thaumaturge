@@ -44,7 +44,7 @@ public record KnockbackAction(float base, float perPower, float lift, boolean pu
             horizontal = horizontal.normalize();
         }
         Vec3 push = horizontal.scale(pull ? -strength : strength).add(0.0, lift * strength, 0.0);
-        entity.push(push);
+        entity.push(push.x, push.y, push.z);
         entity.hurtMarked = true;
     }
 }

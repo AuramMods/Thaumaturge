@@ -8,7 +8,7 @@ import com.leclowndu93150.thaumaturge.registry.TTSpellBehaviors;
 import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.tags.EntityTypeTags;
+import com.leclowndu93150.thaumaturge.registry.TTEntityTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -51,8 +51,8 @@ public record SieveFlow() implements SpellBehavior {
             case ENTITIES -> true;
             case ENEMIES -> !ctx.isAlly(living);
             case ALLIES -> ctx.isAlly(living);
-            case UNDEAD -> living.getType().is(EntityTypeTags.UNDEAD);
-            default -> !living.getType().is(EntityTypeTags.UNDEAD);
+            case UNDEAD -> living.getType().is(TTEntityTags.UNDEAD);
+            default -> !living.getType().is(TTEntityTags.UNDEAD);
         };
     }
 

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import com.leclowndu93150.thaumaturge.content.entity.EntityIgnition;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
@@ -175,7 +176,7 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
                 takeItem(serverLevel, pos, itemEntity);
             } else if (entity instanceof LivingEntity living && !living.fireImmune()) {
                 living.hurt(serverLevel.damageSources().lava(), CONTACT_DAMAGE);
-                living.igniteForSeconds(CONTACT_FIRE_SECONDS);
+                EntityIgnition.igniteForSeconds(living, CONTACT_FIRE_SECONDS);
             }
         }
         super.entityInside(state, level, pos, entity);
