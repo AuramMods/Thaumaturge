@@ -10,7 +10,7 @@ public final class FocalDraw {
     private FocalDraw() {}
 
     public static void sprite(GuiGraphics graphics, ResourceLocation sprite, int x, int y, int width, int height) {
-        graphics.blitSprite(sprite, x, y, width, height);
+        FocalSpriteRenderer.blit(graphics, sprite, x, y, width, height);
     }
 
     public static void sprite(
@@ -20,8 +20,11 @@ public final class FocalDraw {
                 ARGB32.green(color) / 255.0F,
                 ARGB32.blue(color) / 255.0F,
                 ARGB32.alpha(color) / 255.0F);
-        graphics.blitSprite(sprite, x, y, width, height);
-        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        try {
+            sprite(graphics, sprite, x, y, width, height);
+        } finally {
+            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        }
     }
 
     public static void field(GuiGraphics graphics, int x, int y, int width, int height) {

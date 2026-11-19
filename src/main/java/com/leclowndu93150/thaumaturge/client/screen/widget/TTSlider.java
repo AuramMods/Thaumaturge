@@ -119,7 +119,7 @@ public final class TTSlider extends AbstractWidget {
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY, int button) {
+    public void onClick(double mouseX, double mouseY) {
         updateFromMouse(mouseX, mouseY);
     }
 

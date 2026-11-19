@@ -24,8 +24,6 @@ public final class TTScreenTextures {
 
     public static final ResourceLocation GRINDSTONE =
             ResourceLocation.withDefaultNamespace("textures/gui/container/grindstone.png");
-    public static final ResourceLocation GRINDSTONE_ERROR =
-            ResourceLocation.withDefaultNamespace("container/grindstone/error");
 
     public static final ResourceLocation HUD_HOVER_SPARK = gui("hud_hover_spark.png");
     public static final ResourceLocation THAUMOSTATIC_HARNESS = gui("gui_thaumostatic_harness.png");

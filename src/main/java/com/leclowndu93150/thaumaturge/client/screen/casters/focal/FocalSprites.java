@@ -36,7 +36,7 @@ public final class FocalSprites {
     public static final ResourceLocation COMPLEXITY = TTIds.rl("textures/gui/complex.png");
     public static final ResourceLocation CRYSTAL = TTIds.rl("textures/item/essentia_crystal.png");
     public static final ResourceLocation XP_ORB =
-            ResourceLocation.withDefaultNamespace("textures/gui/sprites/container/enchanting_table/level_1.png");
+            ResourceLocation.withDefaultNamespace("textures/gui/container/enchanting_table.png");
 
     public static final int SLOT_SIZE = 18;
     public static final int CELL_SIZE = 22;
@@ -68,9 +68,9 @@ public final class FocalSprites {
     public static final int SPLIT_H = 14;
     public static final int COMPLEXITY_TEXTURE = 16;
     public static final int CRYSTAL_TEXTURE = 16;
-    public static final int XP_ORB_TEXTURE = 16;
+    public static final int XP_ORB_TEXTURE = 256;
     public static final int XP_ORB_U = 3;
-    public static final int XP_ORB_V = 3;
+    public static final int XP_ORB_V = 226;
     public static final int XP_ORB_SIZE = 9;
 
     private FocalSprites() {}

@@ -168,6 +168,7 @@ public final class FocalManipulatorScreen extends AbstractContainerScreen<MenuFo
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         pendingTooltip = null;
+        renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTick);
         summaryPanel.renderOverlay(graphics, mouseX, mouseY);
         if (pendingTooltip != null) pendingTooltip.accept(graphics);
