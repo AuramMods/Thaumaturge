@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity.cult;
 
-import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityGolemOrb;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.server.level.ServerLevel;
@@ -8,8 +7,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.projectile.SmallFireball;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public final class CultSpells {
@@ -65,22 +62,7 @@ public final class CultSpells {
         level.levelEvent(null, FIREBALL_LEVEL_EVENT, caster.blockPosition(), 0);
         for (int i = 0; i < FIREBALL_COUNT; i++) {
             Vec3 shot = new Vec3(dx + random.nextGaussian() * spread, dy, dz + random.nextGaussian() * spread);
-            SmallFireball fireball = new CultistFireball(level, caster, shot.normalize());
-            fireball.setPos(fireball.getX(), originY + FIREBALL_LIFT, fireball.getZ());
-            level.addFreshEntity(fireball);
-        }
-    }
-
-    private static final class CultistFireball extends SmallFireball {
-        private CultistFireball(ServerLevel level, Mob caster, Vec3 direction) {
-            super(level, caster, direction);
-        }
-
-        @Override
-        protected void onHitBlock(BlockHitResult hit) {
-            if (ThaumaturgeServerConfig.CULTIST_FIREBALLS_IGNITE_BLOCKS.get()) {
-                super.onHitBlock(hit);
-            }
+            level.addFreshEntity(CultistFireballs.create(level, caster, shot, originY + FIREBALL_LIFT));
         }
     }
 }

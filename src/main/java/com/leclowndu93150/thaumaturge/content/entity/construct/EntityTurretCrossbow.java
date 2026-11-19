@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
+import com.leclowndu93150.thaumaturge.content.entity.ProjectileArrows;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -108,8 +109,8 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
             return;
         }
         ItemStack arrowStack = held.copyWithCount(1);
-        Arrow arrow = new Arrow(level(), this, arrowStack, null);
-        arrow.setBaseDamage(BASE_ARROW_DAMAGE + distanceFactor * 2.0F + random.nextGaussian() * 0.25);
+        double baseDamage = BASE_ARROW_DAMAGE + distanceFactor * 2.0F + random.nextGaussian() * 0.25;
+        Arrow arrow = ProjectileArrows.create(level(), this, arrowStack, null, baseDamage);
         arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
         Vec3 look = getViewVector(1.0F);
         if (!isPassenger()) {

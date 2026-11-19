@@ -304,7 +304,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
     }
 
     @Override
-    public boolean canBeLeashed() {
+    public boolean canBeLeashed(Player player) {
         return false;
     }
 

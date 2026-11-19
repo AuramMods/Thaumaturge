@@ -24,6 +24,7 @@
     "world.entity.item.ItemEntityGravityMixin",
     "world.entity.projectile.ThrowableProjectileGravityMixin",
     "world.entity.projectile.ThrownTridentLootingMixin",
+    "world.entity.projectile.CultistFireballImpactMixin",
     "world.entity.ai.BrainMixin",
     "world.entity.monster.SlimeAccessor",
     "world.item.alchemy.PotionBrewingAccessor",

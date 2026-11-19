@@ -53,10 +53,10 @@ final class PechAttacks {
         }
         RandomSource random = pech.getRandom();
         ItemStack arrowStack = random.nextFloat() < POISON_CHANCE ? poisonedArrowStack() : new ItemStack(Items.ARROW);
-        Arrow arrow = new Arrow(level, pech, arrowStack, heldBow(pech));
-        arrow.setBaseDamage(power * 2.0
+        double baseDamage = power * 2.0
                 + random.nextGaussian() * 0.25
-                + level.getDifficulty().getId() * 0.11F);
+                + level.getDifficulty().getId() * 0.11F;
+        Arrow arrow = ProjectileArrows.create(level, pech, arrowStack, heldBow(pech), baseDamage);
         double dx = target.getX() - pech.getX();
         double dz = target.getZ() - pech.getZ();
         double flatDistance = Math.sqrt(dx * dx + dz * dz);

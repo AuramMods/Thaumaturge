@@ -2,12 +2,18 @@ package com.leclowndu93150.thaumaturge.content.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mojang.authlib.GameProfile;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.PotionData;
+import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -19,6 +25,8 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -28,6 +36,7 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.CrossbowItem;
@@ -41,6 +50,68 @@ import org.mockito.ArgumentCaptor;
 
 class ProjectileLootingRuntimeTest {
     private static final Holder<DamageType> DAMAGE = Holder.direct(new DamageType("projectile_looting_test", 0.0F));
+
+    @Test
+    void pechArrowKeepsPoisonAndFiringBowPropertiesAfterReload() throws Exception {
+        ServerLevel level = level();
+        Zombie shooter = new Zombie(EntityType.ZOMBIE, level);
+        shooter.setPos(3.5, 62.0, -8.0);
+        when(level.getEntity(shooter.getUUID())).thenReturn(shooter);
+        ItemStack bow = enchanted(new ItemStack(Items.BOW), 2);
+        bow.enchant(Enchantments.POWER_ARROWS, 3);
+        bow.enchant(Enchantments.PUNCH_ARROWS, 2);
+        bow.enchant(Enchantments.FLAMING_ARROWS, 1);
+        bow.enchant(Enchantments.PIERCING, 2);
+        ItemStack ammunition = poisonArrows();
+
+        Arrow fired = ProjectileArrows.create(level, shooter, ammunition, bow, 3.75);
+        assertSame(shooter, fired.getOwner());
+        assertEquals(3.5, fired.getX());
+        assertEquals(shooter.getEyeY() - 0.1F, fired.getY(), 1e-8);
+        assertEquals(-8.0, fired.getZ());
+        assertEquals(AbstractArrow.Pickup.DISALLOWED, fired.pickup);
+        assertEquals(5.25, fired.getBaseDamage());
+        assertEquals(2, fired.getKnockback());
+        assertEquals(2, fired.getPierceLevel());
+        assertEquals(2000, fired.getRemainingFireTicks());
+        assertEquals(3, ammunition.getCount());
+
+        bow.shrink(1);
+        var reloaded = new Arrow(EntityType.ARROW, level);
+        reloaded.load(fired.saveWithoutId(new CompoundTag()));
+        assertSame(shooter, reloaded.getOwner());
+        assertEquals(2, ProjectileLooting.levelFor(hit(reloaded, shooter)));
+        assertEquals(fired.getColor(), reloaded.getColor());
+
+        var target = mock(LivingEntity.class);
+        var applyEffects = Arrow.class.getDeclaredMethod("doPostHurtEffects", LivingEntity.class);
+        applyEffects.setAccessible(true);
+        applyEffects.invoke(reloaded, target);
+        var effect = ArgumentCaptor.forClass(MobEffectInstance.class);
+        verify(target).addEffect(effect.capture(), org.mockito.ArgumentMatchers.same(shooter));
+        assertSame(MobEffects.POISON, effect.getValue().getEffect());
+        assertEquals(40, effect.getValue().getDuration());
+    }
+
+    @Test
+    void turretArrowUsesAmmunitionEffectsWithoutBorrowingWeaponEnchantments() {
+        ServerLevel level = level();
+        Zombie turret = new Zombie(EntityType.ZOMBIE, level);
+        turret.setItemSlot(EquipmentSlot.MAINHAND, enchanted(new ItemStack(Items.BOW), 4));
+        ItemStack ammunition = enchanted(poisonArrows(), 5);
+        Arrow fired = ProjectileArrows.create(level, turret, ammunition, null, 7.0);
+        assertEquals(7.0, fired.getBaseDamage());
+        assertEquals(0, ProjectileLooting.levelFor(hit(fired, turret)));
+        assertEquals(0, fired.getKnockback());
+        assertTrue(fired.getColor() >= 0);
+    }
+
+    private static ItemStack poisonArrows() {
+        var ammunition = new ItemStack(Items.TIPPED_ARROW, 3);
+        ItemData.set(ammunition, VanillaItemData.POTION_CONTENTS,
+                new PotionData(Optional.empty(), Optional.empty(), List.of(new MobEffectInstance(MobEffects.POISON, 40))));
+        return ammunition;
+    }
 
     @Test
     void bowKeepsTheFiringWeaponsLootingAfterItBreaksAndTheArrowReloads() {
