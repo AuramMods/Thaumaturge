@@ -309,8 +309,8 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
     }
 
     @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean hitByPlayer) {
-        super.dropCustomDeathLoot(level, source, hitByPlayer);
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean hitByPlayer) {
+        super.dropCustomDeathLoot(source, looting, hitByPlayer);
         for (ItemStack stack : this.loot) {
             if (!stack.isEmpty() && this.getRandom().nextFloat() < LOOT_DROP_CHANCE) {
                 ItemEntity dropped = this.spawnAtLocation(stack.copy(), 1.5F);

@@ -38,7 +38,6 @@ import java.util.UUID;
 import java.util.function.UnaryOperator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
@@ -83,8 +82,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -132,8 +129,6 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private static final float WATCH_PLAYER_RANGE = 8.0F;
     private static final int RETALIATION_MEMORY_TICKS = 300;
     private static final int KILL_XP = 8;
-    private static final float LOOT_CHANCE = 0.3F;
-    private static final float LOOTING_BONUS_PER_LEVEL = 0.15F;
     private static final ResourceLocation GOLEM_MASTERY_RESEARCH = TTIds.rl("golem_direct");
     private static final float RANK_UP_VOLUME = 0.25F;
     private static final int RANGED_TARGET_FORGET_DIST_SQR = 1024;
@@ -763,28 +758,10 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean playerKill) {
-        super.dropCustomDeathLoot(level, source, playerKill);
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean playerKill) {
+        super.dropCustomDeathLoot(source, looting, playerKill);
         dropAccessories();
-        float chance = LOOT_CHANCE + LOOTING_BONUS_PER_LEVEL * lootingLevel(level, source);
-        for (ItemStack stack : properties().components()) {
-            ItemStack copy = stack.copy();
-            if (random.nextFloat() < chance) {
-                if (copy.getCount() > 0) {
-                    copy.shrink(random.nextInt(copy.getCount()));
-                }
-                spawnAtLocation(copy, 0.25F);
-            }
-        }
-    }
-
-    private static int lootingLevel(ServerLevel level, DamageSource source) {
-        ItemStack weapon = source.getWeaponItem();
-        if (weapon == null || weapon.isEmpty()) {
-            return 0;
-        }
-        return weapon.getEnchantmentLevel(
-                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING));
+        GolemCombat.rollComponentDrops(properties().components(), source, random, stack -> spawnAtLocation(stack, 0.25F));
     }
 
     @Override
@@ -795,33 +772,21 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        if (!(level() instanceof ServerLevel level)) return false;
-        DamageSource source = damageSources().mobAttack(this);
-        float damage = EnchantmentHelper.modifyDamage(
-                level, getWeaponItem(), target, source, (float) getAttributeValue(Attributes.ATTACK_DAMAGE));
-        boolean hurt = target.hurt(source, damage);
-        if (hurt) {
-            float knockback = getKnockback(target, source);
-            if (knockback > 0.0F && target instanceof LivingEntity living) {
-                living.knockback(
-                        knockback * 0.5F, Mth.sin(getYRot() * Mth.DEG_TO_RAD), -Mth.cos(getYRot() * Mth.DEG_TO_RAD));
-                setDeltaMovement(getDeltaMovement().multiply(0.6, 1.0, 0.6));
-            }
-            EnchantmentHelper.doPostAttackEffects(level, target, source);
-            setLastHurtMob(target);
-            if (target instanceof LivingEntity living
-                    && (properties().hasTrait(TTGolemTraits.DEFT.get()) || hasKillCreditAccessory())
-                    && getOwner() instanceof Player owner) {
-                living.setLastHurtByPlayer(owner);
-            }
-            if (properties().arms().ability() != null) {
-                properties().arms().ability().onMeleeHit(this, target);
-            }
-            if (target instanceof Mob mob && !mob.isAlive()) {
-                grantRankExperience(KILL_XP);
-            }
+        if (!GolemCombat.tryMeleeHit(this, target)) {
+            return false;
         }
-        return hurt;
+        if (target instanceof LivingEntity living
+                && (properties().hasTrait(TTGolemTraits.DEFT.get()) || hasKillCreditAccessory())
+                && getOwner() instanceof Player owner) {
+            living.setLastHurtByPlayer(owner);
+        }
+        if (properties().arms().ability() != null) {
+            properties().arms().ability().onMeleeHit(this, target);
+        }
+        if (target instanceof Mob mob && !mob.isAlive()) {
+            grantRankExperience(KILL_XP);
+        }
+        return true;
     }
 
     @Override
@@ -877,11 +842,11 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     @Override
-    public void onRemovedFromLevel() {
+    public void onRemovedFromWorld() {
         if (!level().isClientSide()) {
             releaseTask();
         }
-        super.onRemovedFromLevel();
+        super.onRemovedFromWorld();
     }
 
     @Override

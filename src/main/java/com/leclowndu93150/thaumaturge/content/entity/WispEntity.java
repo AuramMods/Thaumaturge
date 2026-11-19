@@ -223,8 +223,8 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
     }
 
     @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, damageSource, recentlyHit);
+    protected void dropCustomDeathLoot(DamageSource damageSource, int looting, boolean recentlyHit) {
+        super.dropCustomDeathLoot(damageSource, looting, recentlyHit);
         Holder<IAspect> self = aspect();
         if (self != null) {
             this.spawnAtLocation(EssentiaCrystalFactory.of(self));

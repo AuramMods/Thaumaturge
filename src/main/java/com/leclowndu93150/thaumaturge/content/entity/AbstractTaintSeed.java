@@ -184,8 +184,8 @@ public abstract class AbstractTaintSeed extends AbstractRootedTaint implements I
     }
 
     @Override
-    public void onRemovedFromLevel() {
-        super.onRemovedFromLevel();
+    public void onRemovedFromWorld() {
+        super.onRemovedFromWorld();
         if (this.level() instanceof ServerLevel server && registeredPosition != null) {
             TaintOriginRegistry.get(server).remove(registeredPosition);
             registeredPosition = null;

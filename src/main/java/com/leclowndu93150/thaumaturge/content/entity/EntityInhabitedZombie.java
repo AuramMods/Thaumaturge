@@ -88,7 +88,7 @@ public class EntityInhabitedZombie extends Zombie {
     }
 
     @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {}
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {}
 
     @Override
     public @Nullable SpawnGroupData finalizeSpawn(
