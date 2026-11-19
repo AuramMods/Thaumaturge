@@ -27,8 +27,8 @@ class SpellNodeCodecTest {
     void diskAndNetworkCodecsRoundTripSpellNodeData() {
         SpellNode node = new SpellNode(PART, Optional.of(ASPECT), Map.of("strength", 3), List.of(SpellNode.of(PART)));
 
-        var json = SpellNode.CODEC.encodeStart(JsonOps.INSTANCE, node).getOrThrow();
-        assertEquals(node, SpellNode.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow());
+        var json = SpellNode.CODEC.encodeStart(JsonOps.INSTANCE, node).result().orElseThrow();
+        assertEquals(node, SpellNode.CODEC.parse(JsonOps.INSTANCE, json).result().orElseThrow());
 
         ByteBuf buffer = Unpooled.buffer();
         try {

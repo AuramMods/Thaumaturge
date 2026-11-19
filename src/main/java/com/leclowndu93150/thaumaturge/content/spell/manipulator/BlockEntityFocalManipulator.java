@@ -27,6 +27,7 @@ import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -36,7 +37,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -111,7 +111,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
             return;
         }
         draft = spell;
-        name = StringUtil.filterText(newName).strip();
+        name = SharedConstants.filterText(newName).strip();
         setChangedAndSync();
     }
 
@@ -127,9 +127,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
             return false;
         }
         boolean creative = player.getAbilities().instabuild;
-        if (MinecraftForge.EVENT_BUS
-                .post(new SpellInscribeEvent(player, worldPosition, focus, draft, summary))
-                .isCanceled()) {
+        if (MinecraftForge.EVENT_BUS.post(new SpellInscribeEvent(player, worldPosition, focus, draft, summary))) {
             return false;
         }
         if (!creative) {

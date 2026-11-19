@@ -21,7 +21,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -38,7 +37,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jspecify.annotations.Nullable;
 
 public final class BlockFluxGas extends Block implements PhysicalFluxBlock, LiquidBlockContainer {
     private static final int MIN_SPREAD_DIFFERENCE = 2;
@@ -129,8 +127,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
     }
 
     @Override
-    public boolean canPlaceLiquid(
-            @Nullable Player user, BlockGetter level, BlockPos pos, BlockState state, Fluid fluid) {
+    public boolean canPlaceLiquid(BlockGetter level, BlockPos pos, BlockState state, Fluid fluid) {
         return false;
     }
 

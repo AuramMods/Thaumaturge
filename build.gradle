@@ -308,6 +308,8 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/compat/Java17*'
         java.include 'com/leclowndu93150/thaumaturge/compat/Colors*'
         java.include 'com/leclowndu93150/thaumaturge/client/aura/ClientAuraCacheTest.java'
+        java.include 'com/leclowndu93150/thaumaturge/api/spell/SpellNodeCodecTest.java'
+        java.include 'com/leclowndu93150/thaumaturge/api/spell/SpellsColorTest.java'
         java.include 'com/leclowndu93150/thaumaturge/api/items/InvHelperConsumptionCutoffTest.java'
         java.include 'com/leclowndu93150/thaumaturge/api/essentia/EssentiaConduitCompatibilityTest.java'
         java.include 'com/leclowndu93150/thaumaturge/content/entity/EntityGolemDartPortTest.java'

@@ -5,7 +5,6 @@ import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCod
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -57,8 +56,7 @@ public final class BlockHole extends BaseEntityBlock implements LiquidBlockConta
     }
 
     @Override
-    public boolean canPlaceLiquid(
-            @Nullable Player user, BlockGetter level, BlockPos pos, BlockState state, Fluid fluid) {
+    public boolean canPlaceLiquid(BlockGetter level, BlockPos pos, BlockState state, Fluid fluid) {
         return false;
     }
 

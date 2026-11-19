@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import com.leclowndu93150.thaumaturge.api.infusion.InfusionCraftedEvent;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
+import com.leclowndu93150.thaumaturge.api.spell.SpellSummary;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
@@ -22,6 +23,7 @@ import com.leclowndu93150.thaumaturge.api.spell.cast.TouchBudget;
 import com.leclowndu93150.thaumaturge.api.spell.event.ScriptedSpellEvent;
 import com.leclowndu93150.thaumaturge.api.spell.event.SpellCastEvent;
 import com.leclowndu93150.thaumaturge.api.spell.event.SpellEffectEvent;
+import com.leclowndu93150.thaumaturge.api.spell.event.SpellInscribeEvent;
 import com.leclowndu93150.thaumaturge.api.spell.event.SpellNodeEvent;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPartKind;
 import com.leclowndu93150.thaumaturge.content.spell.script.ScriptedNode;
@@ -30,12 +32,14 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.BlockHitResult;
@@ -167,6 +171,35 @@ class SpellEventsRuntimeTest {
         assertEquals(2.0F, pre.visCost());
         assertEquals(List.of(replacement), node.targets());
         assertEquals(List.of(target(1).position()), original.stream().map(SpellTarget::position).toList());
+    }
+
+    @Test
+    void nativeInscriptionPostReportsAnAddonsVeto() {
+        Player player = mock(Player.class);
+        BlockPos table = new BlockPos(5, 73, 2);
+        ItemStack focus = new ItemStack(Items.STICK);
+        Spell draft = Spell.empty();
+        var summary = new SpellSummary(4, 10, 2.0F, 3, Map.of(), 2, 0, 0, 8, 0, 0, List.of());
+        var refused = new SpellInscribeEvent(player, table, focus, draft, summary);
+        var allowed = new SpellInscribeEvent(player, table, focus, draft, summary);
+        Consumer<SpellInscribeEvent> restrict = event -> {
+            if (event == refused) {
+                assertSame(player, event.player());
+                assertEquals(table, event.pos());
+                assertSame(focus, event.focus());
+                assertSame(draft, event.spell());
+                assertSame(summary, event.summary());
+                event.setCanceled(true);
+            }
+        };
+        var bus = MinecraftForge.EVENT_BUS;
+        bus.addListener(restrict);
+        try {
+            assertTrue(bus.post(refused));
+            assertFalse(bus.post(allowed));
+        } finally {
+            bus.unregister(restrict);
+        }
     }
 
     @Test
