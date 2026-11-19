@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -25,28 +26,29 @@ final class GogglesWorldOverlayReadoutTest {
         Level level = mock(Level.class);
         BlockPos pos = new BlockPos(3, 4, 5);
         Direction side = Direction.WEST;
+        when(level.hasChunk(0, 0)).thenReturn(true);
         AspectList stored = mock(AspectList.class);
         IAspectContainer container = mock(IAspectContainer.class);
         when(container.getAspects()).thenReturn(stored);
-        when(level.getCapability(AspectCapabilities.CONTAINER, pos, side)).thenReturn(container);
+        var provider = BlockCapabilityFixture.expose(level, pos, AspectCapabilities.CONTAINER, side, container);
 
         GogglesWorldOverlay.AspectReadout containerReadout = GogglesWorldOverlay.readAspects(level, null, pos, side);
 
         assertSame(stored, containerReadout.aspects());
         assertTrue(containerReadout.showAmounts());
-        verify(level).getCapability(AspectCapabilities.CONTAINER, pos, side);
+        verify(provider).getCapability(AspectCapabilities.CONTAINER, side);
 
         IAspectQuery query = mock(IAspectQuery.class);
         AspectList intent = mock(AspectList.class);
-        when(level.getCapability(AspectCapabilities.CONTAINER, pos, side)).thenReturn(null);
-        when(level.getCapability(EssentiaCapabilities.ASPECT_QUERY, pos, side)).thenReturn(query);
+        BlockCapabilityFixture.expose(provider, AspectCapabilities.CONTAINER, side, null);
+        BlockCapabilityFixture.expose(provider, EssentiaCapabilities.ASPECT_QUERY, side, query);
         when(query.queryAspects()).thenReturn(intent);
 
         GogglesWorldOverlay.AspectReadout queryReadout = GogglesWorldOverlay.readAspects(level, null, pos, side);
 
         assertSame(intent, queryReadout.aspects());
         assertFalse(queryReadout.showAmounts());
-        verify(level).getCapability(EssentiaCapabilities.ASPECT_QUERY, pos, side);
+        verify(provider).getCapability(EssentiaCapabilities.ASPECT_QUERY, side);
         verify(query).queryAspects();
     }
 

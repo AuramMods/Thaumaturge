@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,7 +35,7 @@ class EssentiaSourcesCutoffTest {
     private ServerLevel level;
     private Holder<IAspect> aspect;
     private Holder<IAspect> other;
-    private final Map<BlockPos, IAspectSource> sources = new HashMap<>();
+    private final Map<BlockPos, BlockEntity> providers = new HashMap<>();
     private final Set<ChunkPos> unloaded = new HashSet<>();
     private MockedStatic<EffectDispatch> effects;
     private long time;
@@ -49,8 +50,7 @@ class EssentiaSourcesCutoffTest {
         when(level.getGameTime()).thenAnswer(call -> time);
         when(level.hasChunk(anyInt(), anyInt()))
                 .thenAnswer(call -> !unloaded.contains(new ChunkPos(call.getArgument(0), call.getArgument(1))));
-        when(level.getCapability(eq(AspectCapabilities.CONTAINER), any(BlockPos.class), isNull()))
-                .thenAnswer(call -> sources.get(call.getArgument(1)));
+        when(level.getBlockEntity(any(BlockPos.class))).thenAnswer(call -> providers.get(call.getArgument(0)));
         effects = mockStatic(EffectDispatch.class);
     }
 
@@ -66,10 +66,11 @@ class EssentiaSourcesCutoffTest {
         when(source.getAspects()).thenReturn(empty ? AspectList.EMPTY : AspectList.EMPTY.add(aspect, 1));
         when(source.drain(aspect, 1)).thenReturn(true);
         when(source.accepts(aspect)).thenReturn(true);
-        sources.put(pos, source);
         IEssentiaConduit conduit = mock(IEssentiaConduit.class);
         when(conduit.pull(null)).thenReturn(EssentiaPull.of(aspect, suction));
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, pos, null)).thenReturn(conduit);
+        var provider = BlockCapabilityFixture.provider(AspectCapabilities.CONTAINER, null, source);
+        BlockCapabilityFixture.expose(provider, EssentiaCapabilities.CONDUIT, null, conduit);
+        providers.put(pos, provider);
         return source;
     }
 
@@ -78,8 +79,7 @@ class EssentiaSourcesCutoffTest {
         var near = source(BlockPos.ZERO.east(), 0, false, 100);
         var far = source(BlockPos.ZERO.east(2), 1, false, 0);
         var farther = source(BlockPos.ZERO.east(3), 1, false, 0);
-        var entity = mock(BlockEntity.class);
-        when(level.getBlockEntity(BlockPos.ZERO.east(2))).thenReturn(entity);
+        var entity = providers.get(BlockPos.ZERO.east(2));
         assertTrue(new EssentiaSources(BlockPos.ZERO, 3).drain(level, aspect, 20));
         verify(far).drain(aspect, 1);
         verify(near, never()).drain(any(), anyInt());
@@ -148,8 +148,7 @@ class EssentiaSourcesCutoffTest {
         var wrong = source(BlockPos.ZERO.east(), 0, false, 100);
         var conduit = mock(IEssentiaConduit.class);
         when(conduit.pull(null)).thenReturn(EssentiaPull.of(other, 100));
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.east(), null))
-                .thenReturn(conduit);
+        BlockCapabilityFixture.expose(providers.get(BlockPos.ZERO.east()), EssentiaCapabilities.CONDUIT, null, conduit);
         assertTrue(new EssentiaSources(BlockPos.ZERO, 1).insert(level, aspect, 10));
         verify(first).fill(aspect, 1);
         verify(wrong, never()).fill(any(), anyInt());
@@ -214,7 +213,7 @@ class EssentiaSourcesCutoffTest {
         assertTrue(search.drain(level, aspect, 10));
         verify(west).drain(aspect, 1);
         verifyNoInteractions(east);
-        verify(level, never()).getCapability(AspectCapabilities.CONTAINER, BlockPos.ZERO.east(), null);
+        verify(level, never()).getBlockEntity(BlockPos.ZERO.east());
     }
 
     @Test
@@ -226,7 +225,7 @@ class EssentiaSourcesCutoffTest {
         clearInvocations(level);
         time = 209;
         assertFalse(search.drain(level, aspect, 10));
-        verify(level, never()).getCapability(eq(AspectCapabilities.CONTAINER), any(), isNull());
+        verify(level, never()).getBlockEntity(any(BlockPos.class));
         time = 210;
         assertTrue(search.drain(level, aspect, 10));
         when(found.drain(aspect, 1)).thenReturn(false);
@@ -241,8 +240,7 @@ class EssentiaSourcesCutoffTest {
         var ignored = source(BlockPos.ZERO.west(), 2, false, 0);
         var unloadedSource = source(BlockPos.ZERO.north(), 2, false, 0);
         var available = source(BlockPos.ZERO.east(), 0, false, 0);
-        var entity = mock(BlockEntity.class);
-        when(level.getBlockEntity(BlockPos.ZERO.west())).thenReturn(entity);
+        var entity = providers.get(BlockPos.ZERO.west());
         unloaded.add(new ChunkPos(BlockPos.ZERO.north()));
         assertTrue(new EssentiaSources(BlockPos.ZERO, 1)
                 .ignoring(be -> be == entity)
@@ -259,7 +257,7 @@ class EssentiaSourcesCutoffTest {
         Vec3 target = new Vec3(2.5, 4, 3);
         var search = new EssentiaSources(BlockPos.ZERO, 2).drainEffectTarget(target);
         assertTrue(search.drain(level, aspect, 5));
-        search.facing(Direction.EAST).ignoring(be -> true);
+        search.facing(Direction.EAST).ignoring(be -> be == providers.get(BlockPos.ZERO.west()));
         assertTrue(search.drain(level, aspect, 5));
         verify(west, times(2)).drain(aspect, 1);
         search.invalidate();

@@ -17,6 +17,7 @@ import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeBuffe
 import com.leclowndu93150.thaumaturge.content.infusion.EssentiaSources;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.mojang.serialization.Lifecycle;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -59,8 +60,7 @@ class PortAndResonatorCompatibilityTest {
         when(tube.connectsOn(Direction.EAST)).thenReturn(true);
         when(tube.pull(Direction.EAST)).thenReturn(EssentiaPull.NONE);
         when(level.getGameTime()).thenAnswer(invocation -> gameTime);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.west(), Direction.EAST))
-                .thenReturn(tube);
+        BlockCapabilityFixture.expose(level, BlockPos.ZERO.west(), EssentiaCapabilities.CONDUIT, Direction.EAST, tube);
     }
 
     private MockedConstruction<EssentiaSources> interceptSources() {
@@ -136,7 +136,7 @@ class PortAndResonatorCompatibilityTest {
             clearInvocations(tube, sources, level);
             tick(port, 199);
             verifyNoInteractions(tube, sources);
-            verify(level, never()).getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.west(), Direction.EAST);
+            verify(level, never()).getBlockEntity(BlockPos.ZERO.west());
             tick(port, 1);
             verify(sources).insert(level, aspect, 10);
         }
@@ -289,7 +289,7 @@ class PortAndResonatorCompatibilityTest {
             when(level.hasChunk(-1, 0)).thenReturn(false);
             tick(port, 5);
             verifyNoInteractions(tube, sources);
-            verify(level, never()).getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.west(), Direction.EAST);
+            verify(level, never()).getBlockEntity(BlockPos.ZERO.west());
         }
     }
 
@@ -306,15 +306,14 @@ class PortAndResonatorCompatibilityTest {
 
     @Test
     void resonatorKeepsTranslatedContentsAndSuctionMessages() {
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO, Direction.UP))
-                .thenReturn(tube);
+        var provider = BlockCapabilityFixture.expose(level, BlockPos.ZERO, EssentiaCapabilities.CONDUIT, Direction.UP, tube);
         when(tube.heldAspect(Direction.UP)).thenReturn(aspect);
         when(tube.heldAmount(Direction.UP)).thenReturn(7);
         when(tube.pull(Direction.UP)).thenReturn(EssentiaPull.any(64));
         var player = mock(Player.class);
         var resonator = TTItems.RESONATOR.get();
         assertEquals(InteractionResult.SUCCESS, resonator.onItemUseFirst(ItemStack.EMPTY, context(level, player)));
-        verify(level).getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO, Direction.UP);
+        verify(provider).getCapability(EssentiaCapabilities.CONDUIT, Direction.UP);
         var messages = ArgumentCaptor.forClass(Component.class);
         verify(player, times(2)).sendSystemMessage(messages.capture());
         var contents = (TranslatableContents) Java17.first(messages.getAllValues()).getContents();
@@ -331,13 +330,12 @@ class PortAndResonatorCompatibilityTest {
     @Test
     void resonatorReportsEachBufferCompartmentAndDoesNotDuplicateAggregateStock() {
         when(tube.pull(Direction.UP)).thenReturn(EssentiaPull.NONE);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO, Direction.UP))
-                .thenReturn(tube);
-        when(level.getBlockEntity(BlockPos.ZERO)).thenReturn(mock(BlockEntityTubeBuffer.class));
+        var buffer = mock(BlockEntityTubeBuffer.class);
+        when(level.getBlockEntity(BlockPos.ZERO)).thenReturn(buffer);
+        BlockCapabilityFixture.expose(buffer, EssentiaCapabilities.CONDUIT, Direction.UP, tube);
         var container = mock(IAspectContainer.class);
         when(container.getAspects()).thenReturn(AspectList.EMPTY.add(aspect, 4));
-        when(level.getCapability(AspectCapabilities.CONTAINER, BlockPos.ZERO, Direction.UP))
-                .thenReturn(container);
+        BlockCapabilityFixture.expose(buffer, AspectCapabilities.CONTAINER, Direction.UP, container);
         var player = mock(Player.class);
         TTItems.RESONATOR.get().onItemUseFirst(ItemStack.EMPTY, context(level, player));
         verify(player, times(2)).sendSystemMessage(any());
@@ -352,10 +350,10 @@ class PortAndResonatorCompatibilityTest {
         verifyNoInteractions(player);
         var client = mock(Level.class);
         when(client.isClientSide()).thenReturn(true);
-        when(client.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO, Direction.UP))
-                .thenReturn(tube);
+        when(client.hasChunk(0, 0)).thenReturn(true);
+        var provider = BlockCapabilityFixture.expose(client, BlockPos.ZERO, EssentiaCapabilities.CONDUIT, Direction.UP, tube);
         assertEquals(InteractionResult.SUCCESS, resonator.onItemUseFirst(ItemStack.EMPTY, context(client, player)));
-        verify(client).getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO, Direction.UP);
+        verify(provider).getCapability(EssentiaCapabilities.CONDUIT, Direction.UP);
         verify(player).swing(InteractionHand.MAIN_HAND);
         verify(player, never()).sendSystemMessage(any());
         verifyNoInteractions(tube);

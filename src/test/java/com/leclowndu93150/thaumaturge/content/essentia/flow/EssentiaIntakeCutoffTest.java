@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import com.mojang.serialization.Lifecycle;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -17,6 +18,7 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +26,7 @@ class EssentiaIntakeCutoffTest {
     private ServerLevel level;
     private EssentiaIntakeHost host;
     private IEssentiaConduit supplier;
+    private BlockEntity supplierEntity;
     private Holder<IAspect> aspect;
     private EssentiaIntake intake;
 
@@ -33,6 +36,7 @@ class EssentiaIntakeCutoffTest {
         Registry.register(registry, TTAspects.HERBA, mock(IAspect.class));
         aspect = registry.getHolderOrThrow(TTAspects.HERBA);
         level = mock(ServerLevel.class);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         when(level.registryAccess()).thenReturn(new RegistryAccess.ImmutableRegistryAccess(List.of(registry)).freeze());
         host = mock(EssentiaIntakeHost.class, CALLS_REAL_METHODS);
         when(host.getLevel()).thenReturn(level);
@@ -40,8 +44,8 @@ class EssentiaIntakeCutoffTest {
         when(host.intakeFace()).thenReturn(Direction.EAST);
         when(host.wantsEssentia()).thenReturn(true);
         supplier = mock(IEssentiaConduit.class);
-        when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.east(), Direction.WEST))
-                .thenReturn(supplier);
+        supplierEntity = BlockCapabilityFixture.expose(
+                level, BlockPos.ZERO.east(), EssentiaCapabilities.CONDUIT, Direction.WEST, supplier);
         when(supplier.releasesOn(Direction.WEST)).thenReturn(true);
         when(supplier.pull(Direction.WEST)).thenReturn(EssentiaPull.NONE);
         when(supplier.extract(aspect, 1, Direction.WEST, false)).thenReturn(1);
@@ -51,7 +55,7 @@ class EssentiaIntakeCutoffTest {
     @Test
     void firstDrawUsesModernConduitAndThenWaitsExactlyFiveCalls() {
         assertTrue(intake.pullOne());
-        verify(level).getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.east(), Direction.WEST);
+        verify(supplierEntity).getCapability(EssentiaCapabilities.CONDUIT, Direction.WEST);
         for (int i = 0; i < 4; i++) assertFalse(intake.pullOne());
         verify(supplier, times(1)).extract(aspect, 1, Direction.WEST, false);
         assertTrue(intake.pullOne());
@@ -111,6 +115,6 @@ class EssentiaIntakeCutoffTest {
         assertFalse(unknown.pullOne());
         when(host.getLevel()).thenReturn(null);
         assertFalse(intake.pullOne());
-        verify(level, never()).getCapability(any(), any(BlockPos.class), any(Direction.class));
+        verify(level, never()).getBlockEntity(any(BlockPos.class));
     }
 }
