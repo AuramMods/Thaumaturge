@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(FireBlock.class)
 public class FireBlockMixin {
-    @Inject(method = "checkBurnOut", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "tryCatchFire", at = @At("HEAD"), cancellable = true, remap = false)
     private void thaumaturge$wardResistsFire(
             Level level, BlockPos pos, int chance, RandomSource random, int age, Direction face, CallbackInfo ci) {
         if (WardHandler.isWarded(level, pos)) {
