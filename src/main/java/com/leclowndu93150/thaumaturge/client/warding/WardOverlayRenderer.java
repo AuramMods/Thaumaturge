@@ -79,7 +79,7 @@ public final class WardOverlayRenderer {
             return;
         }
         Vec3 cam = minecraft.gameRenderer.getMainCamera().getPosition();
-        float time = player.tickCount + minecraft.getTimer().getGameTimeDeltaPartialTick(false);
+        float time = player.tickCount + event.getPartialTick();
         MultiBufferSource.BufferSource buffers = minecraft.renderBuffers().bufferSource();
         VertexConsumer buffer = buffers.getBuffer(RUNES);
         Matrix4f pose = event.getPoseStack().last().pose();

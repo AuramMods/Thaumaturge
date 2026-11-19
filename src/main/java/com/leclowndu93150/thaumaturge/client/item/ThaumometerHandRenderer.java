@@ -80,7 +80,7 @@ public final class ThaumometerHandRenderer {
         PoseStack poseStack = event.getPoseStack();
         MultiBufferSource buffers = event.getMultiBufferSource();
         int light = event.getPackedLight();
-        float partial = mc.getTimer().getGameTimeDeltaPartialTick(false);
+        float partial = event.getPartialTick();
         float equip = event.getEquipProgress();
         float swing = isScanning(player) ? 0.0F : event.getSwingProgress();
         float sqrtSwing = Mth.sqrt(swing);

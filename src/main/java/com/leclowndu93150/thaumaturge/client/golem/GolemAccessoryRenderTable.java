@@ -27,7 +27,7 @@ public final class GolemAccessoryRenderTable {
 
     public static GolemAccessoryRenderTable collect(EntityRendererProvider.Context context) {
         RegisterGolemAccessoryRenderersEvent event = new RegisterGolemAccessoryRenderersEvent(context);
-        ModLoader.postEvent(event);
+        ModLoader.get().postEvent(event);
         Map<GolemAccessoryAnchor, Map<ResourceLocation, List<GolemAccessoryRenderer>>> renderers =
                 new EnumMap<>(GolemAccessoryAnchor.class);
         for (RegisterGolemAccessoryRenderersEvent.Registration registration : event.registrations()) {

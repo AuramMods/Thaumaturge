@@ -197,10 +197,9 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
     }
 
     private static float clientTicks() {
-        LocalPlayer player = Minecraft.getInstance().player;
-        return player == null
-                ? 0.0F
-                : player.tickCount + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer player = minecraft.player;
+        return player == null ? 0.0F : player.tickCount + minecraft.getPartialTick();
     }
 
     private static int glowLight(float ticks) {

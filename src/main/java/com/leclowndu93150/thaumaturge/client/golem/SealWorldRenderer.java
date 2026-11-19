@@ -87,7 +87,7 @@ public final class SealWorldRenderer {
         PoseStack poseStack = event.getPoseStack();
         Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
         MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(SEAL_BUFFERS);
-        float partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(false);
+        float partialTicks = event.getPartialTick();
         float time = player.tickCount % 360 + partialTicks;
         for (SealEntity seal : ClientSealHolder.all().values()) {
             BlockPos pos = seal.pos().pos();

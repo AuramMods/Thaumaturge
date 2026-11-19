@@ -1,12 +1,21 @@
 package com.leclowndu93150.thaumaturge.client.render;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
+import com.leclowndu93150.thaumaturge.client.render.entity.TintBufferSource;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
 class EntityVertexRuntimeTest {
@@ -81,5 +90,51 @@ class EntityVertexRuntimeTest {
         } finally {
             rendered.release();
         }
+    }
+
+    @Test
+    void forgeBufferTintsPackedVerticesAndNativeModelPartColors() {
+        var buffer = new BufferBuilder(2048);
+        var format = DefaultVertexFormat.NEW_ENTITY;
+        var layer = RenderType.entityCutoutNoCull(ResourceLocation.withDefaultNamespace("textures/entity/bat.png"));
+        var source = new TintBufferSource(requestedLayer -> {
+            assertSame(layer, requestedLayer);
+            return buffer;
+        }, 0x80604020);
+        var tinted = source.getBuffer(layer);
+        var pose = new PoseStack();
+        buffer.begin(VertexFormat.Mode.QUADS, format);
+        for (int i = 0; i < 4; i++) {
+            EntityVertices.finish(
+                    tinted.vertex(pose.last().pose(), i, 0, 0)
+                            .color(0x8090C0FF).uv(0, 0).overlayCoords(5).uv2(9),
+                    pose.last(), 0, 1, 0);
+        }
+
+        var mesh = new MeshDefinition();
+        mesh.getRoot().addOrReplaceChild("cube", CubeListBuilder.create().texOffs(0, 0)
+                .addBox(0, 0, 0, 2, 2, 2), PartPose.ZERO);
+        LayerDefinition.create(mesh, 16, 16).bakeRoot()
+                .render(pose, tinted, 9, 5, 1.0F, 0.5F, 0.25F, 0.75F);
+
+        var rendered = buffer.end();
+        try {
+            assertEquals(28, rendered.drawState().vertexCount());
+            var bytes = rendered.vertexBuffer().order(ByteOrder.nativeOrder());
+            assertColor(bytes, format.getOffset(1), 54, 48, 32, 64);
+            int firstModelVertex = 4 * format.getVertexSize();
+            assertColor(bytes, firstModelVertex + format.getOffset(1), 96, 31, 7, 95);
+            assertEquals(5, bytes.getInt(firstModelVertex + format.getOffset(3)));
+            assertEquals(9, bytes.getInt(firstModelVertex + format.getOffset(4)));
+        } finally {
+            rendered.release();
+        }
+    }
+
+    private static void assertColor(ByteBuffer vertices, int offset, int red, int green, int blue, int alpha) {
+        assertEquals(red, Byte.toUnsignedInt(vertices.get(offset)));
+        assertEquals(green, Byte.toUnsignedInt(vertices.get(offset + 1)));
+        assertEquals(blue, Byte.toUnsignedInt(vertices.get(offset + 2)));
+        assertEquals(alpha, Byte.toUnsignedInt(vertices.get(offset + 3)));
     }
 }

@@ -64,7 +64,7 @@ public final class WandHandRenderer {
                 ? player.getMainArm()
                 : player.getMainArm().getOpposite();
         float mirror = arm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
-        float partial = mc.getTimer().getGameTimeDeltaPartialTick(false);
+        float partial = event.getPartialTick();
         float equip = event.getEquipProgress();
         float swing = event.getSwingProgress();
         boolean using = player.isUsingItem() && player.getUsedItemHand() == event.getHand();

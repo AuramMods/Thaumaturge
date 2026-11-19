@@ -16,7 +16,7 @@ public final class GolemPartRenderHookRegistration {
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             RegisterGolemPartRenderHooksEvent registration = new RegisterGolemPartRenderHooksEvent();
-            ModLoader.postEvent(registration);
+            ModLoader.get().postEvent(registration);
             GolemPartRenderHooks.install(registration.hooks());
         });
     }

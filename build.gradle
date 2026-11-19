@@ -435,6 +435,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/client/render/TTRenderTypes.java'
         java.include 'com/leclowndu93150/thaumaturge/client/render/TTFlatRenderTypes.java'
         java.include 'com/leclowndu93150/thaumaturge/client/render/EntityVertices.java'
+        java.include 'com/leclowndu93150/thaumaturge/client/render/entity/TintBufferSource.java'
         java.include 'com/leclowndu93150/thaumaturge/client/render/ModelRender.java'
         java.include 'com/leclowndu93150/thaumaturge/client/model/gear/AbstractTTArmorModel.java'
         java.include 'com/leclowndu93150/thaumaturge/client/render/blockentity/LegacyItemLift.java'

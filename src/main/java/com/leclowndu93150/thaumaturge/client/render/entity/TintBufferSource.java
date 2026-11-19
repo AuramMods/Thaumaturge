@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.entity;
 
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraftforge.client.model.pipeline.VertexConsumerWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,8 +36,8 @@ public final class TintBufferSource implements MultiBufferSource {
         }
 
         @Override
-        public VertexConsumer setColor(int red, int green, int blue, int alpha) {
-            return super.setColor(
+        public VertexConsumer color(int red, int green, int blue, int alpha) {
+            return super.color(
                     red * tintRed / 255, green * tintGreen / 255, blue * tintBlue / 255, alpha * tintAlpha / 255);
         }
     }

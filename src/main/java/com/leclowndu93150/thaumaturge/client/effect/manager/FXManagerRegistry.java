@@ -37,7 +37,7 @@ public final class FXManagerRegistry {
         if (mc.level == null) return;
         Camera camera = mc.gameRenderer.getMainCamera();
         PoseStack poseStack = event.getPoseStack();
-        float partialTick = mc.getTimer().getGameTimeDeltaPartialTick(false);
+        float partialTick = event.getPartialTick();
         for (AbstractFXManager<?> m : MANAGERS) m.renderAll(poseStack, camera, partialTick);
     }
 
