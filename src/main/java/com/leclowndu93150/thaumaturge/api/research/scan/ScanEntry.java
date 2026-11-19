@@ -75,7 +75,7 @@ public record ScanEntry(
         }
         Entity creature = target.creature();
         if (creature != null) {
-            return entities.isPresent() && creature.getType().is(entities.get());
+            return entities.isPresent() && entities.get().contains(creature.getType().builtInRegistryHolder());
         }
         ItemStack stack = target.carriedStack();
         if (stack.isEmpty()) {

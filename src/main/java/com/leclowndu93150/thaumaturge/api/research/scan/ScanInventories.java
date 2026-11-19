@@ -24,7 +24,7 @@ final class ScanInventories {
     }
 
     static List<ItemStack> contents(Player player, ScanTarget target) {
-        Set<ItemStack> stacks = ItemStackLinkedSet.createTypeAndComponentsSet();
+        Set<ItemStack> stacks = ItemStackLinkedSet.createTypeAndTagSet();
         List<IItemHandler> handlers = handlers(player, target);
         for (IItemHandler handler : handlers) {
             for (int slot = 0; slot < handler.getSlots(); slot++) {
@@ -34,7 +34,8 @@ final class ScanInventories {
                 }
             }
         }
-        if (handlers.isEmpty() && container(player, target) instanceof Container container) {
+        Container container = handlers.isEmpty() ? container(player, target) : null;
+        if (container != null) {
             for (int slot = 0; slot < container.getContainerSize(); slot++) {
                 ItemStack stack = container.getItem(slot);
                 if (!stack.isEmpty()) {
