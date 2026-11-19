@@ -8,12 +8,14 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionEnchantmentRecipe;
+import com.leclowndu93150.thaumaturge.data.recipe.RecipeDataOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import net.minecraft.advancements.Criterion;
+import java.util.function.Consumer;
+import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -50,16 +52,16 @@ public final class InfusionEnchantmentRecipeBuilder {
         return this;
     }
 
-    public InfusionEnchantmentRecipeBuilder unlockedBy(String name, Criterion<?> criterion) {
+    public InfusionEnchantmentRecipeBuilder unlockedBy(String name, CriterionTriggerInstance criterion) {
         return this;
     }
 
-    public void save(RecipeOutput output) {
+    public void save(Consumer<FinishedRecipe> output) {
         Preconditions.checkState(!components.isEmpty(), "Infusion enchantment recipe has no components");
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
                 TTIds.MODID, "infusion_enchantment/" + enchantment.getSerializedName());
         InfusionEnchantmentRecipe recipe = new InfusionEnchantmentRecipe(
                 enchantment, components, aspects, displayCatalyst, Optional.ofNullable(gate));
-        output.accept(id, recipe, null);
+        RecipeDataOutput.saveCustom(output, id, recipe, null);
     }
 }

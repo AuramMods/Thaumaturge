@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.recipe;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
@@ -37,22 +39,24 @@ import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItemTags;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTWandParts;
+import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.BlockFamily;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
@@ -65,8 +69,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Unit;
-import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -75,11 +77,9 @@ import net.minecraft.world.item.alchemy.Potion;
 import com.leclowndu93150.thaumaturge.itemdata.PotionData;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.armortrim.TrimPattern;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -92,12 +92,14 @@ import net.minecraftforge.registries.RegistryObject;
 public final class TTRecipeProvider extends RecipeProvider {
     private static final int ARCANE_GRINDSTONE_VIS = 50;
 
-    private RecipeOutput output;
+    private final CompletableFuture<HolderLookup.Provider> lookupProvider;
+    private Consumer<FinishedRecipe> output;
     private HolderLookup.Provider registries;
     private HolderLookup<Item> items;
 
     public TTRecipeProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(packOutput, lookupProvider);
+        super(packOutput);
+        this.lookupProvider = lookupProvider;
     }
 
     private static ResearchGate gate(String path) {
@@ -109,17 +111,17 @@ public final class TTRecipeProvider extends RecipeProvider {
     }
 
     @Override
-    protected void buildRecipes(RecipeOutput recipeOutput) {
-        throw new IllegalStateException("buildRecipes(RecipeOutput, HolderLookup.Provider) is the entrypoint");
+    public CompletableFuture<?> run(CachedOutput cache) {
+        return lookupProvider.thenCompose(provider -> RegistryContext.withRegistries(provider, () -> super.run(cache)));
     }
 
     @Override
-    protected void buildRecipes(RecipeOutput recipeOutput, HolderLookup.Provider provider) {
+    protected void buildRecipes(Consumer<FinishedRecipe> recipeOutput) {
         this.output = recipeOutput;
-        this.registries = provider;
-        this.items = provider.lookupOrThrow(Registries.ITEM);
+        this.registries = RegistryContext.resolve(null);
+        this.items = registries.lookupOrThrow(Registries.ITEM);
         buildDustTriggerRecipes();
-        SpecialRecipeBuilder.special(category -> PrimordialPearlRepairRecipe.INSTANCE)
+        SpecialRecipeBuilder.special(PrimordialPearlRepairRecipe.INSTANCE.getSerializer())
                 .save(recipeOutput, "thaumaturge:primordial_pearl_repair");
         buildSalisMundusRecipe();
         buildArcaneWorkbenchRecipes();
@@ -177,7 +179,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TTItems.LABEL.get()))
                 .save(output, TTIds.MODID + ":label_clear");
 
-        SpecialRecipeBuilder.special(category -> LabelFilterRecipe.INSTANCE)
+        SpecialRecipeBuilder.special(LabelFilterRecipe.INSTANCE.getSerializer())
                 .save(output, TTIds.rl("label_filter").toString());
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.JAR_BRACE.get(), 2)
@@ -208,7 +210,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .save(output);
 
         TTBlockFamilies.getAllFamilies()
-                .forEach(family -> generateRecipes(output, family, FeatureFlagSet.of(FeatureFlags.VANILLA)));
+                .forEach(family -> generateRecipes(output, family));
 
         TTBlockFamilies.getAllFamilies()
                 .forEach(family -> family.getVariants().forEach((variant, block) -> {
@@ -1110,7 +1112,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 baseAspects,
                 Ingredient.of(Items.IRON_CHESTPLATE),
                 Optional.of(gate("runic_shielding")));
-        output.accept(TTIds.rl("runic_augment/runic_shielding"), recipe, null);
+        RecipeDataOutput.saveCustom(output, TTIds.rl("runic_augment/runic_shielding"), recipe, null);
     }
 
     private void buildThaumostaticHarnessRecipe() {
@@ -1892,7 +1894,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .aspect(TTAspects.ORDO, 5)
                 .gate(gate("metal_purification"))
                 .unlockedBy("has", has(oreTag))
-                .save(output.withConditions(new NotCondition(new TagEmptyCondition(oreTag))));
+                .save(RecipeDataOutput.withCondition(output, new NotCondition(new TagEmptyCondition(oreTag.location()))));
     }
 
     private void transmutationRecipe(
@@ -1909,7 +1911,7 @@ public final class TTRecipeProvider extends RecipeProvider {
             }
         }
         builder.save(
-                output.withConditions(new NotCondition(new TagEmptyCondition(catalyst))),
+                RecipeDataOutput.withCondition(output, new NotCondition(new TagEmptyCondition(catalyst.location()))),
                 TTIds.MODID + ":crucible/" + name + "_transmutation");
     }
 
@@ -2986,18 +2988,30 @@ public final class TTRecipeProvider extends RecipeProvider {
         return ItemData.create(TTItems.WAND.get(), 1, patch);
     }
 
+    private void saveStarterWandRecipe() {
+        ItemStack wand = wandResult(TTWandParts.CAP_IRON.get(), TTWandParts.ROD_WOOD.get(), false);
+        JsonObject result = new JsonObject();
+        result.addProperty("item", BuiltInRegistries.ITEM.getKey(wand.getItem()).toString());
+        result.addProperty("nbt", wand.getOrCreateTag().toString());
+
+        JsonArray pattern = new JsonArray();
+        List.of("  I", " S ", "I  ").forEach(pattern::add);
+        JsonObject key = new JsonObject();
+        key.add("I", Ingredient.of(TTItems.WAND_CAP_IRON.get()).toJson());
+        key.add("S", Ingredient.of(Tags.Items.RODS_WOODEN).toJson());
+
+        JsonObject fields = new JsonObject();
+        fields.addProperty("category", "equipment");
+        fields.add("pattern", pattern);
+        fields.add("key", key);
+        fields.add("result", result);
+        RecipeDataOutput.save(output, TTIds.rl("wand/assembly/iron_wood"), RecipeSerializer.SHAPED_RECIPE, fields, null);
+    }
+
     private void buildWandRecipes() {
         HolderLookup<IAspect> aspects = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
 
-        ShapedRecipePattern starterPattern = ShapedRecipePattern.of(
-                Map.of('I', Ingredient.of(TTItems.WAND_CAP_IRON.get()), 'S', Ingredient.of(Tags.Items.RODS_WOODEN)),
-                List.of("  I", " S ", "I  "));
-        ShapedRecipe starter = new ShapedRecipe(
-                "",
-                CraftingBookCategory.EQUIPMENT,
-                starterPattern,
-                wandResult(TTWandParts.CAP_IRON.get(), TTWandParts.ROD_WOOD.get(), false));
-        output.accept(TTIds.rl("wand/assembly/iron_wood"), starter, null);
+        saveStarterWandRecipe();
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TTItems.WAND_CAP_IRON.get())
                 .pattern("NNN")
@@ -3021,7 +3035,8 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .gate(gate("cap_copper"))
                 .unlockedBy("has", has(NUGGETS_COPPER))
                 .save(
-                        output.withConditions(new NotCondition(new TagEmptyCondition(NUGGETS_COPPER))),
+                        RecipeDataOutput.withCondition(
+                                output, new NotCondition(new TagEmptyCondition(NUGGETS_COPPER.location()))),
                         TTIds.MODID + ":wand/part/wand_cap_copper");
 
         arcaneShaped(new ItemStack(TTItems.WAND_CAP_SILVER_INERT.get()), WAND_CAP_SILVER_VIS)
@@ -3031,7 +3046,8 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .gate(gate("cap_silver"))
                 .unlockedBy("has", has(NUGGETS_SILVER))
                 .save(
-                        output.withConditions(new NotCondition(new TagEmptyCondition(NUGGETS_SILVER))),
+                        RecipeDataOutput.withCondition(
+                                output, new NotCondition(new TagEmptyCondition(NUGGETS_SILVER.location()))),
                         TTIds.MODID + ":wand/part/wand_cap_silver_inert");
 
         arcaneShaped(new ItemStack(TTItems.WAND_CAP_THAUMIUM_INERT.get()), WAND_CAP_THAUMIUM_VIS)
@@ -3784,10 +3800,10 @@ public final class TTRecipeProvider extends RecipeProvider {
     }
 
     private void dustTrigger(String name, Recipe<?> recipe) {
-        output.accept(TTIds.rl("dust_trigger/" + name), recipe, null);
+        RecipeDataOutput.saveCustom(output, TTIds.rl("dust_trigger/" + name), recipe, null);
     }
 
     private void buildSalisMundusRecipe() {
-        SpecialRecipeBuilder.special(category -> SalisMundusRecipe.INSTANCE).save(output, "thaumaturge:salis_mundus");
+        SpecialRecipeBuilder.special(SalisMundusRecipe.INSTANCE.getSerializer()).save(output, "thaumaturge:salis_mundus");
     }
 }

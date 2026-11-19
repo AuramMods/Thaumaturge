@@ -5,7 +5,10 @@ import static org.mockito.Mockito.*;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
+import com.leclowndu93150.thaumaturge.data.recipe.RecipeDataOutput;
+import com.leclowndu93150.thaumaturge.data.recipe.builders.SimpleRecipeBuilder;
 import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
@@ -14,11 +17,17 @@ import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.MapCodec;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -26,6 +35,12 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.RegistryFixedCodec;
@@ -33,17 +48,24 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.profiling.InactiveProfiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootDataManager;
+import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.crafting.conditions.NotCondition;
+import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class RecipeSerializerRuntimeTest {
     private static final ResourceLocation TYPE_ID = ResourceLocation.fromNamespaceAndPath("thaumaturge", "serde_fixture");
@@ -95,6 +117,64 @@ public class RecipeSerializerRuntimeTest {
         var apply = RecipeManager.class.getDeclaredMethod("apply", Map.class, ResourceManager.class, ProfilerFiller.class);
         apply.setAccessible(true);
         apply.invoke(manager, Map.of(ID, json), mock(ResourceManager.class), InactiveProfiler.INSTANCE);
+    }
+
+    @Test
+    void nativeDatagenWritesRegistryAwareRecipesAndMatchingConditionalUnlocks(@TempDir Path output) throws Exception {
+        var registries = registries("datagen", false);
+        var tag = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("thaumaturge", "optional_ore_fixture"));
+        var condition = new NotCondition(new TagEmptyCondition(tag.location()));
+        var recipe = new ValueRecipe(registries.registryOrThrow(VALUES).getHolderOrThrow(VALUE));
+        var optional = ResourceLocation.fromNamespaceAndPath("thaumaturge", "optional/serialized");
+        var hidden = ResourceLocation.fromNamespaceAndPath("thaumaturge", "hidden/serialized");
+        var provider = new RecipeProvider(new PackOutput(output)) {
+            @Override
+            protected void buildRecipes(Consumer<FinishedRecipe> recipes) {
+                var builder = new SimpleRecipeBuilder(new ItemStack(Items.STONE), RecipeCategory.MISC) {
+                    @Override
+                    public void save(Consumer<FinishedRecipe> sink, ResourceLocation id) {
+                        RecipeDataOutput.saveCustom(sink, id, recipe, buildAdvancement(id));
+                    }
+                };
+                builder.save(recipes, hidden);
+                builder.unlockedBy("has_stone", InventoryChangeTrigger.TriggerInstance.hasItems(Items.STONE));
+                builder.unlockedBy("has_flint", InventoryChangeTrigger.TriggerInstance.hasItems(Items.FLINT));
+                builder.save(RecipeDataOutput.withCondition(recipes, condition), optional);
+            }
+        };
+        RegistryContext.withRegistries(registries, () -> provider.run(CachedOutput.NO_CACHE)).join();
+        assertNull(RegistryContext.scoped());
+
+        var recipePath = output.resolve("data/thaumaturge/recipes");
+        var hiddenJson = JsonParser.parseString(Files.readString(recipePath.resolve("hidden/serialized.json")))
+                .getAsJsonObject();
+        assertEquals(json(), hiddenJson);
+        assertFalse(Files.exists(output.resolve("data/thaumaturge/advancements/recipes/misc/hidden/serialized.json")));
+
+        var optionalJson = JsonParser.parseString(Files.readString(recipePath.resolve("optional/serialized.json")))
+                .getAsJsonObject();
+        assertEquals("forge:conditional", optionalJson.get("type").getAsString());
+        assertNull(RecipeManager.fromJson(optional, optionalJson, ICondition.IContext.EMPTY));
+        var populatedTags = mock(ICondition.IContext.class);
+        when(populatedTags.getTag(tag)).thenReturn(List.of(Items.STONE.builtInRegistryHolder()));
+        var loaded = (ValueRecipe) RegistryContext.withRegistries(
+                registries, () -> RecipeManager.fromJson(optional, optionalJson, populatedTags));
+        assertEquals(optional, loaded.getId());
+        assertSame(recipe.value, loaded.value);
+
+        var unlock = optional.withPrefix("recipes/misc/");
+        var unlockJson = JsonParser.parseString(Files.readString(
+                output.resolve("data/thaumaturge/advancements/" + unlock.getPath() + ".json"))).getAsJsonObject();
+        var context = new DeserializationContext(unlock, new LootDataManager());
+        assertNull(Advancement.Builder.fromJson(unlockJson, context, ICondition.IContext.EMPTY));
+        var loadedUnlock = Advancement.Builder.fromJson(unlockJson, context, populatedTags).serializeToJson();
+        assertEquals("minecraft:recipes/root", loadedUnlock.get("parent").getAsString());
+        assertEquals(optional.toString(), loadedUnlock.getAsJsonObject("rewards").getAsJsonArray("recipes")
+                .get(0).getAsString());
+        var requirements = loadedUnlock.getAsJsonArray("requirements");
+        assertEquals(1, requirements.size());
+        assertEquals(3, requirements.get(0).getAsJsonArray().size());
+        assertEquals(3, loadedUnlock.getAsJsonObject("criteria").size());
     }
 
     @Test

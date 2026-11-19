@@ -7,12 +7,14 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
+import com.leclowndu93150.thaumaturge.data.recipe.RecipeDataOutput;
 import java.util.Optional;
+import java.util.function.Consumer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -61,10 +63,10 @@ public class CrucibleRecipeBuilder extends SimpleRecipeBuilder {
     }
 
     @Override
-    public void save(RecipeOutput output, ResourceLocation id) {
+    public void save(Consumer<FinishedRecipe> output, ResourceLocation id) {
         CrucibleRecipe recipe = new CrucibleRecipe(this.catalyst, this.aspects, this.result, Optional.ofNullable(gate));
 
-        output.accept(id, recipe, buildAdvancement(output, id));
+        RecipeDataOutput.saveCustom(output, id, recipe, buildAdvancement(id));
     }
 
     @Override

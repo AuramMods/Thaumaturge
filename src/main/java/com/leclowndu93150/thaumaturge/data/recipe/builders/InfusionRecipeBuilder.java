@@ -6,14 +6,16 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRecipe;
+import com.leclowndu93150.thaumaturge.data.recipe.RecipeDataOutput;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import net.minecraft.core.HolderGetter;
-import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
+import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -64,7 +66,7 @@ public class InfusionRecipeBuilder extends SimpleRecipeBuilder {
     }
 
     @Override
-    public void save(RecipeOutput output, ResourceLocation id) {
+    public void save(Consumer<FinishedRecipe> output, ResourceLocation id) {
         Preconditions.checkState(!components.isEmpty(), "Infusion recipe has no components");
         InfusionRecipe recipe = catalystPatch != null
                 ? new InfusionRecipe(
@@ -76,7 +78,7 @@ public class InfusionRecipeBuilder extends SimpleRecipeBuilder {
                         Optional.of(catalystPatch),
                         Optional.ofNullable(gate))
                 : new InfusionRecipe(catalyst, components, aspects, instability, result, Optional.ofNullable(gate));
-        output.accept(id, recipe, buildAdvancement(output, id));
+        RecipeDataOutput.saveCustom(output, id, recipe, buildAdvancement(id));
     }
 
     @Override

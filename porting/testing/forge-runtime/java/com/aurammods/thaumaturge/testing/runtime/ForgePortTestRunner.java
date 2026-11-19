@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
 import net.minecraftforge.common.crafting.conditions.*;
@@ -55,8 +56,13 @@ public final class ForgePortTestRunner {
         // Forge's registry bake normally assigns block-state wire IDs and
         // initializes the native state caches before worlds/networking start.
         ((net.minecraftforge.registries.ForgeRegistry<?>) net.minecraftforge.registries.ForgeRegistries.BLOCKS).bake();
-        // ForgeMod normally registers this during the recipe-serializer event.
+        // ForgeMod normally registers these during the recipe-serializer event.
         // This focused launch skips mod construction and the recipe registration event.
+        var conditionalSerializer = new ConditionalRecipe.Serializer<>();
+        ForgeRegistries.RECIPE_SERIALIZERS.register(
+                ResourceLocation.fromNamespaceAndPath("forge", "conditional"), conditionalSerializer);
+        // The focused launch also skips Forge's @ObjectHolder injection.
+        ConditionalRecipe.class.getField("SERIALZIER").set(null, conditionalSerializer);
         CraftingHelper.register(ResourceLocation.withDefaultNamespace("item"), VanillaIngredientSerializer.INSTANCE);
         CraftingHelper.register(AndCondition.Serializer.INSTANCE);
         CraftingHelper.register(FalseCondition.Serializer.INSTANCE);

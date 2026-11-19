@@ -7,13 +7,15 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingRecipe;
+import com.leclowndu93150.thaumaturge.data.recipe.RecipeDataOutput;
 import com.leclowndu93150.thaumaturge.data.recipe.builders.SimpleRecipeBuilder;
 import java.util.Optional;
+import java.util.function.Consumer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -73,10 +75,10 @@ public abstract class ArcaneWorkbenchRecipeBuilder<R extends ArcaneWorkbenchReci
     }
 
     @Override
-    public void save(RecipeOutput output, ResourceLocation id) {
+    public void save(Consumer<FinishedRecipe> output, ResourceLocation id) {
         ArcaneCraftingRecipe recipe = makeRecipe("", this.result, this.aspects, Optional.ofNullable(gate), vis);
 
-        output.accept(id, recipe, buildAdvancement(output, id));
+        RecipeDataOutput.saveCustom(output, id, recipe, buildAdvancement(id));
     }
 
     protected abstract ArcaneCraftingRecipe makeRecipe(
