@@ -1,31 +1,23 @@
 package com.leclowndu93150.thaumaturge.content.equipment.hover;
 
-import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
-import com.leclowndu93150.thaumaturge.state.AttachmentData;
-
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
 import com.leclowndu93150.thaumaturge.mixin.server.network.ServerGamePacketListenerImplAccessor;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
-import net.minecraft.resources.ResourceLocation;
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.common.ForgeMod;
 
 public final class HoverManager {
     public static final int FUEL_INTERVAL_TICKS = 360;
-    private static final ResourceLocation FLIGHT_MODIFIER_ID = TTIds.rl("hover_flight");
-    private static final double FLIGHT_MODIFIER_VALUE = 1.0;
     private static final int HUM_INTERVAL_TICKS = 24;
     private static final float TOGGLE_VOLUME = 0.33F;
     private static final float HUM_VOLUME = 0.05F;
@@ -77,13 +69,13 @@ public final class HoverManager {
 
         player.resetFallDistance();
         ((ServerGamePacketListenerImplAccessor) player.connection).setAboveGroundTickCount(0);
-        keepAloft(player);
         burnFuel(player, stack, gear);
         if (gear.getHoverFuel(stack) <= 0) {
             setHovering(player, false);
             playToggleSound(player, false);
             return;
         }
+        keepAloft(player);
         if (player.tickCount % HUM_INTERVAL_TICKS == 0) {
             play(
                     player,
@@ -118,28 +110,23 @@ public final class HoverManager {
     record ChargeTick(int elapsedTicks, boolean consumeFuel) {}
 
     private static void keepAloft(ServerPlayer player) {
-        AttributeInstance flight = player.getAttribute(ForgeMod.CREATIVE_FLIGHT);
-        if (flight != null && !NamedAttributeModifiers.has(flight, FLIGHT_MODIFIER_ID)) {
-            flight.addTransientModifier(NamedAttributeModifiers.create(
-                    FLIGHT_MODIFIER_ID, FLIGHT_MODIFIER_VALUE, AttributeModifier.Operation.ADDITION));
-        }
+        HoverFlight flight = (HoverFlight) player;
+        boolean grantChanged = !flight.thaumaturge$hasHoverFlight();
+        flight.thaumaturge$setHoverFlight(true);
         Abilities abilities = player.getAbilities();
-        if (!abilities.flying && !player.onGround()) {
-            abilities.flying = true;
-            player.onUpdateAbilities();
-        }
+        boolean startFlying = !abilities.flying && !player.onGround();
+        if (startFlying) abilities.flying = true;
+        if (grantChanged || startFlying) player.onUpdateAbilities();
     }
 
     private static void land(ServerPlayer player) {
-        AttributeInstance flight = player.getAttribute(ForgeMod.CREATIVE_FLIGHT);
-        if (flight != null) {
-            flight.removeModifier(NamedAttributeModifiers.id(FLIGHT_MODIFIER_ID));
-        }
+        HoverFlight flight = (HoverFlight) player;
+        boolean grantChanged = flight.thaumaturge$hasHoverFlight();
+        flight.thaumaturge$setHoverFlight(false);
         Abilities abilities = player.getAbilities();
-        if (abilities.flying && !player.getAbilities().mayfly) {
-            abilities.flying = false;
-            player.onUpdateAbilities();
-        }
+        boolean stopFlying = abilities.flying && !abilities.mayfly;
+        if (stopFlying) abilities.flying = false;
+        if (grantChanged || stopFlying) player.onUpdateAbilities();
     }
 
     private static void playToggleSound(ServerPlayer player, boolean hovering) {

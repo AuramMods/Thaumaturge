@@ -1,7 +1,10 @@
 package com.leclowndu93150.thaumaturge.compat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.doAnswer;
@@ -9,6 +12,7 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.leclowndu93150.thaumaturge.content.equipment.hover.HoverFlight;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,6 +28,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.TextFilter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
@@ -82,6 +87,34 @@ class KnownMovementRuntimeTest {
         when(vehicle.getDeltaMovement()).thenReturn(new Vec3(0, -0.1, 0));
         assertEquals(vehicle.getDeltaMovement(), KnownMovement.of(vehicle));
         assertEquals(vehicle.getDeltaMovement(), KnownMovement.of(passenger));
+    }
+
+    @Test
+    void hoverSuppressesNativeFloatingDetectionWithoutChangingBaseAbilities() throws Exception {
+        var player = mock(ServerPlayer.class);
+        bindPosition(player, START);
+        var listener = listener(player);
+        when(player.serverLevel().getServer().isFlightAllowed()).thenReturn(false);
+        var abilities = new Abilities();
+        when(player.getAbilities()).thenReturn(abilities);
+        var hover = (HoverFlight) player;
+        doCallRealMethod().when(hover).thaumaturge$setHoverFlight(anyBoolean());
+        doCallRealMethod().when(hover).thaumaturge$hasHoverFlight();
+        var floating = ServerGamePacketListenerImpl.class.getDeclaredField("clientIsFloating");
+        floating.setAccessible(true);
+        var packet = new ServerboundMovePlayerPacket.Pos(START.x, START.y, START.z, false);
+
+        listener.handleMovePlayer(packet);
+        assertTrue(floating.getBoolean(listener));
+
+        hover.thaumaturge$setHoverFlight(true);
+        listener.handleMovePlayer(packet);
+        assertFalse(floating.getBoolean(listener));
+        assertFalse(abilities.mayfly);
+
+        hover.thaumaturge$setHoverFlight(false);
+        listener.handleMovePlayer(packet);
+        assertTrue(floating.getBoolean(listener));
     }
 
     private static ServerGamePacketListenerImpl listener(ServerPlayer player) throws Exception {

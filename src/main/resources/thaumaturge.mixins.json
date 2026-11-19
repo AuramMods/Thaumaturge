@@ -7,6 +7,7 @@
   "mixins": [
     "sable.api.SubLevelAssemblyHelperMixin",
     "server.network.ServerGamePacketListenerImplAccessor",
+    "server.network.ServerHoverFlightMixin",
     "world.entity.ExperienceOrbAccessor",
     "world.entity.MobAccessor",
     "world.entity.EntityEyeHeightMixin",
@@ -25,6 +26,7 @@
     "world.entity.EntityShowcaseProtectionMixin",
     "world.entity.MobShowcaseProtectionMixin",
     "world.entity.player.PlayerDamagePhaseMixin",
+    "world.entity.player.PlayerHoverFallMixin",
     "world.entity.player.PlayerMiningEfficiencyMixin",
     "world.entity.monster.SlimeDimensionsMixin",
     "world.entity.monster.MobBowLootingMixin",
@@ -64,6 +66,7 @@
     "server.level.ServerLevelEntityTickMixin",
     "server.level.PlayerRespawnLogicInvoker",
     "server.level.ServerPlayerKnownMovementMixin",
+    "server.level.ServerPlayerHoverFlightMixin",
     "server.network.ServerKnownMovementMixin",
     "world.item.crafting.RecipeManagerMixin",
     "server.ReloadableServerResourcesMixin",
