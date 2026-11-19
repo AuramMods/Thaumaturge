@@ -41,7 +41,8 @@ public final class ScriptedNode implements SpellBehavior {
 
     @Override
     public void execute(CastContext ctx, List<SpellTarget> incoming) {
-        ScriptedSpellEvent event = MinecraftForge.EVENT_BUS.post(new ScriptedSpellEvent(key, ctx, incoming, ctx.power()));
+        var event = new ScriptedSpellEvent(key, ctx, incoming, ctx.power());
+        MinecraftForge.EVENT_BUS.post(event);
         if (!event.stopped()) {
             ctx.proceed(event.targets(), event.state());
         }

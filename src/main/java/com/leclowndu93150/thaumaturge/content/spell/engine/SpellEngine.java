@@ -37,7 +37,9 @@ public final class SpellEngine {
 
     public static SpellCastEvent.Pre firePre(
             LivingEntity caster, ItemStack focus, Spell spell, float power, float vis) {
-        return MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Pre(caster, focus, spell, power, vis));
+        var event = new SpellCastEvent.Pre(caster, focus, spell, power, vis);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 
     public static void execute(
@@ -86,8 +88,8 @@ public final class SpellEngine {
                 state.multiply(SpellStats.POWER, part.power()),
                 aspect,
                 Spells.color(level.registryAccess(), node));
-        SpellNodeEvent event = MinecraftForge.EVENT_BUS.post(new SpellNodeEvent(ctx, inWorld(level, targets)));
-        if (event.isCanceled()) {
+        var event = new SpellNodeEvent(ctx, inWorld(level, targets));
+        if (MinecraftForge.EVENT_BUS.post(event)) {
             return;
         }
         part.behavior().execute(ctx, event.targets());

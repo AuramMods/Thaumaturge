@@ -10,9 +10,9 @@ import net.minecraftforge.eventbus.api.Event;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Fired on the NeoForge game event bus when an infusion matrix finishes a craft, just before the
+ * Fired on the Forge game event bus when an infusion matrix finishes a craft, just before the
  * result replaces the catalyst on the central pedestal. Listeners may change the result in place
- * through {@link #getResult()} or swap it with {@link #setResult(ItemStack)}.
+ * through {@link #getResultStack()} or swap it with {@link #setResultStack(ItemStack)}.
  *
  * <p>The event fires for every infusion kind: plain infusion, infusion enchantment and runic
  * augmentation. It runs on the logical server only. A craft that fails from instability never
@@ -94,7 +94,7 @@ public final class InfusionCraftedEvent extends Event {
      *
      * @return the current result
      */
-    public ItemStack getResult() {
+    public ItemStack getResultStack() {
         return result;
     }
 
@@ -104,7 +104,7 @@ public final class InfusionCraftedEvent extends Event {
      * @param result the new result; an empty stack leaves the pedestal empty
      * @throws NullPointerException when {@code result} is null
      */
-    public void setResult(ItemStack result) {
+    public void setResultStack(ItemStack result) {
         this.result = Objects.requireNonNull(result, "result");
     }
 }

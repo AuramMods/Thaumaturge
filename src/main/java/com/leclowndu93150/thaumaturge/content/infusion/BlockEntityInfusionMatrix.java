@@ -506,9 +506,10 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
         ServerPlayer crafter = job.player()
                 .map(uuid -> level.getServer().getPlayerList().getPlayer(uuid))
                 .orElse(null);
-        InfusionCraftedEvent event = MinecraftForge.EVENT_BUS.post(new InfusionCraftedEvent(
-                level, worldPosition, crafter, catalyst.copy(), preserveCatalystDamage(job.result(), catalyst)));
-        ItemStack result = event.getResult();
+        var event = new InfusionCraftedEvent(
+                level, worldPosition, crafter, catalyst.copy(), preserveCatalystDamage(job.result(), catalyst));
+        MinecraftForge.EVENT_BUS.post(event);
+        ItemStack result = event.getResultStack();
         pedestal.setItem(result);
         job = null;
         if (crafter != null && !result.isEmpty()) {

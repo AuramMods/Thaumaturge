@@ -333,7 +333,7 @@ public final class ResearchManager {
     }
 
     private static boolean vetoed(ResearchEvent event) {
-        return MinecraftForge.EVENT_BUS.post(event).isCanceled();
+        return MinecraftForge.EVENT_BUS.post(event);
     }
 
     private static boolean hasRequirements(IResearchStage stage) {

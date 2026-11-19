@@ -30,8 +30,8 @@ public abstract class AbstractEffectBehavior implements SpellBehavior {
             if (!admit(ctx, target)) {
                 continue;
             }
-            SpellEffectEvent event = MinecraftForge.EVENT_BUS.post(new SpellEffectEvent(ctx, target, ctx.power()));
-            if (!event.isCanceled()) {
+            var event = new SpellEffectEvent(ctx, target, ctx.power());
+            if (!MinecraftForge.EVENT_BUS.post(event)) {
                 apply(ctx, target, event.power(), index++);
             }
         }
