@@ -2,10 +2,11 @@ package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.longs.Long2FloatOpenHashMap;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -14,23 +15,22 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.model.data.ModelData;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 
 public final class LegacyItemLift {
     public static final float LEGACY_CENTER_Y = 0.35F;
     private static final long QUAD_SEED = 42L;
     private static final int MAX_BOTTOM_LIFT_CACHE_ENTRIES = 512;
     private static final float MAX_REASONABLE_RENDER_BOUND = 64.0F;
-    private static final Long2FloatOpenHashMap BOTTOM_LIFT_CACHE = new Long2FloatOpenHashMap();
-
-    static {
-        BOTTOM_LIFT_CACHE.defaultReturnValue(Float.NaN);
-    }
+    private static final Map<BottomLiftKey, Float> BOTTOM_LIFT_CACHE = new LinkedHashMap<>();
 
     private LegacyItemLift() {}
 
@@ -49,7 +49,7 @@ public final class LegacyItemLift {
      *
      * <p>The first lookup renders the item into a bounds-only vertex consumer. This follows Minecraft's actual item
      * rendering path, so special/BEWLR renderers and third-party custom item renderers can be measured too. The result
-     * is cached by resolved model identity, item components, and display context, so subsequent frames are a cheap
+     * is cached by resolved model identity, item and stack NBT, and display context, so subsequent frames are a cheap
      * cache lookup.
      *
      * <p>If a custom renderer fails or emits unusable bounds, this falls back to the baked-model quad calculation. If
@@ -62,19 +62,21 @@ public final class LegacyItemLift {
 
         Minecraft minecraft = Minecraft.getInstance();
         BakedModel model = minecraft.getItemRenderer().getModel(stack, minecraft.level, null, 0);
-        long cacheKey = cacheKey(stack, context, model);
-        float cached = BOTTOM_LIFT_CACHE.get(cacheKey);
-        if (!Float.isNaN(cached)) {
+        CompoundTag tag = stack.getTag();
+        var lookup = new BottomLiftKey(model, stack.getItem(), context, tag);
+        Float cached = BOTTOM_LIFT_CACHE.get(lookup);
+        if (cached != null) {
             return cached;
         }
 
+        var storedKey = new BottomLiftKey(model, lookup.item(), context, tag == null ? null : tag.copy());
         float lift = renderedBottomLift(minecraft, stack, context);
         if (!Float.isFinite(lift)) {
             float[] bounds = bakedYBounds(model, context);
             lift = usableBounds(bounds) ? -bounds[0] : 0.0F;
         }
 
-        cacheBottomLift(cacheKey, lift);
+        cacheBottomLift(storedKey, lift);
         return lift;
     }
 
@@ -132,20 +134,32 @@ public final class LegacyItemLift {
                 && Math.abs(bounds[1]) <= MAX_REASONABLE_RENDER_BOUND;
     }
 
-    private static long cacheKey(ItemStack stack, ItemDisplayContext context, BakedModel model) {
-        int stackState = 31 * ItemStack.hashItemAndComponents(stack) + context.ordinal();
-        return ((long) System.identityHashCode(model) << 32) ^ Integer.toUnsignedLong(stackState);
-    }
-
-    private static void cacheBottomLift(long key, float lift) {
+    private static void cacheBottomLift(BottomLiftKey key, float lift) {
         if (BOTTOM_LIFT_CACHE.size() >= MAX_BOTTOM_LIFT_CACHE_ENTRIES) {
             var iterator = BOTTOM_LIFT_CACHE.keySet().iterator();
-            if (iterator.hasNext()) {
-                iterator.nextLong();
-                iterator.remove();
-            }
+            iterator.next();
+            iterator.remove();
         }
         BOTTOM_LIFT_CACHE.put(key, lift);
+    }
+
+    private record BottomLiftKey(BakedModel model, Item item, ItemDisplayContext context, @Nullable CompoundTag tag) {
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof BottomLiftKey key
+                    && model == key.model
+                    && item == key.item
+                    && context == key.context
+                    && Objects.equals(tag, key.tag);
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = System.identityHashCode(model);
+            hash = 31 * hash + System.identityHashCode(item);
+            hash = 31 * hash + context.ordinal();
+            return 31 * hash + Objects.hashCode(tag);
+        }
     }
 
     private static void accumulateY(List<BakedQuad> quads, Matrix4f matrix, float[] bounds) {
@@ -192,40 +206,53 @@ public final class LegacyItemLift {
 
     private static final class BoundsVertexConsumer implements VertexConsumer {
         private final RenderBounds bounds;
+        private float y = Float.NaN;
 
         private BoundsVertexConsumer(RenderBounds bounds) {
             this.bounds = bounds;
         }
 
         @Override
-        public VertexConsumer addVertex(float x, float y, float z) {
+        public VertexConsumer vertex(double x, double y, double z) {
+            this.y = (float) y;
+            return this;
+        }
+
+        @Override
+        public VertexConsumer color(int red, int green, int blue, int alpha) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer uv(float u, float v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer overlayCoords(int u, int v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer uv2(int u, int v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer normal(float normalX, float normalY, float normalZ) {
+            return this;
+        }
+
+        @Override
+        public void endVertex() {
             bounds.include(y);
-            return this;
+            y = Float.NaN;
         }
 
         @Override
-        public VertexConsumer setColor(int red, int green, int blue, int alpha) {
-            return this;
-        }
+        public void defaultColor(int red, int green, int blue, int alpha) {}
 
         @Override
-        public VertexConsumer setUv(float u, float v) {
-            return this;
-        }
-
-        @Override
-        public VertexConsumer setUv1(int u, int v) {
-            return this;
-        }
-
-        @Override
-        public VertexConsumer setUv2(int u, int v) {
-            return this;
-        }
-
-        @Override
-        public VertexConsumer setNormal(float normalX, float normalY, float normalZ) {
-            return this;
-        }
+        public void unsetDefaultColor() {}
     }
 }

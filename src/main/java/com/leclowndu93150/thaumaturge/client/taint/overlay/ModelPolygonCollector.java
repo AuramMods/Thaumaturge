@@ -13,49 +13,63 @@ public final class ModelPolygonCollector implements VertexConsumer {
     private float x;
     private float y;
     private float z;
+    private float u;
+    private float v;
 
     public List<Vertex[]> polygons() {
         return polygons;
     }
 
     @Override
-    public VertexConsumer addVertex(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public VertexConsumer vertex(double x, double y, double z) {
+        this.x = (float) x;
+        this.y = (float) y;
+        this.z = (float) z;
         return this;
     }
 
     @Override
-    public VertexConsumer setUv(float u, float v) {
+    public VertexConsumer uv(float u, float v) {
+        this.u = u;
+        this.v = v;
+        return this;
+    }
+
+    @Override
+    public void endVertex() {
         pending[pendingCount++] = new Vertex(x, y, z, u, v);
         if (pendingCount == VERTICES_PER_POLYGON) {
             polygons.add(pending);
             pending = new Vertex[VERTICES_PER_POLYGON];
             pendingCount = 0;
         }
+    }
+
+    @Override
+    public VertexConsumer color(int red, int green, int blue, int alpha) {
         return this;
     }
 
     @Override
-    public VertexConsumer setColor(int red, int green, int blue, int alpha) {
+    public VertexConsumer overlayCoords(int u, int v) {
         return this;
     }
 
     @Override
-    public VertexConsumer setUv1(int u, int v) {
+    public VertexConsumer uv2(int u, int v) {
         return this;
     }
 
     @Override
-    public VertexConsumer setUv2(int u, int v) {
+    public VertexConsumer normal(float normalX, float normalY, float normalZ) {
         return this;
     }
 
     @Override
-    public VertexConsumer setNormal(float normalX, float normalY, float normalZ) {
-        return this;
-    }
+    public void defaultColor(int red, int green, int blue, int alpha) {}
+
+    @Override
+    public void unsetDefaultColor() {}
 
     public record Vertex(float x, float y, float z, float u, float v) {}
 }

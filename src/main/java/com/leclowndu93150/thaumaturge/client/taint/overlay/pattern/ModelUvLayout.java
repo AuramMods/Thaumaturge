@@ -36,7 +36,8 @@ public record ModelUvLayout(int width, int height, List<SurfaceFace> faces) {
                 root.visit(new PoseStack(), (pose, path, index, cube) -> {
                     Matrix4f restPose = restPoses.computeIfAbsent(path, key -> restPose(root, key));
                     ModelPolygonCollector collector = new ModelPolygonCollector();
-                    cube.compile(identity, collector, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1);
+                    cube.compile(identity, collector, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
+                            1.0F, 1.0F, 1.0F, 1.0F);
                     for (ModelPolygonCollector.Vertex[] polygon : collector.polygons()) {
                         polygons.add(polygon);
                         poses.add(restPose);
