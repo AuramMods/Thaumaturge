@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
@@ -36,11 +37,12 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
     private final MirrorInbox inbox = new MirrorInbox();
 
     public BlockEntityMirror(BlockPos pos, BlockState state) {
-        super(TTBlockEntities.MIRROR.get(), pos, state);
+        this(TTBlockEntities.MIRROR.get(), pos, state);
     }
 
     BlockEntityMirror(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+        exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> inbox());
     }
 
     @Override

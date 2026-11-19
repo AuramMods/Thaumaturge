@@ -77,7 +77,6 @@ public final class BlockItemGrate extends BaseEntityBlock implements BlockIntera
     public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         level.setBlock(pos, state.cycle(OPEN), UPDATE_CLIENTS);
-        level.invalidateCapabilities(pos);
         playToggleSound(level, pos, !state.getValue(OPEN));
         if (!level.isClientSide()
                 && !state.getValue(OPEN)
@@ -114,7 +113,6 @@ public final class BlockItemGrate extends BaseEntityBlock implements BlockIntera
         boolean powered = level.hasNeighborSignal(pos);
         if (powered != state.getValue(POWERED)) {
             level.setBlock(pos, state.setValue(OPEN, powered).setValue(POWERED, powered), UPDATE_CLIENTS);
-            level.invalidateCapabilities(pos);
             if (powered != state.getValue(OPEN)) playToggleSound(level, pos, powered);
         }
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof BlockEntityItemGrate grate) grate.eject();

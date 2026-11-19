@@ -5,12 +5,16 @@ import static org.mockito.Mockito.*;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.capabilities.Capabilities;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +25,7 @@ class InvHelperConsumptionCutoffTest {
     private Player player;
     private Inventory inventory;
     private ItemStackHandler chest;
+    private BlockEntity adjacent;
 
     @BeforeEach
     void setUp() {
@@ -30,8 +35,15 @@ class InvHelperConsumptionCutoffTest {
         inventory = new Inventory(player);
         when(player.getInventory()).thenReturn(inventory);
         chest = new ItemStackHandler(1);
-        when(level.getCapability(Capabilities.ItemHandler.BLOCK, BlockPos.ZERO.below(), Direction.UP))
-                .thenReturn(chest);
+        adjacent = mock(BlockEntity.class);
+        when(level.getBlockEntity(BlockPos.ZERO.below())).thenReturn(adjacent);
+        when(level.getBlockState(any(BlockPos.class))).thenReturn(Blocks.AIR.defaultBlockState());
+        expose(chest);
+    }
+
+    private void expose(IItemHandler handler) {
+        when(adjacent.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.UP))
+                .thenReturn(LazyOptional.of(() -> handler));
     }
 
     @Test
@@ -74,8 +86,7 @@ class InvHelperConsumptionCutoffTest {
         when(refusing.getSlots()).thenReturn(1);
         when(refusing.getStackInSlot(0)).thenReturn(new ItemStack(Items.IRON_INGOT, 4));
         when(refusing.extractItem(anyInt(), anyInt(), anyBoolean())).thenReturn(ItemStack.EMPTY);
-        when(level.getCapability(Capabilities.ItemHandler.BLOCK, BlockPos.ZERO.below(), Direction.UP))
-                .thenReturn(refusing);
+        expose(refusing);
         assertFalse(InvHelper.takeFromNeighboursOrPlayer(
                 level, BlockPos.ZERO, player, false, new ItemStack(Items.IRON_INGOT, 4)));
         assertTrue(inventory.getItem(0).isEmpty());
@@ -99,6 +110,17 @@ class InvHelperConsumptionCutoffTest {
     }
 
     @Test
+    void defaultToolRequestAllowsNameDataButAnExplicitNameStillMatches() {
+        var named = new ItemStack(Items.IRON_PICKAXE).setHoverName(Component.literal("Named"));
+        inventory.setItem(0, named);
+        var ordinary = new ItemStack(Items.IRON_PICKAXE);
+        var other = new ItemStack(Items.IRON_PICKAXE).setHoverName(Component.literal("Other"));
+        assertTrue(InvHelper.playerHolds(player, ordinary, false));
+        assertTrue(InvHelper.playerHolds(player, named.copy(), false));
+        assertFalse(InvHelper.playerHolds(player, other, false));
+    }
+
+    @Test
     void unexpectedShortExtractionRollsBackNeighborAndPlayerTogether() {
         ItemStackHandler shortExtracting = new ItemStackHandler(1) {
             @Override
@@ -108,8 +130,7 @@ class InvHelperConsumptionCutoffTest {
         };
         shortExtracting.setStackInSlot(0, new ItemStack(Items.IRON_INGOT, 3));
         inventory.setItem(0, new ItemStack(Items.IRON_INGOT, 4));
-        when(level.getCapability(Capabilities.ItemHandler.BLOCK, BlockPos.ZERO.below(), Direction.UP))
-                .thenReturn(shortExtracting);
+        expose(shortExtracting);
 
         assertFalse(InvHelper.takeFromNeighboursOrPlayer(
                 level, BlockPos.ZERO, player, false, new ItemStack(Items.IRON_INGOT, 4)));

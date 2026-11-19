@@ -9,9 +9,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
-import com.leclowndu93150.thaumaturge.registry.TTCapabilities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +30,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,15 +61,13 @@ class MirrorInboxCutoffTest {
 
     @Test
     void registersMirrorInboxAndRejectsUnpairedInsertion() {
-        RegisterCapabilitiesEvent event = mock(RegisterCapabilitiesEvent.class);
-        TTCapabilities.onRegisterCapabilities(event);
         BlockEntityMirror mirror = mirror(SOURCE_POS);
-        ICapabilityProvider<BlockEntity, Direction, IItemHandler> provider = itemProvider(event);
 
-        IItemHandler inbox = provider.getCapability(mirror, Direction.NORTH);
+        IItemHandler inbox = mirror.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.NORTH)
+                .orElseThrow(AssertionError::new);
         assertSame(mirror.inbox(), inbox);
         for (Direction side : Direction.values()) {
-            assertSame(mirror.inbox(), provider.getCapability(mirror, side));
+            assertSame(mirror.inbox(), mirror.getCapability(ForgeCapabilities.ITEM_HANDLER, side).orElse(null));
         }
         ItemStack offered = new ItemStack(Items.STONE, 8);
         assertSame(offered, inbox.insertItem(0, offered, false));
@@ -98,8 +92,8 @@ class MirrorInboxCutoffTest {
         assertTrue(source.inbox().getStackInSlot(0).isEmpty());
         List<ItemStack> queued = savedStacks(target, "Items");
         assertEquals(1, queued.size());
-        assertEquals(Items.STONE, queued.getFirst().getItem());
-        assertEquals(12, queued.getFirst().getCount());
+        assertEquals(Items.STONE, queued.get(0).getItem());
+        assertEquals(12, queued.get(0).getCount());
         assertEquals(1, source.instability);
     }
 
@@ -162,13 +156,4 @@ class MirrorInboxCutoffTest {
         return TTNbt.read(saved, key, ItemStack.CODEC.listOf(), REGISTRIES).orElse(List.of());
     }
 
-    private ICapabilityProvider<BlockEntity, Direction, IItemHandler> itemProvider(RegisterCapabilitiesEvent event) {
-        return Mockito.mockingDetails(event).getInvocations().stream()
-                .filter(call -> call.getMethod().getName().equals("registerBlockEntity"))
-                .filter(call -> call.getArgument(0) == Capabilities.ItemHandler.BLOCK)
-                .filter(call -> call.getArgument(1) == TTBlockEntities.MIRROR.get())
-                .map(call -> (ICapabilityProvider<BlockEntity, Direction, IItemHandler>) call.getArgument(2))
-                .findFirst()
-                .orElseThrow();
-    }
 }

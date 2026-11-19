@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityViews;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -15,6 +16,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.wrapper.InvWrapper;
+import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityHungryChest extends ChestBlockEntity {
     private static final double HORIZONTAL_GROWTH = 0.1;
@@ -28,13 +34,42 @@ public final class BlockEntityHungryChest extends ChestBlockEntity {
     private static final float EAT_PITCH_BASE = 1.0F;
 
     private final AABB swallowBox;
+    private final BlockCapabilityViews capabilityViews = new BlockCapabilityViews();
     private int lidCloseTimer;
 
     public BlockEntityHungryChest(BlockPos pos, BlockState state) {
         super(TTBlockEntities.HUNGRY_CHEST.get(), pos, state);
+        // The hungry chest's automation inventory is this half of the chest.
+        capabilityViews.expose(ForgeCapabilities.ITEM_HANDLER, side -> new InvWrapper(this));
         swallowBox = new AABB(pos)
                 .inflate(HORIZONTAL_GROWTH, 0.0, HORIZONTAL_GROWTH)
                 .expandTowards(0.0, VERTICAL_REACH, 0.0);
+    }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction side) {
+        if (capability == ForgeCapabilities.ITEM_HANDLER) {
+            return capabilityViews == null ? LazyOptional.empty() : capabilityViews.getCapability(capability, side);
+        }
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        capabilityViews.invalidate();
+        super.invalidateCaps();
+    }
+
+    @Override
+    public void reviveCaps() {
+        super.reviveCaps();
+        capabilityViews.revive();
+    }
+
+    @Override
+    public void clearRemoved() {
+        super.clearRemoved();
+        reviveCaps();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.research.scan;
 
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +12,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackLinkedSet;
-import net.neoforged.neoforge.capabilities.Capabilities;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import org.jspecify.annotations.Nullable;
 
@@ -62,12 +63,9 @@ final class ScanInventories {
             List<IItemHandler> handlers) {
         IItemHandler handler = null;
         if (target instanceof ScannedBlock block) {
-            var pos = block.pos();
-            handler = LoadedChunks.contains(player.level(), pos)
-                    ? player.level().getCapability(Capabilities.ItemHandler.BLOCK, pos, side)
-                    : null;
+            handler = InvHelper.handlerAt(player.level(), block.pos(), side);
         } else if (target instanceof ScannedEntity scanned && side == null) {
-            handler = scanned.entity().getCapability(Capabilities.ItemHandler.ENTITY);
+            handler = scanned.entity().getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
         }
         if (handler != null && seen.add(handler)) {
             handlers.add(handler);

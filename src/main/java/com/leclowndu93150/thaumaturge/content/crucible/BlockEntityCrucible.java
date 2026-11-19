@@ -32,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -77,6 +78,7 @@ public class BlockEntityCrucible extends AbstractSyncedBlockEntity implements Re
 
     public BlockEntityCrucible(BlockPos worldPosition, BlockState blockState) {
         super(TTBlockEntities.CRUCIBLE.get(), worldPosition, blockState);
+        exposeCapability(ForgeCapabilities.FLUID_HANDLER, side -> getTank());
     }
 
     private void tick() {

@@ -156,6 +156,12 @@ public final class ItemData {
         return java.util.Collections.unmodifiableMap(fields);
     }
 
+    /** Whether this stack has data beyond a newly constructed stack of the same item. */
+    public static boolean hasStackChanges(ItemStack stack) {
+        return !stack.isEmpty() && stack.hasTag()
+                && !comparisonFields(stack).equals(comparisonFields(new ItemStack(stack.getItem())));
+    }
+
     public static boolean listMatches(java.util.List<ItemStack> first, java.util.List<ItemStack> second) {
         if (first.size() != second.size()) return false;
         for (int i = 0; i < first.size(); i++) {

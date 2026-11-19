@@ -3,7 +3,9 @@ package com.leclowndu93150.thaumaturge.api.items;
 import com.leclowndu93150.thaumaturge.api.transaction.SnapshotJournal;
 import com.leclowndu93150.thaumaturge.api.transaction.Transaction;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
+import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityAccess;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -17,7 +19,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -25,7 +26,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Inventory access and filter matching used by golem seals and provisioning, built on the
- * NeoForge item handler capability.
+ * Forge item handler capability.
  *
  * @since 1.0.0
  */
@@ -99,7 +100,7 @@ public final class InvHelper {
 
     /** Returns the item handler exposed at a block face. */
     public static @Nullable IItemHandler handlerAt(Level level, BlockPos pos, @Nullable Direction side) {
-        return level.getCapability(Capabilities.ItemHandler.BLOCK, pos, side);
+        return BlockCapabilityAccess.items(level, pos, side);
     }
 
     /**
@@ -303,7 +304,7 @@ public final class InvHelper {
         }
         ItemMatch match = ItemMatch.ITEM_OR_TAG
                 .byTag(byTag)
-                .ignoringComponents(wanted.isComponentsPatchEmpty())
+                .ignoringComponents(!ItemData.hasStackChanges(wanted))
                 .withComponentSubset(true);
         int count = 0;
         for (ItemStack held : player.getInventory().items) {
@@ -636,7 +637,7 @@ public final class InvHelper {
     private static ItemMatch playerMatch(ItemStack wanted, boolean byTag) {
         return ItemMatch.EXACT
                 .byTag(byTag)
-                .ignoringComponents(wanted.isComponentsPatchEmpty())
+                .ignoringComponents(!ItemData.hasStackChanges(wanted))
                 .withComponentSubset(true);
     }
 

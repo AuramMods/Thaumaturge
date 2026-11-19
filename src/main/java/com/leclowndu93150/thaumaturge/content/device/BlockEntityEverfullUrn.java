@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityAccess;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
@@ -21,7 +22,7 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -60,6 +61,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
 
     public BlockEntityEverfullUrn(BlockPos pos, BlockState state) {
         super(TTBlockEntities.EVERFULL_URN.get(), pos, state);
+        exposeCapability(ForgeCapabilities.FLUID_HANDLER, side -> getTank());
     }
 
     public FluidTank getTank() {
@@ -114,7 +116,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
 
     private static boolean acceptsWater(Level level, BlockPos pos) {
         return isCauldron(level.getBlockState(pos))
-                || level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.UP) != null;
+                || BlockCapabilityAccess.find(level, pos, ForgeCapabilities.FLUID_HANDLER, Direction.UP) != null;
     }
 
     private void distribute(ServerLevel level) {
@@ -134,7 +136,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
                 }
                 continue;
             }
-            IFluidHandler receiver = level.getCapability(Capabilities.FluidHandler.BLOCK, target, Direction.UP);
+            IFluidHandler receiver = BlockCapabilityAccess.find(level, target, ForgeCapabilities.FLUID_HANDLER, Direction.UP);
             if (receiver == null) {
                 walk.remove();
                 setChanged();

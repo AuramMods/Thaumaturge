@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -58,6 +59,8 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
 
     public BlockEntitySpa(BlockPos pos, BlockState state) {
         super(TTBlockEntities.SPA.get(), pos, state);
+        exposeCapability(ForgeCapabilities.FLUID_HANDLER, side -> getTank());
+        exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> side == Direction.UP ? null : getItems());
     }
 
     public FluidTank getTank() {

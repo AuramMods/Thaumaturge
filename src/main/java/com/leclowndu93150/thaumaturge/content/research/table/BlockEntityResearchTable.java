@@ -46,6 +46,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
@@ -72,6 +73,7 @@ public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity im
 
     public BlockEntityResearchTable(BlockPos pos, BlockState state) {
         super(TTBlockEntities.RESEARCH_TABLE.get(), pos, state);
+        exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> items());
     }
 
     public ItemStackHandler items() {

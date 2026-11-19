@@ -45,6 +45,7 @@ import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
@@ -73,6 +74,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
 
     public BlockEntityThaumatorium(BlockPos pos, BlockState state) {
         super(TTBlockEntities.THAUMATORIUM.get(), pos, state);
+        exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> catalyst());
     }
 
     public ItemStackHandler catalyst() {

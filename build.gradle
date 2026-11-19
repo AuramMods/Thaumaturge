@@ -91,8 +91,13 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/content/equipment/TTMaterials.java'
         java.include 'com/leclowndu93150/thaumaturge/registry/TTItemTags.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/RegistryBlockEntity.java'
+        java.include 'com/leclowndu93150/thaumaturge/content/blockentity/BlockCapabilityViews.java'
+        java.include 'com/leclowndu93150/thaumaturge/content/blockentity/BlockCapabilityAccess.java'
         java.include 'com/leclowndu93150/thaumaturge/content/blockentity/AbstractSyncedBlockEntity.java'
         java.include 'com/leclowndu93150/thaumaturge/api/items/ItemMatch.java'
+        java.include 'com/leclowndu93150/thaumaturge/api/items/InvHelper.java'
+        java.include 'com/leclowndu93150/thaumaturge/api/items/StackFilter.java'
+        java.include 'com/leclowndu93150/thaumaturge/api/transaction/**'
         java.include 'com/leclowndu93150/thaumaturge/api/research/ResearchRequirement.java'
         java.include 'com/leclowndu93150/thaumaturge/network/transport/**'
         java.include 'com/leclowndu93150/thaumaturge/state/**'
@@ -178,6 +183,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/compat/Java17*'
         java.include 'com/leclowndu93150/thaumaturge/compat/Colors*'
         java.include 'com/leclowndu93150/thaumaturge/client/aura/ClientAuraCacheTest.java'
+        java.include 'com/leclowndu93150/thaumaturge/api/items/InvHelperConsumptionCutoffTest.java'
         compileClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
         runtimeClasspath += sourceSets.portCodec.output + sourceSets.portCodec.compileClasspath
     }

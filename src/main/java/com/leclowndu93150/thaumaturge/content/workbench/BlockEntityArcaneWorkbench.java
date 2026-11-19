@@ -26,6 +26,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 public class BlockEntityArcaneWorkbench extends AbstractSyncedBlockEntity implements MenuProvider {
     private static final double AURA_PAYMENT_EPSILON = 0.0001D;
@@ -42,6 +44,7 @@ public class BlockEntityArcaneWorkbench extends AbstractSyncedBlockEntity implem
 
     public BlockEntityArcaneWorkbench(BlockPos worldPosition, BlockState blockState) {
         super(TTBlockEntities.ARCANE_WORKBENCH.get(), worldPosition, blockState);
+        exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> new InvWrapper(getInventory()));
     }
 
     @Override

@@ -22,6 +22,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemStackHandler;
 
 public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
@@ -51,6 +52,7 @@ public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
 
     public BlockEntityVoidSiphon(BlockPos pos, BlockState state) {
         super(TTBlockEntities.VOID_SIPHON.get(), pos, state);
+        exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> output());
     }
 
     public ItemStackHandler output() {

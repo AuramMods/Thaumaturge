@@ -36,7 +36,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.RangedWrapper;
+import org.jspecify.annotations.Nullable;
 
 public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements MenuProvider {
     public int fuelCapacity;
@@ -89,6 +93,17 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
 
     protected BlockEntitySmelter(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+        exposeCapability(ForgeCapabilities.ITEM_HANDLER, this::automationSlots);
+    }
+
+    private IItemHandler automationSlots(@Nullable Direction side) {
+        if (side == null) {
+            return itemSlots();
+        }
+        if (side == Direction.UP || getBlockState().getValue(BlockSmelter.FACING).getAxis() == side.getAxis()) {
+            return new RangedWrapper(itemSlots(), 0, 1);
+        }
+        return new RangedWrapper(itemSlots(), 1, 2);
     }
 
     public ItemStackHandler itemSlots() {

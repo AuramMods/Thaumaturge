@@ -8,19 +8,14 @@ import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.AdvancedAlchemicalFurnaceStructure;
 import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
-import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockSmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectItemStorage;
 import com.leclowndu93150.thaumaturge.content.item.PhialItem;
-import net.minecraft.core.Direction;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.items.wrapper.RangedWrapper;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID)
 public final class TTCapabilities {
@@ -35,10 +30,6 @@ public final class TTCapabilities {
         essentiaItems(event);
         smeltery(event);
         golemBuilder(event);
-        infernalFurnace(event);
-        researchTable(event);
-        spa(event);
-        workbench(event);
         infusion(event);
     }
 
@@ -49,8 +40,6 @@ public final class TTCapabilities {
 
     private static void crucible(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TTBlockEntities.CRUCIBLE.get(), (be, side) -> be);
-        event.registerBlockEntity(
-                Capabilities.FluidHandler.BLOCK, TTBlockEntities.CRUCIBLE.get(), (be, side) -> be.getTank());
     }
 
     private static void nodes(RegisterCapabilitiesEvent event) {
@@ -77,31 +66,13 @@ public final class TTCapabilities {
                 TTBlockEntities.FLUX_SCRUBBER.get(),
                 (be, side) -> side == null || be.connectsOn(side) ? be : null);
         EssentiaCapabilities.registerConduit(event, TTBlockEntities.POTION_SPRAYER.get(), (be, side) -> be);
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK, TTBlockEntities.HUNGRY_CHEST.get(), (be, side) -> new InvWrapper(be));
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                TTBlockEntities.ITEM_GRATE.get(),
-                (be, side) -> side == Direction.UP ? be.inventory() : null);
-        event.registerBlockEntity(
-                Capabilities.FluidHandler.BLOCK, TTBlockEntities.EVERFULL_URN.get(), (be, side) -> be.getTank());
-        event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
-                TTBlockEntities.VIS_GENERATOR.get(),
-                (be, side) -> side == be.outputFace() ? be : null);
         EssentiaCapabilities.registerConduit(
                 event,
                 TTBlockEntities.ESSENTIA_PORT.get(),
                 (be, side) -> side == null || be.connectsOn(side) ? be : null);
         EssentiaCapabilities.registerConduit(event, TTBlockEntities.CONDENSER.get(), (be, side) -> be);
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK, TTBlockEntities.VOID_SIPHON.get(), (be, side) -> be.output());
         EssentiaCapabilities.registerConduit(event, TTBlockEntities.THAUMATORIUM.get(), (be, side) -> be);
         EssentiaCapabilities.registerConduit(event, TTBlockEntities.THAUMATORIUM_TOP.get(), (be, side) -> be);
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK, TTBlockEntities.THAUMATORIUM.get(), (be, side) -> be.catalyst());
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK, TTBlockEntities.MIRROR.get(), (be, side) -> be.inbox());
         event.registerBlockEntity(
                 AspectCapabilities.CONTAINER, TTBlockEntities.MIRROR_ESSENTIA.get(), (be, side) -> be);
     }
@@ -161,19 +132,6 @@ public final class TTCapabilities {
     }
 
     private static void smeltery(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, TTBlockEntities.SMELTER.get(), (be, side) -> {
-            if (side == null) {
-                return be.itemSlots();
-            }
-            if (side == Direction.UP
-                    || be.getBlockState()
-                            .getValue(BlockSmelter.FACING)
-                            .getAxis()
-                            .equals(side.getAxis())) {
-                return new RangedWrapper(be.itemSlots(), 0, 1);
-            }
-            return new RangedWrapper(be.itemSlots(), 1, 2);
-        });
         EssentiaCapabilities.registerConduit(event, TTBlockEntities.ALEMBIC.get(), (be, side) -> be);
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TTBlockEntities.ALEMBIC.get(), (be, side) -> be);
         event.registerBlockEntity(
@@ -191,35 +149,6 @@ public final class TTCapabilities {
                 event,
                 (level, pos, state, be, side) -> AdvancedAlchemicalFurnaceStructure.nozzle(level, pos, side),
                 TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get());
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK, TTBlockEntities.GOLEM_BUILDER.get(), (be, side) -> be.outputHandler());
     }
 
-    private static void infernalFurnace(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                TTBlockEntities.INFERNAL_FURNACE.get(),
-                (be, side) -> side == null || side == Direction.UP ? be.inventory() : null);
-    }
-
-    private static void researchTable(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK, TTBlockEntities.RESEARCH_TABLE.get(), (be, side) -> be.items());
-    }
-
-    private static void spa(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                Capabilities.FluidHandler.BLOCK, TTBlockEntities.SPA.get(), (be, side) -> be.getTank());
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                TTBlockEntities.SPA.get(),
-                (be, side) -> side == Direction.UP ? null : be.getItems());
-    }
-
-    private static void workbench(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                TTBlockEntities.ARCANE_WORKBENCH.get(),
-                (be, side) -> new InvWrapper(be.getInventory()));
-    }
 }

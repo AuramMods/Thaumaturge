@@ -40,6 +40,7 @@ import com.leclowndu93150.thaumaturge.recipe.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -74,6 +75,7 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
 
     public BlockEntityInfernalFurnace(BlockPos worldPosition, BlockState blockState) {
         super(TTBlockEntities.INFERNAL_FURNACE.get(), worldPosition, blockState);
+        exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> side == null || side == Direction.UP ? inventory() : null);
     }
 
     public static void staticTick(Level level, BlockPos pos, BlockState state, BlockEntityInfernalFurnace furnace) {

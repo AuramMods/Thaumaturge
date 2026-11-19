@@ -38,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
@@ -97,6 +98,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
 
     public BlockEntityGolemBuilder(BlockPos pos, BlockState state) {
         super(TTBlockEntities.GOLEM_BUILDER.get(), pos, state);
+        exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> outputHandler());
     }
 
     public ItemStackHandler outputHandler() {

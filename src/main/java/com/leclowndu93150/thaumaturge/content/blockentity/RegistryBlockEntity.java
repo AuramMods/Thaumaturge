@@ -1,7 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.blockentity;
 
 import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -9,10 +11,74 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import org.jspecify.annotations.Nullable;
 
 /** Connect registry-aware mod persistence to Forge's native 1.20.1 callbacks. */
 public abstract class RegistryBlockEntity extends BlockEntity {
+    private @Nullable BlockCapabilityViews capabilityViews;
+
     protected RegistryBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }
+
+    protected final <T> void exposeCapability(
+            Capability<T> capability, Function<@Nullable Direction, @Nullable T> provider) {
+        if (capabilityViews == null) {
+            capabilityViews = new BlockCapabilityViews();
+        }
+        capabilityViews.expose(capability, provider);
+    }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction side) {
+        if (capabilityViews != null) {
+            var view = capabilityViews.getCapability(capability, side);
+            if (view.isPresent()) {
+                return view;
+            }
+        }
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        if (capabilityViews != null) {
+            capabilityViews.invalidate();
+        }
+        super.invalidateCaps();
+    }
+
+    @Override
+    public void reviveCaps() {
+        super.reviveCaps();
+        if (capabilityViews != null) {
+            capabilityViews.revive();
+        }
+    }
+
+    @Override
+    public void clearRemoved() {
+        super.clearRemoved();
+        if (capabilityViews != null) {
+            reviveCaps();
+        }
+    }
+
+    /** Use after changing capability availability without a block-state change. */
+    public final void refreshCapabilityViews() {
+        if (capabilityViews != null) {
+            capabilityViews.refresh();
+        }
+    }
+
+    @Override
+    public void setBlockState(BlockState state) {
+        BlockState oldState = getBlockState();
+        super.setBlockState(state);
+        if (state != oldState) {
+            refreshCapabilityViews();
+        }
+    }
 
     protected final HolderLookup.Provider registries() {
         return RegistryContext.resolve(level == null ? null : level.registryAccess());

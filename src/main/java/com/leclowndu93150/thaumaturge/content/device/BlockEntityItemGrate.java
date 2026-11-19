@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Containers;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemStackHandler;
 
 public final class BlockEntityItemGrate extends RegistryBlockEntity {
@@ -30,6 +32,7 @@ public final class BlockEntityItemGrate extends RegistryBlockEntity {
 
     public BlockEntityItemGrate(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ITEM_GRATE.get(), pos, state);
+        exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> side == Direction.UP ? inventory() : null);
     }
 
     public ItemStackHandler inventory() {

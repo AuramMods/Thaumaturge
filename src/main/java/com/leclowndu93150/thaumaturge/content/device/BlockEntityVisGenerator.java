@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityAccess;
 import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
@@ -12,7 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.neoforged.neoforge.capabilities.Capabilities;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 
 public final class BlockEntityVisGenerator extends RegistryBlockEntity implements IEnergyStorage {
@@ -25,6 +26,7 @@ public final class BlockEntityVisGenerator extends RegistryBlockEntity implement
 
     public BlockEntityVisGenerator(BlockPos pos, BlockState state) {
         super(TTBlockEntities.VIS_GENERATOR.get(), pos, state);
+        exposeCapability(ForgeCapabilities.ENERGY, side -> side == outputFace() ? this : null);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityVisGenerator generator) {
@@ -38,7 +40,7 @@ public final class BlockEntityVisGenerator extends RegistryBlockEntity implement
         }
         Direction facing = state.getValue(BlockStateProperties.FACING);
         IEnergyStorage target =
-                level.getCapability(Capabilities.EnergyStorage.BLOCK, pos.relative(facing), facing.getOpposite());
+                BlockCapabilityAccess.find(level, pos.relative(facing), ForgeCapabilities.ENERGY, facing.getOpposite());
         if (target != null) {
             int pushed = target.receiveEnergy(Math.min(generator.energy, MAX_PUSH), false);
             if (pushed > 0) {
