@@ -1,16 +1,18 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
-import com.leclowndu93150.thaumaturge.datamap.DataMaps;
-
-import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.leclowndu93150.thaumaturge.Thaumaturge;
+import com.google.gson.JsonPrimitive;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectDataMaps;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
+import com.leclowndu93150.thaumaturge.datamap.DataMaps;
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
+import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
+import com.mojang.logging.LogUtils;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,15 +23,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.RegistryOps;
+import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.Recipe;
-import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
+import org.slf4j.Logger;
 
-public record AspectIndexFingerprint(String digest, Map<String, String> sections) {
-    private static final int FORMAT_VERSION = 6;
+public record AspectIndexFingerprint(String digest, Map<String, String> sections, boolean cacheable) {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final int FORMAT_VERSION = 7;
     private static final String ITEMS = "items";
     private static final String BASE_ASPECTS = "base_aspects";
     private static final String RECIPES_PREFIX = "recipes/";
@@ -38,8 +40,8 @@ public record AspectIndexFingerprint(String digest, Map<String, String> sections
     public static AspectIndexFingerprint compute(MinecraftServer server) {
         Map<String, List<String>> lines = new TreeMap<>();
         List<String> items = lines.computeIfAbsent(ITEMS, key -> new ArrayList<>());
-        for (ResourceLocation id : BuiltInRegistries.ITEM.keySet()) {
-            items.add(id.toString());
+        for (Item item : BuiltInRegistries.ITEM) {
+            items.add(BuiltInRegistries.ITEM.getKey(item) + "=" + BuiltInRegistries.ITEM.getId(item));
         }
         List<String> base = lines.computeIfAbsent(BASE_ASPECTS, key -> new ArrayList<>());
         for (Item item : BuiltInRegistries.ITEM) {
@@ -57,36 +59,37 @@ public record AspectIndexFingerprint(String digest, Map<String, String> sections
             Collections.sort(parts);
             base.add(BuiltInRegistries.ITEM.getKey(item) + ":" + String.join(",", parts));
         }
-        RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, server.registryAccess());
+        RecipeAccess recipes = RecipeAccess.of(server.getRecipeManager());
         int unencodable = 0;
         String firstUnencodable = null;
         RuntimeException firstFailure = null;
-        for (RecipeHolder<?> holder : RecipeAccess.of(server.getRecipeManager()).getRecipes()) {
-            ResourceLocation id = holder.id();
-            String contents;
-            try {
-                DataResult<JsonElement> encoded = Recipe.CODEC.encodeStart(ops, holder.value());
-                contents =
-                        encoded.result().map(AspectIndexFingerprint::canonical).orElse(null);
-            } catch (RuntimeException e) {
-                contents = null;
-                if (firstFailure == null) {
-                    firstFailure = e;
+        var buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), server.registryAccess());
+        try {
+            for (RecipeHolder<?> holder : recipes.getRecipes()) {
+                ResourceLocation id = holder.id();
+                String effective;
+                try {
+                    buffer.clear();
+                    ClientboundUpdateRecipesPacket.toNetwork(buffer, holder.value());
+                    effective = ByteBufUtil.hexDump(buffer);
+                } catch (RuntimeException e) {
+                    if (unencodable++ == 0) {
+                        firstUnencodable = id.toString();
+                        firstFailure = e;
+                    }
+                    effective = "!" + holder.value().getClass().getName();
                 }
+                String authored = recipes.sourceDefinition(holder.value())
+                        .map(AspectIndexFingerprint::canonical).orElse("");
+                lines.computeIfAbsent(RECIPES_PREFIX + id.getNamespace(), key -> new ArrayList<>())
+                        .add(id + ":" + effective + ":" + authored);
             }
-            if (contents == null) {
-                unencodable++;
-                if (firstUnencodable == null) {
-                    firstUnencodable = id.toString();
-                }
-                contents = "!" + holder.value().getClass().getName();
-            }
-            lines.computeIfAbsent(RECIPES_PREFIX + id.getNamespace(), key -> new ArrayList<>())
-                    .add(id + ":" + contents);
+        } finally {
+            buffer.release();
         }
         if (unencodable > 0) {
-            Thaumaturge.LOGGER.warn(
-                    "{} recipes could not be encoded for the aspect index fingerprint (first: {}); edits to their contents will not invalidate the cache",
+            LOGGER.warn(
+                    "Rebuilding the aspect index in memory because {} recipes could not be fingerprinted (first: {})",
                     unencodable,
                     firstUnencodable,
                     firstFailure);
@@ -101,7 +104,7 @@ public record AspectIndexFingerprint(String digest, Map<String, String> sections
         for (Map.Entry<String, String> entry : sections.entrySet()) {
             summary.add(entry.getKey() + "=" + entry.getValue());
         }
-        return new AspectIndexFingerprint(sha256(summary), Collections.unmodifiableMap(sections));
+        return new AspectIndexFingerprint(sha256(summary), Collections.unmodifiableMap(sections), unencodable == 0);
     }
 
     public JsonObject sectionsJson() {
@@ -154,8 +157,9 @@ public record AspectIndexFingerprint(String digest, Map<String, String> sections
                 if (i > 0) {
                     out.append(',');
                 }
-                out.append(keys.get(i)).append(':');
-                appendCanonical(object.get(keys.get(i)), out);
+                String key = keys.get(i);
+                out.append(new JsonPrimitive(key)).append(':');
+                appendCanonical(object.get(key), out);
             }
             out.append('}');
         } else if (element.isJsonArray()) {

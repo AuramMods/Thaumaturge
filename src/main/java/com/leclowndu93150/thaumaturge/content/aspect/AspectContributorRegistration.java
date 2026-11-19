@@ -24,7 +24,7 @@ public final class AspectContributorRegistration {
                     new StonecuttingAspectContributor(),
                     new SmithingAspectContributor()));
             RegisterAspectContributorsEvent contributors = new RegisterAspectContributorsEvent();
-            ModLoader.postEvent(contributors);
+            ModLoader.get().postEvent(contributors);
             TTAspectContributors.register(contributors.contributors());
         });
     }

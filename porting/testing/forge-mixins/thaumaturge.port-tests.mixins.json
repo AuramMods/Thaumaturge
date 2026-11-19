@@ -17,6 +17,7 @@
     "world.level.chunk.LevelChunkAttachmentsMixin",
     "world.level.chunk.storage.ChunkSerializerAttachmentsMixin",
     "world.item.crafting.RecipeManagerMixin",
+    "world.item.crafting.SmithingTransformRecipeAccessor",
     "server.ReloadableServerResourcesMixin",
     "network.PacketDecoderRegistryContextMixin",
     "network.PacketEncoderRegistryContextMixin",

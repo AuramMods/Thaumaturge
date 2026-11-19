@@ -12,16 +12,19 @@ public final class AspectCombinations {
 
     public static @Nullable Holder<IAspect> result(
             HolderLookup.Provider registries, Holder<IAspect> first, Holder<IAspect> second) {
+        var firstKey = first.unwrapKey().orElse(null);
+        var secondKey = second.unwrapKey().orElse(null);
+        if (firstKey == null || secondKey == null) {
+            return null;
+        }
         for (Holder.Reference<IAspect> candidate :
                 registries.lookupOrThrow(IAspect.REGISTRY_KEY).listElements().toList()) {
             List<Holder<IAspect>> components = candidate.value().components();
             if (components.size() != 2) {
                 continue;
             }
-            boolean direct =
-                    components.get(0).is(first.getKey()) && components.get(1).is(second.getKey());
-            boolean swapped =
-                    components.get(0).is(second.getKey()) && components.get(1).is(first.getKey());
+            boolean direct = components.get(0).is(firstKey) && components.get(1).is(secondKey);
+            boolean swapped = components.get(0).is(secondKey) && components.get(1).is(firstKey);
             if (direct || swapped) {
                 return candidate;
             }

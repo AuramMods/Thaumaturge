@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
@@ -26,6 +27,7 @@ public final class CookingAspectContributor implements IAspectRecipeContributor 
 
     @Override
     public void beginBuild(RecipeManager recipes, HolderLookup.Provider registries) {
+        RegistryAccess nativeRegistries = (RegistryAccess) registries;
         Map<Item, List<Candidate>> map = new HashMap<>();
         int skipped = 0;
         for (RecipeHolder<?> holder : RecipeAccess.of(recipes).getRecipes()) {
@@ -33,7 +35,7 @@ public final class CookingAspectContributor implements IAspectRecipeContributor 
                 continue;
             }
             try {
-                ItemStack output = cooking.getResultItem(registries);
+                ItemStack output = cooking.getResultItem(nativeRegistries);
                 if (output != null
                         && !output.isEmpty()
                         && !cooking.getIngredients().isEmpty()) {

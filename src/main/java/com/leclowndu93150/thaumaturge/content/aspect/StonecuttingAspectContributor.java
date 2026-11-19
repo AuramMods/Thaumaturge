@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -24,13 +25,14 @@ public final class StonecuttingAspectContributor implements IAspectRecipeContrib
 
     @Override
     public void beginBuild(RecipeManager recipes, HolderLookup.Provider registries) {
+        RegistryAccess nativeRegistries = (RegistryAccess) registries;
         Map<Item, List<Candidate>> map = new HashMap<>();
         for (RecipeHolder<?> holder : RecipeAccess.of(recipes).getRecipes()) {
             if (!(holder.value() instanceof StonecutterRecipe recipe)) {
                 continue;
             }
             try {
-                ItemStack output = recipe.getResultItem(registries);
+                ItemStack output = recipe.getResultItem(nativeRegistries);
                 if (!output.isEmpty()) {
                     map.computeIfAbsent(output.getItem(), item -> new ArrayList<>())
                             .add(new Candidate(List.copyOf(recipe.getIngredients()), output.getCount()));

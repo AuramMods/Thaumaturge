@@ -34,7 +34,7 @@ public interface IAspectRecipeContributor {
      * replaces it.
      *
      * @param recipes the active recipe manager
-     * @param registries the holder lookup provider for the current reload
+     * @param registries the current reload's {@link net.minecraft.core.RegistryAccess}
      */
     default void beginBuild(RecipeManager recipes, HolderLookup.Provider registries) {}
 
@@ -43,7 +43,7 @@ public interface IAspectRecipeContributor {
      *
      * @param item the item under analysis
      * @param recipes the active recipe manager
-     * @param registries the holder lookup provider for the current reload
+     * @param registries the current reload's {@link net.minecraft.core.RegistryAccess}
      * @param partial the partial index, already populated with base aspects and prior results
      * @return the derived aspects, or {@link Optional#empty()} when this contributor abstains
      */

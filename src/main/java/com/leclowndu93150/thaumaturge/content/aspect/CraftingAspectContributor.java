@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import com.leclowndu93150.thaumaturge.recipe.CraftingInput;
@@ -35,6 +36,7 @@ public final class CraftingAspectContributor implements IAspectRecipeContributor
 
     @Override
     public void beginBuild(RecipeManager recipes, HolderLookup.Provider registries) {
+        RegistryAccess nativeRegistries = (RegistryAccess) registries;
         magic = registries.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.PRAECANTATIO);
         Map<Item, List<Candidate>> map = new HashMap<>();
         int skipped = 0;
@@ -49,7 +51,7 @@ public final class CraftingAspectContributor implements IAspectRecipeContributor
                                 .add(new Candidate(List.copyOf(arcane.getIngredients()), count, arcane.visCost()));
                     }
                 } else if (recipe instanceof CraftingRecipe crafting) {
-                    ItemStack output = safeAssemble(crafting, registries);
+                    ItemStack output = safeAssemble(crafting, nativeRegistries);
                     if (!output.isEmpty()) {
                         map.computeIfAbsent(output.getItem(), item -> new ArrayList<>())
                                 .add(new Candidate(List.copyOf(crafting.getIngredients()), output.getCount(), -1));
@@ -96,7 +98,7 @@ public final class CraftingAspectContributor implements IAspectRecipeContributor
         return Optional.ofNullable(best);
     }
 
-    private static ItemStack safeAssemble(CraftingRecipe recipe, HolderLookup.Provider registries) {
+    private static ItemStack safeAssemble(CraftingRecipe recipe, RegistryAccess registries) {
         try {
             ItemStack result = recipe.assemble(EMPTY_INPUT, registries);
             return result == null ? ItemStack.EMPTY : result;

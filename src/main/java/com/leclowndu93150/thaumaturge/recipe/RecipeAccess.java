@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.recipe;
 
+import com.google.gson.JsonElement;
 import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ public final class RecipeAccess {
 
     private final RecipeManager manager;
     private final Map<Recipe<?>, RecipeHolder<?>> holders = new IdentityHashMap<>();
+    private final Map<Recipe<?>, JsonElement> definitions = new IdentityHashMap<>();
     private volatile HolderLookup.Provider registries;
 
     public RecipeAccess(RecipeManager manager) {
@@ -38,6 +40,20 @@ public final class RecipeAccess {
 
     public synchronized void invalidate() {
         holders.clear();
+        definitions.clear();
+    }
+
+    public synchronized void recipesApplied(Map<ResourceLocation, JsonElement> source) {
+        invalidate();
+        for (Recipe<?> recipe : manager.getRecipes()) {
+            JsonElement definition = source.get(recipe.getId());
+            if (definition != null) definitions.put(recipe, definition.deepCopy());
+        }
+    }
+
+    /** Returns the authored data for an active recipe loaded from a pack. */
+    public synchronized Optional<JsonElement> sourceDefinition(Recipe<?> recipe) {
+        return Optional.ofNullable(definitions.get(recipe)).map(JsonElement::deepCopy);
     }
 
     public void attachRegistries(HolderLookup.Provider registries) {

@@ -1,8 +1,12 @@
 package com.leclowndu93150.thaumaturge.mixin.world.item.crafting;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
+import java.util.Map;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.common.crafting.conditions.ICondition;
@@ -25,9 +29,14 @@ abstract class RecipeManagerMixin implements RecipeAccess.Owner {
         return thaumaturge$recipeAccess;
     }
 
-    @Inject(method = {
-            "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V",
-            "replaceRecipes"}, at = @At("RETURN"))
+    @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V",
+            at = @At("RETURN"))
+    private void thaumaturge$recipesApplied(Map<ResourceLocation, JsonElement> source, ResourceManager resources,
+            ProfilerFiller profiler, CallbackInfo ci) {
+        thaumaturge$recipeAccess().recipesApplied(source);
+    }
+
+    @Inject(method = "replaceRecipes", at = @At("RETURN"))
     private void thaumaturge$recipesReplaced(CallbackInfo ci) {
         if (thaumaturge$recipeAccess != null) thaumaturge$recipeAccess.invalidate();
     }

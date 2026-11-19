@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
@@ -38,7 +38,7 @@ final class SplitConservation {
         this.splits = splits;
     }
 
-    static SplitConservation scan(RecipeManager recipes, HolderLookup.Provider registries) {
+    static SplitConservation scan(RecipeManager recipes, RegistryAccess registries) {
         List<Uniform> uniforms = new ArrayList<>();
         Set<Join> joins = new HashSet<>();
         for (RecipeHolder<?> holder : RecipeAccess.of(recipes).getRecipes()) {
@@ -123,7 +123,7 @@ final class SplitConservation {
         return value != null ? value : resolved.getOrDefault(item, AspectList.EMPTY);
     }
 
-    private static Optional<Uniform> uniformOf(CraftingRecipe recipe, HolderLookup.Provider registries) {
+    private static Optional<Uniform> uniformOf(CraftingRecipe recipe, RegistryAccess registries) {
         ItemStack output;
         List<Ingredient> ingredients;
         try {

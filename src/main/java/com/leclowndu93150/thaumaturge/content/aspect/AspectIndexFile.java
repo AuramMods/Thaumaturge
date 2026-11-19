@@ -31,6 +31,7 @@ public final class AspectIndexFile {
     }
 
     public static Optional<AspectIndex> load(HolderLookup.Provider registries, AspectIndexFingerprint live) {
+        if (!live.cacheable()) return Optional.empty();
         Path file = path();
         if (!Files.exists(file)) {
             return Optional.empty();
@@ -94,6 +95,7 @@ public final class AspectIndexFile {
             AspectIndexFingerprint fingerprint,
             int itemCount,
             int recipeCount) {
+        if (!fingerprint.cacheable()) return;
         Path file = path();
         RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registries);
         JsonElement aspects = AspectIndex.CODEC.encodeStart(ops, index).result().orElse(null);

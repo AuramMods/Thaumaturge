@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,7 +31,7 @@ public final class AspectIndexBuilder {
 
     private AspectIndexBuilder() {}
 
-    public static AspectIndex build(RecipeManager recipes, HolderLookup.Provider registries) {
+    public static AspectIndex build(RecipeManager recipes, RegistryAccess registries) {
         for (IAspectRecipeContributor contributor : TTAspectContributors.all()) {
             contributor.beginBuild(recipes, registries);
         }

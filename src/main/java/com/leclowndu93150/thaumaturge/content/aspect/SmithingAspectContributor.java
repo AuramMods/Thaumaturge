@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -25,6 +26,7 @@ public final class SmithingAspectContributor implements IAspectRecipeContributor
 
     @Override
     public void beginBuild(RecipeManager recipes, HolderLookup.Provider registries) {
+        RegistryAccess nativeRegistries = (RegistryAccess) registries;
         Map<Item, List<Candidate>> map = new HashMap<>();
         for (RecipeHolder<?> holder : RecipeAccess.of(recipes).getRecipes()) {
             if (!(holder.value() instanceof SmithingTransformRecipe recipe)) {
@@ -32,7 +34,7 @@ public final class SmithingAspectContributor implements IAspectRecipeContributor
             }
             ItemStack output;
             try {
-                output = recipe.getResultItem(registries);
+                output = recipe.getResultItem(nativeRegistries);
             } catch (RuntimeException ignored) {
                 continue;
             }

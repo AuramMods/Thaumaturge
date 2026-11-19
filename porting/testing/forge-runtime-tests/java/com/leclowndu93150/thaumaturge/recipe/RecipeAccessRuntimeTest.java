@@ -149,6 +149,16 @@ public class RecipeAccessRuntimeTest {
         assertTrue(before.value().getResultItem(RegistryAccess.EMPTY).is(Items.DIAMOND));
         assertSame(after, access.getRecipes().get(0));
         assertFalse(manager.hadErrorsLoading());
+        assertTrue(access.sourceDefinition(before.value()).isEmpty());
+        assertEquals(json, access.sourceDefinition(after.value()).orElseThrow());
+        json.getAsJsonObject().addProperty("result", "minecraft:coal");
+        var captured = access.sourceDefinition(after.value()).orElseThrow().getAsJsonObject();
+        assertEquals("minecraft:emerald", captured.get("result").getAsString());
+        captured.addProperty("result", "minecraft:diamond");
+        assertEquals("minecraft:emerald", access.sourceDefinition(after.value()).orElseThrow()
+                .getAsJsonObject().get("result").getAsString());
+        manager.replaceRecipes(List.of(after.value()));
+        assertTrue(access.sourceDefinition(after.value()).isEmpty());
     }
 
     @Test
