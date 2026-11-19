@@ -2,7 +2,6 @@ package com.leclowndu93150.thaumaturge.content.warding;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
-import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.BlockForwarding;
 import com.leclowndu93150.thaumaturge.content.world.space.BlocksMovedEvent;
 import net.minecraft.core.BlockPos;
@@ -99,11 +98,8 @@ public final class WardEvents {
     }
 
     @SubscribeEvent
-    public static void onChunkWatch(ChunkWatchEvent.Sent event) {
-        BlockPos origin = event.getPos().getWorldPosition();
-        if (LoadedChunks.contains(event.getLevel(), origin)) {
-            WardHandler.syncChunk(event.getPlayer(), event.getLevel().getChunkAt(origin));
-        }
+    public static void onChunkWatch(ChunkWatchEvent.Watch event) {
+        WardHandler.syncChunk(event.getPlayer(), event.getChunk());
     }
 
     @SubscribeEvent

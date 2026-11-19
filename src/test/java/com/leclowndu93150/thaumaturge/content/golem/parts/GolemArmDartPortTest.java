@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.content.entity.EntityGolemDart;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -27,7 +28,9 @@ import org.mockito.Mockito;
 class GolemArmDartPortTest {
     private static final float POWER = 0.37F;
 
-    private final GolemArmDart arms = new GolemArmDart();
+    @SuppressWarnings("unchecked")
+    private final EntityType<EntityGolemDart> dartType = mock(EntityType.class);
+    private final GolemArmDart arms = new GolemArmDart(() -> dartType);
 
     @Test
     void clientRangedCallbackDoesNotReadBodyOrSpawnDart() {
@@ -69,7 +72,7 @@ class GolemArmDartPortTest {
             arms.onRangedAttack(golem, target, POWER);
 
             darts.verify(() -> EntityGolemDart.loose(
-                    eq(body), eq(target), eq(expectedDamage), eq((double) (POWER * POWER)), eq(1.6F), eq(3.0F)));
+                    eq(dartType), eq(body), eq(target), eq(expectedDamage), eq((double) (POWER * POWER)), eq(1.6F), eq(3.0F)));
         }
         verify(body).playSound(SoundEvents.ARROW_SHOOT, 1.0F, expectedPitch);
         verify(bodyRandom).nextGaussian();

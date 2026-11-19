@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -14,14 +13,20 @@ public final class EntityGolemDart extends AbstractArrow {
         super(type, level);
     }
 
-    private EntityGolemDart(LivingEntity shooter) {
-        super(TTEntities.GOLEM_DART.get(), shooter, shooter.level(), new ItemStack(Items.ARROW), null);
+    private EntityGolemDart(EntityType<EntityGolemDart> type, LivingEntity shooter) {
+        super(type, shooter, shooter.level());
         pickup = Pickup.DISALLOWED;
     }
 
     public static void loose(
-            LivingEntity shooter, LivingEntity target, double damage, double loft, float velocity, float inaccuracy) {
-        EntityGolemDart dart = new EntityGolemDart(shooter);
+            EntityType<EntityGolemDart> type,
+            LivingEntity shooter,
+            LivingEntity target,
+            double damage,
+            double loft,
+            float velocity,
+            float inaccuracy) {
+        EntityGolemDart dart = new EntityGolemDart(type, shooter);
         dart.setBaseDamage(damage);
         Vec3 aim = aimVector(dart.position(), new Vec3(target.getX(), target.getEyeY(), target.getZ()), loft);
         dart.shoot(aim.x, aim.y, aim.z, velocity, inaccuracy);
@@ -33,7 +38,7 @@ public final class EntityGolemDart extends AbstractArrow {
     }
 
     @Override
-    protected ItemStack getDefaultPickupItem() {
+    protected ItemStack getPickupItem() {
         return new ItemStack(Items.ARROW);
     }
 }

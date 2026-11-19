@@ -243,7 +243,7 @@ public final class TTGolemParts {
                             GolemComponent.of(() -> new ItemStack(Blocks.DISPENSER, 2)),
                             GolemComponent.of(() -> new ItemStack(Items.ARROW, 32)),
                             GolemComponent.mechanism()),
-                    new GolemArmDart(),
+                    new GolemArmDart(TTEntities.GOLEM_DART),
                     List.of(
                             traitHolder(TTGolemTraits.FIGHTER),
                             traitHolder(TTGolemTraits.CLUMSY),

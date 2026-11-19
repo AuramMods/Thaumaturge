@@ -52,7 +52,7 @@ public final class GolemWorldEvents {
     }
 
     @SubscribeEvent
-    public static void onChunkWatch(ChunkWatchEvent.Sent event) {
+    public static void onChunkWatch(ChunkWatchEvent.Watch event) {
         for (SealEntity seal : SealHandler.getSealsInChunk(event.getChunk())) {
             PayloadNetwork.sendToPlayer(event.getPlayer(), ClientboundSealPayload.update(seal));
         }
