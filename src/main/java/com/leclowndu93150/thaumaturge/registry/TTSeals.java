@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import static com.leclowndu93150.thaumaturge.registry.TTGolemTraits.traitHolder;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealFilterMode;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
@@ -32,7 +34,7 @@ public final class TTSeals {
             "pickup_advanced",
             () -> collect(9)
                     .showSettings()
-                    .requires(TTGolemTraits.SMART)
+                    .requires(traitHolder(TTGolemTraits.SMART))
                     .placer(TTItems.SEAL_PICKUP_ADVANCED)
                     .build());
     public static final RegistryObject<SealType> FILL =
@@ -40,7 +42,7 @@ public final class TTSeals {
     public static final RegistryObject<SealType> FILL_ADVANCED = SEALS.register(
             "fill_advanced",
             () -> store(9).showSettings()
-                    .requires(TTGolemTraits.SMART)
+                    .requires(traitHolder(TTGolemTraits.SMART))
                     .placer(TTItems.SEAL_FILL_ADVANCED)
                     .build());
     public static final RegistryObject<SealType> EMPTY =
@@ -48,7 +50,7 @@ public final class TTSeals {
     public static final RegistryObject<SealType> EMPTY_ADVANCED = SEALS.register(
             "empty_advanced",
             () -> empty(9).showSettings()
-                    .requires(TTGolemTraits.SMART)
+                    .requires(traitHolder(TTGolemTraits.SMART))
                     .placer(TTItems.SEAL_EMPTY_ADVANCED)
                     .build());
     public static final RegistryObject<SealType> HARVEST = SEALS.register(
@@ -58,32 +60,32 @@ public final class TTSeals {
                     .area()
                     .settings(HarvestBehavior.REPLANT, HarvestBehavior.REQUEST_SEEDS)
                     .showSettings()
-                    .requires(TTGolemTraits.DEFT, TTGolemTraits.SMART)
+                    .requires(traitHolder(TTGolemTraits.DEFT), traitHolder(TTGolemTraits.SMART))
                     .placer(TTItems.SEAL_HARVEST)
                     .build());
     public static final RegistryObject<SealType> BUTCHER = SEALS.register(
             "butcher",
             () -> SealType.builder(ButcherBehavior::new)
                     .area()
-                    .requires(TTGolemTraits.FIGHTER, TTGolemTraits.SMART)
+                    .requires(traitHolder(TTGolemTraits.FIGHTER), traitHolder(TTGolemTraits.SMART))
                     .placer(TTItems.SEAL_BUTCHER)
                     .build());
     public static final RegistryObject<SealType> GUARD = SEALS.register(
             "guard",
-            () -> guard().requires(TTGolemTraits.FIGHTER)
+            () -> guard().requires(traitHolder(TTGolemTraits.FIGHTER))
                     .placer(TTItems.SEAL_GUARD)
                     .build());
     public static final RegistryObject<SealType> GUARD_ADVANCED = SEALS.register(
             "guard_advanced",
             () -> guard().showSettings()
-                    .requires(TTGolemTraits.FIGHTER, TTGolemTraits.SMART)
+                    .requires(traitHolder(TTGolemTraits.FIGHTER), traitHolder(TTGolemTraits.SMART))
                     .placer(TTItems.SEAL_GUARD_ADVANCED)
                     .build());
     public static final RegistryObject<SealType> LUMBER = SEALS.register(
             "lumber",
             () -> SealType.builder(FellBehavior::new)
                     .area()
-                    .requires(TTGolemTraits.BREAKER, TTGolemTraits.SMART)
+                    .requires(traitHolder(TTGolemTraits.BREAKER), traitHolder(TTGolemTraits.SMART))
                     .placer(TTItems.SEAL_LUMBER)
                     .build());
     public static final RegistryObject<SealType> BREAKER = SEALS.register(
@@ -100,7 +102,7 @@ public final class TTSeals {
                             UseBehavior.SNEAKING,
                             UseBehavior.REQUEST_ITEMS)
                     .showSettings()
-                    .requires(TTGolemTraits.DEFT, TTGolemTraits.SMART)
+                    .requires(traitHolder(TTGolemTraits.DEFT), traitHolder(TTGolemTraits.SMART))
                     .placement(SealPlacements.ANYWHERE)
                     .placer(TTItems.SEAL_USE)
                     .build());
@@ -111,7 +113,7 @@ public final class TTSeals {
                     .settings(ItemMatchSettings.ALL)
                     .settings(ProvideBehavior.SINGLE_ITEM, ProvideBehavior.LEAVE_ONE)
                     .showSettings()
-                    .forbids(TTGolemTraits.CLUMSY)
+                    .forbids(traitHolder(TTGolemTraits.CLUMSY))
                     .placement(SealPlacements.CONTAINER)
                     .placer(TTItems.SEAL_PROVIDER)
                     .build());
@@ -121,7 +123,7 @@ public final class TTSeals {
                     .filter(9, SealFilterMode.WHITELIST_WITH_LIMITS)
                     .settings(ItemMatchSettings.ALL)
                     .showSettings()
-                    .forbids(TTGolemTraits.CLUMSY)
+                    .forbids(traitHolder(TTGolemTraits.CLUMSY))
                     .placement(SealPlacements.CONTAINER)
                     .placer(TTItems.SEAL_STOCK)
                     .build());
@@ -129,7 +131,7 @@ public final class TTSeals {
             "breaker_advanced",
             () -> breaker(9)
                     .settings(BreakBehavior.SILK_TOUCH)
-                    .requires(TTGolemTraits.SMART)
+                    .requires(traitHolder(TTGolemTraits.SMART))
                     .placer(TTItems.SEAL_BREAKER_ADVANCED)
                     .build());
 
@@ -140,7 +142,7 @@ public final class TTSeals {
                 .filter(slots, SealFilterMode.PLAIN)
                 .area()
                 .settings(ItemMatchSettings.ALL)
-                .forbids(TTGolemTraits.CLUMSY);
+                .forbids(traitHolder(TTGolemTraits.CLUMSY));
     }
 
     private static SealType.Builder store(int slots) {
@@ -148,7 +150,7 @@ public final class TTSeals {
                 .filter(slots, SealFilterMode.LIMITS_WHEN_WHITELIST)
                 .settings(ItemMatchSettings.ALL)
                 .settings(StoreBehavior.ONLY_EXISTING)
-                .forbids(TTGolemTraits.CLUMSY);
+                .forbids(traitHolder(TTGolemTraits.CLUMSY));
     }
 
     private static SealType.Builder empty(int slots) {
@@ -156,7 +158,7 @@ public final class TTSeals {
                 .filter(slots, SealFilterMode.PLAIN)
                 .settings(ItemMatchSettings.ALL)
                 .settings(EmptyBehavior.CYCLE, EmptyBehavior.LEAVE_ONE)
-                .forbids(TTGolemTraits.CLUMSY)
+                .forbids(traitHolder(TTGolemTraits.CLUMSY))
                 .placement(SealPlacements.CONTAINER);
     }
 
@@ -172,7 +174,7 @@ public final class TTSeals {
                 .area()
                 .settings(ItemMatchSettings.MATCH_DAMAGE)
                 .showSettings()
-                .requires(TTGolemTraits.BREAKER);
+                .requires(traitHolder(TTGolemTraits.BREAKER));
     }
 
     public static Registry<SealType> registry() {

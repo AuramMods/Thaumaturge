@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import static com.leclowndu93150.thaumaturge.registry.TTGolemTraits.traitHolder;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemAddon;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemArm;
@@ -55,7 +57,7 @@ public final class TTGolemParts {
                     1,
                     stack(TTBlocks.PLANK_GREATWOOD),
                     stack(TTItems.MECHANISM_SIMPLE),
-                    List.of(TTGolemTraits.LIGHT)));
+                    List.of(traitHolder(TTGolemTraits.LIGHT))));
 
     public static final RegistryObject<GolemMaterial> IRON = MATERIALS.register(
             "iron",
@@ -68,7 +70,10 @@ public final class TTGolemParts {
                     3,
                     stack(TTItems.PLATE_IRON),
                     stack(TTItems.MECHANISM_SIMPLE),
-                    List.of(TTGolemTraits.HEAVY, TTGolemTraits.FIREPROOF, TTGolemTraits.BLASTPROOF)));
+                    List.of(
+                            traitHolder(TTGolemTraits.HEAVY),
+                            traitHolder(TTGolemTraits.FIREPROOF),
+                            traitHolder(TTGolemTraits.BLASTPROOF))));
 
     public static final RegistryObject<GolemMaterial> CLAY = MATERIALS.register(
             "clay",
@@ -81,7 +86,7 @@ public final class TTGolemParts {
                     2,
                     () -> new ItemStack(Blocks.TERRACOTTA),
                     stack(TTItems.MECHANISM_SIMPLE),
-                    List.of(TTGolemTraits.FIREPROOF)));
+                    List.of(traitHolder(TTGolemTraits.FIREPROOF))));
 
     public static final RegistryObject<GolemMaterial> BRASS = MATERIALS.register(
             "brass",
@@ -94,7 +99,7 @@ public final class TTGolemParts {
                     3,
                     stack(TTItems.PLATE_BRASS),
                     stack(TTItems.MECHANISM_SIMPLE),
-                    List.of(TTGolemTraits.LIGHT)));
+                    List.of(traitHolder(TTGolemTraits.LIGHT))));
 
     public static final RegistryObject<GolemMaterial> THAUMIUM = MATERIALS.register(
             "thaumium",
@@ -107,7 +112,10 @@ public final class TTGolemParts {
                     4,
                     stack(TTItems.PLATE_THAUMIUM),
                     stack(TTItems.MECHANISM_SIMPLE),
-                    List.of(TTGolemTraits.HEAVY, TTGolemTraits.FIREPROOF, TTGolemTraits.BLASTPROOF)));
+                    List.of(
+                            traitHolder(TTGolemTraits.HEAVY),
+                            traitHolder(TTGolemTraits.FIREPROOF),
+                            traitHolder(TTGolemTraits.BLASTPROOF))));
 
     public static final RegistryObject<GolemMaterial> VOID = MATERIALS.register(
             "void",
@@ -120,7 +128,7 @@ public final class TTGolemParts {
                     4,
                     stack(TTItems.PLATE_VOID),
                     stack(TTItems.MECHANISM_SIMPLE),
-                    List.of(TTGolemTraits.REPAIR)));
+                    List.of(traitHolder(TTGolemTraits.REPAIR))));
 
     public static final RegistryObject<GolemHead> HEAD_BASIC = HEADS.register(
             "basic",
@@ -140,7 +148,7 @@ public final class TTGolemParts {
                     new GolemPartModel(obj("golem_head_smart"), null, GolemPartModel.AttachPoint.HEAD),
                     List.of(stackComponent(TTItems.MIND_BIOTHAUMIC)),
                     null,
-                    List.of(TTGolemTraits.SMART, TTGolemTraits.FRAGILE)));
+                    List.of(traitHolder(TTGolemTraits.SMART), traitHolder(TTGolemTraits.FRAGILE))));
 
     public static final RegistryObject<GolemHead> HEAD_SMART_ARMORED = HEADS.register(
             "smart_armored",
@@ -152,7 +160,7 @@ public final class TTGolemParts {
                             stackComponent(TTItems.MIND_BIOTHAUMIC), stackComponent(TTItems.PLATE_BRASS),
                             GolemComponent.base(), GolemComponent.of(() -> new ItemStack(Blocks.WHITE_WOOL))),
                     null,
-                    List.of(TTGolemTraits.SMART)));
+                    List.of(traitHolder(TTGolemTraits.SMART))));
 
     public static final RegistryObject<GolemHead> HEAD_SCOUT = HEADS.register(
             "scout",
@@ -162,7 +170,7 @@ public final class TTGolemParts {
                     new GolemPartModel(obj("golem_head_scout"), null, GolemPartModel.AttachPoint.HEAD),
                     List.of(stackComponent(TTItems.MIND_CLOCKWORK), stackComponent(TTItems.MODULE_VISION)),
                     null,
-                    List.of(TTGolemTraits.SCOUT, TTGolemTraits.FRAGILE)));
+                    List.of(traitHolder(TTGolemTraits.SCOUT), traitHolder(TTGolemTraits.FRAGILE))));
 
     public static final RegistryObject<GolemHead> HEAD_SMART_SCOUT = HEADS.register(
             "smart_scout",
@@ -172,7 +180,10 @@ public final class TTGolemParts {
                     new GolemPartModel(obj("golem_head_scout_smart"), null, GolemPartModel.AttachPoint.HEAD),
                     List.of(stackComponent(TTItems.MIND_BIOTHAUMIC), stackComponent(TTItems.MODULE_VISION)),
                     null,
-                    List.of(TTGolemTraits.SCOUT, TTGolemTraits.SMART, TTGolemTraits.FRAGILE)));
+                    List.of(
+                            traitHolder(TTGolemTraits.SCOUT),
+                            traitHolder(TTGolemTraits.SMART),
+                            traitHolder(TTGolemTraits.FRAGILE))));
 
     public static final RegistryObject<GolemArm> ARMS_BASIC = ARMS.register(
             "basic",
@@ -187,7 +198,7 @@ public final class TTGolemParts {
                     new GolemPartModel(obj("golem_arms_fine"), null, GolemPartModel.AttachPoint.ARMS),
                     List.of(stackComponent(TTItems.MECHANISM_SIMPLE), GolemComponent.base()),
                     null,
-                    List.of(TTGolemTraits.DEFT, TTGolemTraits.FRAGILE)));
+                    List.of(traitHolder(TTGolemTraits.DEFT), traitHolder(TTGolemTraits.FRAGILE))));
 
     public static final RegistryObject<GolemArm> ARMS_CLAWS = ARMS.register(
             "claws",
@@ -200,7 +211,10 @@ public final class TTGolemParts {
                             GolemComponent.of(() -> new ItemStack(Items.SHEARS, 2)),
                             GolemComponent.base()),
                     null,
-                    List.of(TTGolemTraits.FIGHTER, TTGolemTraits.CLUMSY, TTGolemTraits.BRUTAL)));
+                    List.of(
+                            traitHolder(TTGolemTraits.FIGHTER),
+                            traitHolder(TTGolemTraits.CLUMSY),
+                            traitHolder(TTGolemTraits.BRUTAL))));
 
     public static final RegistryObject<GolemArm> ARMS_BREAKERS = ARMS.register(
             "breakers",
@@ -213,7 +227,10 @@ public final class TTGolemParts {
                             GolemComponent.base(),
                             GolemComponent.of(() -> new ItemStack(Blocks.PISTON, 2))),
                     null,
-                    List.of(TTGolemTraits.BREAKER, TTGolemTraits.CLUMSY, TTGolemTraits.BRUTAL)));
+                    List.of(
+                            traitHolder(TTGolemTraits.BREAKER),
+                            traitHolder(TTGolemTraits.CLUMSY),
+                            traitHolder(TTGolemTraits.BRUTAL))));
 
     public static final RegistryObject<GolemArm> ARMS_DARTS = ARMS.register(
             "darts",
@@ -227,7 +244,11 @@ public final class TTGolemParts {
                             GolemComponent.of(() -> new ItemStack(Items.ARROW, 32)),
                             GolemComponent.mechanism()),
                     new GolemArmDart(),
-                    List.of(TTGolemTraits.FIGHTER, TTGolemTraits.CLUMSY, TTGolemTraits.RANGED, TTGolemTraits.FRAGILE)));
+                    List.of(
+                            traitHolder(TTGolemTraits.FIGHTER),
+                            traitHolder(TTGolemTraits.CLUMSY),
+                            traitHolder(TTGolemTraits.RANGED),
+                            traitHolder(TTGolemTraits.FRAGILE))));
 
     public static final RegistryObject<GolemLeg> LEGS_WALKER = LEGS.register(
             "walker",
@@ -250,7 +271,7 @@ public final class TTGolemParts {
                             GolemComponent.of(() -> new ItemStack(Items.LEATHER)),
                             GolemComponent.mechanism()),
                     new RollerLegDust(),
-                    List.of(TTGolemTraits.WHEELED)));
+                    List.of(traitHolder(TTGolemTraits.WHEELED))));
 
     public static final RegistryObject<GolemLeg> LEGS_CLIMBER = LEGS.register(
             "climber",
@@ -265,7 +286,7 @@ public final class TTGolemParts {
                             GolemComponent.of(() -> new ItemStack(Items.FLINT, 4)), GolemComponent.base(),
                             GolemComponent.mechanism(), GolemComponent.mechanism()),
                     null,
-                    List.of(TTGolemTraits.CLIMBER)));
+                    List.of(traitHolder(TTGolemTraits.CLIMBER))));
 
     public static final RegistryObject<GolemLeg> LEGS_FLYER = LEGS.register(
             "flyer",
@@ -279,7 +300,7 @@ public final class TTGolemParts {
                             GolemComponent.of(() -> new ItemStack(Items.SLIME_BALL)),
                             GolemComponent.mechanism()),
                     new GolemLegLevitator(),
-                    List.of(TTGolemTraits.FLYER, TTGolemTraits.FRAGILE)));
+                    List.of(traitHolder(TTGolemTraits.FLYER), traitHolder(TTGolemTraits.FRAGILE))));
 
     public static final RegistryObject<GolemAddon> ADDON_NONE = ADDONS.register(
             "none",
@@ -301,7 +322,7 @@ public final class TTGolemParts {
                             new GolemPartModel(obj("golem_armor_pauldrons"), null, GolemPartModel.AttachPoint.ARMS)),
                     List.of(GolemComponent.base(), GolemComponent.base(), GolemComponent.base(), GolemComponent.base()),
                     null,
-                    List.of(TTGolemTraits.ARMORED, TTGolemTraits.HEAVY)));
+                    List.of(traitHolder(TTGolemTraits.ARMORED), traitHolder(TTGolemTraits.HEAVY))));
 
     public static final RegistryObject<GolemAddon> ADDON_FIGHTER = ADDONS.register(
             "fighter",
@@ -311,7 +332,7 @@ public final class TTGolemParts {
                     null,
                     List.of(stackComponent(TTItems.MODULE_AGGRESSION), GolemComponent.mechanism()),
                     null,
-                    List.of(TTGolemTraits.FIGHTER)));
+                    List.of(traitHolder(TTGolemTraits.FIGHTER))));
 
     public static final RegistryObject<GolemAddon> ADDON_HAULER = ADDONS.register(
             "hauler",
@@ -323,7 +344,7 @@ public final class TTGolemParts {
                             GolemComponent.of(() -> new ItemStack(Items.LEATHER)),
                             GolemComponent.of(() -> new ItemStack(Blocks.CHEST))),
                     null,
-                    List.of(TTGolemTraits.HAULER)));
+                    List.of(traitHolder(TTGolemTraits.HAULER))));
 
     private TTGolemParts() {}
 

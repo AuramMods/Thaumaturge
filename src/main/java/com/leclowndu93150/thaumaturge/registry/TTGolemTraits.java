@@ -2,7 +2,9 @@ package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
@@ -58,6 +60,14 @@ public final class TTGolemTraits {
 
     public static Registry<GolemTrait> registry() {
         return ForgeRegistration.vanillaRegistry(REGISTRY);
+    }
+
+    static Holder.Reference<GolemTrait> traitHolder(RegistryObject<GolemTrait> trait) {
+        var registry = registry();
+        var key = ResourceKey.create(GolemTrait.REGISTRY_KEY, trait.getId());
+        // Golem part registries can fire before the traits registry. Forge binds this same reference on registration.
+        return registry.getHolder(key).orElseGet(() ->
+                ((WritableRegistry<GolemTrait>) registry).createRegistrationLookup().getOrThrow(key));
     }
 
     public static void register(IEventBus modBus) {

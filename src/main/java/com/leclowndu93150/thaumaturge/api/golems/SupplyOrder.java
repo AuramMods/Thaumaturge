@@ -139,7 +139,8 @@ public class SupplyOrder {
                 destination.face(),
                 batch,
                 wanted.getCount(),
-                ItemStack.hashItemAndComponents(wanted));
+                wanted.getItem(),
+                wanted.isEmpty() ? null : wanted.getTag());
     }
 
     record Destination(

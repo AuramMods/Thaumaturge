@@ -105,6 +105,8 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/api/research/ResearchRequirement.java'
         java.include 'com/leclowndu93150/thaumaturge/api/ApiBinding.java'
         java.include 'com/leclowndu93150/thaumaturge/api/labyrinth/**'
+        java.include 'com/leclowndu93150/thaumaturge/api/golems/**'
+        java.include 'com/leclowndu93150/thaumaturge/registry/TTGolemTraits.java'
         java.include 'com/leclowndu93150/thaumaturge/network/transport/**'
         java.include 'com/leclowndu93150/thaumaturge/state/**'
         java.include 'com/leclowndu93150/thaumaturge/itemdata/**'
