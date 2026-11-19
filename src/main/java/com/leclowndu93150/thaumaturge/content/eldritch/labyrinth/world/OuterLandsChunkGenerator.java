@@ -1,14 +1,15 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world;
 
-import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthIndex;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthRuntime;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeGeometry;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazePlan;
-import com.mojang.serialization.MapCodec;
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -32,8 +33,8 @@ import net.minecraft.world.level.levelgen.blending.Blender;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
 public final class OuterLandsChunkGenerator extends ChunkGenerator {
-    public static final MapCodec<OuterLandsChunkGenerator> CODEC =
-            RecordCodecBuilder.mapCodec(instance -> instance.group(
+    public static final Codec<OuterLandsChunkGenerator> CODEC =
+            RecordCodecBuilder.create(instance -> instance.group(
                             Biome.CODEC.fieldOf("biome").forGetter(generator -> generator.biome),
                             Codecs.optionalFieldOf(BandSettings.CODEC, "band", BandSettings.DEFAULT)
                                     .forGetter(generator -> generator.band))
@@ -57,13 +58,14 @@ public final class OuterLandsChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    protected MapCodec<? extends ChunkGenerator> codec() {
+    protected Codec<? extends ChunkGenerator> codec() {
         return CODEC;
     }
 
     @Override
     public CompletableFuture<ChunkAccess> fillFromNoise(
-            Blender blender, RandomState randomState, StructureManager structureManager, ChunkAccess chunk) {
+            Executor executor, Blender blender, RandomState randomState, StructureManager structureManager,
+            ChunkAccess chunk) {
         ChunkPos pos = chunk.getPos();
         if (runtime.index().planAt(pos.x, pos.z, LabyrinthIndex.MARGIN_CHUNKS) != null) {
             BandFiller.fill(chunk, band);

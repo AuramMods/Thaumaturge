@@ -37,9 +37,10 @@ public final class RoomTemplates {
     public boolean usable(StructureTemplateManager manager, HolderLookup.Provider registries, Holder<RoomType> room) {
         String roomId = RoomType.id(room);
         for (Wrapper<ResourceLocation> entry : room.value().templates().unwrap()) {
-            Optional<CompiledRoom> compiled = get(manager, registries, entry.data());
+            ResourceLocation templateId = entry.getData();
+            Optional<CompiledRoom> compiled = get(manager, registries, templateId);
             if (compiled.isEmpty()) {
-                Thaumaturge.LOGGER.error("Labyrinth room {} names missing template {}", roomId, entry.data());
+                Thaumaturge.LOGGER.error("Labyrinth room {} names missing template {}", roomId, templateId);
                 return false;
             }
             CompiledRoom value = compiled.get();

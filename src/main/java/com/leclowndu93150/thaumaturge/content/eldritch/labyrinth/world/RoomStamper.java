@@ -1,7 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world;
 
-import com.leclowndu93150.thaumaturge.state.AttachmentData;
-
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MarkerPhase;
@@ -16,6 +14,7 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.processor.Strip
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.CompiledRoom;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.RoomTransform;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.state.ChunkAttachmentData;
 import java.util.Optional;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
@@ -46,19 +45,21 @@ public final class RoomStamper {
         if (placed.isPresent()) {
             place(level, chunkPos, plan, runtime, placed.get());
         }
-        AttachmentData.set(chunk, TTAttachments.LABYRINTH_STAMP, MazeStamp.of(plan));
+        ChunkAttachmentData.set(chunk, level.registryAccess(), TTAttachments.LABYRINTH_STAMP, MazeStamp.of(plan));
     }
 
     public static boolean isStamped(ChunkAccess chunk, MazePlan plan) {
-        return AttachmentData.get(chunk, TTAttachments.LABYRINTH_STAMP).matches(plan);
+        MazeStamp stamp = ChunkAttachmentData.getExisting(chunk, TTAttachments.LABYRINTH_STAMP);
+        return stamp != null && stamp.matches(plan);
     }
 
     public static boolean isStale(ChunkAccess chunk, MazePlan plan) {
-        return AttachmentData.get(chunk, TTAttachments.LABYRINTH_STAMP).staleFor(plan);
+        MazeStamp stamp = ChunkAttachmentData.getExisting(chunk, TTAttachments.LABYRINTH_STAMP);
+        return stamp != null && stamp.staleFor(plan);
     }
 
-    public static void unstamp(ChunkAccess chunk) {
-        AttachmentData.set(chunk, TTAttachments.LABYRINTH_STAMP, MazeStamp.NONE);
+    public static void unstamp(ServerLevel level, ChunkAccess chunk) {
+        ChunkAttachmentData.set(chunk, level.registryAccess(), TTAttachments.LABYRINTH_STAMP, MazeStamp.NONE);
     }
 
     public static boolean ensureStamped(

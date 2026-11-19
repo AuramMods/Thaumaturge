@@ -97,7 +97,7 @@ public final class AttachmentData {
         attach(event, event.getObject()::registryAccess, () -> {});
     }
 
-    private static void attachChunk(AttachCapabilitiesEvent<LevelChunk> event) {
+    static void attachChunk(AttachCapabilitiesEvent<LevelChunk> event) {
         LevelChunk owner = event.getObject();
         attach(event, () -> owner.getLevel().registryAccess(), () -> owner.setUnsaved(true));
     }

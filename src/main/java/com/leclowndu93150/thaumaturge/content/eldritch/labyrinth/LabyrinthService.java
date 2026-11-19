@@ -137,7 +137,7 @@ public final class LabyrinthService {
                     if (owner == null || !owner.id().equals(plan.id())) {
                         return false;
                     }
-                    RoomStamper.unstamp(chunk);
+                    RoomStamper.unstamp(outer, chunk);
                     runtime.get().queueRepair(chunk.getPos().x, chunk.getPos().z);
                     return true;
                 });

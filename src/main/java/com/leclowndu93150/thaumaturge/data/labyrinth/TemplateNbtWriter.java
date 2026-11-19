@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 final class TemplateNbtWriter {
     private static final String MARKER_MODE = "DATA";
     private static final String EXTENSION = "nbt";
-    private static final String STRUCTURE_PATH = "structure";
+    private static final String STRUCTURE_PATH = "structures";
 
     private TemplateNbtWriter() {}
 

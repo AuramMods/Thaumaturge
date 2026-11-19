@@ -16,7 +16,7 @@ final class BranchStage implements LayoutStage {
         int target = Math.round(context.definition().layout().coverage() * (work.cells() - work.reservedCount()));
         int budget = work.cells() * ITERATIONS_PER_CELL;
         float straightness = context.definition().layout().straightness();
-        List<Direction> options = new ArrayList<>(Direction.Plane.HORIZONTAL.length());
+        List<Direction> options = new ArrayList<>(4);
         for (int iteration = 0; iteration < budget && grown.size() < target; iteration++) {
             int current = WeightedPick.any(grown, random);
             Direction heading = null;

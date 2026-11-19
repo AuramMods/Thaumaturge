@@ -87,6 +87,15 @@ public final class AttachmentStorage {
         pending = tag.copy();
     }
 
+    void mergePersistent(CompoundTag data) {
+        if (data.isEmpty()) return;
+        values.keySet().removeIf(key -> data.contains(key.id().toString()));
+        for (String id : data.getAllKeys()) {
+            pending.put(id, data.get(id).copy());
+        }
+        changed.run();
+    }
+
     public List<AttachmentKey<?>> presentKeys() {
         return registry.keys().stream().filter(this::has).toList();
     }
