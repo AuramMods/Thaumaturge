@@ -97,6 +97,7 @@
     "world.item.AxeDataMapMixin"
   ],
   "client": [
+    "client.ftblibrary.FTBLibraryClientMixin",
     "client.gui.GuiGraphicsAccessor",
     "client.lighting.BlockLightEngineMixin",
     "client.model.AgeableListModelMixin",

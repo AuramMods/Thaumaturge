@@ -23,6 +23,8 @@ public class TTMixinPlugin implements IMixinConfigPlugin {
             return FMLLoader.getLoadingModList().getModFileById(TTIds.SABLE) != null;
         if (mixinClassName.contains(".iris."))
             return FMLLoader.getLoadingModList().getModFileById(TTIds.IRIS) != null;
+        if (mixinClassName.contains(".ftblibrary."))
+            return FMLLoader.getLoadingModList().getModFileById(TTIds.FTB_LIBRARY) != null;
         return true;
     }
 

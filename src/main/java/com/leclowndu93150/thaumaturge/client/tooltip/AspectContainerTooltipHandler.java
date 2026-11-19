@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.client.tooltip;
 
-import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -10,21 +9,23 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
 import com.leclowndu93150.thaumaturge.api.items.ILabel;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class AspectContainerTooltipHandler {
@@ -33,7 +34,8 @@ public final class AspectContainerTooltipHandler {
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
-        if (stack.isEmpty()) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (stack.isEmpty() || minecraft == null || minecraft.screen == null) {
             return;
         }
         IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER).orElse(null);
@@ -43,18 +45,16 @@ public final class AspectContainerTooltipHandler {
 
         if (stack.getItem() instanceof ILabel label) {
             ResourceKey<IAspect> filter = label.getFilteredAspect(stack);
-            HolderLookup.Provider registries = event.getContext().registries();
-            if (filter == null || registries == null) return;
-            Holder<IAspect> aspect = EssentiaTransportHelper.resolve(registries, filter);
+            if (filter == null) return;
+            Player player = event.getEntity();
+            Level level = player == null ? minecraft.level : player.level();
+            Holder<IAspect> aspect = EssentiaTransportHelper.resolve(level, filter);
             if (aspect == null) return;
             renderAspectList(AspectList.of(new AspectInstance(aspect, 1)), event.getToolTip());
         }
     }
 
     private static void renderAspectList(AspectList aspects, List<Component> tooltip) {
-        if (!shouldShow()) {
-            return;
-        }
         if (aspects.isEmpty()) {
             return;
         }
@@ -73,10 +73,5 @@ public final class AspectContainerTooltipHandler {
             line.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(aspect.value().color())));
             tooltip.add(2, line);
         }
-    }
-
-    private static boolean shouldShow() {
-        Minecraft mc = Minecraft.getInstance();
-        return mc.screen != null;
     }
 }
