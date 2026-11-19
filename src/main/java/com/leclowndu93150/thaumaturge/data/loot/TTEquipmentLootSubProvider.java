@@ -1,13 +1,14 @@
 package com.leclowndu93150.thaumaturge.data.loot;
 
 import com.leclowndu93150.thaumaturge.content.entity.loot.DifficultyValue;
+import com.leclowndu93150.thaumaturge.content.entity.loot.NumberChanceCondition;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
@@ -16,8 +17,8 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
-import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
-import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
@@ -32,12 +33,11 @@ public final class TTEquipmentLootSubProvider implements LootTableSubProvider {
     private static final float ZOMBIE_GEAR_CHANCE = 0.6F;
     private static final float ZOMBIE_GEAR_CHANCE_HARD = 0.9F;
 
-    public TTEquipmentLootSubProvider(HolderLookup.Provider registries) {}
-
     @Override
-    public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
+    public void generate(BiConsumer<ResourceLocation, LootTable.Builder> output) {
+        knightKits(output);
         output.accept(
-                TTLootTables.EQUIPMENT_CULTIST_CLERIC,
+                TTLootTables.EQUIPMENT_CULTIST_CLERIC.location(),
                 withEach(
                                 LootTable.lootTable(),
                                 TTItems.CRIMSON_ROBE_HELM.get(),
@@ -46,14 +46,14 @@ public final class TTEquipmentLootSubProvider implements LootTableSubProvider {
                         .withPool(chance(
                                 TTItems.CRIMSON_BOOTS.get(), hardOr(CLERIC_BOOTS_CHANCE_HARD, CLERIC_BOOTS_CHANCE))));
         output.accept(
-                TTLootTables.EQUIPMENT_CULTIST_KNIGHT,
+                TTLootTables.EQUIPMENT_CULTIST_KNIGHT.location(),
                 withEach(
                         LootTable.lootTable().withPool(knightArms()),
                         TTItems.CRIMSON_PLATE_CHEST.get(),
                         TTItems.CRIMSON_PLATE_LEGS.get(),
                         TTItems.CRIMSON_BOOTS.get()));
         output.accept(
-                TTLootTables.EQUIPMENT_CULTIST_LEADER,
+                TTLootTables.EQUIPMENT_CULTIST_LEADER.location(),
                 withEach(
                                 LootTable.lootTable(),
                                 TTItems.CRIMSON_PRAETOR_HELM.get(),
@@ -62,10 +62,10 @@ public final class TTEquipmentLootSubProvider implements LootTableSubProvider {
                                 TTItems.CRIMSON_BOOTS.get())
                         .withPool(single(AlternativesEntry.alternatives(
                                 LootItem.lootTableItem(TTItems.VOID_SWORD.get())
-                                        .when(LootItemRandomChanceCondition.randomChance(onlyOn(Difficulty.EASY))),
+                                        .when(NumberChanceCondition.randomChance(onlyOn(Difficulty.EASY))),
                                 LootItem.lootTableItem(TTItems.CRIMSON_BLADE.get())))));
         output.accept(
-                TTLootTables.EQUIPMENT_CULTIST_RANGER,
+                TTLootTables.EQUIPMENT_CULTIST_RANGER.location(),
                 withEach(
                                 LootTable.lootTable(),
                                 TTItems.CRIMSON_RANGER_HELM.get(),
@@ -75,7 +75,7 @@ public final class TTEquipmentLootSubProvider implements LootTableSubProvider {
                         .withPool(chance(
                                 TTItems.CRIMSON_BOOTS.get(), hardOr(CLERIC_BOOTS_CHANCE_HARD, CLERIC_BOOTS_CHANCE))));
         output.accept(
-                TTLootTables.EQUIPMENT_CULTIST_RANGER_CAPTAIN,
+                TTLootTables.EQUIPMENT_CULTIST_RANGER_CAPTAIN.location(),
                 withEach(
                         LootTable.lootTable(),
                         TTItems.CRIMSON_CAPTAIN_HELM.get(),
@@ -85,34 +85,40 @@ public final class TTEquipmentLootSubProvider implements LootTableSubProvider {
                         TTItems.THAUMIUM_AXE.get()));
         NumberProvider zombieGear = hardOr(ZOMBIE_GEAR_CHANCE_HARD, ZOMBIE_GEAR_CHANCE);
         output.accept(
-                TTLootTables.EQUIPMENT_INHABITED_ZOMBIE,
+                TTLootTables.EQUIPMENT_INHABITED_ZOMBIE.location(),
                 withEach(LootTable.lootTable(), TTItems.CRIMSON_PLATE_HELM.get())
                         .withPool(chance(TTItems.CRIMSON_PLATE_CHEST.get(), zombieGear))
                         .withPool(chance(TTItems.CRIMSON_PLATE_LEGS.get(), zombieGear)));
     }
 
-    private static LootPool.Builder knightArms() {
-        LootTable special = LootTable.lootTable()
+    private static void knightKits(BiConsumer<ResourceLocation, LootTable.Builder> output) {
+        output.accept(TTLootTables.EQUIPMENT_KNIGHT_VOID_KIT.location(), withEach(
+                LootTable.lootTable(), TTItems.VOID_SWORD.get(), TTItems.CRIMSON_ROBE_HELM.get()));
+        output.accept(TTLootTables.EQUIPMENT_KNIGHT_THAUMIUM_KIT.location(), withEach(
+                LootTable.lootTable(), TTItems.THAUMIUM_SWORD.get(), TTItems.CRIMSON_PLATE_HELM.get()));
+        output.accept(TTLootTables.EQUIPMENT_KNIGHT_IRON_KIT.location(), withEach(
+                LootTable.lootTable(), Items.IRON_SWORD, TTItems.CRIMSON_PLATE_HELM.get()));
+        output.accept(TTLootTables.EQUIPMENT_KNIGHT_SPECIAL.location(), LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1.0F))
-                        .add(NestedLootTable.inlineLootTable(
-                                        kit(TTItems.VOID_SWORD.get(), TTItems.CRIMSON_ROBE_HELM.get()))
+                        .add(reference(TTLootTables.EQUIPMENT_KNIGHT_VOID_KIT)
                                 .setWeight(KNIGHT_VOID_WEIGHT))
                         .add(LootItem.lootTableItem(TTItems.THAUMIUM_SWORD.get())
                                 .setWeight(KNIGHT_THAUMIUM_BARE_WEIGHT))
-                        .add(NestedLootTable.inlineLootTable(
-                                        kit(TTItems.THAUMIUM_SWORD.get(), TTItems.CRIMSON_PLATE_HELM.get()))
-                                .setWeight(KNIGHT_THAUMIUM_HELMED_WEIGHT)))
-                .build();
-        return single(AlternativesEntry.alternatives(
-                NestedLootTable.inlineLootTable(special)
-                        .when(LootItemRandomChanceCondition.randomChance(
-                                hardOr(KNIGHT_SPECIAL_CHANCE_HARD, KNIGHT_SPECIAL_CHANCE))),
-                NestedLootTable.inlineLootTable(kit(Items.IRON_SWORD, TTItems.CRIMSON_PLATE_HELM.get()))));
+                        .add(reference(TTLootTables.EQUIPMENT_KNIGHT_THAUMIUM_KIT)
+                                .setWeight(KNIGHT_THAUMIUM_HELMED_WEIGHT))));
     }
 
-    private static LootTable kit(ItemLike... items) {
-        return withEach(LootTable.lootTable(), items).build();
+    private static LootPool.Builder knightArms() {
+        return single(AlternativesEntry.alternatives(
+                reference(TTLootTables.EQUIPMENT_KNIGHT_SPECIAL)
+                        .when(NumberChanceCondition.randomChance(
+                                hardOr(KNIGHT_SPECIAL_CHANCE_HARD, KNIGHT_SPECIAL_CHANCE))),
+                reference(TTLootTables.EQUIPMENT_KNIGHT_IRON_KIT)));
+    }
+
+    private static LootPoolSingletonContainer.Builder<?> reference(ResourceKey<LootTable> table) {
+        return LootTableReference.lootTableReference(table.location());
     }
 
     private static LootTable.Builder withEach(LootTable.Builder table, ItemLike... items) {
@@ -123,7 +129,7 @@ public final class TTEquipmentLootSubProvider implements LootTableSubProvider {
     }
 
     private static LootPool.Builder chance(ItemLike item, NumberProvider chance) {
-        return single(LootItem.lootTableItem(item)).when(LootItemRandomChanceCondition.randomChance(chance));
+        return single(LootItem.lootTableItem(item)).when(NumberChanceCondition.randomChance(chance));
     }
 
     private static LootPool.Builder single(LootPoolEntryContainer.Builder<?> entry) {

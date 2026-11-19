@@ -21,6 +21,10 @@ public final class TTLootTables {
 
     public static final ResourceKey<LootTable> EQUIPMENT_CULTIST_CLERIC = key("equipment/cultist_cleric");
     public static final ResourceKey<LootTable> EQUIPMENT_CULTIST_KNIGHT = key("equipment/cultist_knight");
+    public static final ResourceKey<LootTable> EQUIPMENT_KNIGHT_SPECIAL = key("equipment/cultist_knight/special");
+    public static final ResourceKey<LootTable> EQUIPMENT_KNIGHT_VOID_KIT = key("equipment/cultist_knight/void_kit");
+    public static final ResourceKey<LootTable> EQUIPMENT_KNIGHT_THAUMIUM_KIT = key("equipment/cultist_knight/thaumium_kit");
+    public static final ResourceKey<LootTable> EQUIPMENT_KNIGHT_IRON_KIT = key("equipment/cultist_knight/iron_kit");
     public static final ResourceKey<LootTable> EQUIPMENT_CULTIST_LEADER = key("equipment/cultist_leader");
     public static final ResourceKey<LootTable> EQUIPMENT_CULTIST_RANGER = key("equipment/cultist_ranger");
     public static final ResourceKey<LootTable> EQUIPMENT_CULTIST_RANGER_CAPTAIN =

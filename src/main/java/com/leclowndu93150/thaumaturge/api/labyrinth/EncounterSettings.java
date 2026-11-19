@@ -8,7 +8,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
@@ -43,8 +42,8 @@ public record EncounterSettings(
      * Codec for the settings fields shared by every encounter type. Encounter type codecs include it alongside their own fields.
      */
     public static final MapCodec<EncounterSettings> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    ComponentSerialization.CODEC.fieldOf("name").forGetter(EncounterSettings::name),
-                    ComponentSerialization.CODEC.fieldOf("announcement").forGetter(EncounterSettings::announcement),
+                    ExtraCodecs.COMPONENT.fieldOf("name").forGetter(EncounterSettings::name),
+                    ExtraCodecs.COMPONENT.fieldOf("announcement").forGetter(EncounterSettings::announcement),
                     Codecs.optionalFieldOf(ResourceLocation.CODEC, "arena").forGetter(EncounterSettings::arena),
                     TTLootTables.KEY_CODEC.fieldOf("reward").forGetter(EncounterSettings::reward),
                     Codecs.optionalFieldOf(EncounterScaling.CODEC, "scaling", EncounterScaling.DEFAULT)

@@ -144,7 +144,7 @@ public final class TTDataGenerators {
                 new LootTableProvider.SubProviderEntry(
                         () -> new TTEntityRewardLootSubProvider(lookup.join()), LootContextParamSets.ENTITY),
                 new LootTableProvider.SubProviderEntry(
-                        () -> new TTEquipmentLootSubProvider(lookup.join()), MobSpawnEquipment.PARAMETERS),
+                        TTEquipmentLootSubProvider::new, MobSpawnEquipment.PARAMETERS),
                 new LootTableProvider.SubProviderEntry(
                         () -> new TTTaintedLootSubProvider(lookup.join()), LootContextParamSets.ENTITY),
                 new LootTableProvider.SubProviderEntry(
