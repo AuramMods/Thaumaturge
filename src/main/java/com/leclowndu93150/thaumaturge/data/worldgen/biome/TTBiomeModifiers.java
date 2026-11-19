@@ -16,8 +16,8 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.BiomeModifiers;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.minecraftforge.common.world.ForgeBiomeModifiers;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public final class TTBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_ORES = key("add_ores");
@@ -49,7 +49,7 @@ public final class TTBiomeModifiers {
     private TTBiomeModifiers() {}
 
     private static ResourceKey<BiomeModifier> key(String path) {
-        return ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, TTIds.rl(path));
+        return ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, TTIds.rl(path));
     }
 
     public static void bootstrap(BootstapContext<BiomeModifier> context) {
@@ -58,7 +58,7 @@ public final class TTBiomeModifiers {
 
         context.register(
                 ADD_ORES,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                         HolderSet.direct(
                                 features.getOrThrow(TTPlacedFeatures.ORE_CINNABAR),
@@ -68,125 +68,125 @@ public final class TTBiomeModifiers {
 
         context.register(
                 ADD_CRYSTALS,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.CRYSTALS)),
                         GenerationStep.Decoration.UNDERGROUND_ORES));
 
         context.register(
                 ADD_WILD_NODES,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.NODES_WILD)),
                         GenerationStep.Decoration.TOP_LAYER_MODIFICATION));
 
         context.register(
                 ADD_MAGICAL_NODES,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         HolderSet.direct(biomes.getOrThrow(TTBiomes.MAGICAL_FOREST)),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.NODES_MAGICAL)),
                         GenerationStep.Decoration.TOP_LAYER_MODIFICATION));
 
         context.register(
                 ADD_EERIE_NODES,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         HolderSet.direct(biomes.getOrThrow(TTBiomes.EERIE)),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.NODES_EERIE)),
                         GenerationStep.Decoration.TOP_LAYER_MODIFICATION));
 
         context.register(
                 ADD_NETHER_NODES,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(BiomeTags.IS_NETHER),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.NODES_NETHER)),
                         GenerationStep.Decoration.TOP_LAYER_MODIFICATION));
 
         context.register(
                 ADD_OBSIDIAN_TOTEMS,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.OBSIDIAN_TOTEM)),
                         GenerationStep.Decoration.SURFACE_STRUCTURES));
 
         context.register(
                 ADD_CRIMSON_PORTALS,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.CRIMSON_PORTAL)),
                         GenerationStep.Decoration.SURFACE_STRUCTURES));
 
         context.register(
                 ADD_HILLTOP_STONES,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.HILLTOP_STONES)),
                         GenerationStep.Decoration.SURFACE_STRUCTURES));
 
         context.register(
                 ADD_GREATWOOD,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(TTBiomeTags.HAS_GREATWOOD),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.GREATWOOD_NATURAL)),
                         GenerationStep.Decoration.VEGETAL_DECORATION));
 
         context.register(
                 ADD_GREATWOOD_RARE,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(TTBiomeTags.HAS_GREATWOOD_RARE),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.GREATWOOD_NATURAL_RARE)),
                         GenerationStep.Decoration.VEGETAL_DECORATION));
 
         context.register(
                 ADD_SILVERWOOD,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(TTBiomeTags.HAS_SILVERWOOD),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.SILVERWOOD_NATURAL)),
                         GenerationStep.Decoration.VEGETAL_DECORATION));
 
         context.register(
                 ADD_SILVERWOOD_ABUNDANT,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(TTBiomeTags.HAS_SILVERWOOD_ABUNDANT),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.SILVERWOOD_ABUNDANT)),
                         GenerationStep.Decoration.VEGETAL_DECORATION));
 
         context.register(
                 ADD_CINDERPEARL,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
+                new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(TTBiomeTags.HAS_CINDERPEARL),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.CINDERPEARL)),
                         GenerationStep.Decoration.VEGETAL_DECORATION));
 
         context.register(
                 ADD_NETHER_WISPS,
-                new BiomeModifiers.AddSpawnsBiomeModifier(
+                new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
                         biomes.getOrThrow(BiomeTags.IS_NETHER),
                         List.of(new MobSpawnSettings.SpawnerData(TTEntities.WISP.get(), NETHER_WISP_WEIGHT, 1, 1))));
 
         context.register(
                 ADD_NETHER_FIREBATS,
-                new BiomeModifiers.AddSpawnsBiomeModifier(
+                new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
                         biomes.getOrThrow(BiomeTags.IS_NETHER),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 TTEntities.FIRE_BAT.get(), NETHER_FIREBAT_WEIGHT, 1, 2))));
 
         context.register(
                 ADD_OVERWORLD_BRAINY_ZOMBIES,
-                new BiomeModifiers.AddSpawnsBiomeModifier(
+                new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
                         biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 TTEntities.BRAINY_ZOMBIE.get(), OVERWORLD_BRAINY_ZOMBIE_WEIGHT, 1, 1))));
 
         context.register(
                 ADD_DESERT_BRAINY_HUSKS,
-                new BiomeModifiers.AddSpawnsBiomeModifier(
+                new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
                         biomes.getOrThrow(TTBiomeTags.HAS_BRAINY_HUSK),
                         List.of(new MobSpawnSettings.SpawnerData(
                                 TTEntities.BRAINY_HUSK.get(), DESERT_BRAINY_HUSK_WEIGHT, 1, 1))));
 
         context.register(
                 ADD_PECHS,
-                new BiomeModifiers.AddSpawnsBiomeModifier(
+                new ForgeBiomeModifiers.AddSpawnsBiomeModifier(
                         biomes.getOrThrow(TTBiomeTags.HAS_PECH),
                         List.of(new MobSpawnSettings.SpawnerData(TTEntities.PECH.get(), PECH_WEIGHT, 1, 1))));
     }

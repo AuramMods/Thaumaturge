@@ -2,8 +2,6 @@ package com.leclowndu93150.thaumaturge.data.loot;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
-import java.util.concurrent.CompletableFuture;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
@@ -15,8 +13,8 @@ import net.neoforged.neoforge.common.loot.AddTableLootModifier;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 
 public final class TTGlobalLootModifierProvider extends GlobalLootModifierProvider {
-    public TTGlobalLootModifierProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries, TTIds.MODID);
+    public TTGlobalLootModifierProvider(PackOutput output) {
+        super(output, TTIds.MODID);
     }
 
     @Override

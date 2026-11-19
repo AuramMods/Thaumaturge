@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.data;
 
-import com.leclowndu93150.thaumaturge.content.entity.loot.MobSpawnEquipment;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthEncounter;
@@ -14,6 +13,7 @@ import com.leclowndu93150.thaumaturge.compat.curio.data.TTCurioProvider;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.LabyrinthDefinition;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.RoomType;
 import com.leclowndu93150.thaumaturge.content.eldritch.site.ObeliskSite;
+import com.leclowndu93150.thaumaturge.content.entity.loot.MobSpawnEquipment;
 import com.leclowndu93150.thaumaturge.content.infusion.instability.InstabilityOutcome;
 import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable;
 import com.leclowndu93150.thaumaturge.data.damagetype.TTDamageTypeBootstrap;
@@ -78,10 +78,11 @@ import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID)
 public final class TTDataGenerators {
@@ -89,7 +90,70 @@ public final class TTDataGenerators {
 
     @SubscribeEvent
     public static void onGatherData(GatherDataEvent event) {
-        RegistrySetBuilder registries = new RegistrySetBuilder()
+        var generator = event.getGenerator();
+        var output = generator.getPackOutput();
+        var existingFiles = event.getExistingFileHelper();
+        if (event.includeClient()) {
+            generator.addProvider(true, new TTEnglishProvider(output));
+            generator.addProvider(true, new TTSoundDefinitionsProvider(output, existingFiles));
+            generator.addProvider(true, new TTModelProvider(output));
+        }
+
+        if (!event.includeServer()) {
+            return;
+        }
+
+        var datapackEntries = generator.addProvider(true, new DatapackBuiltinEntriesProvider(
+                output, event.getLookupProvider(), registryEntries(), Set.of(TTIds.MODID)));
+        var lookup = datapackEntries.getRegistryProvider();
+
+        generator.addProvider(true, new LabyrinthRoomProvider(output));
+        generator.addProvider(true, new SparseTemplateProvider(output));
+        generator.addProvider(true, new TTLabyrinthRoomTagsProvider(output, lookup));
+        generator.addProvider(true, new TTRecipeProvider(output, lookup));
+        generator.addProvider(true, new AuraModifierProvider(output, lookup));
+        generator.addProvider(true, new EntityAspectsProvider(output, lookup));
+        generator.addProvider(true, new ChampionWhitelistProvider(output, lookup));
+        generator.addProvider(true, new InfernalBonusProvider(output, lookup));
+        generator.addProvider(true, new GolemAccessoryItemProvider(output, lookup));
+        generator.addProvider(true, new TaintedProfileProvider(output, lookup));
+        generator.addProvider(true, new StrippingProvider(output, lookup));
+        generator.addProvider(true, new FuelValuesProvider(output, lookup));
+        generator.addProvider(true, new EnchantingStatsProvider(output, lookup));
+        generator.addProvider(true, new FocusTierProvider(output, lookup));
+        generator.addProvider(true, new TrimMaterialBonusProvider(output, lookup));
+        generator.addProvider(true, new CrystalTrimMaterialProvider(output, lookup));
+        generator.addProvider(true, new SmelterStatsProvider(output, lookup));
+        generator.addProvider(true, new InfusionModifierProvider(output, lookup));
+        generator.addProvider(true, new TTCurioProvider(output, existingFiles, lookup));
+
+        var blockTags = generator.addProvider(true, new TTBlockTagsProvider(output, lookup, existingFiles));
+        generator.addProvider(true, new TTItemTagsProvider(output, lookup, blockTags.contentsGetter(), existingFiles));
+        generator.addProvider(true, new TTDamageTypeTagsProvider(output, lookup, existingFiles));
+        generator.addProvider(true, new TTStructureTagsProvider(output, lookup, existingFiles));
+        generator.addProvider(true, new TTBiomeTagsProvider(output, lookup, existingFiles));
+        generator.addProvider(true, new TTEntityTypeTagsProvider(output, lookup, existingFiles));
+        generator.addProvider(true, new TTFluidTagsProvider(output, lookup, existingFiles));
+        generator.addProvider(true, new TTMobEffectTagsProvider(output, lookup, existingFiles));
+
+        generator.addProvider(true, new LootTableProvider(output, Set.of(), List.of(
+                new LootTableProvider.SubProviderEntry(
+                        () -> new TTBlockLootSubProvider(lookup.join()), LootContextParamSets.BLOCK),
+                new LootTableProvider.SubProviderEntry(
+                        () -> new TTEntityLootSubProvider(lookup.join()), LootContextParamSets.ENTITY),
+                new LootTableProvider.SubProviderEntry(
+                        () -> new TTEntityRewardLootSubProvider(lookup.join()), LootContextParamSets.ENTITY),
+                new LootTableProvider.SubProviderEntry(
+                        () -> new TTEquipmentLootSubProvider(lookup.join()), MobSpawnEquipment.PARAMETERS),
+                new LootTableProvider.SubProviderEntry(
+                        () -> new TTTaintedLootSubProvider(lookup.join()), LootContextParamSets.ENTITY),
+                new LootTableProvider.SubProviderEntry(
+                        () -> new TTGameplayLootSubProvider(lookup.join()), LootContextParamSets.CHEST))));
+        generator.addProvider(true, new TTGlobalLootModifierProvider(output));
+    }
+
+    private static RegistrySetBuilder registryEntries() {
+        return new RegistrySetBuilder()
                 .add(IAspect.REGISTRY_KEY, AspectBootstrap::bootstrap)
                 .add(IResearchCategory.REGISTRY_KEY, CategoryBootstrap::bootstrap)
                 .add(ScanEntry.REGISTRY_KEY, ScanEntryBootstrap::bootstrap)
@@ -103,7 +167,7 @@ public final class TTDataGenerators {
                 .add(Registries.LEVEL_STEM, OuterLandsBootstrap::bootstrapStems)
                 .add(Registries.STRUCTURE, TTStructureBootstrap::bootstrapStructures)
                 .add(Registries.STRUCTURE_SET, TTStructureBootstrap::bootstrapSets)
-                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, TTBiomeModifiers::bootstrap)
+                .add(ForgeRegistries.Keys.BIOME_MODIFIERS, TTBiomeModifiers::bootstrap)
                 .add(SpellPart.REGISTRY_KEY, SpellPartBootstrap::bootstrap)
                 .add(AspectAffinity.REGISTRY_KEY, AffinityBootstrap::bootstrap)
                 .add(Registries.PROCESSOR_LIST, LabyrinthProcessorBootstrap::bootstrap)
@@ -114,68 +178,5 @@ public final class TTDataGenerators {
                 .add(InstabilityOutcome.REGISTRY_KEY, InstabilityOutcomeBootstrap::bootstrap)
                 .add(Registries.TRIM_MATERIAL, TTTrimBootstrap::materials)
                 .add(Registries.TRIM_PATTERN, TTTrimBootstrap::patterns);
-        event.createDatapackRegistryObjects(registries);
-
-        event.createProvider(TTEnglishProvider::new);
-        event.createProvider(
-                (output, lookupProvider) -> new TTSoundDefinitionsProvider(output, event.getExistingFileHelper()));
-        event.createProvider(LabyrinthRoomProvider::new);
-        event.createProvider(SparseTemplateProvider::new);
-        event.createProvider(TTLabyrinthRoomTagsProvider::new);
-        event.createProvider(TTModelProvider::new);
-        event.createProvider(TTRecipeProvider::new);
-        event.createProvider(AuraModifierProvider::new);
-        event.createProvider(EntityAspectsProvider::new);
-        event.createProvider(ChampionWhitelistProvider::new);
-        event.createProvider(InfernalBonusProvider::new);
-        event.createProvider(GolemAccessoryItemProvider::new);
-        event.createProvider(TaintedProfileProvider::new);
-        event.createProvider(StrippingProvider::new);
-        event.createProvider(FuelValuesProvider::new);
-        event.createProvider(EnchantingStatsProvider::new);
-        event.createProvider(FocusTierProvider::new);
-        event.createProvider(TrimMaterialBonusProvider::new);
-        event.createProvider(CrystalTrimMaterialProvider::new);
-        event.createProvider(SmelterStatsProvider::new);
-        event.createProvider(InfusionModifierProvider::new);
-        event.createProvider(
-                (output, lookupProvider) -> new TTCurioProvider(output, event.getExistingFileHelper(), lookupProvider));
-
-        event.createBlockAndItemTags(
-                (output, lookupProvider) ->
-                        new TTBlockTagsProvider(output, lookupProvider, event.getExistingFileHelper()),
-                (output, lookupProvider, blockTags) ->
-                        new TTItemTagsProvider(output, lookupProvider, blockTags, event.getExistingFileHelper()));
-        event.createProvider((output, lookupProvider) ->
-                new TTDamageTypeTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
-        event.createProvider((output, lookupProvider) ->
-                new TTStructureTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
-        event.createProvider((output, lookupProvider) ->
-                new TTBiomeTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
-        event.createProvider((output, lookupProvider) ->
-                new TTEntityTypeTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
-        event.createProvider((output, lookupProvider) ->
-                new TTFluidTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
-        event.createProvider((output, lookupProvider) ->
-                new TTMobEffectTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
-
-        event.createProvider((output, lookupProvider) -> new LootTableProvider(
-                output,
-                Set.of(),
-                List.of(
-                        new LootTableProvider.SubProviderEntry(TTBlockLootSubProvider::new, LootContextParamSets.BLOCK),
-                        new LootTableProvider.SubProviderEntry(
-                                TTEntityLootSubProvider::new, LootContextParamSets.ENTITY),
-                        new LootTableProvider.SubProviderEntry(
-                                TTEntityRewardLootSubProvider::new, LootContextParamSets.ENTITY),
-                        new LootTableProvider.SubProviderEntry(
-                                TTEquipmentLootSubProvider::new, MobSpawnEquipment.PARAMETERS),
-                        new LootTableProvider.SubProviderEntry(
-                                TTTaintedLootSubProvider::new, LootContextParamSets.ENTITY),
-                        new LootTableProvider.SubProviderEntry(
-                                TTGameplayLootSubProvider::new, LootContextParamSets.CHEST)),
-                lookupProvider));
-
-        event.createProvider(TTGlobalLootModifierProvider::new);
     }
 }
