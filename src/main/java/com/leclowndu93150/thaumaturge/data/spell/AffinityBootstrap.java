@@ -232,7 +232,7 @@ public final class AffinityBootstrap {
                 "mote",
                 0,
                 "focus_projectile",
-                SoundEvents.BREEZE_WIND_CHARGE_BURST,
+                sound(TTSounds.WIND.get()),
                 List.of(new KnockbackAction(0.4F, 0.3F, 0.1F, false)),
                 List.of(),
                 List.of(effect(EffectCodecs.holder(MobEffects.MOVEMENT_SPEED), 10, 10, 0.0F, 0.5F, 2)));

@@ -42,6 +42,10 @@
     "forge.ForgeFuelDataMapMixin",
     "world.item.VisDiscountTooltipMixin",
     "world.level.loot.LootContextParamSetsMixin",
+    "world.level.WindBurstExplosionMixin",
+    "world.level.block.ButtonBlockSoundInvoker",
+    "world.level.block.FenceGateBlockSoundsAccessor",
+    "world.level.block.TrapDoorBlockAccess",
     "world.item.AxeDataMapMixin"
   ],
   "client": [

@@ -40,6 +40,8 @@ public final class TTBlockTags {
     public static final TagKey<Block> INFUSION_STABILISERS = key("infusion_stabilisers");
 
     public static final TagKey<Block> PORTABLE_HOLE_BLACKLIST = key("portable_hole_blacklist");
+    public static final TagKey<Block> BLOCKS_WIND_CHARGE_EXPLOSIONS = TagKey.create(
+            Registries.BLOCK, ResourceLocation.withDefaultNamespace("blocks_wind_charge_explosions"));
 
     public static final TagKey<Block> ELDRITCH_OBELISK_PARTS = key("eldritch_obelisk_parts");
 
