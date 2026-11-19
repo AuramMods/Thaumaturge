@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
@@ -30,11 +29,11 @@ import net.minecraft.world.item.Items;
 import org.jspecify.annotations.Nullable;
 
 public final class WandAssemblyPackResources implements PackResources {
-    private final PackLocationInfo location;
+    private final String packId;
     private @Nullable Map<ResourceLocation, byte[]> entries;
 
-    public WandAssemblyPackResources(PackLocationInfo location) {
-        this.location = location;
+    public WandAssemblyPackResources(String packId) {
+        this.packId = packId;
     }
 
     private synchronized Map<ResourceLocation, byte[]> entries() {
@@ -112,7 +111,7 @@ public final class WandAssemblyPackResources implements PackResources {
         String name = modPair
                 ? capId.getPath() + "_" + rodId.getPath()
                 : capId.getNamespace() + "_" + capId.getPath() + "_" + rodId.getNamespace() + "_" + rodId.getPath();
-        return TTIds.rl("recipe/wand/" + kind + "/" + name + ".json");
+        return TTIds.rl("recipes/wand/" + kind + "/" + name + ".json");
     }
 
     private static byte[] recipe(
@@ -184,8 +183,9 @@ public final class WandAssemblyPackResources implements PackResources {
         if (type != PackType.SERVER_DATA || !namespace.equals(TTIds.MODID)) {
             return;
         }
+        String prefix = directory.isEmpty() || directory.endsWith("/") ? directory : directory + "/";
         for (Map.Entry<ResourceLocation, byte[]> entry : entries().entrySet()) {
-            if (entry.getKey().getPath().startsWith(directory)) {
+            if (entry.getKey().getPath().startsWith(prefix)) {
                 byte[] data = entry.getValue();
                 output.accept(entry.getKey(), () -> new ByteArrayInputStream(data));
             }
@@ -203,8 +203,8 @@ public final class WandAssemblyPackResources implements PackResources {
     }
 
     @Override
-    public PackLocationInfo location() {
-        return location;
+    public String packId() {
+        return packId;
     }
 
     @Override

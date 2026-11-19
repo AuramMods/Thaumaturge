@@ -1,20 +1,15 @@
 package com.leclowndu93150.thaumaturge.content.wands.assembly;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import java.util.List;
-import java.util.Optional;
+import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.packs.PackLocationInfo;
-import net.minecraft.server.packs.PackResources;
-import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.PackCompatibility;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.event.AddPackFindersEvent;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID)
 public final class WandAssemblyPackEvents {
@@ -26,31 +21,13 @@ public final class WandAssemblyPackEvents {
             return;
         }
         event.addRepositorySource(consumer -> {
-            PackLocationInfo location = new PackLocationInfo(
-                    TTIds.MODID + "_wand_assembly",
-                    Component.literal("Thaumaturge Wand Assembly"),
-                    PackSource.BUILT_IN,
-                    Optional.empty());
-            Pack.Metadata metadata = new Pack.Metadata(
+            Pack.Info info = new Pack.Info(
                     Component.literal("Wand assembly recipes derived from the cap and rod registries"),
-                    PackCompatibility.COMPATIBLE,
-                    FeatureFlagSet.of(),
-                    List.of(),
-                    false);
-            PackSelectionConfig config = new PackSelectionConfig(true, Pack.Position.BOTTOM, false);
-            consumer.accept(new Pack(location, new AssemblySupplier(), metadata, config));
+                    SharedConstants.getCurrentVersion().getPackVersion(PackType.SERVER_DATA),
+                    FeatureFlagSet.of());
+            consumer.accept(Pack.create(TTIds.MODID + "_wand_assembly", Component.literal("Thaumaturge Wand Assembly"),
+                    true, WandAssemblyPackResources::new, info, PackType.SERVER_DATA, Pack.Position.BOTTOM, false,
+                    PackSource.BUILT_IN));
         });
-    }
-
-    private static final class AssemblySupplier implements Pack.ResourcesSupplier {
-        @Override
-        public PackResources openPrimary(PackLocationInfo info) {
-            return new WandAssemblyPackResources(info);
-        }
-
-        @Override
-        public PackResources openFull(PackLocationInfo info, Pack.Metadata metadata) {
-            return new WandAssemblyPackResources(info);
-        }
     }
 }

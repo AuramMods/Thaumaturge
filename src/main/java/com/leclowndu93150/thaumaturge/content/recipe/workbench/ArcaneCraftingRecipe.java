@@ -23,7 +23,8 @@ public abstract class ArcaneCraftingRecipe extends AbstractRecipe<IArcaneCraftin
     public static Codec<AspectInstance> LIMITED_ASPECTS =
             Codecs.validate(AspectInstance.CODEC, instance -> instance.amount() > 64
                     ? DataResult.error(() ->
-                            "The amount for '" + instance.aspect().getKey().location() + "' aspect must not exceed 64.")
+                            "The amount for '" + instance.aspect().unwrapKey().orElseThrow().location()
+                                    + "' aspect must not exceed 64.")
                     : DataResult.success(instance));
     public static Codec<AspectList> PRIMAL_ASPECTS_CODEC = Codecs.list(LIMITED_ASPECTS, 0, 6)
             .flatXmap(
@@ -32,7 +33,8 @@ public abstract class ArcaneCraftingRecipe extends AbstractRecipe<IArcaneCraftin
                         for (AspectInstance entry : entries) {
                             if (!entry.aspect().value().isPrimal())
                                 return DataResult.error(
-                                        () -> "'" + entry.aspect().getKey().location() + "' is not a primal aspect.",
+                                        () -> "'" + entry.aspect().unwrapKey().orElseThrow().location()
+                                                + "' is not a primal aspect.",
                                         result);
                             result = result.add(entry);
                         }
