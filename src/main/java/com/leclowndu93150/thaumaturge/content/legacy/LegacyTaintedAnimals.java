@@ -80,7 +80,7 @@ public final class LegacyTaintedAnimals {
         legacy.ejectPassengers();
         legacy.stopRiding();
         legacy.discard();
-        MobTraits.add(replacement, TTMobTraits.TAINTED);
+        MobTraits.add(replacement, TTMobTraits.registry().getHolderOrThrow(MobTraits.TAINTED));
         replacement.setHealth(Math.min(health, replacement.getMaxHealth()));
         for (Entity rider : riders) {
             rider.startRiding(replacement);

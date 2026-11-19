@@ -795,7 +795,7 @@ public final class TTCommands {
             entity.discard();
             throw ERROR_NOT_LIVING.create(EntityType.getKey(entity.getType()));
         }
-        MobTraits.add(living, TTMobTraits.TAINTED);
+        MobTraits.add(living, TTMobTraits.registry().getHolderOrThrow(MobTraits.TAINTED));
         ctx.getSource().sendSuccess(() -> Component.translatable(KEY + "tainted", living.getName()), true);
         return Command.SINGLE_SUCCESS;
     }

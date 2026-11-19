@@ -7,16 +7,16 @@ import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class TaintNaturalSpawnEvents {
     private TaintNaturalSpawnEvents() {}
 
     @SubscribeEvent
-    public static void onFinalizeSpawn(FinalizeSpawnEvent event) {
+    public static void onFinalizeSpawn(MobSpawnEvent.FinalizeSpawn event) {
         Mob mob = event.getEntity();
         if (!isNaturalWorldSpawn(event.getSpawnType())
                 || mob.isSpawnCancelled()
@@ -27,7 +27,7 @@ public final class TaintNaturalSpawnEvents {
         }
         TaintedProfile profile = TaintedProfile.of(mob.getType());
         if (profile != null && profile.naturalSpawns()) {
-            MobTraits.add(mob, TTMobTraits.TAINTED);
+            MobTraits.add(mob, TTMobTraits.registry().getHolderOrThrow(MobTraits.TAINTED));
         }
     }
 

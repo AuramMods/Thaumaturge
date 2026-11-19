@@ -134,8 +134,8 @@ public final class TaintBiomeFeature extends Feature<TaintBiomeConfig> {
         }
         level.setBlock(pos, BlockTaintFibre.stateForWorld(level, pos), PLACE_FLAGS);
         taintacle.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, random.nextFloat() * FULL_TURN, 0.0F);
-        ForgeEventFactory.finalizeMobSpawn(
-                taintacle, level, level.getCurrentDifficultyAt(pos), MobSpawnType.CHUNK_GENERATION, null);
+        ForgeEventFactory.onFinalizeSpawn(
+                taintacle, level, level.getCurrentDifficultyAt(pos), MobSpawnType.CHUNK_GENERATION, null, null);
         taintacle.setPersistenceRequired();
         level.addFreshEntityWithPassengers(taintacle);
         return true;

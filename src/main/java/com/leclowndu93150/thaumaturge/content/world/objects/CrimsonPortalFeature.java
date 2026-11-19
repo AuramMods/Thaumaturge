@@ -42,7 +42,7 @@ public final class CrimsonPortalFeature extends Feature<NoneFeatureConfiguration
         }
         portal.setPersistenceRequired();
         portal.moveTo(spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5, 0.0F, 0.0F);
-        ForgeEventFactory.finalizeMobSpawn(portal, level, level.getCurrentDifficultyAt(spawn), MobSpawnType.STRUCTURE, null);
+        ForgeEventFactory.onFinalizeSpawn(portal, level, level.getCurrentDifficultyAt(spawn), MobSpawnType.STRUCTURE, null, null);
         level.addFreshEntityWithPassengers(portal);
         return true;
     }

@@ -184,7 +184,7 @@ public class MoundPiece extends ScatteredFeaturePiece {
         if (portal != null) {
             portal.setPersistenceRequired();
             portal.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
-            ForgeEventFactory.finalizeMobSpawn(portal, level, level.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null);
+            ForgeEventFactory.onFinalizeSpawn(portal, level, level.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
             level.addFreshEntityWithPassengers(portal);
         }
     }

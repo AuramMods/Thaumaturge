@@ -150,8 +150,8 @@ public final class BlockEntityEldritchCrabSpawner extends RegistryBlockEntity {
         double offsetZ = dir.getAxis() == Direction.Axis.Z ? crab.getBbWidth() / 2.0 : 0.5;
         crab.moveTo(pos.getX() + offsetX, pos.getY() + offsetY, pos.getZ() + offsetZ, dir.toYRot(), 0.0F);
         crab.setDeltaMovement(dir.getStepX() * 0.2F, dir.getStepY() * 0.2F, dir.getStepZ() * 0.2F);
-        ForgeEventFactory.finalizeMobSpawn(
-                crab, serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.SPAWNER, null);
+        ForgeEventFactory.onFinalizeSpawn(
+                crab, serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.SPAWNER, null, null);
         int difficulty = Math.max(
                 (int) (level.getDifficulty().getId()
                         + serverLevel.getCurrentDifficultyAt(pos).getEffectiveDifficulty()),

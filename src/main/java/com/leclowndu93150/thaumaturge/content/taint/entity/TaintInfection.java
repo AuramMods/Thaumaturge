@@ -25,7 +25,7 @@ public final class TaintInfection {
     }
 
     public static void tryInfect(ServerLevel level, LivingEntity mob) {
-        if (canInfect(level, mob) && MobTraits.add(mob, TTMobTraits.TAINTED)) {
+        if (canInfect(level, mob) && MobTraits.add(mob, TTMobTraits.registry().getHolderOrThrow(MobTraits.TAINTED))) {
             TaintEcology.addPressure(
                     level,
                     mob.blockPosition(),

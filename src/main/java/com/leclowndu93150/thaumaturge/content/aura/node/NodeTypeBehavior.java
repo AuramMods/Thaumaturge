@@ -124,8 +124,8 @@ final class NodeTypeBehavior {
             guard.discard();
             return;
         }
-        ForgeEventFactory.finalizeMobSpawn(
-                guard, level, level.getCurrentDifficultyAt(guard.blockPosition()), MobSpawnType.EVENT, null);
+        ForgeEventFactory.onFinalizeSpawn(
+                guard, level, level.getCurrentDifficultyAt(guard.blockPosition()), MobSpawnType.EVENT, null, null);
         level.addFreshEntity(guard);
         level.levelEvent(SPAWNER_EFFECT_EVENT, pos, 0);
     }

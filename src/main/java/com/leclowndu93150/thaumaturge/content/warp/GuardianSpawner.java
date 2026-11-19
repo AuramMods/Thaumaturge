@@ -69,8 +69,8 @@ public final class GuardianSpawner {
             if (!canPlace(level, portal)) {
                 continue;
             }
-            ForgeEventFactory.finalizeMobSpawn(
-                    portal, level, level.getCurrentDifficultyAt(portal.blockPosition()), reason, null);
+            ForgeEventFactory.onFinalizeSpawn(
+                    portal, level, level.getCurrentDifficultyAt(portal.blockPosition()), reason, null, null);
             level.addFreshEntity(portal);
             return true;
         }

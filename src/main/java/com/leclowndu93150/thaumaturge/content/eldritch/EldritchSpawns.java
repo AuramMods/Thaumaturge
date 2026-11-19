@@ -25,7 +25,7 @@ public final class EldritchSpawns {
             return Optional.empty();
         }
         mob.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, random.nextFloat() * FULL_TURN_DEGREES, 0.0F);
-        ForgeEventFactory.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(at), MobSpawnType.EVENT, null);
+        ForgeEventFactory.onFinalizeSpawn(mob, level, level.getCurrentDifficultyAt(at), MobSpawnType.EVENT, null, null);
         mob.setPersistenceRequired();
         mob.restrictTo(home, leash);
         return Optional.of(mob);

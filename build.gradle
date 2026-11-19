@@ -194,6 +194,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/content/world/objects/MagicalCaveFloorPlacement.java'
         java.include 'com/leclowndu93150/thaumaturge/content/world/objects/SurfaceBiomeSearch.java'
         java.include 'com/leclowndu93150/thaumaturge/content/eldritch/labyrinth/LabyrinthTuning.java'
+        java.include 'com/leclowndu93150/thaumaturge/content/eldritch/EldritchSpawns.java'
         java.include 'com/leclowndu93150/thaumaturge/content/eldritch/labyrinth/processor/*.java'
         java.include 'com/leclowndu93150/thaumaturge/content/eldritch/labyrinth/room/LabyrinthNoise.java'
         java.include 'com/leclowndu93150/thaumaturge/content/eldritch/labyrinth/room/StateOrientation.java'

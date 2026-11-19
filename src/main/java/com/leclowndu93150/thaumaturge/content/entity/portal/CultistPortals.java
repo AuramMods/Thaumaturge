@@ -43,8 +43,8 @@ public final class CultistPortals {
                 portal.getX() + random.nextFloat() - random.nextFloat(),
                 portal.getY() + ARRIVAL_LIFT,
                 portal.getZ() + random.nextFloat() - random.nextFloat());
-        ForgeEventFactory.finalizeMobSpawn(
-                arrival, level, level.getCurrentDifficultyAt(arrival.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
+        ForgeEventFactory.onFinalizeSpawn(
+                arrival, level, level.getCurrentDifficultyAt(arrival.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
         level.addFreshEntity(arrival);
         if (arrival instanceof EntityCultist cultist) {
             cultist.spawnCultistArrivalParticles();
