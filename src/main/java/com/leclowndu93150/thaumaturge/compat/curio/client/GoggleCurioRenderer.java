@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.client.ICurioRenderer;
@@ -59,7 +58,7 @@ public final class GoggleCurioRenderer implements ICurioRenderer {
         model.hat.visible = true;
         for (ResourceLocation texture : textures) {
             VertexConsumer buffer = buffers.getBuffer(RenderType.armorCutoutNoCull(texture));
-            model.renderToBuffer(poseStack, buffer, light, OverlayTexture.NO_OVERLAY, -1);
+            model.renderToBuffer(poseStack, buffer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 

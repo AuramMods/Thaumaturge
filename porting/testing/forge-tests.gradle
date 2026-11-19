@@ -96,6 +96,10 @@ def runtimeJar = tasks.register('portTestRuntimeJar', Zip) {
             // userdev locator discover the embedded library wrappers as mods.
             def legacy = cp - configurations.jarJar.files
             systemProperty 'legacyClassPath', legacy*.absolutePath.join(File.pathSeparator)
+            // Load Curios in Forge's game layer so it can see transformed Minecraft and apply its mixins.
+            def curios = cp.find { it.name.startsWith('curios-forge-') }
+            systemProperty 'thaumaturge.portTestCurios', curios.absolutePath
+            systemProperty 'ignoreList', config.replace(tokens, config.properties['ignoreList']) + ',curios-forge-'
             systemProperty 'java.awt.headless', 'true'
             systemProperty 'apple.awt.UIElement', 'true'
             systemProperty 'thaumaturge.portTestPaths', runtime.absolutePath

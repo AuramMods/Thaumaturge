@@ -107,6 +107,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/blockinteraction/**'
         java.include 'com/leclowndu93150/thaumaturge/compat/Java17*'
         java.include 'com/leclowndu93150/thaumaturge/compat/Colors*'
+        java.include 'com/leclowndu93150/thaumaturge/compat/curio/data/TTCurioProvider.java'
         java.include 'com/leclowndu93150/thaumaturge/TTIds.java'
         java.include 'com/leclowndu93150/thaumaturge/client/aura/ClientAuraCache.java'
         java.include 'com/leclowndu93150/thaumaturge/event/tick/**'

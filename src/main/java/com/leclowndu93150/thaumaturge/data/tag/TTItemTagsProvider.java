@@ -21,9 +21,19 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import top.theillusivec4.curios.api.CuriosTags;
 
 public final class TTItemTagsProvider extends ItemTagsProvider {
+    private static final TagKey<Item> CURIO_BACK = curioSlot("back");
+    private static final TagKey<Item> CURIO_HEAD = curioSlot("head");
+    private static final TagKey<Item> CURIO_NECKLACE = curioSlot("necklace");
+    private static final TagKey<Item> CURIO_RING = curioSlot("ring");
+    private static final TagKey<Item> CURIO_BELT = curioSlot("belt");
+    private static final TagKey<Item> CURIO_CHARM = curioSlot("charm");
+
+    private static TagKey<Item> curioSlot(String slot) {
+        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(TTIds.CURIOS, slot));
+    }
+
     public TTItemTagsProvider(
             PackOutput output,
             CompletableFuture<HolderLookup.Provider> lookupProvider,
@@ -318,28 +328,31 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.VOID_ROBE_LEGS.get())
                 .add(CultistArmorDyeing.dyeableArmor().toArray(Item[]::new));
 
-        tag(CuriosTags.BACK).add(TTItems.THAUMOSTATIC_HARNESS.get());
+        tag(CURIO_BACK).add(TTItems.THAUMOSTATIC_HARNESS.get());
         tag(ItemTags.CHEST_ARMOR).add(TTItems.THAUMOSTATIC_HARNESS.get());
-        tag(CuriosTags.HEAD).add(TTItems.GOGGLES_REVEALING.get(), TTItems.CURIOSITY_BAND.get());
-        tag(CuriosTags.NECKLACE)
+        tag(CURIO_HEAD).add(TTItems.GOGGLES_REVEALING.get(), TTItems.CURIOSITY_BAND.get());
+        tag(CURIO_NECKLACE)
                 .add(
                         TTItems.AMULET_MUNDANE.get(),
                         TTItems.AMULET_FANCY.get(),
                         TTItems.AMULET_VIS.get(),
                         TTItems.AMULET_VIS_CRAFTED.get());
-        tag(CuriosTags.RING)
+        tag(CURIO_RING)
                 .add(
                         TTItems.RING_MUNDANE.get(),
                         TTItems.RING_APPRENTICE.get(),
                         TTItems.RING_FANCY.get(),
                         TTItems.CLOUD_RING.get());
-        tag(CuriosTags.BELT).add(TTItems.GIRDLE_MUNDANE.get(), TTItems.GIRDLE_FANCY.get(), TTItems.FOCUS_POUCH.get());
-        tag(CuriosTags.CHARM)
+        tag(CURIO_BELT).add(TTItems.GIRDLE_MUNDANE.get(), TTItems.GIRDLE_FANCY.get(), TTItems.FOCUS_POUCH.get());
+        tag(CURIO_CHARM)
                 .add(TTItems.CHARM_UNDYING.get(), TTItems.VERDANT_CHARM.get(), TTItems.VOIDSEER_CHARM.get());
 
         tag(TTItemTags.RUNIC_SHIELDABLE)
-                .addOptionalTags(
-                        CuriosTags.HEAD, CuriosTags.NECKLACE, CuriosTags.RING, CuriosTags.BELT, CuriosTags.CHARM);
+                .addOptionalTag(CURIO_HEAD)
+                .addOptionalTag(CURIO_NECKLACE)
+                .addOptionalTag(CURIO_RING)
+                .addOptionalTag(CURIO_BELT)
+                .addOptionalTag(CURIO_CHARM);
 
         tag(ItemTags.SWORDS)
                 .add(

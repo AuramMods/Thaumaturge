@@ -1,12 +1,9 @@
 package com.leclowndu93150.thaumaturge.compat.curio;
 
-import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
-import com.leclowndu93150.thaumaturge.compat.curio.client.CuriosityBandCurioRenderer;
-import com.leclowndu93150.thaumaturge.compat.curio.client.GoggleCurioRenderer;
-import com.leclowndu93150.thaumaturge.compat.curio.client.HoverHarnessCurioRenderer;
+import com.leclowndu93150.thaumaturge.compat.NamedAttributeModifiers;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.AmuletVisItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VerdantCharmItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VoidseerCharmItem;
@@ -22,18 +19,15 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.CuriosCapability;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.SlotResult;
-import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
-import top.theillusivec4.curios.api.type.capability.ICurio;
+import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
 public final class ThaumaturgeCuriosCompat {
@@ -42,14 +36,16 @@ public final class ThaumaturgeCuriosCompat {
 
     public static void init(IEventBus modBus) {
         GogglesAccess.bindCurios(ThaumaturgeCuriosCompat::anyCurioMatches);
-        modBus.addListener(ThaumaturgeCuriosCompat::registerCurio);
-        modBus.addListener(ThaumaturgeCuriosCompat::onClientSetup);
+        modBus.addListener(ThaumaturgeCuriosCompat::onCommonSetup);
         MinecraftForge.EVENT_BUS.addListener(ThaumaturgeCuriosCompat::onItemAttributeModifier);
     }
 
-    private static void registerCurio(RegisterCapabilitiesEvent event) {
-        registerPlain(
-                event,
+    private static void onCommonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(ThaumaturgeCuriosCompat::registerCurios);
+    }
+
+    private static void registerCurios() {
+        register(new ICurioItem() {},
                 TTItems.GOGGLES_REVEALING.get(),
                 TTItems.AMULET_MUNDANE.get(),
                 TTItems.RING_MUNDANE.get(),
@@ -62,32 +58,22 @@ public final class ThaumaturgeCuriosCompat {
                 TTItems.CLOUD_RING.get(),
                 TTItems.CURIOSITY_BAND.get(),
                 TTItems.FOCUS_POUCH.get());
-        event.registerItem(
-                CuriosCapability.ITEM,
-                (stack, ctx) -> new HoverHarnessCurio(stack),
-                TTItems.THAUMOSTATIC_HARNESS.get());
-        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TTItems.AMULET_VIS.get());
-        event.registerItem(
-                CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TTItems.AMULET_VIS_CRAFTED.get());
-        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TTItems.VERDANT_CHARM.get());
-        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TTItems.VOIDSEER_CHARM.get());
+        CuriosApi.registerCurio(TTItems.THAUMOSTATIC_HARNESS.get(), new HoverHarnessCurio());
+        register(tickingCurio(),
+                TTItems.AMULET_VIS.get(), TTItems.AMULET_VIS_CRAFTED.get(),
+                TTItems.VERDANT_CHARM.get(), TTItems.VOIDSEER_CHARM.get());
     }
 
-    private static void registerPlain(RegisterCapabilitiesEvent event, Item... items) {
+    private static void register(ICurioItem behavior, Item... items) {
         for (Item item : items) {
-            event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> (ICurio) () -> stack, item);
+            CuriosApi.registerCurio(item, behavior);
         }
     }
 
-    private static ICurio tickingCurio(ItemStack stack) {
-        return new ICurio() {
+    private static ICurioItem tickingCurio() {
+        return new ICurioItem() {
             @Override
-            public ItemStack getStack() {
-                return stack;
-            }
-
-            @Override
-            public void curioTick(SlotContext slotContext) {
+            public void curioTick(SlotContext slotContext, ItemStack stack) {
                 LivingEntity wearer = slotContext.entity();
                 if (stack.getItem() instanceof AmuletVisItem amulet) {
                     amulet.wornTick(stack, wearer);
@@ -99,7 +85,7 @@ public final class ThaumaturgeCuriosCompat {
             }
 
             @Override
-            public void onUnequip(SlotContext slotContext, ItemStack newStack) {
+            public void onUnequip(SlotContext slotContext, ItemStack newStack, ItemStack stack) {
                 if (stack.getItem() instanceof VoidseerCharmItem && !newStack.is(stack.getItem())) {
                     VoidseerCharmItem.clearDiscount(slotContext.entity());
                 }
@@ -107,14 +93,8 @@ public final class ThaumaturgeCuriosCompat {
         };
     }
 
-    private static void onClientSetup(FMLClientSetupEvent event) {
-        CuriosRendererRegistry.register(TTItems.THAUMOSTATIC_HARNESS.get(), HoverHarnessCurioRenderer::new);
-        CuriosRendererRegistry.register(TTItems.GOGGLES_REVEALING.get(), GoggleCurioRenderer::new);
-        CuriosRendererRegistry.register(TTItems.CURIOSITY_BAND.get(), CuriosityBandCurioRenderer::new);
-    }
-
     public static List<ItemStack> equippedCurios(LivingEntity entity) {
-        Optional<ICuriosItemHandler> invOpt = CuriosApi.getCuriosInventory(entity);
+        Optional<ICuriosItemHandler> invOpt = CuriosApi.getCuriosInventory(entity).resolve();
         if (invOpt.isEmpty()) {
             return List.of();
         }
@@ -130,15 +110,15 @@ public final class ThaumaturgeCuriosCompat {
     }
 
     public static boolean anyCurioMatches(LivingEntity entity, Predicate<ItemStack> predicate) {
-        Optional<ICuriosItemHandler> invOpt = CuriosApi.getCuriosInventory(entity);
-        return invOpt.isPresent() && invOpt.get().findFirstCurio(predicate).isPresent();
+        return findSlot(entity, predicate).isPresent();
     }
 
     public static ItemStack findCurio(LivingEntity entity, Predicate<ItemStack> predicate) {
-        return CuriosApi.getCuriosInventory(entity)
-                .flatMap(inv -> inv.findFirstCurio(predicate))
-                .map(SlotResult::stack)
-                .orElse(ItemStack.EMPTY);
+        return findSlot(entity, predicate).map(SlotResult::stack).orElse(ItemStack.EMPTY);
+    }
+
+    private static Optional<SlotResult> findSlot(LivingEntity entity, Predicate<ItemStack> predicate) {
+        return CuriosApi.getCuriosInventory(entity).resolve().flatMap(inv -> inv.findFirstCurio(predicate));
     }
 
     public static boolean isCurioEquipped(LivingEntity entity, Item item) {
@@ -146,7 +126,7 @@ public final class ThaumaturgeCuriosCompat {
     }
 
     public static ItemStack extractCurio(LivingEntity entity, Item item) {
-        Optional<ICuriosItemHandler> invOpt = CuriosApi.getCuriosInventory(entity);
+        Optional<ICuriosItemHandler> invOpt = CuriosApi.getCuriosInventory(entity).resolve();
         if (invOpt.isEmpty()) {
             return ItemStack.EMPTY;
         }
@@ -165,7 +145,7 @@ public final class ThaumaturgeCuriosCompat {
     }
 
     public static boolean rechargeFirstCurio(Player player) {
-        Optional<ICuriosItemHandler> invOpt = CuriosApi.getCuriosInventory(player);
+        Optional<ICuriosItemHandler> invOpt = CuriosApi.getCuriosInventory(player).resolve();
         if (invOpt.isEmpty()) {
             return false;
         }
@@ -181,7 +161,7 @@ public final class ThaumaturgeCuriosCompat {
     }
 
     public static List<CurioPouchRef> equippedPouches(LivingEntity entity, Predicate<ItemStack> predicate) {
-        Optional<ICuriosItemHandler> invOpt = CuriosApi.getCuriosInventory(entity);
+        Optional<ICuriosItemHandler> invOpt = CuriosApi.getCuriosInventory(entity).resolve();
         if (invOpt.isEmpty()) {
             return List.of();
         }

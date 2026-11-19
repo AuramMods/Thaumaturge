@@ -15,6 +15,7 @@ public final class ForgePortClientTestLaunchHandler extends ForgeClientUserdevLa
     protected void processStreams(String[] classpath, VersionInfo version, Stream.Builder<Path> minecraft,
             Stream.Builder<List<Path>> mods) {
         super.processStreams(classpath, version, minecraft, mods);
+        mods.add(List.of(Path.of(System.getProperty("thaumaturge.portTestCurios"))));
         for (String path : System.getProperty("thaumaturge.portTestPaths").split(File.pathSeparator)) {
             minecraft.add(Path.of(path));
         }
