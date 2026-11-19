@@ -15,14 +15,12 @@ import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.Lifecycle;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -30,12 +28,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -242,22 +240,10 @@ class PotionSprayerConduitCutoffTest {
     void nativePotionEffectsKeepDurationAmplifierAndVisibility() {
         var machine = machine(Direction.NORTH);
         var potion = new ItemStack(Items.POTION);
-        var contents = mock(PotionContents.class);
-        potion.set(DataComponents.POTION_CONTENTS, contents);
+        var instantInstance = new MobEffectInstance(MobEffects.HEAL, 1, 2);
+        var lastingInstance = new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 123, 3, true, false, false);
+        PotionUtils.setCustomEffects(potion, List.of(instantInstance, lastingInstance));
         configure(machine, potion, AspectList.EMPTY.add(aspect, 1));
-        var instant = mock(MobEffect.class);
-        when(instant.isInstantenous()).thenReturn(true);
-        var lasting = mock(MobEffect.class);
-        var instantInstance = new MobEffectInstance(Holder.direct(instant), 1, 2);
-        var lastingInstance = new MobEffectInstance(Holder.direct(lasting), 123, 3, true, false, false);
-        doAnswer(call -> {
-                    Consumer<MobEffectInstance> consumer = call.getArgument(0);
-                    consumer.accept(instantInstance);
-                    consumer.accept(lastingInstance);
-                    return null;
-                })
-                .when(contents)
-                .forEachEffect(any());
         var target = mock(LivingEntity.class);
         when(level.getEntitiesOfClass(eq(LivingEntity.class), any(AABB.class), any()))
                 .thenReturn(List.of(target));
@@ -266,10 +252,11 @@ class PotionSprayerConduitCutoffTest {
             effects.when(() -> Effects.vent(eq(level), any())).thenReturn(mock(Effects.Vent.class, RETURNS_SELF));
             tick(machine, 1, false);
         }
-        verify(instant).applyInstantenousEffect(null, null, target, 2, 1.0);
+        verify(target).heal(16.0F);
         var effect = ArgumentCaptor.forClass(MobEffectInstance.class);
         verify(target).addEffect(effect.capture());
         assertNotSame(lastingInstance, effect.getValue());
+        assertSame(MobEffects.MOVEMENT_SPEED, effect.getValue().getEffect());
         assertEquals(123, effect.getValue().getDuration());
         assertEquals(3, effect.getValue().getAmplifier());
         assertTrue(effect.getValue().isAmbient());

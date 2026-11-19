@@ -8,7 +8,6 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.mixin.world.item.alchemy.PotionBrewingAccessor;
-import com.leclowndu93150.thaumaturge.mixin.world.item.alchemy.PotionBrewingMixAccessor;
 import com.mojang.serialization.Lifecycle;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -25,9 +24,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionBrewing;
-import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,7 @@ class PotionAspectsCutoffTest {
     private Holder<IAspect> alkimia;
     private Holder<IAspect> compound;
     private final List<Holder<IAspect>> primals = new ArrayList<>();
+    private List<PotionBrewing.Mix<Potion>> originalMixes;
 
     @BeforeEach
     void setUp() {
@@ -59,26 +61,31 @@ class PotionAspectsCutoffTest {
         }
         level = mock(ServerLevel.class);
         when(level.registryAccess()).thenReturn(new RegistryAccess.ImmutableRegistryAccess(List.of(registry)).freeze());
+        originalMixes = List.copyOf(potionMixes());
     }
 
-    private ItemStack potion(Holder<Potion> potion) {
-        ItemStack stack = new ItemStack(Items.POTION);
-        stack.set(DataComponents.POTION_CONTENTS, new PotionContents(potion));
-        return stack;
+    @AfterEach
+    void restoreBrewingTable() {
+        brewing(originalMixes);
     }
 
-    private PotionBrewingMixAccessor mix(Holder<Potion> from, Holder<Potion> to, Item... ingredients) {
-        var mix = mock(PotionBrewingMixAccessor.class);
-        doReturn(from).when(mix).thaumaturge$getFrom();
-        doReturn(to).when(mix).thaumaturge$getTo();
-        when(mix.thaumaturge$getIngredient()).thenReturn(Ingredient.of(ingredients));
-        return mix;
+    private ItemStack potion(Potion potion) {
+        return PotionUtils.setPotion(new ItemStack(Items.POTION), potion);
     }
 
-    private void brewing(List<?> mixes) {
-        PotionBrewing brewing = mock(PotionBrewing.class, withSettings().extraInterfaces(PotionBrewingAccessor.class));
-        doReturn(mixes).when((PotionBrewingAccessor) brewing).thaumaturge$getPotionMixes();
-        when(level.potionBrewing()).thenReturn(brewing);
+    private PotionBrewing.Mix<Potion> mix(Potion from, Potion to, Item... ingredients) {
+        return new PotionBrewing.Mix<>(ForgeRegistries.POTIONS, from, Ingredient.of(ingredients), to);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<PotionBrewing.Mix<Potion>> potionMixes() {
+        return (List<PotionBrewing.Mix<Potion>>) PotionBrewingAccessor.thaumaturge$getPotionMixes();
+    }
+
+    private void brewing(List<PotionBrewing.Mix<Potion>> mixes) {
+        var table = potionMixes();
+        table.clear();
+        table.addAll(mixes);
     }
 
     @Test
@@ -89,7 +96,7 @@ class PotionAspectsCutoffTest {
         assertEquals(5, water.amountOf(magic));
         assertEquals(5, water.amountOf(alkimia));
         assertEquals(0, water.amountOf(aqua));
-        verify(level).potionBrewing();
+        assertTrue(BrewingRoutes.reagents(BuiltInRegistries.POTION.wrapAsHolder(Potions.WATER)).isEmpty());
         AspectList fallback = PotionAspects.of(level, new ItemStack(Items.POTION));
         assertEquals(2, fallback.size());
         assertEquals(5, fallback.amountOf(magic));

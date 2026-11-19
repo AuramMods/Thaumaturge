@@ -5,10 +5,18 @@ import static org.mockito.Mockito.*;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
-import java.lang.reflect.Field;
-import net.minecraft.core.Holder;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.itemdata.ItemDataContext;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataKey;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.mojang.serialization.Lifecycle;
+import java.lang.reflect.Field;
+import java.util.List;
+import net.minecraft.core.Holder;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -20,6 +28,7 @@ class EssentiaCrystalAccessTest {
     private Item crystal;
     private ItemDataKey<AspectInstance> component;
     private Holder<IAspect> aspect;
+    private RegistryAccess registries;
     private Object savedItem;
     private Object savedComponent;
 
@@ -31,7 +40,10 @@ class EssentiaCrystalAccessTest {
         field("aspectComponent").set(null, null);
         crystal = Items.AMETHYST_SHARD;
         component = TTDataComponents.CRYSTAL_ASPECT.get();
-        aspect = Holder.direct(mock(IAspect.class));
+        var aspects = new MappedRegistry<>(IAspect.REGISTRY_KEY, Lifecycle.stable());
+        Registry.register(aspects, TTAspects.AER, mock(IAspect.class));
+        registries = new RegistryAccess.ImmutableRegistryAccess(List.of(aspects)).freeze();
+        aspect = aspects.getHolderOrThrow(TTAspects.AER);
     }
 
     @AfterEach
@@ -57,31 +69,37 @@ class EssentiaCrystalAccessTest {
     @Test
     void classifiesOnlyGenuineSingleAspectCrystals() {
         bind();
-        ItemStack unconfigured = new ItemStack(crystal);
-        assertEquals(EssentiaCrystalAccess.State.UNCONFIGURED, EssentiaCrystalAccess.state(unconfigured));
-        assertNull(EssentiaCrystalAccess.aspect(unconfigured));
-        unconfigured.set(component, new AspectInstance(aspect, 2));
-        assertEquals(EssentiaCrystalAccess.State.MALFORMED, EssentiaCrystalAccess.state(unconfigured));
-        assertFalse(EssentiaCrystalAccess.isConfigured(unconfigured));
-        ItemStack foreign = new ItemStack(Items.DIRT);
-        foreign.set(component, new AspectInstance(aspect, 1));
-        assertEquals(EssentiaCrystalAccess.State.NOT_CRYSTAL, EssentiaCrystalAccess.state(foreign));
-        assertNull(EssentiaCrystalAccess.aspect(foreign));
+        ItemDataContext.withRegistries(registries, () -> {
+            ItemStack unconfigured = new ItemStack(crystal);
+            assertEquals(EssentiaCrystalAccess.State.UNCONFIGURED, EssentiaCrystalAccess.state(unconfigured));
+            assertNull(EssentiaCrystalAccess.aspect(unconfigured));
+            ItemData.set(unconfigured, component, new AspectInstance(aspect, 2));
+            assertEquals(EssentiaCrystalAccess.State.MALFORMED, EssentiaCrystalAccess.state(unconfigured));
+            assertFalse(EssentiaCrystalAccess.isConfigured(unconfigured));
+            ItemStack foreign = new ItemStack(Items.DIRT);
+            ItemData.set(foreign, component, new AspectInstance(aspect, 1));
+            assertEquals(EssentiaCrystalAccess.State.NOT_CRYSTAL, EssentiaCrystalAccess.state(foreign));
+            assertNull(EssentiaCrystalAccess.aspect(foreign));
+            return null;
+        });
     }
 
     @Test
     void creationReturnsIndependentStacksWithOneAspectUnitPerCrystal() {
         bind();
-        ItemStack first = EssentiaCrystalAccess.create(aspect, 3);
-        ItemStack second = EssentiaCrystalAccess.create(aspect, 3);
-        assertEquals(3, first.getCount());
-        assertEquals(new AspectInstance(aspect, 1), first.get(component));
-        assertSame(aspect, EssentiaCrystalAccess.aspect(first));
-        assertEquals(EssentiaCrystalAccess.State.CONFIGURED, EssentiaCrystalAccess.state(first));
-        first.remove(component);
-        first.setCount(1);
-        assertEquals(3, second.getCount());
-        assertTrue(EssentiaCrystalAccess.isConfigured(second));
+        ItemDataContext.withRegistries(registries, () -> {
+            ItemStack first = EssentiaCrystalAccess.create(aspect, 3);
+            ItemStack second = EssentiaCrystalAccess.create(aspect, 3);
+            assertEquals(3, first.getCount());
+            assertEquals(new AspectInstance(aspect, 1), ItemData.get(first, component));
+            assertSame(aspect, EssentiaCrystalAccess.aspect(first));
+            assertEquals(EssentiaCrystalAccess.State.CONFIGURED, EssentiaCrystalAccess.state(first));
+            ItemData.remove(first, component);
+            first.setCount(1);
+            assertEquals(3, second.getCount());
+            assertTrue(EssentiaCrystalAccess.isConfigured(second));
+            return null;
+        });
     }
 
     private void bind() {
