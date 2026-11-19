@@ -7,14 +7,14 @@ import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import snownee.jade.api.BlockAccessor;
-import snownee.jade.api.IComponentProvider;
+import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElement;
 import snownee.jade.api.ui.IElementHelper;
 
-enum JadeMachineIconProvider implements IComponentProvider<BlockAccessor> {
+enum JadeMachineIconProvider implements IBlockComponentProvider {
     INSTANCE;
 
     private static final ResourceLocation UID = TTIds.rl("machine_icon");

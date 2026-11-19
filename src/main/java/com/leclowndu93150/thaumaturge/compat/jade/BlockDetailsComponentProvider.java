@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.ITooltip;
-import snownee.jade.api.JadeIds;
+import snownee.jade.api.Identifiers;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.theme.IThemeHelper;
 
@@ -34,12 +34,13 @@ public enum BlockDetailsComponentProvider implements IBlockComponentProvider {
         TTNbt.read(accessor.getServerData(), BlockDetailsDataProvider.DATA, JadeBlockDetails.CODEC)
                 .ifPresent(data -> {
                     if (!JadeConfig.shouldShow(config, data.option(), accessor)) {
-                        if (data.hideFluid()) tooltip.remove(JadeIds.UNIVERSAL_FLUID_STORAGE);
+                        if (data.hideFluid()) tooltip.remove(Identifiers.UNIVERSAL_FLUID_STORAGE);
                         return;
                     }
-                    data.title()
-                            .ifPresent(title -> tooltip.replace(
-                                    JadeIds.CORE_OBJECT_NAME, IThemeHelper.get().title(title)));
+                    data.title().ifPresent(title -> {
+                        tooltip.remove(Identifiers.CORE_OBJECT_NAME);
+                        tooltip.add(0, IThemeHelper.get().title(title), Identifiers.CORE_OBJECT_NAME);
+                    });
                     data.summary().forEach(tooltip::add);
                     if (accessor.showDetails()) data.details().forEach(tooltip::add);
                 });

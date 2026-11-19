@@ -70,6 +70,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/serialization/RegistryContext*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/ClientRegistryContext*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/TTNbt*'
+        java.include 'com/leclowndu93150/thaumaturge/compat/jade/JadeBlockDetails.java'
         java.include 'com/leclowndu93150/thaumaturge/serialization/BlockCodecs*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/Codecs*'
         java.include 'com/leclowndu93150/thaumaturge/serialization/IngredientCodecs*'

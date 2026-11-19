@@ -3,7 +3,6 @@ package com.leclowndu93150.thaumaturge.compat.jade;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import java.util.List;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.Accessor;
 import snownee.jade.api.IWailaClientRegistration;
@@ -84,7 +83,6 @@ final class JadeConfig {
         for (ResourceLocation option : OPTIONS) {
             registration.addConfig(option, DisplayMode.GOGGLES);
         }
-        registration.setConfigCategoryOverride(CATEGORY, Component.translatable("config.jade.thaumaturge"));
     }
 
     static boolean shouldShow(IPluginConfig config, ResourceLocation option, Accessor<?> accessor) {
