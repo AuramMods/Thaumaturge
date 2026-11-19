@@ -10,6 +10,7 @@
     "world.entity.ExperienceOrbAccessor",
     "world.entity.MobAccessor",
     "world.entity.EntityEyeHeightMixin",
+    "world.entity.FaceAttachedPassengerMixin",
     "world.entity.EntityRandomAccessor",
     "world.entity.EntityScaleMixin",
     "world.entity.EntityTypeGeometryMixin",

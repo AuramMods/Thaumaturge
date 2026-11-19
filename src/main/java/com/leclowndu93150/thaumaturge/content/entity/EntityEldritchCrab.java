@@ -1,10 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -16,13 +14,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,10 +38,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public class EntityEldritchCrab extends Monster implements ISidedHurt {
+public class EntityEldritchCrab extends Monster implements ISidedHurt, FaceAttachedPassenger {
     private static final EntityDataAccessor<Boolean> DATA_HELM =
             SynchedEntityData.defineId(EntityEldritchCrab.class, EntityDataSerializers.BOOLEAN);
 
@@ -58,7 +52,6 @@ public class EntityEldritchCrab extends Monster implements ISidedHurt {
     private static final double LATCH_RANGE_SQ = 4.0;
     private static final float DISMOUNT_CHANCE = 0.2F;
     private static final float HELM_BREAK_HEALTH_FRACTION = 0.5F;
-    private static final float HARD_GROUP_EFFECT_CHANCE = 0.1F;
     private static final int BREAK_PARTICLES = 8;
     private static final int MOUNTED_ATTACK_BASE = 10;
     private static final int MOUNTED_ATTACK_SPREAD = 10;
@@ -140,27 +133,13 @@ public class EntityEldritchCrab extends Monster implements ISidedHurt {
             MobSpawnType reason,
             @Nullable SpawnGroupData groupData,
             @Nullable CompoundTag spawnTag) {
-        if (level.getDifficulty() == Difficulty.HARD) {
-            this.setHelm(true);
-        } else {
-            this.setHelm(this.random.nextFloat() < HELM_CHANCE);
-        }
-        RandomSource rand = level.getRandom();
-        if (level.getDifficulty() == Difficulty.HARD
-                && rand.nextFloat() < HARD_GROUP_EFFECT_CHANCE * difficulty.getSpecialMultiplier()) {
-            var effect = randomGroupEffect(rand);
-            this.addEffect(EffectCodecs.instance(effect, MobEffectInstance.INFINITE_DURATION));
+        Difficulty mode = level.getDifficulty();
+        this.setHelm(mode == Difficulty.HARD || this.random.nextFloat() < HELM_CHANCE);
+        MobEffectInstance effect = EldritchCrabEffects.forSpawn(mode, difficulty, level.getRandom());
+        if (effect != null) {
+            this.addEffect(effect);
         }
         return super.finalizeSpawn(level, difficulty, reason, groupData, spawnTag);
-    }
-
-    private static Holder<MobEffect> randomGroupEffect(RandomSource rand) {
-        return switch (rand.nextInt(5)) {
-            case 0, 1 -> MobEffects.MOVEMENT_SPEED;
-            case 2 -> MobEffects.DAMAGE_BOOST;
-            case 3 -> MobEffects.REGENERATION;
-            default -> MobEffects.INVISIBILITY;
-        };
     }
 
     @Override
@@ -179,16 +158,6 @@ public class EntityEldritchCrab extends Monster implements ISidedHurt {
         if (previous instanceof ServerPlayer player && getVehicle() != previous) {
             player.connection.send(new ClientboundSetPassengersPacket(player));
         }
-    }
-
-    @Override
-    public Vec3 getVehicleAttachmentPoint(Entity vehicle) {
-        if (!(vehicle instanceof LivingEntity host)) {
-            return super.getVehicleAttachmentPoint(vehicle);
-        }
-        double reach = host.getBbWidth() * 0.5 + getBbWidth() * 0.25;
-        Vec3 face = host.getEyePosition().add(host.getLookAngle().scale(reach)).add(0.0, -getBbHeight() * 0.5, 0.0);
-        return vehicle.getPassengerRidingPosition(this).subtract(face);
     }
 
     @Override
@@ -325,7 +294,7 @@ public class EntityEldritchCrab extends Monster implements ISidedHurt {
 
     @Override
     public boolean canBeAffected(MobEffectInstance effect) {
-        return !effect.is(MobEffects.POISON) && super.canBeAffected(effect);
+        return !EldritchCrabEffects.isImmuneTo(effect) && super.canBeAffected(effect);
     }
 
     @Override
