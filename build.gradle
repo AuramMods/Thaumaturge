@@ -747,11 +747,9 @@ def prepareClientProfile = tasks.register('prepareClientProfile') {
 }
 def prepareTestServers = tasks.register('prepareTestServers') {
     doLast {
-        ['run/server', 'run-gametest'].each { path ->
-            def directory = file(path)
-            directory.mkdirs()
-            new File(directory, 'eula.txt').setText('eula=true\n', 'UTF-8')
-        }
+        def directory = file('run/server')
+        directory.mkdirs()
+        new File(directory, 'eula.txt').setText('eula=true\n', 'UTF-8')
     }
 }
 // This run configuration is solely for background testing on the user's Mac.
@@ -759,11 +757,12 @@ minecraft.runs.client.jvmArg backgroundAgentOption
 tasks.matching { it.name == 'runClient' }.configureEach {
     dependsOn prepareClientProfile, backgroundAgentJar
 }
-tasks.matching { it.name in ['runServer', 'runGameTestServer'] }.configureEach { dependsOn prepareTestServers }
+tasks.matching { it.name == 'runServer' }.configureEach { dependsOn prepareTestServers }
 
 apply from: 'gradle/sable-forge.gradle'
 apply from: 'porting/testing/forge-tests.gradle'
 apply from: 'porting/testing/forge-original-tests.gradle'
+apply from: 'porting/testing/forge-game-tests.gradle'
 
 
 tasks.register('generateColorReference', JavaExec) {

@@ -80,6 +80,20 @@ writes the summary and XML to `build/test-results/forgeOriginalTest`, and closes
 the client. Gradle treats failed, skipped or aborted cases and an empty suite as
 a failed test run. The launcher and its dependencies live in test source sets.
 
+## In-world Forge GameTests
+
+```sh
+./gradlew runGameTestServer
+```
+
+Generate mod data with `./gradlew runData` in a separate invocation after a
+clean checkout. The GameTest task uses a headless server profile under
+`build/forge-game-tests/server` and reports the cases in
+`build/test-results/forgeGameTest/TEST-world.xml`. It exercises real placed
+block entities, block item placement and loot, and server-ticked essentia
+transport. The GameTest source set and structure templates stay outside the
+mod JAR.
+
 ## Headless Forge foundation tests
 
 ```sh

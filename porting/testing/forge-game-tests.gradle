@@ -1,0 +1,47 @@
+def profile = layout.buildDirectory.dir('forge-game-tests/server')
+def report = layout.buildDirectory.file('test-results/forgeGameTest/TEST-world.xml')
+
+sourceSets {
+    forgeGameTest {
+        java.srcDir 'porting/testing/forge-game-tests/java'
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+    }
+}
+
+minecraft.runs.gameTestServer {
+    workingDirectory profile.get().asFile
+    property 'java.awt.headless', 'true'
+    property 'thaumaturge.gameTestReport', report.get().asFile.absolutePath
+    mods.getByName(mod_id).source(sourceSets.forgeGameTest)
+}
+
+def prepareForgeGameTests = tasks.register('prepareForgeGameTests') {
+    doLast {
+        def directory = profile.get().asFile
+        directory.mkdirs()
+        new File(directory, 'eula.txt').setText('eula=true\n', 'UTF-8')
+        new File(directory, 'server.properties').setText('server-ip=127.0.0.1\nserver-port=0\n', 'UTF-8')
+        copy {
+            from 'porting/testing/forge-game-tests/structures'
+            into new File(directory, 'gameteststructures')
+        }
+        def reportFile = report.get().asFile
+        reportFile.parentFile.mkdirs()
+        java.nio.file.Files.deleteIfExists(reportFile.toPath())
+    }
+}
+
+tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+    dependsOn prepareForgeGameTests, tasks.named('forgeGameTestClasses')
+    doLast {
+        def reportFile = report.get().asFile
+        if (!reportFile.isFile()) {
+            throw new GradleException("Forge did not produce its GameTest report at ${reportFile}.")
+        }
+        def results = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(reportFile)
+        int testCount = results.getElementsByTagName('testcase').length
+        if (testCount == 0) {
+            throw new GradleException("Forge executed zero world tests. See ${reportFile}.")
+        }
+    }
+}
