@@ -482,6 +482,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/EntityTypeGeometryMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/LivingEntityJumpStrengthMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/LivingEntityClassificationMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/EntityBaneSlownessMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/MobEnchantmentDamageMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/WitherClassificationMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/world/entity/player/PlayerEnchantmentDamageMixin.java'

@@ -21,6 +21,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.damagesource.DamageType;
@@ -42,6 +45,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ForgeHooks;
@@ -101,12 +105,7 @@ class EntityClassificationRuntimeTest {
         var target = new ProbeCow(level);
         var mob = new Zombie(EntityType.ZOMBIE, level);
         mob.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0);
-        var player = new Player(level, BlockPos.ZERO, 0.0F, new GameProfile(UUID.randomUUID(), "PortClassification")) {
-            @Override public boolean isSpectator() { return false; }
-            @Override public boolean isCreative() { return false; }
-            @Override public float getAttackStrengthScale(float tickDelta) { return 1.0F; }
-        };
-        player.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0);
+        var player = player(level);
         var weapon = new ItemStack(Items.IRON_SWORD);
         weapon.enchant(Enchantments.SMITE, 2);
         weapon.enchant(Enchantments.BANE_OF_ARTHROPODS, 1);
@@ -124,15 +123,79 @@ class EntityClassificationRuntimeTest {
             GolemCombat.tryMeleeHit(mob, target);
             new ProbeTrident(level, player, trident).hit(target);
             assertEquals(List.of(11.5F, 11.5F, 11.5F, 13.0F), target.hits);
-            Enchantments.BANE_OF_ARTHROPODS.doPostAttack(player, target, 1);
-            var slowness = target.getEffect(MobEffects.MOVEMENT_SLOWDOWN);
-            assertNotNull(slowness);
-            assertEquals(3, slowness.getAmplifier());
             assertEquals(0.0F, EntityEnchantmentDamage.additionalBonus(weapon, MobType.UNDEAD, EntityType.ZOMBIE));
         });
         target.hits.clear();
         mob.doHurtTarget(target);
         assertEquals(List.of(4.0F), target.hits);
+    }
+
+    @Test
+    void baneDirectHitsUsePinnedDurationAndVictimRandomness() {
+        var level = level();
+        var player = player(level);
+        var mob = new Zombie(EntityType.ZOMBIE, level);
+        var playerVictim = new ProbeCow(level, true);
+        var mobVictim = new ProbeCow(level, true);
+        var golemVictim = new ProbeCow(level, true);
+        player.setItemSlot(EquipmentSlot.MAINHAND, baneSword(1));
+        mob.setItemSlot(EquipmentSlot.MAINHAND, baneSword(5));
+        mobVictim.effectRandom = mock(RandomSource.class);
+        when(mobVictim.effectRandom.nextFloat()).thenReturn(0.5F);
+        golemVictim.effectRandom = mock(RandomSource.class);
+        when(golemVictim.effectRandom.nextFloat()).thenReturn(Math.nextDown(1.0F));
+
+        withTags(Map.of(TTEntityTags.SENSITIVE_TO_BANE_OF_ARTHROPODS, List.of(EntityType.COW)), () -> {
+            player.attack(playerVictim);
+            assertBaneSlowness(playerVictim, 30);
+            assertTrue(mob.doHurtTarget(mobVictim));
+            assertBaneSlowness(mobVictim, 50);
+            assertTrue(GolemCombat.tryMeleeHit(mob, golemVictim));
+            assertBaneSlowness(golemVictim, 70);
+        });
+    }
+
+    @Test
+    void baneAppliesToNearbyTargetsDuringTheNativeSwordSweep() {
+        var level = level();
+        var player = player(level);
+        player.setOnGround(true);
+        player.setItemSlot(EquipmentSlot.MAINHAND, baneSword(1));
+        var primary = new ProbeCow(level, true);
+        var nearby = new ProbeCow(level);
+        when(level.getEntitiesOfClass(eq(LivingEntity.class), any(AABB.class))).thenReturn(List.of(primary, nearby));
+        withTags(Map.of(TTEntityTags.SENSITIVE_TO_BANE_OF_ARTHROPODS, List.of(EntityType.COW)), () -> {
+            player.attack(primary);
+            assertEquals(1, nearby.hits.size());
+            assertBaneSlowness(primary, 30);
+            assertBaneSlowness(nearby, 30);
+        });
+    }
+
+    @Test
+    void baneSkipsIndirectHitsAndOffhandEnchantments() {
+        var level = level();
+        var player = player(level);
+        player.setItemSlot(EquipmentSlot.MAINHAND, baneSword(1));
+        var trident = new ItemStack(Items.TRIDENT);
+        trident.enchant(Enchantments.BANE_OF_ARTHROPODS, 1);
+        var projectile = new ProbeTrident(level, player, trident);
+        var indirectVictim = new ProbeCow(level, true);
+        indirectVictim.nativeType = MobType.ARTHROPOD;
+        var offhandVictim = new ProbeCow(level, true);
+        withTags(Map.of(TTEntityTags.SENSITIVE_TO_BANE_OF_ARTHROPODS, List.of(EntityType.COW)), () -> {
+            projectile.hit(indirectVictim);
+            assertEquals(List.of(10.5F), indirectVictim.hits);
+            assertNull(indirectVictim.getEffect(MobEffects.MOVEMENT_SLOWDOWN));
+            projectile.doEnchantDamageEffects(player, indirectVictim);
+            assertNull(indirectVictim.getEffect(MobEffects.MOVEMENT_SLOWDOWN));
+
+            player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+            player.setItemSlot(EquipmentSlot.OFFHAND, baneSword(1));
+            player.attack(offhandVictim);
+            assertEquals(List.of(4.0F), offhandVictim.hits);
+            assertNull(offhandVictim.getEffect(MobEffects.MOVEMENT_SLOWDOWN));
+        });
     }
 
     @Test
@@ -178,11 +241,35 @@ class EntityClassificationRuntimeTest {
         var sources = mock(DamageSources.class);
         when(level.damageSources()).thenReturn(sources);
         when(level.getScoreboard()).thenReturn(mock(ServerScoreboard.class));
+        when(level.getCurrentDifficultyAt(any())).thenReturn(new DifficultyInstance(Difficulty.NORMAL, 0L, 0L, 0.0F));
         when(sources.mobAttack(any())).thenAnswer(call -> new DamageSource(DAMAGE, (Entity) call.getArgument(0)));
         when(sources.playerAttack(any())).thenAnswer(call -> new DamageSource(DAMAGE, (Entity) call.getArgument(0)));
         when(sources.trident(any(), any())).thenAnswer(call -> new DamageSource(DAMAGE, call.getArgument(0), call.getArgument(1)));
         when(sources.magic()).thenReturn(new DamageSource(DAMAGE));
         return level;
+    }
+
+    private static Player player(ServerLevel level) {
+        var player = new Player(level, BlockPos.ZERO, 0.0F, new GameProfile(UUID.randomUUID(), "PortClassification")) {
+            @Override public boolean isSpectator() { return false; }
+            @Override public boolean isCreative() { return false; }
+            @Override public float getAttackStrengthScale(float tickDelta) { return 1.0F; }
+        };
+        player.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0);
+        return player;
+    }
+
+    private static ItemStack baneSword(int level) {
+        var sword = new ItemStack(Items.IRON_SWORD);
+        sword.enchant(Enchantments.BANE_OF_ARTHROPODS, level);
+        return sword;
+    }
+
+    private static void assertBaneSlowness(LivingEntity target, int duration) {
+        var slowness = target.getEffect(MobEffects.MOVEMENT_SLOWDOWN);
+        assertNotNull(slowness);
+        assertEquals(3, slowness.getAmplifier());
+        assertEquals(duration, slowness.getDuration());
     }
 
     private static void withTags(Map<TagKey<EntityType<?>>, List<EntityType<?>>> values, Runnable test) {
@@ -203,14 +290,30 @@ class EntityClassificationRuntimeTest {
 
     private static final class ProbeCow extends Cow {
         private final List<Float> hits = new ArrayList<>();
+        private final boolean acceptsDamage;
+        private RandomSource effectRandom;
+        private MobType nativeType;
 
         private ProbeCow(Level level) {
+            this(level, false);
+        }
+
+        private ProbeCow(Level level, boolean acceptsDamage) {
             super(EntityType.COW, level);
+            this.acceptsDamage = acceptsDamage;
         }
 
         @Override public boolean hurt(DamageSource source, float amount) {
             hits.add(amount);
-            return false;
+            return acceptsDamage;
+        }
+
+        @Override public RandomSource getRandom() {
+            return effectRandom == null ? super.getRandom() : effectRandom;
+        }
+
+        @Override public MobType getMobType() {
+            return nativeType == null ? super.getMobType() : nativeType;
         }
     }
 

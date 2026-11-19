@@ -33,6 +33,7 @@
     "world.level.PortalEntityScaleMixin",
     "world.entity.LivingEntityJumpStrengthMixin",
     "world.entity.LivingEntityClassificationMixin",
+    "world.entity.EntityBaneSlownessMixin",
     "world.entity.MobEnchantmentDamageMixin",
     "world.entity.WitherClassificationMixin",
     "world.entity.player.PlayerEnchantmentDamageMixin",

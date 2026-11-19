@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
+import com.leclowndu93150.thaumaturge.content.entity.EntityEnchantmentDamage;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFollowingItem;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
@@ -97,6 +98,7 @@ public final class InfusionEnchantmentEvents {
             if (living.hurt(level.damageSources().playerAttack(player), damage * ARCING_DAMAGE_FRACTION)) {
                 EnchantmentHelper.doPostHurtEffects(living, player);
                 EnchantmentHelper.doPostDamageEffects(player, living);
+                EntityEnchantmentDamage.applyBaneOnDirectHit(player, living);
                 float yaw = player.getYRot() * ((float) Math.PI / 180.0F);
                 living.push(-Mth.sin(yaw) * 0.5F, 0.1, Mth.cos(yaw) * 0.5F);
                 Effects.slash(
