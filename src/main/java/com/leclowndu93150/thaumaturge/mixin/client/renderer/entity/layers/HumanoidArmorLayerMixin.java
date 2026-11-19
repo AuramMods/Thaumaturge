@@ -5,9 +5,12 @@ import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimColors;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimSpriteKey;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimSpriteSource;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimSprites;
+import com.leclowndu93150.thaumaturge.client.model.gear.AbstractTTArmorModel;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import com.leclowndu93150.thaumaturge.content.equipment.ArmorMaterialData;
+import com.leclowndu93150.thaumaturge.content.equipment.TTMaterials;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -25,11 +28,13 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraftforge.client.ForgeHooksClient;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -55,10 +60,44 @@ public abstract class HumanoidArmorLayerMixin implements ArmorTrimSpriteSource {
     @Unique
     private Function<ArmorTrimSpriteKey, Optional<TextureAtlasSprite>> thaumaturge$armorTrimSprites;
 
+    @Unique
+    private @Nullable AnimationFrame thaumaturge$animationFrame;
+
     @Inject(method = "<init>", at = @At("TAIL"))
     private void thaumaturge$bindArmorTrimSprites(CallbackInfo ci) {
         TextureAtlas atlas = armorTrimAtlas;
         thaumaturge$armorTrimSprites = Util.memoize(key -> ArmorTrimSprites.find(atlas, key));
+    }
+
+    @WrapMethod(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V")
+    private void thaumaturge$withArmorAnimation(
+            PoseStack poses, MultiBufferSource buffers, int light, LivingEntity entity,
+            float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw,
+            float headPitch, Operation<Void> render) {
+        AnimationFrame previous = thaumaturge$animationFrame;
+        thaumaturge$animationFrame = new AnimationFrame(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        try {
+            render.call(poses, buffers, light, entity, limbSwing, limbSwingAmount, partialTick, ageInTicks,
+                    netHeadYaw, headPitch);
+        } finally {
+            thaumaturge$animationFrame = previous;
+        }
+    }
+
+    @ModifyExpressionValue(method = "renderArmorPiece", at = @At(value = "INVOKE", remap = false,
+            target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;getArmorModelHook(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/EquipmentSlot;Lnet/minecraft/client/model/HumanoidModel;)Lnet/minecraft/client/model/Model;"))
+    private Model thaumaturge$animateArmor(Model model, @Local(argsOnly = true) LivingEntity wearer,
+            @Local(argsOnly = true) EquipmentSlot slot, @Local ArmorItem item) {
+        AnimationFrame frame = thaumaturge$animationFrame;
+        if (frame != null && model instanceof AbstractTTArmorModel armor
+                && item.getMaterial() != TTMaterials.ARMOR_THAUMOSTATIC_HARNESS) {
+            armor.setupAnim(wearer, frame.limbSwing(), frame.limbSwingAmount(), frame.ageInTicks(),
+                    frame.netHeadYaw(), frame.headPitch());
+            if (slot == EquipmentSlot.HEAD && wearer instanceof ArmorStand) {
+                armor.hat.copyFrom(armor.head);
+            }
+        }
+        return model;
     }
 
     @WrapOperation(method = "renderArmorPiece", at = {
@@ -142,4 +181,7 @@ public abstract class HumanoidArmorLayerMixin implements ArmorTrimSpriteSource {
     public TextureAtlasSprite thaumaturge$armorTrimSprite(ArmorTrimSpriteKey key, TextureAtlasSprite fallback) {
         return thaumaturge$armorTrimSprites.apply(key).orElse(fallback);
     }
+
+    public record AnimationFrame(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+                                 float headPitch) {}
 }

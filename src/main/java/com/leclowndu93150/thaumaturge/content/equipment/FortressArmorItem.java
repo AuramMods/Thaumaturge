@@ -5,17 +5,15 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.List;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
-public final class FortressArmorItem extends ArmorItem {
+public final class FortressArmorItem extends ModeledArmorItem {
     public static final int NO_MASK = -1;
 
     public FortressArmorItem(ArmorMaterial material, ArmorItem.Type type, Properties properties) {

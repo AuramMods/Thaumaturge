@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
+import com.leclowndu93150.thaumaturge.content.equipment.ModeledArmorItem;
 import com.leclowndu93150.thaumaturge.content.equipment.TTMaterials;
 import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
@@ -30,7 +31,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 import org.jspecify.annotations.Nullable;
 
-public final class ThaumostaticHarnessItem extends ArmorItem implements IHoverGear, IVisDiscountGear {
+public final class ThaumostaticHarnessItem extends ModeledArmorItem implements IHoverGear, IVisDiscountGear {
     private static final int VIS_DISCOUNT = 2;
 
     public ThaumostaticHarnessItem(Properties properties) {

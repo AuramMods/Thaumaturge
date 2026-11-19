@@ -178,7 +178,8 @@ public final class TTDataComponents {
     public static final Supplier<ItemDataKey<Unit>> GOGGLES_UPGRADE =
             DATA_COMPONENTS.registerComponentType(
                     "goggles_upgrade",
-                    builder -> builder.persistent(Unit.CODEC).networkSynchronized(StreamCodec.unit(Unit.INSTANCE)));
+                    builder -> builder.persistent(Codec.unit(Unit.INSTANCE))
+                            .networkSynchronized(StreamCodec.unit(Unit.INSTANCE)));
 
     public static final Supplier<ItemDataKey<ItemStack>> HARNESS_JAR =
             DATA_COMPONENTS.registerComponentType(
