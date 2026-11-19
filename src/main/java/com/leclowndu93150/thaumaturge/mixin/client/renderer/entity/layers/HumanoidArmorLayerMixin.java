@@ -1,13 +1,16 @@
 package com.leclowndu93150.thaumaturge.mixin.client.renderer.entity.layers;
 
+import com.leclowndu93150.thaumaturge.client.equipment.ArmorLayerColors;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimColors;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimSpriteKey;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimSpriteSource;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimSprites;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
+import com.leclowndu93150.thaumaturge.content.equipment.ArmorMaterialData;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -15,11 +18,18 @@ import java.util.Optional;
 import java.util.function.Function;
 import net.minecraft.Util;
 import net.minecraft.client.model.Model;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
+import net.minecraftforge.client.ForgeHooksClient;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,12 +49,50 @@ public abstract class HumanoidArmorLayerMixin implements ArmorTrimSpriteSource {
             "renderTrim(Lnet/minecraft/world/item/ArmorMaterial;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V";
 
     @Unique
+    private static final String RENDER_MODEL =
+            "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/ArmorItem;Lnet/minecraft/client/model/Model;ZFFFLnet/minecraft/resources/ResourceLocation;)V";
+
+    @Unique
     private Function<ArmorTrimSpriteKey, Optional<TextureAtlasSprite>> thaumaturge$armorTrimSprites;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void thaumaturge$bindArmorTrimSprites(CallbackInfo ci) {
         TextureAtlas atlas = armorTrimAtlas;
         thaumaturge$armorTrimSprites = Util.memoize(key -> ArmorTrimSprites.find(atlas, key));
+    }
+
+    @WrapOperation(method = "renderArmorPiece", at = {
+            @At(value = "INVOKE", target = RENDER_MODEL, ordinal = 0, remap = false),
+            @At(value = "INVOKE", target = RENDER_MODEL, ordinal = 2, remap = false)
+    }, require = 2)
+    private void thaumaturge$renderMaterialLayers(
+            HumanoidArmorLayer<?, ?, ?> renderer, PoseStack poses, MultiBufferSource buffers, int packedLight,
+            ArmorItem armor, Model model, boolean inner, float red, float green, float blue, ResourceLocation texture,
+            Operation<Void> original, @Local(argsOnly = true) LivingEntity wearer,
+            @Local(argsOnly = true) EquipmentSlot slot, @Local ItemStack stack) {
+        if (!(armor.getMaterial() instanceof ArmorMaterialData material) || material.layers().size() <= 1) {
+            original.call(renderer, poses, buffers, packedLight, armor, model, inner, red, green, blue, texture);
+            return;
+        }
+
+        for (ArmorMaterialData.Layer layer : material.layers()) {
+            int tint = ArmorLayerColors.wornTint(stack, material, layer);
+            if (tint == 0) {
+                continue;
+            }
+            var layerTexture = new ResourceLocation(ForgeHooksClient.getArmorTexture(
+                    wearer, stack, layer.texture(inner).toString(), slot, layer.textureType()));
+            original.call(renderer, poses, buffers, packedLight, armor, model, inner,
+                    ARGB32.red(tint) / 255.0F, ARGB32.green(tint) / 255.0F, ARGB32.blue(tint) / 255.0F, layerTexture);
+        }
+    }
+
+    @WrapWithCondition(method = "renderArmorPiece",
+            at = @At(value = "INVOKE", target = RENDER_MODEL, ordinal = 1, remap = false))
+    private boolean thaumaturge$useNativeArmorOverlay(
+            HumanoidArmorLayer<?, ?, ?> renderer, PoseStack poses, MultiBufferSource buffers, int packedLight,
+            ArmorItem armor, Model model, boolean inner, float red, float green, float blue, ResourceLocation texture) {
+        return !(armor.getMaterial() instanceof ArmorMaterialData material) || material.layers().size() <= 1;
     }
 
     @ModifyExpressionValue(

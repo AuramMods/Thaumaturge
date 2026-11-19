@@ -405,6 +405,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/client/taint/overlay/pattern/SurfaceFace.java'
         java.include 'com/leclowndu93150/thaumaturge/client/taint/overlay/pattern/UvRect.java'
         java.include 'com/leclowndu93150/thaumaturge/client/equipment/ArmorTrimColors.java'
+        java.include 'com/leclowndu93150/thaumaturge/client/equipment/ArmorLayerColors.java'
         java.include 'com/leclowndu93150/thaumaturge/client/equipment/ArmorTrimSpriteKey.java'
         java.include 'com/leclowndu93150/thaumaturge/client/equipment/ArmorTrimSpriteSource.java'
         java.include 'com/leclowndu93150/thaumaturge/client/equipment/ArmorTrimSprites.java'

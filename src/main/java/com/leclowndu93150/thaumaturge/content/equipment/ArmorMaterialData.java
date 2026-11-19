@@ -12,6 +12,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.jspecify.annotations.Nullable;
 
 /** The source material definition, including layers, presented through native Forge armor APIs. */
 public record ArmorMaterialData(ResourceLocation id, Map<ArmorItem.Type, Integer> defense, int enchantmentValue,
@@ -41,16 +42,19 @@ public record ArmorMaterialData(ResourceLocation id, Map<ArmorItem.Type, Integer
 
     public static final class Layer {
         private final boolean dyeable;
+        private final @Nullable String textureType;
         private final ResourceLocation innerTexture;
         private final ResourceLocation outerTexture;
 
         public Layer(ResourceLocation assetName, String suffix, boolean dyeable) {
             this.dyeable = dyeable;
+            this.textureType = suffix.isEmpty() ? null : suffix.substring(1);
             innerTexture = texture(assetName, suffix, 2);
             outerTexture = texture(assetName, suffix, 1);
         }
         public Layer(ResourceLocation assetName) { this(assetName, "", false); }
         public boolean dyeable() { return dyeable; }
+        public @Nullable String textureType() { return textureType; }
         public ResourceLocation texture(boolean leggings) { return leggings ? innerTexture : outerTexture; }
         private static ResourceLocation texture(ResourceLocation assetName, String suffix, int layer) {
             return new ResourceLocation(assetName.getNamespace(), "textures/models/armor/" + assetName.getPath()

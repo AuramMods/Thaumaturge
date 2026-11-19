@@ -1,15 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.content.equipment.ArmorMaterialData;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.EntityInhabitedZombie;
-import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public final class CultistPlateItem extends ArmorItem {
     private static final ResourceLocation ZOMBIE_PLATE_OUTER =
@@ -22,10 +21,9 @@ public final class CultistPlateItem extends ArmorItem {
     }
 
     @Override
-    public ResourceLocation getArmorTexture(
-            ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterialData.Layer layer, boolean innerModel) {
+    public @Nullable String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, @Nullable String type) {
         if (entity instanceof EntityInhabitedZombie) {
-            return innerModel ? ZOMBIE_PLATE_INNER : ZOMBIE_PLATE_OUTER;
+            return (slot == EquipmentSlot.LEGS ? ZOMBIE_PLATE_INNER : ZOMBIE_PLATE_OUTER).toString();
         }
         return null;
     }
