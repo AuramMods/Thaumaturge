@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.research.link;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -28,13 +29,8 @@ final class ResearchLinkDataTest {
                 Set.of(),
                 Map.of(research, new ResearchLinkData.Progress(2, false)));
 
-        ResearchLinkData.Link decoded = ResearchLinkData.Link.CODEC
-                .parse(
-                        NbtOps.INSTANCE,
-                        ResearchLinkData.Link.CODEC
-                                .encodeStart(NbtOps.INSTANCE, link)
-                                .getOrThrow())
-                .getOrThrow();
+        var encoded = Codecs.getOrThrow(ResearchLinkData.Link.CODEC.encodeStart(NbtOps.INSTANCE, link));
+        ResearchLinkData.Link decoded = Codecs.getOrThrow(ResearchLinkData.Link.CODEC.parse(NbtOps.INSTANCE, encoded));
 
         assertEquals(link.progress(), decoded.progress());
     }

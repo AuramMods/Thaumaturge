@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonParser;
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.BlockPos;
 import org.junit.jupiter.api.Test;
@@ -18,11 +19,10 @@ class HarvestBehaviorCompatibilityTest {
                 """.formatted(position));
 
         var behavior =
-                HarvestBehavior.CODEC.codec().parse(JsonOps.INSTANCE, legacy).getOrThrow();
-        var encoded = HarvestBehavior.CODEC
+                Codecs.getOrThrow(HarvestBehavior.CODEC.codec().parse(JsonOps.INSTANCE, legacy));
+        var encoded = Codecs.getOrThrow(HarvestBehavior.CODEC
                 .codec()
-                .encodeStart(JsonOps.INSTANCE, behavior)
-                .getOrThrow()
+                .encodeStart(JsonOps.INSTANCE, behavior))
                 .getAsJsonObject();
         var site = encoded.getAsJsonArray("replant_sites").get(0).getAsJsonObject();
 
@@ -41,11 +41,10 @@ class HarvestBehaviorCompatibilityTest {
                 """.formatted(currentPosition, legacyPosition));
 
         var behavior =
-                HarvestBehavior.CODEC.codec().parse(JsonOps.INSTANCE, saved).getOrThrow();
-        var encoded = HarvestBehavior.CODEC
+                Codecs.getOrThrow(HarvestBehavior.CODEC.codec().parse(JsonOps.INSTANCE, saved));
+        var encoded = Codecs.getOrThrow(HarvestBehavior.CODEC
                 .codec()
-                .encodeStart(JsonOps.INSTANCE, behavior)
-                .getOrThrow()
+                .encodeStart(JsonOps.INSTANCE, behavior))
                 .getAsJsonObject();
 
         assertEquals(
@@ -64,11 +63,10 @@ class HarvestBehaviorCompatibilityTest {
                 """);
 
         var behavior =
-                HarvestBehavior.CODEC.codec().parse(JsonOps.INSTANCE, legacy).getOrThrow();
-        var encoded = HarvestBehavior.CODEC
+                Codecs.getOrThrow(HarvestBehavior.CODEC.codec().parse(JsonOps.INSTANCE, legacy));
+        var encoded = Codecs.getOrThrow(HarvestBehavior.CODEC
                 .codec()
-                .encodeStart(JsonOps.INSTANCE, behavior)
-                .getOrThrow()
+                .encodeStart(JsonOps.INSTANCE, behavior))
                 .getAsJsonObject();
 
         assertEquals(

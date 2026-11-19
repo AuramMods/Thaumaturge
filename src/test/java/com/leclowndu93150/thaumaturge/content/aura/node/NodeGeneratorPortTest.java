@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -172,7 +173,7 @@ class NodeGeneratorPortTest {
         assertEquals(3, result.amountOf(positive));
         assertEquals(0, result.amountOf(zero));
         assertEquals(1, result.entries().size());
-        assertEquals(positive, result.entries().getFirst().aspect());
+        assertEquals(positive, Java17.first(result.entries()).aspect());
     }
 
     @Test

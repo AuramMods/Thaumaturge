@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ class WandRuneLayoutTest {
         }
 
         List<WandRuneLayout.Rune> rotated = WandRuneLayout.create(true, false, false, 10.0F);
-        assertEquals(12.0F, rotated.getFirst().yawDegrees(), EPSILON);
+        assertEquals(12.0F, Java17.first(rotated).yawDegrees(), EPSILON);
     }
 
     @Test

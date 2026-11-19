@@ -17,6 +17,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -90,7 +91,7 @@ class GolemDispatchPortTest {
                 .orElseThrow();
 
         assertSame(first, duplicate);
-        assertSame(first, GolemDispatch.supplyQueue(level).getFirst());
+        assertSame(first, Java17.first(GolemDispatch.supplyQueue(level)));
         assertEquals(2, first.wanted().getCount());
         assertEquals(4, GolemDispatch.supplyQueue(level).size());
         assertFalse(first.equals(separateBatch));

@@ -16,6 +16,7 @@ import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxOutbreaks;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpawnParticlePayload;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import io.netty.buffer.Unpooled;
@@ -119,20 +120,19 @@ class AuraCompatibilityTest {
         legacy.addProperty("base", 100);
         legacy.addProperty("vis", 20.5F);
         legacy.addProperty("flux", 3.5F);
-        AuraData loaded = AuraData.CODEC.codec().parse(JsonOps.INSTANCE, legacy).getOrThrow();
+        AuraData loaded = Codecs.getOrThrow(AuraData.CODEC.codec().parse(JsonOps.INSTANCE, legacy));
         assertEquals(100, loaded.getBase());
         assertEquals(20.5F, loaded.getVis());
         assertEquals(3.5F, loaded.getFlux());
         assertTrue(loaded.isInitialized());
-        JsonObject saved = AuraData.CODEC
+        JsonObject saved = Codecs.getOrThrow(AuraData.CODEC
                 .codec()
-                .encodeStart(JsonOps.INSTANCE, loaded)
-                .getOrThrow()
+                .encodeStart(JsonOps.INSTANCE, loaded))
                 .getAsJsonObject();
         assertEquals(Set.of("base", "vis", "flux", "initialized"), saved.keySet());
         legacy.addProperty("base", 0);
         legacy.addProperty("initialized", true);
-        loaded = AuraData.CODEC.codec().parse(JsonOps.INSTANCE, legacy).getOrThrow();
+        loaded = Codecs.getOrThrow(AuraData.CODEC.codec().parse(JsonOps.INSTANCE, legacy));
         assertTrue(loaded.isInitialized());
         assertEquals(0, loaded.getBase());
     }
@@ -492,15 +492,15 @@ class AuraCompatibilityTest {
         JsonObject oldSave = new JsonObject();
         oldSave.addProperty("base", 100);
         oldSave.addProperty("flux", 100);
-        AuraData data = AuraData.CODEC.codec().parse(JsonOps.INSTANCE, oldSave).getOrThrow();
+        AuraData data = Codecs.getOrThrow(AuraData.CODEC.codec().parse(JsonOps.INSTANCE, oldSave));
         assertFalse(data.hasRiftPressure());
         for (int second = 0; second < 89; second++) {
             assertTrue(data.updateRiftPressure(true, true));
         }
         assertFalse(data.hasRiftPressure());
-        var saved = AuraData.CODEC.codec().encodeStart(JsonOps.INSTANCE, data).getOrThrow();
+        var saved = Codecs.getOrThrow(AuraData.CODEC.codec().encodeStart(JsonOps.INSTANCE, data));
         AuraData reloaded =
-                AuraData.CODEC.codec().parse(JsonOps.INSTANCE, saved).getOrThrow();
+                Codecs.getOrThrow(AuraData.CODEC.codec().parse(JsonOps.INSTANCE, saved));
         assertTrue(reloaded.updateRiftPressure(true, true));
         assertTrue(reloaded.hasRiftPressure());
         assertFalse(reloaded.updateRiftPressure(true, true));

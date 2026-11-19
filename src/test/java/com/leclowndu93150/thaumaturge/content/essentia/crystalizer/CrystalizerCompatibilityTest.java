@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCrystalAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -224,7 +225,7 @@ class CrystalizerCompatibilityTest {
             assertEquals(0, machine.progress());
             assertEquals(1, drops.constructed().size());
             verify(level).playSound(null, BlockPos.ZERO, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.2F, 1.75F);
-            var drop = drops.constructed().getFirst();
+            var drop = Java17.first(drops.constructed());
             verify(level).addFreshEntity(drop);
             verify(drop).setDeltaMovement(-0.04, 0.0, 0.0);
             Effects.Vent puff = mock(Effects.Vent.class, RETURNS_SELF);

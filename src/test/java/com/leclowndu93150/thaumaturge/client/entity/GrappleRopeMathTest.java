@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import java.util.List;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
@@ -16,12 +17,12 @@ class GrappleRopeMathTest {
         Vec3 end = new Vec3(3.0, 4.0, -2.0);
         List<Vec3> points = GrappleRopeMath.points(end, 1.0F, 20.0F);
 
-        assertEquals(0.0, points.getFirst().x, TOLERANCE);
-        assertEquals(0.0, points.getFirst().y, TOLERANCE);
-        assertEquals(0.0, points.getFirst().z, TOLERANCE);
-        assertEquals(end.x, points.getLast().x, TOLERANCE);
-        assertEquals(end.y, points.getLast().y, TOLERANCE);
-        assertEquals(end.z, points.getLast().z, TOLERANCE);
+        assertEquals(0.0, Java17.first(points).x, TOLERANCE);
+        assertEquals(0.0, Java17.first(points).y, TOLERANCE);
+        assertEquals(0.0, Java17.first(points).z, TOLERANCE);
+        assertEquals(end.x, Java17.last(points).x, TOLERANCE);
+        assertEquals(end.y, Java17.last(points).y, TOLERANCE);
+        assertEquals(end.z, Java17.last(points).z, TOLERANCE);
     }
 
     @Test
@@ -45,8 +46,8 @@ class GrappleRopeMathTest {
         int middle = first.size() / 2;
 
         assertNotEquals(first.get(middle), later.get(middle));
-        assertEquals(end.z, first.getLast().z, TOLERANCE);
-        assertEquals(0.0, first.getLast().x, TOLERANCE);
-        assertEquals(0.0, first.getLast().y, TOLERANCE);
+        assertEquals(end.z, Java17.last(first).z, TOLERANCE);
+        assertEquals(0.0, Java17.last(first).x, TOLERANCE);
+        assertEquals(0.0, Java17.last(first).y, TOLERANCE);
     }
 }

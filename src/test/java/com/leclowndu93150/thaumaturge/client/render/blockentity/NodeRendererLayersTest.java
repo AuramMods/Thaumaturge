@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.client.render.NodeTexture;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,9 +76,9 @@ class NodeRendererLayersTest {
                 state.visible = false;
                 List<Layer> layers = layers(state);
                 assertEquals(1, layers.size());
-                assertEquals(7, layers.getFirst().strip());
-                assertSame(TTRenderTypes.fxAdditive(TEXTURE), layers.getFirst().type());
-                assertEquals(shaders ? 0.4F : 0.0066F, layers.getFirst().alpha());
+                assertEquals(7, Java17.first(layers).strip());
+                assertSame(TTRenderTypes.fxAdditive(TEXTURE), Java17.first(layers).type());
+                assertEquals(shaders ? 0.4F : 0.0066F, Java17.first(layers).alpha());
             }
         }
     }
@@ -90,7 +91,7 @@ class NodeRendererLayersTest {
         List<Layer> layers = layers(state);
 
         assertEquals(1, layers.size());
-        assertSame(TTRenderTypes.fxAdditiveNoDepth(TEXTURE), layers.getFirst().type());
+        assertSame(TTRenderTypes.fxAdditiveNoDepth(TEXTURE), Java17.first(layers).type());
     }
 
     @Test

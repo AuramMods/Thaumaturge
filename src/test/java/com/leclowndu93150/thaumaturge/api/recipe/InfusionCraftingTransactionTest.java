@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.api.recipe;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import java.util.List;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -28,11 +29,11 @@ class InfusionCraftingTransactionTest {
         ItemStack returnedOutput = inspection.output();
         List<ItemStack> returnedRemainders = inspection.componentRemainders();
         assertEquals(2, returnedOutput.getCount());
-        assertEquals(1, returnedRemainders.getFirst().getCount());
+        assertEquals(1, Java17.first(returnedRemainders).getCount());
 
         returnedOutput.setCount(1);
-        returnedRemainders.getFirst().setCount(2);
+        Java17.first(returnedRemainders).setCount(2);
         assertEquals(2, inspection.output().getCount());
-        assertEquals(1, inspection.componentRemainders().getFirst().getCount());
+        assertEquals(1, Java17.first(inspection.componentRemainders()).getCount());
     }
 }

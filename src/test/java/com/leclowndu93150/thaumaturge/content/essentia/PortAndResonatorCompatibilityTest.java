@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeBuffer;
 import com.leclowndu93150.thaumaturge.content.infusion.EssentiaSources;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -102,7 +103,7 @@ class PortAndResonatorCompatibilityTest {
     void inputSimulatesWithdrawalBeforeRemoteInsertionOnFiveTickCadence() {
         try (var intercepted = interceptSources()) {
             var port = port(true);
-            var sources = intercepted.constructed().getFirst();
+            var sources = Java17.first(intercepted.constructed());
             verify(sources).facing(Direction.EAST);
             verify(sources).drainEffectTarget(Vec3.atCenterOf(BlockPos.ZERO));
             offerInput();
@@ -123,7 +124,7 @@ class PortAndResonatorCompatibilityTest {
         try (var intercepted = interceptSources();
                 var aura = mockStatic(AuraHelper.class)) {
             var port = port(true);
-            var sources = intercepted.constructed().getFirst();
+            var sources = Java17.first(intercepted.constructed());
             offerInput();
             tick(port, 5);
             var order = inOrder(tube, sources);
@@ -146,7 +147,7 @@ class PortAndResonatorCompatibilityTest {
         try (var intercepted = interceptSources();
                 var aura = mockStatic(AuraHelper.class)) {
             var port = port(true);
-            var sources = intercepted.constructed().getFirst();
+            var sources = Java17.first(intercepted.constructed());
             offerInput();
             when(tube.extract(aspect, 1, Direction.EAST, true)).thenReturn(0);
             tick(port, 5);
@@ -164,7 +165,7 @@ class PortAndResonatorCompatibilityTest {
         try (var intercepted = interceptSources();
                 var aura = mockStatic(AuraHelper.class)) {
             var port = port(false);
-            var sources = intercepted.constructed().getFirst();
+            var sources = Java17.first(intercepted.constructed());
             when(tube.receivesOn(Direction.EAST)).thenReturn(true);
             when(tube.pull(Direction.EAST)).thenReturn(EssentiaPull.any(64));
             tick(port, 5);
@@ -191,7 +192,7 @@ class PortAndResonatorCompatibilityTest {
         try (var intercepted = interceptSources();
                 var aura = mockStatic(AuraHelper.class)) {
             var port = port(false);
-            var sources = intercepted.constructed().getFirst();
+            var sources = Java17.first(intercepted.constructed());
             requestOutput();
             when(sources.drain(level, aspect, 10)).thenReturn(true);
             tick(port, 5);
@@ -213,7 +214,7 @@ class PortAndResonatorCompatibilityTest {
     void connectionStockPullThresholdAndSimulationGateTransfers() {
         try (var intercepted = interceptSources()) {
             var input = port(true);
-            var sources = intercepted.constructed().getFirst();
+            var sources = Java17.first(intercepted.constructed());
             offerInput();
             when(tube.connectsOn(Direction.EAST)).thenReturn(false);
             tick(input, 5);
@@ -229,7 +230,7 @@ class PortAndResonatorCompatibilityTest {
             verify(tube, never()).extract(any(), anyInt(), any(), anyBoolean());
             verify(sources, never()).insert(any(), any(), anyInt());
             var output = port(false);
-            var outputSources = intercepted.constructed().getLast();
+            var outputSources = Java17.last(intercepted.constructed());
             requestOutput();
             when(tube.insert(aspect, 1, Direction.EAST, true)).thenReturn(0);
             tick(output, 5);
@@ -241,7 +242,7 @@ class PortAndResonatorCompatibilityTest {
     void portFaceCapacitySimulationAndServerContractsMatchFinal() {
         try (var intercepted = interceptSources()) {
             var port = port(true);
-            var sources = intercepted.constructed().getFirst();
+            var sources = Java17.first(intercepted.constructed());
             when(sources.insert(level, aspect, 10)).thenReturn(true);
             assertEquals(128, port.pull(Direction.WEST).strength());
             assertEquals(EssentiaPull.NONE, port.pull(Direction.EAST));
@@ -283,7 +284,7 @@ class PortAndResonatorCompatibilityTest {
     void unloadedTubeDoesNotTriggerCapabilityOrRemoteSourceQueries() {
         try (var intercepted = interceptSources()) {
             var port = port(true);
-            var sources = intercepted.constructed().getFirst();
+            var sources = Java17.first(intercepted.constructed());
             clearInvocations(tube, sources);
             when(level.hasChunk(-1, 0)).thenReturn(false);
             tick(port, 5);
@@ -316,8 +317,8 @@ class PortAndResonatorCompatibilityTest {
         verify(level).getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO, Direction.UP);
         var messages = ArgumentCaptor.forClass(Component.class);
         verify(player, times(2)).sendSystemMessage(messages.capture());
-        var contents = (TranslatableContents) messages.getAllValues().getFirst().getContents();
-        var suction = (TranslatableContents) messages.getAllValues().getLast().getContents();
+        var contents = (TranslatableContents) Java17.first(messages.getAllValues()).getContents();
+        var suction = (TranslatableContents) Java17.last(messages.getAllValues()).getContents();
         assertEquals("message.thaumaturge.resonator.contents", contents.getKey());
         assertEquals("7", contents.getArgs()[0]);
         assertEquals("message.thaumaturge.resonator.suction", suction.getKey());

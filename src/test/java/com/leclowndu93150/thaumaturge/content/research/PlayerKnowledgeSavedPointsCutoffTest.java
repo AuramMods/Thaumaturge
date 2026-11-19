@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
 import com.leclowndu93150.thaumaturge.api.capability.ResearchFlag;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.RegistryAccess;
@@ -142,14 +143,13 @@ final class PlayerKnowledgeSavedPointsCutoffTest {
     }
 
     private static PlayerKnowledge decode(JsonObject saved) {
-        return PlayerKnowledge.CODEC.codec().parse(JsonOps.INSTANCE, saved).getOrThrow();
+        return Codecs.getOrThrow(PlayerKnowledge.CODEC.codec().parse(JsonOps.INSTANCE, saved));
     }
 
     private static JsonObject encode(PlayerKnowledge knowledge) {
-        return PlayerKnowledge.CODEC
+        return Codecs.getOrThrow(PlayerKnowledge.CODEC
                 .codec()
-                .encodeStart(JsonOps.INSTANCE, knowledge)
-                .getOrThrow()
+                .encodeStart(JsonOps.INSTANCE, knowledge))
                 .getAsJsonObject();
     }
 

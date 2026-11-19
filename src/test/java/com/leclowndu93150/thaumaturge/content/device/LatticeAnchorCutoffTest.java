@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -305,7 +306,7 @@ class LatticeAnchorCutoffTest {
             dirty.useItemOn(
                     filter, dirty.defaultBlockState(), level, BlockPos.ZERO, player, InteractionHand.MAIN_HAND, hit);
             assertEquals(1, drops.constructed().size());
-            verify(level).addFreshEntity(drops.constructed().getFirst());
+            verify(level).addFreshEntity(Java17.first(drops.constructed()));
             assertEquals(1, filter.getCount());
         }
     }

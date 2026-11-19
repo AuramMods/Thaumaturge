@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -236,7 +237,7 @@ class TubeConduitCutoffTest {
         }
         ArgumentCaptor<VentParticleOptions> particles = ArgumentCaptor.forClass(VentParticleOptions.class);
         verify(level, times(50)).addParticle(particles.capture(), eq(0.5), eq(0.5), eq(0.5), eq(0.0), eq(0.0), eq(0.0));
-        VentParticleOptions first = particles.getAllValues().getFirst();
+        VentParticleOptions first = Java17.first(particles.getAllValues());
         assertEquals(0x123456, first.color());
         assertEquals(1.5F, first.scale());
         assertEquals(1.0, first.vx() * first.vx() + first.vy() * first.vy() + first.vz() * first.vz(), 1.0E-9);

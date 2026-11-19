@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.api.wands.IWandVisStorage;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
@@ -81,14 +82,14 @@ class WandVisCutoffTest {
         int after = simulate ? 100 : exact ? 80 : 90;
         TTAspects.PRIMALS.forEach(aspect -> assertEquals(after, storage.charge.amount(aspect)));
         if (simulate) assertSame(before, storage.charge);
-        else assertSame(storage.charge, storage.writes.getFirst());
+        else assertSame(storage.charge, Java17.first(storage.writes));
         assertSame(WandVis.EMPTY, ItemData.get(stack, TTDataComponents.WAND_VIS.get()));
     }
 
     @ParameterizedTest
     @CsvSource({"false,false", "false,true", "true,false", "true,true"})
     void lateUnaffordableCostNeverPublishesEarlierDeductions(boolean exact, boolean simulate) {
-        ResourceKey<IAspect> last = TTAspects.PRIMALS.getLast();
+        ResourceKey<IAspect> last = Java17.last(TTAspects.PRIMALS);
         WandVis before = funded().with(last, 9);
         Storage storage = new Storage(before);
         ItemStack stack = customWand(storage);

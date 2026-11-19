@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.gson.JsonElement;
 import com.leclowndu93150.thaumaturge.content.world.objects.SurfaceBiomeSearch;
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
 import java.util.Optional;
@@ -62,9 +63,9 @@ class TaintBiomeWorldgenTest {
                 120);
 
         JsonElement encoded =
-                TaintBiomeConfig.CODEC.encodeStart(JsonOps.INSTANCE, config).getOrThrow();
+                Codecs.getOrThrow(TaintBiomeConfig.CODEC.encodeStart(JsonOps.INSTANCE, config));
         TaintBiomeConfig decoded =
-                TaintBiomeConfig.CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow();
+                Codecs.getOrThrow(TaintBiomeConfig.CODEC.parse(JsonOps.INSTANCE, encoded));
 
         assertEquals(config.crust(), decoded.crust());
         assertEquals(7, decoded.maxCrustBlobs());

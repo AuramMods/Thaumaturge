@@ -25,6 +25,7 @@ import com.leclowndu93150.thaumaturge.content.research.scan.ScanBindings;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import java.io.InputStream;
@@ -80,24 +81,21 @@ final class ResearchProgressionDataParityTest {
         List<IResearchStage> auromancy = new ArrayList<>();
         for (int index = 0; index < auromancyStages.size(); index++) {
             auromancy.add(
-                    ResearchStage.CODEC.parse(ops, auromancyStages.get(index)).getOrThrow());
+                    Codecs.getOrThrow(ResearchStage.CODEC.parse(ops, auromancyStages.get(index))));
         }
-        List<ResearchEntryMeta> auromancyMeta = ResearchEntryMeta.CODEC
+        List<ResearchEntryMeta> auromancyMeta = Codecs.getOrThrow(ResearchEntryMeta.CODEC
                 .listOf()
-                .parse(JsonOps.INSTANCE, auromancyJson.getAsJsonArray("meta"))
-                .getOrThrow();
+                .parse(JsonOps.INSTANCE, auromancyJson.getAsJsonArray("meta")));
         assertTrue(auromancy.get(1).craft().stream()
                 .anyMatch(requirement -> requirement.items().contains(TTItems.WAND.getDelegate())));
 
         JsonObject oreJson = loadResearch("ore");
-        List<ResearchEntryMeta> oreMeta = ResearchEntryMeta.CODEC
+        List<ResearchEntryMeta> oreMeta = Codecs.getOrThrow(ResearchEntryMeta.CODEC
                 .listOf()
-                .parse(JsonOps.INSTANCE, oreJson.getAsJsonArray("meta"))
-                .getOrThrow();
+                .parse(JsonOps.INSTANCE, oreJson.getAsJsonArray("meta")));
         assertFalse(oreMeta.contains(ResearchEntryMeta.AUTOUNLOCK));
-        IResearchStage oreStage = ResearchStage.CODEC
-                .parse(ops, oreJson.getAsJsonArray("stages").get(0))
-                .getOrThrow();
+        IResearchStage oreStage = Codecs.getOrThrow(ResearchStage.CODEC
+                .parse(ops, oreJson.getAsJsonArray("stages").get(0)));
 
         IResearchEntry auromancyEntry = mock(IResearchEntry.class);
         when(auromancyEntry.stages()).thenReturn(List.copyOf(auromancy));

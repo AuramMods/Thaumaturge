@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -303,7 +304,7 @@ class AdvancedFurnaceCutoffTest {
             block.onRemove(furnace.getBlockState(), level, BlockPos.ZERO, Blocks.AIR.defaultBlockState(), false);
             furnace.dropContents(BlockPos.ZERO);
             assertEquals(1, drops.constructed().size());
-            ItemEntity drop = drops.constructed().getFirst();
+            ItemEntity drop = Java17.first(drops.constructed());
             assertNotSame(original, drop.getItem());
             assertTrue(ItemStack.isSameItemSameTags(original, drop.getItem()));
             verify(level).addFreshEntity(drop);

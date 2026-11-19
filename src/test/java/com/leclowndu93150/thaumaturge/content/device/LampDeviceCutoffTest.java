@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
+import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntake;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
@@ -177,7 +178,7 @@ class LampDeviceCutoffTest {
     void fertilityAbsorbsAtMostOnePerTickAndStopsAtTenEvenWhilePowered() {
         try (var intakes = mockConstruction(EssentiaIntake.class)) {
             var lamp = fertility(8);
-            var intake = intakes.constructed().getFirst();
+            var intake = Java17.first(intakes.constructed());
             when(intake.pullOne()).thenReturn(true);
             when(level.hasNeighborSignal(BlockPos.ZERO)).thenReturn(true);
             tick(lamp, 3);
@@ -299,7 +300,7 @@ class LampDeviceCutoffTest {
     void growthPullsOnePointPerTickToChargeThenReserveAndStopsUntilNeeded() {
         try (var intakes = mockConstruction(EssentiaIntake.class)) {
             var lamp = growth(-1, false);
-            var intake = intakes.constructed().getFirst();
+            var intake = Java17.first(intakes.constructed());
             when(intake.pullOne()).thenReturn(true);
             when(level.hasNeighborSignal(BlockPos.ZERO)).thenReturn(true);
             tick(lamp, 1);
