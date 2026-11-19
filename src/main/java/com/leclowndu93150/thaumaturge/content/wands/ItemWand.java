@@ -277,7 +277,7 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
     }
 
     @Override
-    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+    public int getUseDuration(ItemStack stack) {
         return 72000;
     }
 
@@ -287,7 +287,7 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
         if (level instanceof ServerLevel serverLevel
                 && entity instanceof Player player
                 && SpellCasting.channels(focusStack)) {
-            SpellCasting.release(serverLevel, player, stack, focusStack, getUseDuration(stack, entity) - remainingTime);
+            SpellCasting.release(serverLevel, player, stack, focusStack, getUseDuration(stack) - remainingTime);
             return;
         }
         super.releaseUsing(stack, level, entity, remainingTime);
@@ -310,7 +310,7 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
         }
         ItemStack focusStack = socketedFocus(stack);
         if (SpellCasting.channels(focusStack)) {
-            SpellCasting.tick(serverLevel, player, stack, focusStack, getUseDuration(stack, entity) - ticksRemaining);
+            SpellCasting.tick(serverLevel, player, stack, focusStack, getUseDuration(stack) - ticksRemaining);
             return;
         }
         if (ticksRemaining % WandEconomy.CRUDE_REFINE_INTERVAL_TICKS != 0) {

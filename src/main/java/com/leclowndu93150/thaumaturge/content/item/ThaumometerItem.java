@@ -44,6 +44,11 @@ public final class ThaumometerItem extends Item {
 
     // Runs before the block's own use handler so scanning a container doesn't open its screen instead.
     @Override
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        return useOn(context);
+    }
+
+    @Override
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
         if (player == null) {
@@ -70,7 +75,7 @@ public final class ThaumometerItem extends Item {
     }
 
     @Override
-    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+    public int getUseDuration(ItemStack stack) {
         return USE_DURATION_TICKS;
     }
 
