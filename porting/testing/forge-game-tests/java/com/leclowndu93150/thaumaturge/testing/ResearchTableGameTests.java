@@ -22,7 +22,6 @@ import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -202,11 +201,4 @@ public final class ResearchTableGameTests {
         return new BlockHitResult(Vec3.atCenterOf(pos).add(0, 0.5, 0), Direction.UP, pos, false);
     }
 
-    private record GameTestPayloadContext(FakePlayer player) implements PayloadContext {
-        @Override
-        public CompletableFuture<Void> enqueueWork(Runnable work) {
-            work.run();
-            return CompletableFuture.completedFuture(null);
-        }
-    }
 }

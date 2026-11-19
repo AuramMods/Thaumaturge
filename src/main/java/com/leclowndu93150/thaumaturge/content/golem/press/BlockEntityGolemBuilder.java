@@ -48,6 +48,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
     private static final String KEY_GOLEM = "golem";
     private static final String KEY_COST = "cost";
     private static final String KEY_MAX_COST = "mcost";
+    private static final String KEY_BUFFERED = "buffered";
     private static final int OUTPUT_SLOTS = 1;
     private static final int CYCLE_INTERVAL_TICKS = 5;
     private static final int WORKING_SUCTION = 128;
@@ -249,6 +250,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
         cost = 0;
         totalCost = 0;
         pending = null;
+        buffered = false;
     }
 
     private static ItemStack placerFor(GolemProperties design) {
@@ -338,6 +340,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
         super.saveAdditional(out, registries);
         out.putInt(KEY_MAX_COST, totalCost);
         out.putInt(KEY_COST, cost);
+        out.putBoolean(KEY_BUFFERED, buffered);
         if (pending != null) TTNbt.store(out, KEY_GOLEM, GolemProperties.CODEC, registries, pending);
         out.put("inventory", outputHandler.serializeNBT());
     }
@@ -348,6 +351,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
         totalCost = in.getInt(KEY_MAX_COST);
         cost = in.getInt(KEY_COST);
         pending = TTNbt.read(in, KEY_GOLEM, GolemProperties.CODEC, registries).orElse(null);
+        buffered = isWorking() && in.getBoolean(KEY_BUFFERED);
         outputHandler.deserializeNBT(in.getCompound("inventory"));
     }
 
@@ -364,8 +368,9 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
     @Override
     public int insert(Holder<IAspect> aspect, int amount, Direction face, boolean simulate) {
         boolean acceptable = isWorking() && !buffered && amount > 0 && aspect.is(TTAspects.MACHINA);
-        if (!simulate) {
-            buffered = buffered || acceptable;
+        if (!simulate && acceptable) {
+            buffered = true;
+            setChanged();
         }
         return acceptable ? UNIT : NOTHING;
     }
