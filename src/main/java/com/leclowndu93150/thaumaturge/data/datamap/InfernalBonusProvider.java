@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -24,86 +23,85 @@ public final class InfernalBonusProvider extends DataMapProvider {
 
     @Override
     protected void gather(HolderLookup.Provider provider) {
-        HolderLookup<Item> items = provider.lookupOrThrow(Registries.ITEM);
         Builder<List<InfernalBonus>, Item> b = builder(InfernalBonus.DATA_MAP);
 
         add(
                 b,
                 Tags.Items.ORES_IRON,
-                InfernalBonus.builder(items, Tags.Items.NUGGETS_IRON)
+                InfernalBonus.builder(Tags.Items.NUGGETS_IRON)
                         .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 Tags.Items.ORES_COPPER,
-                InfernalBonus.builder(items, TTItemTags.NUGGETS_COPPER)
+                InfernalBonus.builder(TTItemTags.NUGGETS_COPPER)
                         .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 Tags.Items.ORES_GOLD,
-                InfernalBonus.builder(items, Tags.Items.NUGGETS_GOLD)
+                InfernalBonus.builder(Tags.Items.NUGGETS_GOLD)
                         .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 Tags.Items.RAW_MATERIALS_IRON,
-                InfernalBonus.builder(items, Tags.Items.NUGGETS_IRON)
+                InfernalBonus.builder(Tags.Items.NUGGETS_IRON)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 Tags.Items.RAW_MATERIALS_COPPER,
-                InfernalBonus.builder(items, TTItemTags.NUGGETS_COPPER)
+                InfernalBonus.builder(TTItemTags.NUGGETS_COPPER)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 Tags.Items.RAW_MATERIALS_GOLD,
-                InfernalBonus.builder(items, Tags.Items.NUGGETS_GOLD)
+                InfernalBonus.builder(Tags.Items.NUGGETS_GOLD)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 Tags.Items.ORES_QUARTZ,
-                InfernalBonus.builder(items, TTItemTags.NUGGETS_QUARTZ)
+                InfernalBonus.builder(TTItemTags.NUGGETS_QUARTZ)
                         .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 TTItemTags.ORES_CINNABAR,
-                InfernalBonus.builder(items, TTItemTags.NUGGETS_QUICKSILVER)
+                InfernalBonus.builder(TTItemTags.NUGGETS_QUICKSILVER)
                         .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 TTItemTags.RAW_MATERIALS_CINNABAR,
-                InfernalBonus.builder(items, TTItemTags.NUGGETS_QUICKSILVER)
+                InfernalBonus.builder(TTItemTags.NUGGETS_QUICKSILVER)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 TTItemTags.ORES_LEAD,
-                InfernalBonus.builder(items, TTItemTags.NUGGETS_LEAD)
+                InfernalBonus.builder(TTItemTags.NUGGETS_LEAD)
                         .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 TTItemTags.ORES_SILVER,
-                InfernalBonus.builder(items, TTItemTags.NUGGETS_SILVER)
+                InfernalBonus.builder(TTItemTags.NUGGETS_SILVER)
                         .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 TTItemTags.ORES_TIN,
-                InfernalBonus.builder(items, TTItemTags.NUGGETS_TIN)
+                InfernalBonus.builder(TTItemTags.NUGGETS_TIN)
                         .count(2)
                         .chance(0.33F)
                         .build());

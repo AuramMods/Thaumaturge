@@ -137,6 +137,31 @@ public class DataMapProviderRuntimeTest {
     }
 
     @Test
+    void infernalBonusDatagenKeepsAnUnboundOutputTag() throws Exception {
+        var owner = owner("owner");
+        var tag = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("port_map_generate", "future_nuggets"));
+        assertTrue(owner.lookupOrThrow(Registries.ITEM).get(tag).isEmpty());
+        var bonus = InfernalBonus.builder(tag).count(2).chance(0.33F).build();
+        var ore = Items.IRON_ORE.builtInRegistryHolder();
+        var provider = provider(owner, generator -> generator.builder(InfernalBonus.DATA_MAP)
+                .add(ore, List.of(bonus), false));
+        try {
+            provider.run(CachedOutput.NO_CACHE).join();
+            var encoded = read(InfernalBonus.DATA_MAP).getAsJsonObject().getAsJsonObject("values")
+                    .getAsJsonArray("minecraft:iron_ore").get(0).getAsJsonObject();
+            assertEquals("#port_map_generate:future_nuggets", encoded.get("items").getAsString());
+            assertEquals(2, encoded.get("count").getAsInt());
+            assertEquals(0.33F, encoded.get("chance").getAsFloat());
+
+            load(owner, InfernalBonus.DATA_MAP);
+            var loaded = DataMaps.get(ore, InfernalBonus.DATA_MAP).get(0);
+            assertEquals(tag, loaded.items().unwrapKey().orElseThrow());
+        } finally {
+            DataMaps.clear(owner);
+        }
+    }
+
+    @Test
     void holderEncodingUsesTheProvidedLookupAndFailsBeforeOverwritingAnExistingFile() throws Exception {
         var first = owner("first"); var second = owner("second");
         Files.createDirectories(file(HOLDERS).getParent()); Files.writeString(file(HOLDERS), "retained existing output");

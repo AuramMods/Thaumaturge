@@ -54,7 +54,10 @@ mixin {
     config 'thaumaturge.mixins.json'
 }
 
-sourceSets.main.resources.srcDir 'src/generated/resources'
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    exclude '.cache/**'
+}
 sourceSets.test.java.srcDir 'porting/testing/dfu-reference/java'
 
 // Separate source sets let the window controls be tested before the mod compiles.

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -72,8 +71,8 @@ public record InfernalBonus(HolderSet<Item> items, IntProvider count, float chan
         return new Builder(HolderSet.direct(BuiltInRegistries.ITEM.wrapAsHolder(item.asItem())));
     }
 
-    public static Builder builder(HolderLookup<Item> getter, TagKey<Item> tag) {
-        return new Builder(getter.getOrThrow(tag));
+    public static Builder builder(TagKey<Item> tag) {
+        return new Builder(BuiltInRegistries.ITEM.getOrCreateTag(tag));
     }
 
     public static final class Builder {
