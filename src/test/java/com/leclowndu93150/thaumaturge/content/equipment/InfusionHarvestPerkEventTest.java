@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import static com.leclowndu93150.thaumaturge.content.equipment.InfusionDropFixture.event;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -15,6 +16,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.leclowndu93150.thaumaturge.event.block.BlockDropsEvent;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFollowingItem;
 import java.util.ArrayList;
@@ -24,7 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +33,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
@@ -168,7 +168,7 @@ class InfusionHarvestPerkEventTest {
                     return null;
                 })
                 .when(held)
-                .hurtAndBreak(anyInt(), eq(player), eq(EquipmentSlot.MAINHAND));
+                .hurtAndBreak(anyInt(), eq(player), any());
 
         BlockState state = mock(BlockState.class);
         BlockState neighbour = mock(BlockState.class);
@@ -201,15 +201,5 @@ class InfusionHarvestPerkEventTest {
         when(player.isShiftKeyDown()).thenReturn(sneaking);
         when(held.getEnchantmentLevel(any())).thenReturn(0);
         return player;
-    }
-
-    private static BlockDropsEvent event(ServerLevel level, BlockState state, Player player, List<ItemEntity> drops) {
-        BlockDropsEvent event = mock(BlockDropsEvent.class);
-        when(event.getLevel()).thenReturn(level);
-        when(event.getState()).thenReturn(state);
-        when(event.getPos()).thenReturn(BlockPos.ZERO);
-        when(event.getBreaker()).thenReturn(player);
-        when(event.getDrops()).thenReturn(drops);
-        return event;
     }
 }

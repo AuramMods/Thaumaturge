@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -9,14 +10,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
+import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
 class InfusionBurrowingOrderTest {
@@ -44,7 +48,7 @@ class InfusionBurrowingOrderTest {
             mining.when(() -> EnchantMining.isOre(level, pos)).thenReturn(false);
             mining.when(() -> EnchantMining.breakFurthest(level, pos, state, player))
                     .thenAnswer(invocation -> {
-                        verify(tool, never()).hurtAndBreak(anyInt(), eq(player), eq(EquipmentSlot.MAINHAND));
+                        verify(tool, never()).hurtAndBreak(anyInt(), eq(player), any());
                         return true;
                     });
 
@@ -52,6 +56,9 @@ class InfusionBurrowingOrderTest {
         }
 
         verify(event).setCanceled(true);
-        verify(tool).hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+        ArgumentCaptor<Consumer<LivingEntity>> broken = ArgumentCaptor.captor();
+        verify(tool).hurtAndBreak(eq(1), eq(player), broken.capture());
+        broken.getValue().accept(player);
+        verify(player).broadcastBreakEvent(EquipmentSlot.MAINHAND);
     }
 }

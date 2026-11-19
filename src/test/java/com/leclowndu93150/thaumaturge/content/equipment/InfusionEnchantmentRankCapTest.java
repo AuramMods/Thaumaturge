@@ -1,17 +1,18 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.itemdata.ItemData;
-
+import static com.leclowndu93150.thaumaturge.content.equipment.InfusionDropFixture.event;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +23,8 @@ import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
+import com.leclowndu93150.thaumaturge.event.block.BlockDropsEvent;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -51,7 +54,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
@@ -139,7 +141,8 @@ class InfusionEnchantmentRankCapTest {
     void soundingPassesDeclaredMaximumToScanner() {
         ServerPlayer player = mock(ServerPlayer.class);
         ServerLevel level = mock(ServerLevel.class);
-        ItemStack tool = stackWithLevel(InfusionEnchantment.SOUNDING, Integer.MAX_VALUE);
+        ItemStack tool = spy(stackWithLevel(InfusionEnchantment.SOUNDING, Integer.MAX_VALUE));
+        doNothing().when(tool).hurtAndBreak(anyInt(), eq(player), any());
         BlockPos pos = new BlockPos(2, 3, 4);
         when(player.isShiftKeyDown()).thenReturn(true);
         when(player.getItemInHand(InteractionHand.MAIN_HAND)).thenReturn(tool);
@@ -175,7 +178,7 @@ class InfusionEnchantmentRankCapTest {
         when(drop.getItem()).thenReturn(originalDrop);
         when(player.getUUID()).thenReturn(UUID.randomUUID());
         when(player.getMainHandItem()).thenReturn(tool);
-        BlockDropsEvent event = blockDrops(level, state, player, new ArrayList<>(List.of(drop)));
+        BlockDropsEvent event = event(level, state, player, new ArrayList<>(List.of(drop)));
 
         try (MockedStatic<RefiningResults> refiningResults = mockStatic(RefiningResults.class)) {
             refiningResults.when(() -> RefiningResults.clusterFor(state)).thenReturn(Items.IRON_INGOT);
@@ -200,7 +203,7 @@ class InfusionEnchantmentRankCapTest {
         when(player.getMainHandItem()).thenReturn(tool);
         ItemEntity drop = mock(ItemEntity.class);
         when(drop.getItem()).thenReturn(new ItemStack(Items.RAW_IRON));
-        BlockDropsEvent event = blockDrops(level, state, player, new ArrayList<>(List.of(drop)));
+        BlockDropsEvent event = event(level, state, player, new ArrayList<>(List.of(drop)));
 
         try (MockedStatic<RefiningResults> refiningResults = mockStatic(RefiningResults.class)) {
             refiningResults.when(() -> RefiningResults.clusterFor(state)).thenReturn(Items.IRON_INGOT);
@@ -305,16 +308,5 @@ class InfusionEnchantmentRankCapTest {
         levels.put(enchantment, level);
         ItemData.set(stack, TTDataComponents.INFUSION_ENCHANTMENTS.get(), new InfusionEnchantments(levels));
         return stack;
-    }
-
-    private static BlockDropsEvent blockDrops(
-            ServerLevel level, BlockState state, Player breaker, List<ItemEntity> drops) {
-        BlockDropsEvent event = mock(BlockDropsEvent.class);
-        when(event.getLevel()).thenReturn(level);
-        when(event.getState()).thenReturn(state);
-        when(event.getPos()).thenReturn(BlockPos.ZERO);
-        when(event.getBreaker()).thenReturn(breaker);
-        when(event.getDrops()).thenReturn(drops);
-        return event;
     }
 }

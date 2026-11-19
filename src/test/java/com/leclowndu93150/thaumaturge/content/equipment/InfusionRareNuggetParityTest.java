@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import static com.leclowndu93150.thaumaturge.content.equipment.InfusionDropFixture.event;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.leclowndu93150.thaumaturge.event.block.BlockDropsEvent;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.MockedConstruction;
@@ -185,15 +186,5 @@ class InfusionRareNuggetParityTest {
         ServerLevel level = mock(ServerLevel.class, org.mockito.Answers.RETURNS_DEEP_STUBS);
         when(level.getRandom()).thenReturn(random);
         return level;
-    }
-
-    private static BlockDropsEvent event(ServerLevel level, BlockState state, Player breaker, List<ItemEntity> drops) {
-        BlockDropsEvent event = mock(BlockDropsEvent.class);
-        when(event.getLevel()).thenReturn(level);
-        when(event.getState()).thenReturn(state);
-        when(event.getPos()).thenReturn(BlockPos.ZERO);
-        when(event.getBreaker()).thenReturn(breaker);
-        when(event.getDrops()).thenReturn(drops);
-        return event;
     }
 }

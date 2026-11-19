@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.server.command.admin;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,16 +19,17 @@ import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityHiero
 import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityHierophantSigil;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellCloud;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellProjectile;
+import com.leclowndu93150.thaumaturge.event.tick.EntityTickEvent;
 import java.util.Set;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
-import net.neoforged.neoforge.event.entity.living.MobDespawnEvent;
-import com.leclowndu93150.thaumaturge.event.tick.EntityTickEvent;
 import org.junit.jupiter.api.Test;
 
 class ShowcaseEntitiesTest {
@@ -103,27 +105,30 @@ class ShowcaseEntitiesTest {
         when(entity.getTags()).thenReturn(Set.of());
         when(entity.getCustomName()).thenReturn(Component.literal("Specimen"));
         EntityTickEvent.Pre tick = new EntityTickEvent.Pre(entity);
-        EntityInvulnerabilityCheckEvent damage = new EntityInvulnerabilityCheckEvent(entity, null, false);
+        var damage = mock(DamageSource.class);
+        doCallRealMethod().when(entity).isInvulnerableTo(damage);
 
         ShowcaseEntities.onTick(tick);
-        ShowcaseEntities.onInvulnerability(damage);
 
         assertFalse(tick.isCanceled());
-        assertFalse(damage.isInvulnerable());
+        assertFalse(entity.isInvulnerableTo(damage));
     }
 
     @Test
     void savedSpecimensRemainInvulnerableAndCannotDespawnInPeaceful() {
-        Mob entity = mock(Mob.class);
-        when(entity.getTags()).thenReturn(Set.of("thaumaturge_showcase"));
-        EntityInvulnerabilityCheckEvent damage = new EntityInvulnerabilityCheckEvent(entity, null, false);
-        MobDespawnEvent despawn = new MobDespawnEvent(entity, mock(ServerLevel.class));
+        var level = mock(ServerLevel.class);
+        when(level.getDifficulty()).thenReturn(Difficulty.PEACEFUL);
+        var specimen = new Zombie(EntityType.ZOMBIE, level);
+        var ordinary = new Zombie(EntityType.ZOMBIE, level);
+        specimen.addTag("thaumaturge_showcase");
+        specimen.setPersistenceRequired();
+        ordinary.setPersistenceRequired();
 
-        ShowcaseEntities.onInvulnerability(damage);
-        ShowcaseEntities.onDespawn(despawn);
-
-        assertTrue(damage.isInvulnerable());
-        assertEquals(MobDespawnEvent.Result.DENY, despawn.getResult());
+        assertTrue(specimen.isInvulnerableTo(mock(DamageSource.class)));
+        specimen.checkDespawn();
+        ordinary.checkDespawn();
+        assertFalse(specimen.isRemoved());
+        assertTrue(ordinary.isRemoved());
     }
 
     @Test
