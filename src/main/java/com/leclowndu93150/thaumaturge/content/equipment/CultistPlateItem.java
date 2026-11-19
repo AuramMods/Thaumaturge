@@ -9,7 +9,7 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
-public final class CultistPlateItem extends ModeledArmorItem {
+public final class CultistPlateItem extends DyeableModeledArmorItem {
     private static final ResourceLocation ZOMBIE_PLATE_OUTER =
             TTIds.rl("textures/models/armor/zombie_plate_layer_1.png");
     private static final ResourceLocation ZOMBIE_PLATE_INNER =

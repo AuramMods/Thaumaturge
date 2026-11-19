@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.client.color;
 
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.equipment.ArmorLayerColors;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimColors;
 import com.leclowndu93150.thaumaturge.content.equipment.CultistArmorDyeing;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -9,7 +10,6 @@ import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.GrassColor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,8 +18,6 @@ import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID, value = Dist.CLIENT)
 public final class TTColorHandlers {
-    private static final int ROBES_UNDYED_ARGB = 0xFF6A3880;
-    private static final int UNDYED_HIDDEN = 0;
     private static final int UNTINTED = -1;
     private static final int PLAIN_TRIM_LAYER = 1;
     private static final int DYED_TRIM_LAYER = 2;
@@ -69,7 +67,7 @@ public final class TTColorHandlers {
         event.register(dyed(CRYSTAL_PERDITIO_COLOR), TTItems.CRYSTAL_PERDITIO.get());
         event.register(dyed(CRYSTAL_VITIUM_COLOR), TTItems.CRYSTAL_VITIUM.get());
         event.register(
-                trimmed(dyed(ROBES_UNDYED_ARGB), DYED_TRIM_LAYER),
+                trimmed(dyed(ArmorLayerColors.ROBE_COLOR), DYED_TRIM_LAYER),
                 TTItems.CLOTH_CHEST.get(),
                 TTItems.CLOTH_LEGS.get(),
                 TTItems.CLOTH_BOOTS.get());
@@ -84,22 +82,17 @@ public final class TTColorHandlers {
                 TTItems.VOID_LEGS.get(),
                 TTItems.VOID_BOOTS.get());
         event.register(
-                dyed(ROBES_UNDYED_ARGB),
+                dyed(ArmorLayerColors.ROBE_COLOR),
                 TTItems.VOID_ROBE_HELM.get(),
                 TTItems.VOID_ROBE_CHEST.get(),
                 TTItems.VOID_ROBE_LEGS.get());
-        ItemColor dyedCloth = dyedOverlay();
         for (Item item : CultistArmorDyeing.dyeableArmor()) {
-            event.register(dyedCloth, item);
+            event.register(ArmorLayerColors::crimsonClothTint, item);
         }
     }
 
     private static ItemColor constant(int argb) {
         return (stack, tintIndex) -> tintIndex == 0 ? argb : -1;
-    }
-
-    private static ItemColor dyedOverlay() {
-        return (stack, tintIndex) -> tintIndex == 1 ? DyedItemColor.getOrDefault(stack, UNDYED_HIDDEN) : -1;
     }
 
     private static ItemColor trimmed(ItemColor base, int trimLayer) {
@@ -108,6 +101,6 @@ public final class TTColorHandlers {
     }
 
     private static ItemColor dyed(int fallbackArgb) {
-        return (stack, tintIndex) -> tintIndex == 0 ? DyedItemColor.getOrDefault(stack, fallbackArgb) : -1;
+        return (stack, tintIndex) -> tintIndex == 0 ? ArmorLayerColors.dyeColor(stack, fallbackArgb) : -1;
     }
 }

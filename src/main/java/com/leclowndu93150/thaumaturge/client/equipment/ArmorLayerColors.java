@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 
 public final class ArmorLayerColors {
     public static final int ROBE_COLOR = 0xFF6A3880;
+    public static final int CRIMSON_CLOTH_TINT_INDEX = 1;
 
     private ArmorLayerColors() {}
 
@@ -29,5 +30,9 @@ public final class ArmorLayerColors {
         return display != null && display.contains(DyeableLeatherItem.TAG_COLOR, Tag.TAG_ANY_NUMERIC)
                 ? ARGB32.opaque(display.getInt(DyeableLeatherItem.TAG_COLOR))
                 : fallback;
+    }
+
+    public static int crimsonClothTint(ItemStack stack, int tintIndex) {
+        return tintIndex == CRIMSON_CLOTH_TINT_INDEX ? dyeColor(stack, 0) : -1;
     }
 }

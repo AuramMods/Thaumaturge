@@ -70,6 +70,7 @@
     "client.particle.ParticleEngineMixin",
     "client.renderer.RenderStateShardAccessor",
     "client.renderer.entity.LivingEntityRenderScaleMixin",
+    "client.renderer.entity.ItemRendererArmorDyeMixin",
     "client.renderer.entity.layers.HumanoidArmorLayerMixin",
     "client.renderer.entity.EntityShadowScaleMixin"
   ],

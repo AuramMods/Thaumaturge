@@ -21,6 +21,8 @@ import com.leclowndu93150.thaumaturge.content.entity.construct.TurretPlacerItem;
 import com.leclowndu93150.thaumaturge.content.equipment.CrimsonBladeItem;
 import com.leclowndu93150.thaumaturge.content.equipment.CultistPlateItem;
 import com.leclowndu93150.thaumaturge.content.equipment.CultistRobeItem;
+import com.leclowndu93150.thaumaturge.content.equipment.DyeableCultistRobeItem;
+import com.leclowndu93150.thaumaturge.content.equipment.DyeableModeledArmorItem;
 import com.leclowndu93150.thaumaturge.content.equipment.ElementalAxeItem;
 import com.leclowndu93150.thaumaturge.content.equipment.ElementalHoeItem;
 import com.leclowndu93150.thaumaturge.content.equipment.ElementalPickaxeItem;
@@ -28,7 +30,6 @@ import com.leclowndu93150.thaumaturge.content.equipment.ElementalShovelItem;
 import com.leclowndu93150.thaumaturge.content.equipment.ElementalSwordItem;
 import com.leclowndu93150.thaumaturge.content.equipment.FortressArmorItem;
 import com.leclowndu93150.thaumaturge.content.equipment.GrappleGunItem;
-import com.leclowndu93150.thaumaturge.content.equipment.ModeledArmorItem;
 import com.leclowndu93150.thaumaturge.content.equipment.PrimalCrusherItem;
 import com.leclowndu93150.thaumaturge.content.equipment.RobeArmorItem;
 import com.leclowndu93150.thaumaturge.content.equipment.TTMaterials;
@@ -418,35 +419,35 @@ public final class TTItems {
                             .rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<ArmorItem> CRIMSON_RANGER_HELM = ForgeRegistration.registerItem(ITEMS,
             "crimson_ranger_helm",
-            props -> new ModeledArmorItem(
+            props -> new DyeableModeledArmorItem(
                     TTMaterials.ARMOR_CULTIST_RANGER,
                     ArmorItem.Type.HELMET,
                     props.durability(ArmorTypes.durability(ArmorItem.Type.HELMET, TTMaterials.DURABILITY_CULTIST_RANGER))
                             .rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<ArmorItem> CRIMSON_RANGER_CHEST = ForgeRegistration.registerItem(ITEMS,
             "crimson_ranger_chest",
-            props -> new ModeledArmorItem(
+            props -> new DyeableModeledArmorItem(
                     TTMaterials.ARMOR_CULTIST_RANGER,
                     ArmorItem.Type.CHESTPLATE,
                     props.durability(ArmorTypes.durability(ArmorItem.Type.CHESTPLATE, TTMaterials.DURABILITY_CULTIST_RANGER))
                             .rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<ArmorItem> CRIMSON_RANGER_LEGS = ForgeRegistration.registerItem(ITEMS,
             "crimson_ranger_legs",
-            props -> new ModeledArmorItem(
+            props -> new DyeableModeledArmorItem(
                     TTMaterials.ARMOR_CULTIST_RANGER,
                     ArmorItem.Type.LEGGINGS,
                     props.durability(ArmorTypes.durability(ArmorItem.Type.LEGGINGS, TTMaterials.DURABILITY_CULTIST_RANGER))
                             .rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<ArmorItem> CRIMSON_CAPTAIN_HELM = ForgeRegistration.registerItem(ITEMS,
             "crimson_captain_helm",
-            props -> new ModeledArmorItem(
+            props -> new DyeableModeledArmorItem(
                     TTMaterials.ARMOR_CULTIST_CAPTAIN,
                     ArmorItem.Type.HELMET,
                     props.durability(ArmorTypes.durability(ArmorItem.Type.HELMET, TTMaterials.DURABILITY_CULTIST_CAPTAIN))
                             .rarity(Rarity.RARE)));
     public static final RegistryObject<ArmorItem> CRIMSON_CAPTAIN_CHEST = ForgeRegistration.registerItem(ITEMS,
             "crimson_captain_chest",
-            props -> new ModeledArmorItem(
+            props -> new DyeableModeledArmorItem(
                     TTMaterials.ARMOR_CULTIST_CAPTAIN,
                     ArmorItem.Type.CHESTPLATE,
                     props.durability(ArmorTypes.durability(ArmorItem.Type.CHESTPLATE, TTMaterials.DURABILITY_CULTIST_CAPTAIN))
@@ -460,21 +461,21 @@ public final class TTItems {
                             .rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<CultistRobeItem> CRIMSON_ROBE_HELM = ForgeRegistration.registerItem(ITEMS,
             "crimson_robe_helm",
-            props -> new CultistRobeItem(
+            props -> new DyeableCultistRobeItem(
                     TTMaterials.ARMOR_CULTIST_ROBE,
                     ArmorItem.Type.HELMET,
                     props.durability(ArmorTypes.durability(ArmorItem.Type.HELMET, TTMaterials.DURABILITY_CULTIST_ROBE))
                             .rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<CultistRobeItem> CRIMSON_ROBE_CHEST = ForgeRegistration.registerItem(ITEMS,
             "crimson_robe_chest",
-            props -> new CultistRobeItem(
+            props -> new DyeableCultistRobeItem(
                     TTMaterials.ARMOR_CULTIST_ROBE,
                     ArmorItem.Type.CHESTPLATE,
                     props.durability(ArmorTypes.durability(ArmorItem.Type.CHESTPLATE, TTMaterials.DURABILITY_CULTIST_ROBE))
                             .rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<CultistRobeItem> CRIMSON_ROBE_LEGS = ForgeRegistration.registerItem(ITEMS,
             "crimson_robe_legs",
-            props -> new CultistRobeItem(
+            props -> new DyeableCultistRobeItem(
                     TTMaterials.ARMOR_CULTIST_ROBE,
                     ArmorItem.Type.LEGGINGS,
                     props.durability(ArmorTypes.durability(ArmorItem.Type.LEGGINGS, TTMaterials.DURABILITY_CULTIST_ROBE))
@@ -1100,21 +1101,21 @@ public final class TTItems {
 
     public static final RegistryObject<Item> CRIMSON_PRAETOR_HELM = ForgeRegistration.registerItem(ITEMS,
             "crimson_praetor_helm",
-            props -> new ModeledArmorItem(
+            props -> new DyeableModeledArmorItem(
                     TTMaterials.ARMOR_CULTIST_LEADER,
                     ArmorItem.Type.HELMET,
                     props.durability(ArmorTypes.durability(ArmorItem.Type.HELMET, TTMaterials.DURABILITY_CULTIST_LEADER))
                             .rarity(Rarity.RARE)));
     public static final RegistryObject<Item> CRIMSON_PRAETOR_CHEST = ForgeRegistration.registerItem(ITEMS,
             "crimson_praetor_chest",
-            props -> new ModeledArmorItem(
+            props -> new DyeableModeledArmorItem(
                     TTMaterials.ARMOR_CULTIST_LEADER,
                     ArmorItem.Type.CHESTPLATE,
                     props.durability(ArmorTypes.durability(ArmorItem.Type.CHESTPLATE, TTMaterials.DURABILITY_CULTIST_LEADER))
                             .rarity(Rarity.RARE)));
     public static final RegistryObject<Item> CRIMSON_PRAETOR_LEGS = ForgeRegistration.registerItem(ITEMS,
             "crimson_praetor_legs",
-            props -> new ModeledArmorItem(
+            props -> new DyeableModeledArmorItem(
                     TTMaterials.ARMOR_CULTIST_LEADER,
                     ArmorItem.Type.LEGGINGS,
                     props.durability(ArmorTypes.durability(ArmorItem.Type.LEGGINGS, TTMaterials.DURABILITY_CULTIST_LEADER))

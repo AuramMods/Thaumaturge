@@ -2,9 +2,10 @@ package com.leclowndu93150.thaumaturge.content.equipment;
 
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 
-public final class RobeArmorItem extends ArmorItem implements IVisDiscountGear {
+public final class RobeArmorItem extends ArmorItem implements IVisDiscountGear, DyeableLeatherItem {
     private final int visDiscount;
 
     public RobeArmorItem(int visDiscount, ArmorItem.Type type, Properties properties) {

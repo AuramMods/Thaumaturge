@@ -35,7 +35,7 @@ public final class CultistArmorDyeing {
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             for (Item item : dyeableArmor()) {
-                CauldronInteraction.WATER.map().put(item, CauldronInteraction.DYED_ITEM);
+                CauldronInteraction.WATER.put(item, CauldronInteraction.DYED_ITEM);
             }
         });
     }
