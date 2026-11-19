@@ -1,29 +1,20 @@
 package com.leclowndu93150.thaumaturge.data.loot;
 
-import com.leclowndu93150.thaumaturge.data.lang.LoreBookTextEn;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.LootTableSubProvider;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.network.Filterable;
-import net.minecraft.world.item.Items;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
-import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
-import net.minecraft.world.level.storage.loot.functions.ListOperation;
-import net.minecraft.world.level.storage.loot.functions.SetBookCoverFunction;
+import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
-import net.minecraft.world.level.storage.loot.functions.SetWrittenBookPagesFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
@@ -52,36 +43,28 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
     private static final float BOSS_POOL_MIN = 4.0F;
     private static final float BOSS_POOL_MAX = 6.0F;
     private static final float BOSS_CHEST_ROLLS = 4.0F;
-    private static final String LORE_TITLE = "A Message to the World";
-    private static final String LORE_AUTHOR = "A Thaumaturge";
-
-    private final HolderLookup.Provider registries;
-
-    public TTGameplayLootSubProvider(HolderLookup.Provider registries) {
-        this.registries = registries;
-    }
 
     @Override
-    public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
+    public void generate(BiConsumer<ResourceLocation, LootTable.Builder> output) {
         output.accept(
-                TTLootTables.LOOT_BAG_COMMON,
+                TTLootTables.LOOT_BAG_COMMON.location(),
                 bagTable(TreasureLootPools.COMMON)
                         .withPool(templatePool(
                                 TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), ARCANE_TEMPLATE_COMMON_BAG_CHANCE)));
         output.accept(
-                TTLootTables.LOOT_BAG_UNCOMMON,
+                TTLootTables.LOOT_BAG_UNCOMMON.location(),
                 bagTable(TreasureLootPools.UNCOMMON)
                         .withPool(templatePool(
                                 TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(), OCCULT_TEMPLATE_UNCOMMON_BAG_CHANCE)));
         output.accept(
-                TTLootTables.LOOT_BAG_RARE,
+                TTLootTables.LOOT_BAG_RARE.location(),
                 bagTable(TreasureLootPools.RARE)
                         .withPool(lorePool())
                         .withPool(templatePool(
                                 TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(), OCCULT_TEMPLATE_RARE_BAG_CHANCE)));
 
         output.accept(
-                TTLootTables.TREASURE_COMMON,
+                TTLootTables.TREASURE_COMMON.location(),
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
@@ -95,7 +78,7 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                                 TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), ARCANE_TEMPLATE_TREASURE_CHANCE)));
 
         output.accept(
-                TTLootTables.TREASURE_UNCOMMON,
+                TTLootTables.TREASURE_UNCOMMON.location(),
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
@@ -108,7 +91,7 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                                 .add(entry(TTItems.CURIO_PRESERVED.get(), 1))));
 
         output.accept(
-                TTLootTables.TREASURE_RARE,
+                TTLootTables.TREASURE_RARE.location(),
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
@@ -128,7 +111,7 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                         .withPool(lorePool()));
 
         output.accept(
-                TTLootTables.TREASURE_LIBRARY,
+                TTLootTables.TREASURE_LIBRARY.location(),
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
@@ -137,7 +120,7 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                         .withPool(lorePool()));
 
         output.accept(
-                TTLootTables.TREASURE_SMITH,
+                TTLootTables.TREASURE_SMITH.location(),
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
@@ -145,7 +128,7 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                                 .add(entry(TTItems.QUICKSILVER.get(), 2, 1.0F, 3.0F))));
 
         output.accept(
-                TTLootTables.LABYRINTH_KEY_ROOM,
+                TTLootTables.LABYRINTH_KEY_ROOM.location(),
                 labyrinthReward(
                         TTItems.LOOT_BAG_UNCOMMON.get(),
                         ConstantValue.exactly(1.0F),
@@ -160,7 +143,7 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                 TTLootTables.LABYRINTH_TAINT_SWARM,
                 TTLootTables.LABYRINTH_HIEROPHANT)) {
             output.accept(
-                    boss,
+                    boss.location(),
                     labyrinthReward(
                             TTItems.LOOT_BAG_RARE.get(),
                             UniformGenerator.between(BOSS_BAGS_MIN, BOSS_BAGS_MAX),
@@ -170,28 +153,16 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                             TTLootTables.TREASURE_RARE));
         }
         output.accept(
-                TTLootTables.LABYRINTH_PRIMORDIAL_PEARL,
+                TTLootTables.LABYRINTH_PRIMORDIAL_PEARL.location(),
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .add(LootItem.lootTableItem(TTItems.PRIMORDIAL_PEARL.get()))));
 
-        output.accept(
-                TTLootTables.LORE_BOOK,
-                LootTable.lootTable()
-                        .withPool(LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1.0F))
-                                .add(LootItem.lootTableItem(Items.WRITTEN_BOOK)
-                                        .apply(() -> new SetWrittenBookPagesFunction(
-                                                List.of(), messagePages(), ListOperation.ReplaceAll.INSTANCE))
-                                        .apply(() -> new SetBookCoverFunction(
-                                                List.of(),
-                                                Optional.of(Filterable.passThrough(LORE_TITLE)),
-                                                Optional.of(LORE_AUTHOR),
-                                                Optional.empty())))));
+        output.accept(TTLootTables.LORE_BOOK.location(), LoreBookLoot.table());
     }
 
-    private LootTable.Builder labyrinthReward(
+    private static LootTable.Builder labyrinthReward(
             ItemLike bag,
             NumberProvider bags,
             int rarity,
@@ -202,10 +173,10 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1.0F))
                         .add(LootItem.lootTableItem(bag).apply(SetItemCountFunction.setCount(bags))))
-                .withPool(TreasureLootPools.treasurePool(registries, rarity, treasureRolls))
+                .withPool(TreasureLootPools.treasurePool(rarity, treasureRolls))
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(chestRolls))
-                        .add(NestedLootTable.lootTableReference(chest)));
+                        .add(LootTableReference.lootTableReference(chest.location())));
     }
 
     private static LootPool.Builder templatePool(ItemLike template, float chance) {
@@ -219,15 +190,7 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
         return LootPool.lootPool()
                 .setRolls(ConstantValue.exactly(1.0F))
                 .when(LootItemRandomChanceCondition.randomChance(LORE_CHANCE))
-                .add(NestedLootTable.lootTableReference(TTLootTables.LORE_BOOK));
-    }
-
-    private static List<Filterable<Component>> messagePages() {
-        List<Filterable<Component>> pages = new ArrayList<>(LoreBookTextEn.pageCount());
-        for (int page = 1; page <= LoreBookTextEn.pageCount(); page++) {
-            pages.add(Filterable.passThrough(Component.translatable(LoreBookTextEn.pageKey(page))));
-        }
-        return pages;
+                .add(LootTableReference.lootTableReference(TTLootTables.LORE_BOOK.location()));
     }
 
     private static LootPoolSingletonContainer.Builder<?> entry(ItemLike item, int weight) {
@@ -240,9 +203,8 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(min, max)));
     }
 
-    private LootTable.Builder bagTable(int rarity) {
+    private static LootTable.Builder bagTable(int rarity) {
         return LootTable.lootTable()
-                .withPool(TreasureLootPools.treasurePool(
-                        registries, rarity, UniformGenerator.between(BAG_MIN_ROLLS, BAG_MAX_ROLLS)));
+                .withPool(TreasureLootPools.treasurePool(rarity, UniformGenerator.between(BAG_MIN_ROLLS, BAG_MAX_ROLLS)));
     }
 }

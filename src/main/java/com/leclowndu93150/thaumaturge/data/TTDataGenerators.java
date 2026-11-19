@@ -148,7 +148,7 @@ public final class TTDataGenerators {
                 new LootTableProvider.SubProviderEntry(
                         TTTaintedLootSubProvider::new, LootContextParamSets.ENTITY),
                 new LootTableProvider.SubProviderEntry(
-                        () -> new TTGameplayLootSubProvider(lookup.join()), LootContextParamSets.CHEST))));
+                        TTGameplayLootSubProvider::new, LootContextParamSets.CHEST))));
         generator.addProvider(true, new TTGlobalLootModifierProvider(output));
     }
 

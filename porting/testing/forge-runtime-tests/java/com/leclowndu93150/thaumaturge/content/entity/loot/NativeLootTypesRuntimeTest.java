@@ -9,6 +9,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.labyrinth.EncounterSettings;
+import com.leclowndu93150.thaumaturge.data.lang.LoreBookTextEn;
+import com.leclowndu93150.thaumaturge.data.loot.LoreBookLoot;
 import com.leclowndu93150.thaumaturge.itemdata.BlockItemData;
 import com.leclowndu93150.thaumaturge.itemdata.CopyItemDataFunction;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
@@ -18,6 +20,7 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemDataPatch;
 import com.leclowndu93150.thaumaturge.itemdata.ItemDataRegistry;
 import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 import com.leclowndu93150.thaumaturge.registry.TTLootTypes;
+import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import com.leclowndu93150.thaumaturge.registry.TTStructureTags;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
@@ -63,6 +66,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
+import net.minecraft.world.item.WrittenBookItem;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -79,8 +87,10 @@ import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
+import net.minecraft.world.level.storage.loot.functions.EnchantWithLevelsFunction;
 import net.minecraft.world.level.storage.loot.functions.ExplorationMapFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.functions.SetPotionFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
@@ -357,6 +367,67 @@ class NativeLootTypesRuntimeTest {
     }
 
     @Test
+    void authoredLootBookSurvivesGenerationReloadAndPageResolution(@TempDir Path directory) throws Exception {
+        var bookId = TTLootTables.LORE_BOOK.location();
+        var rewardId = id("lore_reward");
+        var provider = new LootTableProvider(new PackOutput(directory), Set.of(bookId, rewardId), List.of(
+                new LootTableProvider.SubProviderEntry(() -> output -> {
+                    output.accept(bookId, LoreBookLoot.table());
+                    output.accept(rewardId, LootTable.lootTable()
+                            .withPool(single(LootTableReference.lootTableReference(bookId))));
+                }, LootContextParamSets.CHEST)));
+        provider.run(CachedOutput.NO_CACHE).join();
+        var tables = reloadLootTables(directory, "lore-book");
+        var server = mock(MinecraftServer.class);
+        var level = mock(ServerLevel.class);
+        when(server.getLootData()).thenReturn(tables);
+        when(level.getServer()).thenReturn(server);
+        var params = new LootParams.Builder(level).withParameter(LootContextParams.ORIGIN, Vec3.ZERO)
+                .create(LootContextParamSets.CHEST);
+        var drops = rollStacks(tables.getLootTable(rewardId), params, 42);
+        assertEquals(1, drops.size());
+        var book = drops.get(0);
+        assertTrue(book.is(Items.WRITTEN_BOOK));
+        assertEquals("A Message to the World", book.getHoverName().getString());
+        assertEquals("A Thaumaturge", book.getTag().getString("author"));
+        assertEquals(0, WrittenBookItem.getGeneration(book));
+        assertTrue(WrittenBookItem.makeSureTagIsValid(book.getTag()));
+
+        var savedBook = ItemStack.of(book.save(new CompoundTag()));
+        assertTrue(WrittenBookItem.resolveBookComponents(savedBook, null, null));
+        assertEquals(LoreBookTextEn.pageCount(), WrittenBookItem.getPageCount(savedBook));
+        var pages = savedBook.getTag().getList("pages", Tag.TAG_STRING);
+        for (int index = 0; index < pages.size(); index++) {
+            var content = Component.Serializer.fromJson(pages.getString(index)).getContents();
+            assertEquals(LoreBookTextEn.pageKey(index + 1), assertInstanceOf(TranslatableContents.class, content).getKey());
+        }
+    }
+
+    @Test
+    void nativeTreasureFunctionsIncludeDiscoverableTreasureAndKeepPotionForm() {
+        var enchant = roundTripFunction(EnchantWithLevelsFunction.enchantWithLevels(ConstantValue.exactly(31))
+                .allowTreasure().build(), "minecraft:enchant_with_levels");
+        var context = mock(LootContext.class);
+        when(context.getRandom()).thenReturn(RandomSource.create(91));
+        var observed = new HashSet<Enchantment>();
+        for (int attempt = 0; attempt < 512; attempt++) {
+            var book = enchant.apply(new ItemStack(Items.BOOK), context);
+            assertTrue(book.is(Items.ENCHANTED_BOOK));
+            observed.addAll(EnchantmentHelper.getEnchantments(book).keySet());
+        }
+        assertTrue(observed.containsAll(Set.of(Enchantments.MENDING, Enchantments.FROST_WALKER)));
+        assertFalse(observed.contains(Enchantments.SOUL_SPEED));
+        assertFalse(observed.contains(Enchantments.SWIFT_SNEAK));
+
+        var setPotion = roundTripFunction(SetPotionFunction.setPotion(Potions.WATER_BREATHING).build(), "minecraft:set_potion");
+        for (var form : List.of(Items.POTION, Items.SPLASH_POTION, Items.LINGERING_POTION)) {
+            var stack = setPotion.apply(new ItemStack(form), context);
+            assertTrue(stack.is(form));
+            assertSame(Potions.WATER_BREATHING, PotionUtils.getPotion(stack));
+        }
+    }
+
+    @Test
     void nativeEquipmentTablesResolveWeightedKitReferencesAfterDatagenAndReload(@TempDir Path directory)
             throws Exception {
         var parent = id("knight");
@@ -466,9 +537,13 @@ class NativeLootTypesRuntimeTest {
     }
 
     private static List<Item> roll(LootTable table, LootParams params, long seed) {
+        return rollStacks(table, params, seed).stream().map(ItemStack::getItem).toList();
+    }
+
+    private static List<ItemStack> rollStacks(LootTable table, LootParams params, long seed) {
         var drops = new ArrayList<ItemStack>();
         table.getRandomItemsRaw(new LootContext.Builder(params).withOptionalRandomSeed(seed).create(null), drops::add);
-        return drops.stream().map(ItemStack::getItem).toList();
+        return drops;
     }
 
     private static LootParams blockLootParams(ServerLevel level, ItemStack tool, Float explosionRadius) {

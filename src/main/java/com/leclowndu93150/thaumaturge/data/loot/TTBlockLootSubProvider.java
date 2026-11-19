@@ -190,8 +190,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
                         .setRolls(ConstantValue.exactly(1))
                         .when(HAS_SILK_TOUCH)
                         .add(LootItem.lootTableItem(block)))
-                .withPool(TreasureLootPools.treasurePool(
-                                lookupProvider, rarity, UniformGenerator.between(1.0F + rarity, 3.0F + rarity))
+                .withPool(TreasureLootPools.treasurePool(rarity, UniformGenerator.between(1.0F + rarity, 3.0F + rarity))
                         .when(HAS_NO_SILK_TOUCH));
     }
 

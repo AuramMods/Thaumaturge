@@ -170,6 +170,8 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/content/entity/loot/LootingChanceValue.java'
         java.include 'com/leclowndu93150/thaumaturge/content/entity/loot/LootingCountFunction.java'
         java.include 'com/leclowndu93150/thaumaturge/data/loot/TTGlobalLootModifierProvider.java'
+        java.include 'com/leclowndu93150/thaumaturge/data/loot/LoreBookLoot.java'
+        java.include 'com/leclowndu93150/thaumaturge/data/lang/LoreBookTextEn.java'
         java.include 'com/leclowndu93150/thaumaturge/registry/TTGlobalLootModifiers.java'
         java.include 'com/leclowndu93150/thaumaturge/registry/TTLootTypes.java'
         java.include 'com/leclowndu93150/thaumaturge/api/entity/trait/MobTrait.java'

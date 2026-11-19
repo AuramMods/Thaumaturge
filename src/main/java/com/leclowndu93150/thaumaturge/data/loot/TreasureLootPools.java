@@ -3,8 +3,6 @@ package com.leclowndu93150.thaumaturge.data.loot;
 import com.leclowndu93150.thaumaturge.content.item.PrimordialPearlItem;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
@@ -25,7 +23,7 @@ public final class TreasureLootPools {
     public static final int UNCOMMON = 1;
     public static final int RARE = 2;
 
-    private static final List<Holder<Potion>> LOOT_POTIONS = List.of(
+    private static final List<Potion> LOOT_POTIONS = List.of(
             Potions.HEALING,
             Potions.REGENERATION,
             Potions.SWIFTNESS,
@@ -37,7 +35,7 @@ public final class TreasureLootPools {
 
     private TreasureLootPools() {}
 
-    public static LootPool.Builder treasurePool(HolderLookup.Provider registries, int rarity, NumberProvider rolls) {
+    public static LootPool.Builder treasurePool(int rarity, NumberProvider rolls) {
         LootPool.Builder pool = LootPool.lootPool().setRolls(rolls);
         pool.add(nugget(rarity));
         pool.add(counted(TTItems.SALIS_MUNDUS.get(), 1, 3 + rarity * 3));
@@ -54,7 +52,8 @@ public final class TreasureLootPools {
         pool.add(LootItem.lootTableItem(Items.BOOK)
                 .setWeight(10)
                 .apply(EnchantWithLevelsFunction.enchantWithLevels(
-                        registries, UniformGenerator.between(5.0F, 5.0F + rarity * 13.0F))));
+                                UniformGenerator.between(5.0F, 5.0F + rarity * 13.0F))
+                        .allowTreasure()));
         switch (rarity) {
             case COMMON -> pool.add(pearl(1, 7));
             case UNCOMMON -> {
@@ -68,7 +67,7 @@ public final class TreasureLootPools {
                 pool.add(counted(Items.NETHER_STAR, 1, 1));
             }
         }
-        for (Holder<Potion> potion : LOOT_POTIONS) {
+        for (Potion potion : LOOT_POTIONS) {
             pool.add(potionEntry(Items.POTION, potion));
             pool.add(potionEntry(Items.SPLASH_POTION, potion));
             if (rarity > COMMON) {
@@ -78,7 +77,7 @@ public final class TreasureLootPools {
         return pool;
     }
 
-    private static LootPoolEntryContainer.Builder<?> potionEntry(ItemLike item, Holder<Potion> potion) {
+    private static LootPoolEntryContainer.Builder<?> potionEntry(ItemLike item, Potion potion) {
         return LootItem.lootTableItem(item).setWeight(2).apply(SetPotionFunction.setPotion(potion));
     }
 
