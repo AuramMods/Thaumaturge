@@ -1,8 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
-import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
-import com.leclowndu93150.thaumaturge.itemdata.ItemData;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -13,17 +10,17 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStorage;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
-import com.mojang.serialization.Lifecycle;
-import java.util.List;
+import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
+import com.leclowndu93150.thaumaturge.testing.AspectRegistryFixture;
+import com.leclowndu93150.thaumaturge.testing.BlockCapabilityFixture;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.MappedRegistry;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -47,12 +44,10 @@ class JarCompatibilityTest {
 
     @BeforeEach
     void setUp() {
-        MappedRegistry<IAspect> registry = new MappedRegistry<>(IAspect.REGISTRY_KEY, Lifecycle.stable());
-        Registry.register(registry, TTAspects.ORDO, mock(IAspect.class));
-        Registry.register(registry, TTAspects.IGNIS, mock(IAspect.class));
+        registries = AspectRegistryFixture.create(TTAspects.ORDO, TTAspects.IGNIS);
+        var registry = registries.registryOrThrow(IAspect.REGISTRY_KEY);
         order = registry.getHolderOrThrow(TTAspects.ORDO);
         fire = registry.getHolderOrThrow(TTAspects.IGNIS);
-        registries = new RegistryAccess.ImmutableRegistryAccess(List.of(registry)).freeze();
         level = mock(Level.class);
         when(level.registryAccess()).thenReturn(registries);
         when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
@@ -218,14 +213,16 @@ class JarCompatibilityTest {
         when(context.getHand()).thenReturn(InteractionHand.MAIN_HAND);
         when(context.getItemInHand()).thenReturn(held);
 
-        assertEquals(InteractionResult.CONSUME, ((JarItem) held.getItem()).useOn(context));
+        assertEquals(InteractionResult.CONSUME,
+                RegistryContext.withRegistries(registries, () -> ((JarItem) held.getItem()).useOn(context)));
         assertEquals(1, held.getCount());
         ArgumentCaptor<ItemStack> dropped = ArgumentCaptor.forClass(ItemStack.class);
         verify(player).spawnAtLocation(dropped.capture());
         assertEquals(1, dropped.getValue().getCount());
-        assertEquals(
-                5,
-                ItemData.get(dropped.getValue(), TTDataComponents.ESSENTIA_CONTENTS.get()).totalAmount());
+        var contents = RegistryContext.withRegistries(
+                registries, () -> ItemData.get(dropped.getValue(), TTDataComponents.ESSENTIA_CONTENTS.get()));
+        assertEquals(5, contents.totalAmount());
+        assertSame(order, contents.contents().entries().get(0).aspect());
         verify(player, never()).setItemInHand(any(), any());
         verify(player, never()).drop(any(ItemStack.class), anyBoolean());
     }

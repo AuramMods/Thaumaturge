@@ -60,7 +60,7 @@ class FluxGooContactPortTest {
         verify(living).setDeltaMovement(0.0, 0.0, 0.0);
         ArgumentCaptor<MobEffectInstance> effect = ArgumentCaptor.forClass(MobEffectInstance.class);
         verify(living).addEffect(effect.capture());
-        assertEquals(TTMobEffects.VIS_EXHAUST, effect.getValue().getEffect());
+        assertEquals(TTMobEffects.VIS_EXHAUST.get(), effect.getValue().getEffect());
         assertEquals(600, effect.getValue().getDuration());
         assertEquals(1, effect.getValue().getAmplifier());
     }

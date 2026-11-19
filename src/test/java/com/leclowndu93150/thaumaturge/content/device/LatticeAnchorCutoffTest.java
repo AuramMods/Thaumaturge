@@ -13,12 +13,13 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
+import com.leclowndu93150.thaumaturge.testing.AspectRegistryFixture;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -283,28 +284,28 @@ class LatticeAnchorCutoffTest {
     @Test
     void aSuccessfulCleaningRollDropsOneVitiumCrystalAtTheCutoffFaceOffset() {
         when(random.nextBoolean()).thenReturn(true);
-        Holder<IAspect> vitium = Holder.direct(mock(IAspect.class));
+        var registries = AspectRegistryFixture.create(TTAspects.VITIUM);
+        when(level.registryAccess()).thenReturn(registries);
+        var vitium = registries.registryOrThrow(IAspect.REGISTRY_KEY).getHolderOrThrow(TTAspects.VITIUM);
         Player player = mock(Player.class);
         when(player.getAbilities()).thenReturn(new Abilities());
         ItemStack filter = new ItemStack(TTItems.FILTER.get(), 2);
         BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(BlockPos.ZERO), Direction.EAST, BlockPos.ZERO, false);
-        try (var aspects = mockStatic(Aspects.class);
-                var drops = mockConstruction(ItemEntity.class, (drop, context) -> {
-                    assertSame(level, context.arguments().get(0));
-                    assertEquals(1.125, (double) context.arguments().get(1));
-                    assertEquals(0.5, (double) context.arguments().get(2));
-                    assertEquals(0.5, (double) context.arguments().get(3));
-                    ItemStack crystal = (ItemStack) context.arguments().get(4);
-                    assertTrue(crystal.is(TTItems.ESSENTIA_CRYSTAL.get()));
-                    assertEquals(1, crystal.getCount());
-                    AspectInstance content = ItemData.get(crystal, TTDataComponents.CRYSTAL_ASPECT.get());
-                    assertNotNull(content);
-                    assertSame(vitium, content.aspect());
-                    assertEquals(1, content.amount());
-                })) {
-            aspects.when(() -> Aspects.resolve(level, TTAspects.VITIUM)).thenReturn(vitium);
-            dirty.useItemOn(
-                    filter, dirty.defaultBlockState(), level, BlockPos.ZERO, player, InteractionHand.MAIN_HAND, hit);
+        try (var drops = mockConstruction(ItemEntity.class, (drop, context) -> {
+            assertSame(level, context.arguments().get(0));
+            assertEquals(1.125, (double) context.arguments().get(1));
+            assertEquals(0.5, (double) context.arguments().get(2));
+            assertEquals(0.5, (double) context.arguments().get(3));
+            ItemStack crystal = (ItemStack) context.arguments().get(4);
+            assertTrue(crystal.is(TTItems.ESSENTIA_CRYSTAL.get()));
+            assertEquals(1, crystal.getCount());
+            AspectInstance content = ItemData.get(crystal, TTDataComponents.CRYSTAL_ASPECT.get());
+            assertNotNull(content);
+            assertSame(vitium, content.aspect());
+            assertEquals(1, content.amount());
+        })) {
+            RegistryContext.withRegistries(registries, () -> dirty.useItemOn(
+                    filter, dirty.defaultBlockState(), level, BlockPos.ZERO, player, InteractionHand.MAIN_HAND, hit));
             assertEquals(1, drops.constructed().size());
             verify(level).addFreshEntity(Java17.first(drops.constructed()));
             assertEquals(1, filter.getCount());

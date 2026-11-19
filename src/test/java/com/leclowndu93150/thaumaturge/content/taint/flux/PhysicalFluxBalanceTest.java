@@ -1,7 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
-import com.leclowndu93150.thaumaturge.state.AttachmentData;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,6 +9,7 @@ import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintSprouting;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.testing.AttachmentFixture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 import net.minecraft.core.BlockPos;
@@ -30,7 +29,7 @@ class PhysicalFluxBalanceTest {
         var goo = FluxGooFluid.gooBlockState(1);
         var air = Blocks.AIR.defaultBlockState();
         var state = new AtomicReference<>(goo);
-        sample(chunk, pos);
+        sample(level, chunk, pos);
         when(chunk.getBlockState(pos)).thenAnswer(call -> state.get());
         when(level.getBlockState(pos)).thenAnswer(call -> state.get());
         when(level.getGameTime()).thenReturn(20L, 200L, 400L, 600L);
@@ -53,7 +52,7 @@ class PhysicalFluxBalanceTest {
         ServerLevel level = mock(ServerLevel.class);
         LevelChunk chunk = mock(LevelChunk.class);
         RandomSource random = mock(RandomSource.class);
-        PhysicalFluxSamples samples = sample(chunk, BlockPos.ZERO);
+        PhysicalFluxSamples samples = sample(level, chunk, BlockPos.ZERO);
         for (int x = 0; x < 4; x++) {
             BlockPos pos = new BlockPos(x, 0, 0);
             samples.add(pos);
@@ -85,11 +84,9 @@ class PhysicalFluxBalanceTest {
         }
     }
 
-    private static PhysicalFluxSamples sample(LevelChunk chunk, BlockPos pos) {
-        PhysicalFluxSamples samples = new PhysicalFluxSamples();
+    private static PhysicalFluxSamples sample(ServerLevel level, LevelChunk chunk, BlockPos pos) {
+        var samples = AttachmentFixture.attach(chunk, level::registryAccess).get(TTAttachments.PHYSICAL_FLUX_SAMPLES);
         samples.add(pos);
-        when(AttachmentData.getExistingDataOrNull(chunk, TTAttachments.PHYSICAL_FLUX_SAMPLES))
-                .thenReturn(samples);
         return samples;
     }
 }

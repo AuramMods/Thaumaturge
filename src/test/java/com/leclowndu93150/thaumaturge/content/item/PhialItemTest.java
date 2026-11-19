@@ -1,17 +1,20 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
-import com.leclowndu93150.thaumaturge.itemdata.ItemData;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
+import com.leclowndu93150.thaumaturge.testing.AspectRegistryFixture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -32,6 +35,7 @@ class PhialItemTest {
     private BlockEntityJar jar;
     private UseOnContext context;
     private Holder<IAspect> aspect;
+    private RegistryAccess registries;
     private ItemStack held;
 
     @BeforeEach
@@ -41,8 +45,10 @@ class PhialItemTest {
         inventory = mock(Inventory.class);
         jar = mock(BlockEntityJar.class);
         context = mock(UseOnContext.class);
-        aspect = Holder.direct(mock(IAspect.class));
+        registries = AspectRegistryFixture.create(TTAspects.ORDO);
+        aspect = registries.registryOrThrow(IAspect.REGISTRY_KEY).getHolderOrThrow(TTAspects.ORDO);
         held = new ItemStack(TTItems.PHIAL.get());
+        when(level.registryAccess()).thenReturn(registries);
         when(context.getLevel()).thenReturn(level);
         when(context.getClickedPos()).thenReturn(BlockPos.ZERO);
         when(context.getPlayer()).thenReturn(player);
@@ -59,12 +65,16 @@ class PhialItemTest {
     @Test
     void completeWithdrawalConsumesOneEmptyPhialAndReturnsActualContents() {
         when(jar.extract(aspect, 10, Direction.UP, false)).thenReturn(10);
-        assertEquals(InteractionResult.SUCCESS, TTItems.PHIAL.get().useOn(context));
+        assertEquals(InteractionResult.SUCCESS,
+                RegistryContext.withRegistries(registries, () -> TTItems.PHIAL.get().useOn(context)));
         assertTrue(held.isEmpty());
         verify(player).setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         ArgumentCaptor<ItemStack> output = ArgumentCaptor.forClass(ItemStack.class);
         verify(inventory).add(output.capture());
-        assertEquals(10, ItemData.get(output.getValue(), TTDataComponents.ASPECTS.get()).totalAmount());
+        var contents = RegistryContext.withRegistries(
+                registries, () -> ItemData.get(output.getValue(), TTDataComponents.ASPECTS.get()));
+        assertEquals(10, contents.totalAmount());
+        assertSame(aspect, contents.entries().get(0).aspect());
     }
 
     @Test
@@ -81,7 +91,8 @@ class PhialItemTest {
     void creativeWithdrawalDoesNotConsumeHeldPhial() {
         player.getAbilities().instabuild = true;
         when(jar.extract(aspect, 10, Direction.UP, false)).thenReturn(10);
-        assertEquals(InteractionResult.SUCCESS, TTItems.PHIAL.get().useOn(context));
+        assertEquals(InteractionResult.SUCCESS,
+                RegistryContext.withRegistries(registries, () -> TTItems.PHIAL.get().useOn(context)));
         assertEquals(1, held.getCount());
         verify(inventory).add(any(ItemStack.class));
         verify(player, never()).setItemInHand(any(), any());
