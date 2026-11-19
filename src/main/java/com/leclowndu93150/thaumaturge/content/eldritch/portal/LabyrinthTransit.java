@@ -1,7 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.portal;
 
-import com.leclowndu93150.thaumaturge.state.AttachmentData;
-
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthLandmarks;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
@@ -11,9 +9,11 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeRecord;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTTicketTypes;
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -22,11 +22,9 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraft.world.level.portal.DimensionTransition;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkStatus;
 
 public final class LabyrinthTransit {
     private static final long NOTICE_INTERVAL = 40;
@@ -35,37 +33,42 @@ public final class LabyrinthTransit {
 
     private LabyrinthTransit() {}
 
-    public static boolean touch(ServerLevel level, ServerPlayer player, Optional<PortalLink> link) {
+    public static void touch(ServerLevel level, ServerPlayer player, Optional<PortalLink> link) {
         TransitState state = AttachmentData.get(player, TTAttachments.LABYRINTH_TRANSIT);
         long now = level.getGameTime();
         if (now < state.cooldownUntil()) {
-            return false;
+            return;
         }
         Optional<Target> target = link.flatMap(value -> resolve(level.getServer(), value));
         if (target.isEmpty()) {
             if (state.noticeDue(now, NOTICE_INTERVAL)) {
                 TTActionBar.sendPurple(player, CLOSED);
             }
-            return false;
+            return;
         }
         Optional<TransitState.Pending> pending = state.pending();
         if (pending.isEmpty()
                 || !pending.get().link().equals(link.get())
                 || now - pending.get().started() > TTTicketTypes.TRANSIT_LIFETIME) {
-            release(level.getServer(), state);
+            release(level.getServer(), player.getUUID(), state);
             ServerLevel destination = target.get().level();
             ChunkPos chunk = new ChunkPos(target.get().anchor());
             int radius = ThaumaturgeServerConfig.LABYRINTH.preloadRadiusChunks.get();
-            CompletableFuture<?> loaded = preload(destination, chunk, radius);
+            CompletableFuture<?> loaded = preload(destination, chunk, radius, player.getUUID());
             state.setPending(Optional.of(
                     new TransitState.Pending(link.get(), destination.dimension(), chunk, radius, loaded, now)));
         }
-        return true;
+        if (player.isOnPortalCooldown()) {
+            player.setPortalCooldown();
+        } else {
+            state.markContact(level);
+        }
     }
 
-    private static CompletableFuture<Void> preload(ServerLevel level, ChunkPos center, int radius) {
+    private static CompletableFuture<Void> preload(ServerLevel level, ChunkPos center, int radius, UUID playerId) {
         ServerChunkCache chunks = level.getChunkSource();
-        chunks.addRegionTicket(TTTicketTypes.LABYRINTH_TRANSIT, center, radius, center);
+        chunks.addRegionTicket(TTTicketTypes.LABYRINTH_TRANSIT, center, radius, playerId);
+        // Forge waits synchronously for getChunkFuture when called from the server thread.
         return CompletableFuture.supplyAsync(
                         () -> {
                             List<CompletableFuture<?>> pending = new ArrayList<>();
@@ -80,9 +83,28 @@ public final class LabyrinthTransit {
                 .thenCompose(future -> future);
     }
 
-    public static int transitionTime(ServerLevel level, ServerPlayer player) {
-        Optional<TransitState.Pending> pending =
-                AttachmentData.get(player, TTAttachments.LABYRINTH_TRANSIT).pending();
+    static void tick(ServerPlayer player) {
+        TransitState state = AttachmentData.getExistingDataOrNull(player, TTAttachments.LABYRINTH_TRANSIT);
+        if (state == null) {
+            return;
+        }
+        ServerLevel level = player.serverLevel();
+        boolean canUsePortal = player.isAlive() && player.canChangeDimensions() && !player.isSpectator();
+        if (!state.tickPortal(level, canUsePortal, transitionTime(level, player, state.pending()))) {
+            return;
+        }
+        player.setPortalCooldown();
+        destination(level, player, state.pending()).ifPresent(destination -> {
+            if ((destination.level().dimension() != Level.NETHER || level.getServer().isNetherEnabled())
+                    && destination.teleport(player, true)) {
+                release(level.getServer(), player.getUUID(), state);
+                state.setCooldownUntil(
+                        player.level().getGameTime() + ThaumaturgeServerConfig.LABYRINTH.cooldownTicks.get());
+            }
+        });
+    }
+
+    private static int transitionTime(ServerLevel level, ServerPlayer player, Optional<TransitState.Pending> pending) {
         if (pending.isEmpty()) {
             return Integer.MAX_VALUE;
         }
@@ -95,9 +117,8 @@ public final class LabyrinthTransit {
         return player.getAbilities().invulnerable ? CREATIVE_WARMUP : config.warmupTicks.get();
     }
 
-    public static Optional<DimensionTransition> destination(ServerLevel level, ServerPlayer player) {
-        Optional<TransitState.Pending> pending =
-                AttachmentData.get(player, TTAttachments.LABYRINTH_TRANSIT).pending();
+    private static Optional<LabyrinthDestination> destination(
+            ServerLevel level, ServerPlayer player, Optional<TransitState.Pending> pending) {
         if (pending.isEmpty()) {
             return Optional.empty();
         }
@@ -106,44 +127,36 @@ public final class LabyrinthTransit {
         if (target.isEmpty()) {
             return Optional.empty();
         }
-        DimensionTransition.PostDimensionTransition post =
-                DimensionTransition.PLAY_PORTAL_SOUND.then(LabyrinthTransit::finish);
         if (link.kind() == PortalLink.Kind.TO_LABYRINTH && target.get().maze().isPresent()) {
             ArrivalPad.Arrival arrival =
                     ArrivalPad.prepare(target.get().level(), target.get().maze().get());
-            return Optional.of(
-                    new DimensionTransition(target.get().level(), arrival.pos(), Vec3.ZERO, arrival.yaw(), 0.0F, post));
+            return Optional.of(arrival.destination(target.get().level()));
         }
         return Optional.of(ReturnPointFinder.find(
-                player, target.get().level(), target.get().anchor(), post));
+                player, target.get().level(), target.get().anchor(),
+                ThaumaturgeServerConfig.LABYRINTH.returnSearchRadius.get()));
     }
 
-    public static DimensionTransition returnTransition(
-            ServerPlayer player, Optional<MazeRecord> record, DimensionTransition.PostDimensionTransition post) {
+    static void returnToOrigin(ServerPlayer player, Optional<MazeRecord> record) {
         Target target = origin(player.level().getServer(), record);
-        return ReturnPointFinder.find(player, target.level(), target.anchor(), post);
+        ReturnPointFinder.find(player, target.level(), target.anchor(),
+                ThaumaturgeServerConfig.LABYRINTH.returnSearchRadius.get()).teleport(player, false);
     }
 
     public static void abandon(ServerPlayer player) {
-        release(player.level().getServer(), AttachmentData.get(player, TTAttachments.LABYRINTH_TRANSIT));
-    }
-
-    private static void finish(Entity entity) {
-        if (entity instanceof ServerPlayer player) {
-            TransitState state = AttachmentData.get(player, TTAttachments.LABYRINTH_TRANSIT);
-            release(player.level().getServer(), state);
-            state.setCooldownUntil(
-                    player.level().getGameTime() + ThaumaturgeServerConfig.LABYRINTH.cooldownTicks.get());
+        TransitState state = AttachmentData.getExistingDataOrNull(player, TTAttachments.LABYRINTH_TRANSIT);
+        if (state != null) {
+            release(player.level().getServer(), player.getUUID(), state);
         }
     }
 
-    private static void release(MinecraftServer server, TransitState state) {
+    private static void release(MinecraftServer server, UUID playerId, TransitState state) {
         state.pending().ifPresent(pending -> {
             ServerLevel level = server.getLevel(pending.level());
             if (level != null) {
                 level.getChunkSource()
                         .removeRegionTicket(
-                                TTTicketTypes.LABYRINTH_TRANSIT, pending.chunk(), pending.radius(), pending.chunk());
+                                TTTicketTypes.LABYRINTH_TRANSIT, pending.chunk(), pending.radius(), playerId);
             }
         });
         state.setPending(Optional.empty());

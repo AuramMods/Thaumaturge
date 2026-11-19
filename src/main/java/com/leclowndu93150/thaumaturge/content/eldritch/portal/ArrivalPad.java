@@ -15,7 +15,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 
 public final class ArrivalPad {
@@ -46,9 +45,11 @@ public final class ArrivalPad {
         if (SafeSpot.clear(outer, feet) && SafeSpot.clear(outer, feet.above())) {
             return;
         }
-        Arrival arrival = prepare(outer, record);
-        player.changeDimension(new DimensionTransition(
-                outer, arrival.pos(), Vec3.ZERO, arrival.yaw(), 0.0F, DimensionTransition.DO_NOTHING));
+        teleport(player, outer, record);
+    }
+
+    public static boolean teleport(ServerPlayer player, ServerLevel outer, MazeRecord record) {
+        return prepare(outer, record).destination(outer).teleport(player, false);
     }
 
     private static void ensureStamped(ServerLevel outer, MazeRecord record, BlockPos anchor) {
@@ -79,5 +80,9 @@ public final class ArrivalPad {
         return (float) Mth.atan2(-(to.getX() - from.getX()), to.getZ() - from.getZ()) * Mth.RAD_TO_DEG;
     }
 
-    public record Arrival(Vec3 pos, float yaw) {}
+    public record Arrival(Vec3 pos, float yaw) {
+        LabyrinthDestination destination(ServerLevel level) {
+            return new LabyrinthDestination(level, pos, yaw, 0.0F);
+        }
+    }
 }

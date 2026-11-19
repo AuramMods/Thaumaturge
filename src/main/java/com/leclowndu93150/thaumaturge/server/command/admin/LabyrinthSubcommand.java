@@ -41,8 +41,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.portal.DimensionTransition;
-import net.minecraft.world.phys.Vec3;
 
 final class LabyrinthSubcommand implements AdminSubcommand {
     private static final DynamicCommandExceptionType UNKNOWN =
@@ -233,9 +231,9 @@ final class LabyrinthSubcommand implements AdminSubcommand {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         MazeRecord record = record(ctx);
         ServerLevel outer = outer(ctx);
-        ArrivalPad.Arrival arrival = ArrivalPad.prepare(outer, record);
-        player.changeDimension(new DimensionTransition(
-                outer, arrival.pos(), Vec3.ZERO, arrival.yaw(), 0.0F, DimensionTransition.DO_NOTHING));
+        if (!ArrivalPad.teleport(player, outer, record)) {
+            throw FAILED.create();
+        }
         return record.plan().id().value();
     }
 

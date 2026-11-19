@@ -55,6 +55,7 @@
     "world.level.chunk.LevelChunkRegistryContextMixin",
     "world.level.chunk.storage.ChunkSerializerRegistryContextMixin",
     "server.level.ServerLevelEntityTickMixin",
+    "server.level.PlayerRespawnLogicInvoker",
     "server.level.ServerPlayerKnownMovementMixin",
     "server.network.ServerKnownMovementMixin",
     "world.item.crafting.RecipeManagerMixin",

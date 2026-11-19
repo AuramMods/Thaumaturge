@@ -8,25 +8,22 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Portal;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEldritchPortal extends BaseEntityBlock implements Portal {
+public final class BlockEldritchPortal extends BaseEntityBlock {
     public static final MapCodec<BlockEldritchPortal> CODEC = simpleCodec(BlockEldritchPortal::new);
 
     public BlockEldritchPortal(BlockBehaviour.Properties properties) {
@@ -56,30 +53,10 @@ public final class BlockEldritchPortal extends BaseEntityBlock implements Portal
     private void touchNearby(ServerLevel level, BlockPos pos, BlockEntityEldritchPortal portal) {
         for (ServerPlayer player : level.getEntitiesOfClass(
                 ServerPlayer.class, LevelSpaces.worldBox(level, pos, portal.reach()), EntitySelector.NO_SPECTATORS)) {
-            if (!player.isPassenger() && !player.isVehicle() && LabyrinthTransit.touch(level, player, portal.link())) {
-                player.setAsInsidePortal(this, pos);
+            if (!player.isPassenger() && !player.isVehicle()) {
+                LabyrinthTransit.touch(level, player, portal.link());
             }
         }
-    }
-
-    @Override
-    public int getPortalTransitionTime(ServerLevel level, Entity entity) {
-        return entity instanceof ServerPlayer player
-                ? LabyrinthTransit.transitionTime(level, player)
-                : Integer.MAX_VALUE;
-    }
-
-    @Override
-    public @Nullable DimensionTransition getPortalDestination(
-            ServerLevel level, Entity entity, BlockPos portalEntryPos) {
-        return entity instanceof ServerPlayer player
-                ? LabyrinthTransit.destination(level, player).orElse(null)
-                : null;
-    }
-
-    @Override
-    public Portal.Transition getLocalTransition() {
-        return Portal.Transition.CONFUSION;
     }
 
     @Override
