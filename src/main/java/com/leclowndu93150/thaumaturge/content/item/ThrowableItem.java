@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -53,7 +54,7 @@ public final class ThrowableItem extends Item {
             server.addFreshEntity(thrown);
         }
         player.awardStat(Stats.ITEM_USED.get(this));
-        held.consume(1, player);
+        InvHelper.consume(held, 1, player);
         return InteractionResultHolder.sidedSuccess(held, level.isClientSide());
     }
 

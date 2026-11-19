@@ -13,6 +13,7 @@ import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -32,6 +33,13 @@ import org.jspecify.annotations.Nullable;
  */
 public final class InvHelper {
     private InvHelper() {}
+
+    /** Consumes items unless the user has creative building abilities. */
+    public static void consume(ItemStack stack, int amount, @Nullable LivingEntity user) {
+        if (!(user instanceof Player player) || !player.getAbilities().instabuild) {
+            stack.shrink(amount);
+        }
+    }
 
     /**
      * Comparison flags for filter matching.

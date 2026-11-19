@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.api.research.IResearchTableAid;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
@@ -98,7 +99,7 @@ public final class BlockCandleHolder extends AbstractCandleBlock implements IRes
             return ItemInteractionResult.SUCCESS;
         }
         level.setBlock(pos, state.setValue(CANDLE, candle.get()), Block.UPDATE_ALL);
-        stack.consume(1, player);
+        InvHelper.consume(stack, 1, player);
         level.playSound(null, pos, SoundEvents.CANDLE_PLACE, SoundSource.BLOCKS, PLACE_VOLUME, 1.0F);
         level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
         return ItemInteractionResult.SUCCESS;

@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.pech;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.research.KnowledgeGrant;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -51,7 +52,7 @@ public final class PechWandItem extends Item {
             }
             return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
         }
-        player.getItemInHand(hand).consume(1, player);
+        InvHelper.consume(player.getItemInHand(hand), 1, player);
         if (player instanceof ServerPlayer scholar) {
             study(scholar);
         }

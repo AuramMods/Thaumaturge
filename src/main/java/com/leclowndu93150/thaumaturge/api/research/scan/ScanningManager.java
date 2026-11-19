@@ -235,7 +235,7 @@ public final class ScanningManager {
 
     static ItemStack blockStack(Player player, BlockPos pos, BlockState state) {
         Vec3 eye = player.getEyePosition();
-        Vec3 end = eye.add(player.getViewVector(1.0F).scale(player.blockInteractionRange()));
+        Vec3 end = eye.add(player.getViewVector(1.0F).scale(player.getBlockReach()));
         BlockHitResult hit = player.level()
                 .clipWithInteractionOverride(
                         eye, end, pos, state.getShape(player.level(), pos, CollisionContext.of(player)), state);

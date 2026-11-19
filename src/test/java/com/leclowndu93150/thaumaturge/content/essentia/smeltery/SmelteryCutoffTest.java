@@ -489,7 +489,8 @@ class SmelteryCutoffTest {
         var machine = smelter();
         var player = mock(Player.class);
         when(player.level()).thenReturn(level);
-        when(player.canInteractWithBlock(BlockPos.ZERO, 4.0)).thenReturn(true);
+        when(player.getBlockReach()).thenReturn(4.5);
+        when(player.getEyePosition()).thenReturn(new Vec3(9.25, 0.5, 0.5));
         when(level.getBlockState(BlockPos.ZERO)).thenReturn(machine.getBlockState());
         var menu = new MenuSmelter(1, new Inventory(player), machine);
         assertSame(machine.itemSlots(), menu.items());
@@ -498,7 +499,7 @@ class SmelteryCutoffTest {
         assertEquals(80, menu.getSlot(1).x);
         assertEquals(47, menu.getSlot(1).y);
         assertTrue(menu.stillValid(player));
-        when(player.canInteractWithBlock(BlockPos.ZERO, 4.0)).thenReturn(false);
+        when(player.getEyePosition()).thenReturn(new Vec3(9.5, 0.5, 0.5));
         assertFalse(menu.stillValid(player));
         try (var index = mockStatic(AspectIndexAccess.class);
                 var fuel = mockStatic(ForgeEventFactory.class)) {

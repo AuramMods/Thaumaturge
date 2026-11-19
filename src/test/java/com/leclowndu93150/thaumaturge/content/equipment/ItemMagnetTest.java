@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.Tool;
@@ -99,10 +100,9 @@ class ItemMagnetTest {
         Player attacker = mock(Player.class);
         LivingEntity target = mock(LivingEntity.class);
         when(attacker.level()).thenReturn(level);
-        when(attacker.hasInfiniteMaterials()).thenReturn(false);
+        when(attacker.getAbilities()).thenReturn(new Abilities());
 
-        assertTrue(stack.hurtEnemy(target, attacker));
-        stack.postHurtEnemy(target, attacker);
+        stack.hurtEnemy(target, attacker);
 
         assertEquals(2, stack.getDamageValue());
     }

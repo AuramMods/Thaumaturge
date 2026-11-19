@@ -69,7 +69,7 @@ public record RayDelivery(double range, boolean reach, Visual visual, float widt
             return range;
         }
         LivingEntity caster = ctx.caster();
-        return caster instanceof Player player ? player.blockInteractionRange() : MOB_REACH;
+        return caster instanceof Player player ? player.getBlockReach() : MOB_REACH;
     }
 
     private void show(CastContext ctx, SpellLook look, SpellTarget origin, Vec3 end, boolean hit) {

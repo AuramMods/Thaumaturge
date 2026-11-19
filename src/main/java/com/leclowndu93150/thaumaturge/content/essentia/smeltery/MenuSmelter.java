@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
 import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
+import com.leclowndu93150.thaumaturge.content.world.PlayerReach;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -64,7 +65,7 @@ public final class MenuSmelter extends AbstractTTMenu {
     @Override
     public boolean stillValid(Player player) {
         return player.level().getBlockState(pos).getBlock() instanceof BlockSmelter
-                && player.canInteractWithBlock(pos, INTERACTION_BUFFER);
+                && PlayerReach.canInteractWithBlock(player, pos, INTERACTION_BUFFER);
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.blocks.LabelTarget;
 import com.leclowndu93150.thaumaturge.api.items.ILabel;
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.BlockPos;
@@ -68,7 +69,7 @@ public final class LabelItem extends Item implements ILabel {
         if (!target.attachLabel(level, pos, context.getClickedFace(), player, label)) {
             return InteractionResult.PASS;
         }
-        label.consume(1, player);
+        InvHelper.consume(label, 1, player);
         return InteractionResult.SUCCESS;
     }
 

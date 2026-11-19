@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.golems.GolemDispatch;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -51,9 +52,8 @@ public final class ItemSealPlacer extends Item implements ISealDisplayer {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (SealHandler.place((ServerLevel) level, new SealPos(pos, context.getClickedFace()), sealKey, type, player)
-                && !player.hasInfiniteMaterials()) {
-            stack.shrink(1);
+        if (SealHandler.place((ServerLevel) level, new SealPos(pos, context.getClickedFace()), sealKey, type, player)) {
+            InvHelper.consume(stack, 1, player);
         }
         return InteractionResult.CONSUME;
     }

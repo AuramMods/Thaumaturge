@@ -30,7 +30,7 @@ class ItemWandTest {
 
     private void aimAtNode() {
         when(player.level()).thenReturn(level);
-        when(player.blockInteractionRange()).thenReturn(6.0);
+        when(player.getBlockReach()).thenReturn(6.0);
         when(player.getItemInHand(InteractionHand.MAIN_HAND)).thenReturn(stack);
         when(player.pick(6.0, 1.0F, false))
                 .thenReturn(new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, false));

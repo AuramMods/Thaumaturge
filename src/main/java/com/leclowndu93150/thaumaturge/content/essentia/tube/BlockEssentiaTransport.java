@@ -73,7 +73,7 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
     }
 
     static @Nullable BlockHitResult traceLook(Level level, Player player, BlockPos pos) {
-        HitResult hit = player.pick(player.blockInteractionRange(), LOOK_PARTIAL_TICK, false);
+        HitResult hit = player.pick(player.getBlockReach(), LOOK_PARTIAL_TICK, false);
         return hit instanceof BlockHitResult block
                         && block.getType() == HitResult.Type.BLOCK
                         && block.getBlockPos().equals(pos)

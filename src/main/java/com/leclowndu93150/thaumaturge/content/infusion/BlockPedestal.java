@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.infusion;
 
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
@@ -126,7 +127,7 @@ public final class BlockPedestal extends BaseEntityBlock implements BlockInterac
         }
         if (!held.isEmpty()) {
             pedestal.setItem(held.copyWithCount(1));
-            held.consume(1, player);
+            InvHelper.consume(held, 1, player);
         }
         float pitch = (level.random.nextFloat() - level.random.nextFloat()) * 0.7F + 1.0F;
         level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.2F, pitch * (wasEmpty ? 1.6F : 1.5F));

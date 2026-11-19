@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
@@ -61,7 +62,7 @@ public record ConstructDeployment<T extends EntityOwnedConstruct>(
                 SoundSource.BLOCKS,
                 SETTLE_VOLUME,
                 SETTLE_PITCH);
-        context.getItemInHand().consume(1, player);
+        InvHelper.consume(context.getItemInHand(), 1, player);
         return InteractionResult.SUCCESS;
     }
 

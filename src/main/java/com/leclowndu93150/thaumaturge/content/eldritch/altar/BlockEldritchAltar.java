@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.eldritch.altar;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
 import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
@@ -108,7 +109,7 @@ public final class BlockEldritchAltar extends BlockEldritchStructure implements 
         }
         if (!level.isClientSide()) {
             altar.setEyes(altar.getEyes() + 1);
-            stack.consume(1, player);
+            InvHelper.consume(stack, 1, player);
             level.playSound(null, pos, TTSounds.CRYSTAL.get(), SoundSource.BLOCKS, EYE_VOLUME, 1.0F);
         }
         return ItemInteractionResult.SUCCESS;

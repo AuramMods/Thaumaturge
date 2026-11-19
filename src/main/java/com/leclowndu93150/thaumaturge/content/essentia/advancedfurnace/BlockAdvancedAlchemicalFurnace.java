@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
@@ -94,7 +95,7 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock implem
                 || !furnace.insertInput(stack)) {
             return ItemInteractionResult.FAIL;
         }
-        stack.consume(1, player);
+        InvHelper.consume(stack, 1, player);
         return ItemInteractionResult.CONSUME;
     }
 

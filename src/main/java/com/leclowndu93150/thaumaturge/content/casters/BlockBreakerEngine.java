@@ -125,7 +125,7 @@ public final class BlockBreakerEngine {
         if (!level.removeBlock(pos, false)) {
             return;
         }
-        if (!player.hasInfiniteMaterials()) {
+        if (!player.getAbilities().instabuild) {
             Block.dropResources(state, level, pos, blockEntity, player, harvestTool(level, player, silk, fortune));
         }
     }
@@ -161,13 +161,13 @@ public final class BlockBreakerEngine {
             int slot = 1;
             ItemStack targetItem =
                     task.target() != null ? new ItemStack(task.target().getBlock()) : ItemStack.EMPTY;
-            if (task.consumeTarget() && !targetItem.isEmpty() && !player.hasInfiniteMaterials()) {
+            if (task.consumeTarget() && !targetItem.isEmpty() && !player.getAbilities().instabuild) {
                 slot = findInventorySlot(player, targetItem);
             }
             if (slot < 0) {
                 continue;
             }
-            if (!player.hasInfiniteMaterials()) {
+            if (!player.getAbilities().instabuild) {
                 if (task.consumeTarget() && !targetItem.isEmpty()) {
                     player.getInventory().removeItem(slot, 1);
                 }

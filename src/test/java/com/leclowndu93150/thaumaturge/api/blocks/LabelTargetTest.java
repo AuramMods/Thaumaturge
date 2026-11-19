@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -33,6 +34,7 @@ class LabelTargetTest {
     void setUp() {
         level = mock(Level.class);
         player = mock(Player.class);
+        when(player.getAbilities()).thenReturn(new Abilities());
         context = mock(UseOnContext.class);
         state = mock(BlockState.class);
         labels = new ItemStack(TTItems.LABEL.get(), 2);
@@ -61,7 +63,7 @@ class LabelTargetTest {
         assertEquals(accepted ? InteractionResult.SUCCESS : InteractionResult.PASS, result);
         assertEquals(accepted, result.shouldSwing());
         assertEquals(accepted, result.consumesAction());
-        assertEquals(accepted, result.indicateItemUse());
+        assertEquals(accepted, result.shouldAwardStats());
         assertEquals(accepted ? 1 : 2, labels.getCount());
         verify(target).attachLabel(level, BlockPos.ZERO, Direction.EAST, player, labels);
         verify(level, never()).getBlockEntity(any());
@@ -76,7 +78,7 @@ class LabelTargetTest {
         LabelTarget target = (LabelTarget) entity;
         when(target.attachLabel(level, BlockPos.ZERO, Direction.EAST, player, labels))
                 .thenReturn(true);
-        when(player.hasInfiniteMaterials()).thenReturn(creative);
+        player.getAbilities().instabuild = creative;
         assertEquals(InteractionResult.SUCCESS, TTItems.LABEL.get().useOn(context));
         assertEquals(creative ? 2 : 1, labels.getCount());
         verify(target).attachLabel(level, BlockPos.ZERO, Direction.EAST, player, labels);

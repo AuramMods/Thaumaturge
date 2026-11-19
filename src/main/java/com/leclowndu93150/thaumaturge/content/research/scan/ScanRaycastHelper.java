@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.scan;
 
+import com.leclowndu93150.thaumaturge.content.world.PlayerReach;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.Objects;
 import net.minecraft.world.entity.Entity;
@@ -26,8 +27,8 @@ public final class ScanRaycastHelper {
                 player.level(),
                 player.getEyePosition(),
                 player.getViewVector(1.0F),
-                player.blockInteractionRange(),
-                player.entityInteractionRange(),
+                player.getBlockReach(),
+                PlayerReach.entityRange(player),
                 fluid,
                 player));
     }

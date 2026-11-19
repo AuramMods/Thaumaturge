@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
+import com.leclowndu93150.thaumaturge.content.world.PlayerReach;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -66,6 +67,6 @@ public final class MenuVoidSiphon extends AbstractTTMenu {
     public boolean stillValid(Player player) {
         return blockEntity != null
                 && !blockEntity.isRemoved()
-                && player.canInteractWithBlock(blockEntity.getBlockPos(), REACH_BUFFER);
+                && PlayerReach.canInteractWithBlock(player, blockEntity.getBlockPos(), REACH_BUFFER);
     }
 }

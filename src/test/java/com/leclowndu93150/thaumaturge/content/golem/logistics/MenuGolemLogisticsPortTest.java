@@ -24,6 +24,9 @@ class MenuGolemLogisticsPortTest {
         assertEquals(0, MenuGolemLogistics.lastPageForItemCount(80));
         assertEquals(0, MenuGolemLogistics.lastPageForItemCount(81));
         assertEquals(1, MenuGolemLogistics.lastPageForItemCount(82));
+        assertEquals(1, MenuGolemLogistics.lastPageForItemCount(90));
+        assertEquals(2, MenuGolemLogistics.lastPageForItemCount(91));
+        assertEquals(238_609_286, MenuGolemLogistics.lastPageForItemCount(Integer.MAX_VALUE));
     }
 
     @Test

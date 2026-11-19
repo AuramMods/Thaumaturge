@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
 import com.leclowndu93150.thaumaturge.content.menu.BlockMenu;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInput;
+import com.leclowndu93150.thaumaturge.content.world.PlayerReach;
 import com.leclowndu93150.thaumaturge.network.ClientboundThaumatoriumRecipesPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundThaumatoriumRecipesPayload.Entry;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
@@ -112,6 +113,6 @@ public final class MenuThaumatorium extends AbstractTTMenu implements BlockMenu<
     public boolean stillValid(Player player) {
         return blockEntity != null
                 && !blockEntity.isRemoved()
-                && player.canInteractWithBlock(blockEntity.getBlockPos(), REACH_BUFFER);
+                && PlayerReach.canInteractWithBlock(player, blockEntity.getBlockPos(), REACH_BUFFER);
     }
 }

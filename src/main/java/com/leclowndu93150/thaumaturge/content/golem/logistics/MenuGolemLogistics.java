@@ -17,6 +17,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -152,7 +153,7 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
     }
 
     static int lastPageForItemCount(int itemCount) {
-        return Math.max(0, Math.ceilDiv(itemCount, COLUMNS) - ROWS);
+        return itemCount <= SIZE ? 0 : Mth.positiveCeilDiv(itemCount - SIZE, COLUMNS);
     }
 
     static int clampPage(int page, int itemCount) {

@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
+import com.leclowndu93150.thaumaturge.content.world.PlayerReach;
 import java.util.Set;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.player.Player;
@@ -15,12 +16,12 @@ public final class SealAccess {
     private SealAccess() {}
 
     public static boolean mayEdit(Player player, ISealEntity seal) {
-        return !seal.isLocked() || player.getUUID().equals(seal.owner()) || player.hasInfiniteMaterials();
+        return !seal.isLocked() || player.getUUID().equals(seal.owner()) || player.getAbilities().instabuild;
     }
 
     public static boolean isLive(Player player, ISealEntity seal) {
         return SealHandler.getSealEntity(player.level(), seal.pos()) == seal
-                && player.canInteractWithBlock(seal.pos().pos(), REACH_BUFFER);
+                && PlayerReach.canInteractWithBlock(player, seal.pos().pos(), REACH_BUFFER);
     }
 
     public static boolean allows(@Nullable ISealEntity seal, IGolemAPI golem) {

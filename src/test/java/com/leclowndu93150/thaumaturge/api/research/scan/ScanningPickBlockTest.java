@@ -94,7 +94,7 @@ class ScanningPickBlockTest {
         when(player.level()).thenReturn(level);
         when(player.getEyePosition()).thenReturn(eye);
         when(player.getViewVector(1.0F)).thenReturn(direction);
-        when(player.blockInteractionRange()).thenReturn(5.0);
+        when(player.getBlockReach()).thenReturn(5.0);
         return player;
     }
 

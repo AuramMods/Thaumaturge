@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
@@ -110,9 +111,7 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
         if (!serverLevel.addFreshEntity(golem)) {
             return InteractionResult.FAIL;
         }
-        if (!player.hasInfiniteMaterials()) {
-            held.shrink(1);
-        }
+        InvHelper.consume(held, 1, player);
         return InteractionResult.CONSUME;
     }
 }

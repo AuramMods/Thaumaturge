@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.pech;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityPech;
+import com.leclowndu93150.thaumaturge.content.world.PlayerReach;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.stream.IntStream;
 import net.minecraft.network.FriendlyByteBuf;
@@ -126,7 +127,7 @@ public final class MenuPech extends AbstractContainerMenu {
         return pech != null
                 && pech.isAlive()
                 && pech.isDomesticated()
-                && player.canInteractWithEntity(pech, REACH_BUFFER);
+                && PlayerReach.canInteractWithEntity(player, pech, REACH_BUFFER);
     }
 
     @Override

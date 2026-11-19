@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.lock;
 
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.content.eldritch.encounter.EncounterPhases;
@@ -53,7 +54,7 @@ final class LockActivation {
             TTActionBar.sendPurple(player, "gui.thaumaturge.labyrinth.lock.wrong_key");
             return;
         }
-        stack.consume(1, player);
+        InvHelper.consume(stack, 1, player);
         EncounterPhases.charge(level, record.get());
     }
 

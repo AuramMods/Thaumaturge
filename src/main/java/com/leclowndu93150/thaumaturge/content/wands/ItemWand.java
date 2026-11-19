@@ -338,7 +338,7 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
     }
 
     private static @Nullable BlockEntityNode targetedNode(Player player) {
-        HitResult hit = player.pick(player.blockInteractionRange(), 1.0F, false);
+        HitResult hit = player.pick(player.getBlockReach(), 1.0F, false);
         return hit instanceof BlockHitResult blockHit
                         && hit.getType() == HitResult.Type.BLOCK
                         && player.level().getBlockEntity(blockHit.getBlockPos()) instanceof BlockEntityNode node
