@@ -21,6 +21,8 @@
     "server.ReloadableServerResourcesMixin",
     "network.PacketDecoderRegistryContextMixin",
     "network.PacketEncoderRegistryContextMixin",
+    "network.ClientboundLoginPacketRegistryMixin",
+    "network.LoginRegistryCodecsMixin",
     "resources.RegistryOpsAccessor",
     "world.effect.MobEffectInstanceMixin",
     "world.effect.AbsorptionMobEffectMixin",

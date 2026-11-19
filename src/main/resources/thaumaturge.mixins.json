@@ -5,6 +5,8 @@
   "plugin": "com.leclowndu93150.thaumaturge.TTMixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "network.ClientboundLoginPacketRegistryMixin",
+    "network.LoginRegistryCodecsMixin",
     "sable.api.SubLevelAssemblyHelperMixin",
     "server.network.ServerGamePacketListenerImplAccessor",
     "server.network.ServerHoverFlightMixin",
