@@ -1,22 +1,21 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockBreakAccess;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import java.util.ArrayDeque;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.event.level.BlockEvent.BreakEvent;
 
 public final class EnchantMining {
     private static final int LEVEL_EVENT_BLOCK_BREAK = 2001;
@@ -26,6 +25,7 @@ public final class EnchantMining {
     private static final int SEARCH_LIMIT_HORIZONTAL = 24;
     private static final int SEARCH_LIMIT_VERTICAL = 48;
     private static final int SEARCH_NODE_LIMIT = 1024;
+    private static final int MAX_ENCHANTMENT_LEVEL = 255;
 
     private static final ThreadLocal<Boolean> HARVESTING_FURTHEST = ThreadLocal.withInitial(() -> false);
 
@@ -40,16 +40,12 @@ public final class EnchantMining {
             return false;
         }
         BlockState state = level.getBlockState(pos);
-        if (!skipEvent) {
-            BreakEvent event = ForgeHooks.fireBlockBreak(
-                    level, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos, state);
-            if (event.isCanceled()) {
-                return false;
-            }
+        if (!skipEvent && !BlockBreakAccess.mayBreak(level, serverPlayer, pos, state)) {
+            return false;
         }
         BlockEntity blockEntity = level.getBlockEntity(pos);
         level.levelEvent(null, LEVEL_EVENT_BLOCK_BREAK, pos, Block.getId(state));
-        boolean canHarvest = !player.getAbilities().instabuild && player.hasCorrectToolForDrops(state, level, pos);
+        boolean canHarvest = !player.getAbilities().instabuild && state.canHarvestBlock(level, pos, player);
         boolean removed = level.removeBlock(pos, false);
         if (removed && canHarvest) {
             Block.dropResources(state, level, pos, blockEntity, player, player.getMainHandItem());
@@ -139,18 +135,20 @@ public final class EnchantMining {
 
     public static ItemStack fortuneTool(ServerLevel level, Player player, boolean silk, int fortune) {
         ItemStack tool = player.getMainHandItem().copy();
-        if (tool.isEmpty() && (silk || fortune > 0)) {
+        if (!silk && fortune <= 0) {
+            return tool;
+        }
+        if (tool.isEmpty()) {
             tool = new ItemStack(Items.NETHERITE_PICKAXE);
         }
-        if (!tool.isEmpty() && (silk || fortune > 0)) {
-            var enchantments = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-            if (silk) {
-                tool.enchant(enchantments.getOrThrow(Enchantments.SILK_TOUCH), 1);
-            }
-            if (fortune > 0) {
-                tool.enchant(enchantments.getOrThrow(Enchantments.FORTUNE), fortune);
-            }
+        var enchantments = EnchantmentHelper.getEnchantments(tool);
+        if (silk) {
+            enchantments.merge(Enchantments.SILK_TOUCH, 1, Math::max);
         }
+        if (fortune > 0) {
+            enchantments.merge(Enchantments.BLOCK_FORTUNE, Math.min(fortune, MAX_ENCHANTMENT_LEVEL), Math::max);
+        }
+        EnchantmentHelper.setEnchantments(enchantments, tool);
         return tool;
     }
 }

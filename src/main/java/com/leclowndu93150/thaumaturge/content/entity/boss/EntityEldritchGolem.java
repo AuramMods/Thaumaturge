@@ -173,7 +173,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements Ranged
             }
             return;
         }
-        if (!ForgeEventFactory.canEntityGrief((ServerLevel) level(), this)) {
+        if (!ForgeEventFactory.getMobGriefingEvent(level(), this)) {
             return;
         }
         if (stomping) {

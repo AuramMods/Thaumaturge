@@ -4,10 +4,12 @@ import net.minecraftforge.event.TickEvent;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.blockinteraction.BlockBreakAccess;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues.BreakerTask;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues.SwapperTask;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
+import com.leclowndu93150.thaumaturge.content.equipment.EnchantMining;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.ArrayList;
@@ -15,22 +17,17 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.TickEvent.LevelTickEvent;
 import org.jspecify.annotations.Nullable;
 
@@ -115,9 +112,7 @@ public final class BlockBreakerEngine {
             return;
         }
         BlockState state = level.getBlockState(pos);
-        BlockEvent.BreakEvent event = ForgeHooks.fireBlockBreak(
-                level, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos, state);
-        if (event.isCanceled()) {
+        if (!BlockBreakAccess.mayBreak(level, serverPlayer, pos, state)) {
             return;
         }
         BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -126,25 +121,9 @@ public final class BlockBreakerEngine {
             return;
         }
         if (!player.getAbilities().instabuild) {
-            Block.dropResources(state, level, pos, blockEntity, player, harvestTool(level, player, silk, fortune));
+            Block.dropResources(
+                    state, level, pos, blockEntity, player, EnchantMining.fortuneTool(level, player, silk, fortune));
         }
-    }
-
-    private static ItemStack harvestTool(ServerLevel level, Player player, boolean silk, int fortune) {
-        ItemStack tool = player.getMainHandItem().copy();
-        if (tool.isEmpty() && (silk || fortune > 0)) {
-            tool = new ItemStack(Items.NETHERITE_PICKAXE);
-        }
-        if (!tool.isEmpty() && (silk || fortune > 0)) {
-            var enchantments = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-            if (silk) {
-                tool.enchant(enchantments.getOrThrow(Enchantments.SILK_TOUCH), 1);
-            }
-            if (fortune > 0) {
-                tool.enchant(enchantments.getOrThrow(Enchantments.FORTUNE), fortune);
-            }
-        }
-        return tool;
     }
 
     private static void tickSwappers(ServerLevel level, BlockWorkQueues queues) {
@@ -224,7 +203,7 @@ public final class BlockBreakerEngine {
                 task.pos(),
                 level.getBlockEntity(task.pos()),
                 player,
-                harvestTool(level, player, task.silk(), task.fortune()));
+                EnchantMining.fortuneTool(level, player, task.silk(), task.fortune()));
         for (ItemStack drop : drops) {
             if (!player.getInventory().add(drop)) {
                 level.addFreshEntity(new EntitySpecialItem(
