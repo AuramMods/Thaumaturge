@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Set;
+import javax.imageio.ImageIO;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import org.junit.jupiter.api.Test;
@@ -50,9 +51,8 @@ class DynamicTreesJoCodeResourceTest {
     }
 
     @Test
-    void thickTrunksAndDenseLeavesHaveMatchingFamilyModelsAndAtlasSources() throws Exception {
+    void thickTrunksAndDenseLeavesHaveMatchingFamilyModelsAndRingSprites() throws Exception {
         String pack = "resourcepacks/dynamictrees/assets/";
-        String atlas = resource(pack + "minecraft/atlases/blocks.json");
         for (String species : new String[] {"greatwood", "silverwood"}) {
             JsonObject family = json("trees/thaumaturge/families/" + species + ".json");
             JsonObject config = json("trees/thaumaturge/species/" + species + ".json");
@@ -67,47 +67,16 @@ class DynamicTreesJoCodeResourceTest {
                 JsonObject model = json(pack + "dynamictrees/models/block/" + prefix + species + "_branch.json");
                 assertEquals("dynamictrees:thick_branch", model.get("loader").getAsString());
                 assertEquals("thaumaturge:" + species, model.get("family").getAsString());
-                assertTrue(atlas.contains(
-                        model.getAsJsonObject("textures").get("rings").getAsString()));
+                String rings = model.getAsJsonObject("textures").get("rings").getAsString();
+                String[] texture = rings.split(":", 2);
+                try (var stream = openResource(pack + texture[0] + "/textures/" + texture[1] + "_thick.png")) {
+                    var image = ImageIO.read(stream);
+                    assertNotNull(image, rings);
+                    assertEquals(48, image.getWidth(), rings);
+                    assertEquals(48, image.getHeight(), rings);
+                }
             }
         }
-    }
-
-    @Test
-    void worldgenKeepsNativePlacementAndSelectionInsteadOfAddingPoissonSpawns() throws Exception {
-        ClassLoader loader = getClass().getClassLoader();
-        assertNull(loader.getResource("trees/thaumaturge/world_gen/default.json"));
-        assertNull(loader.getResource("data/thaumaturge/neoforge/biome_modifier/dynamic_trees_worldgen.json"));
-        for (String tree : new String[] {"greatwood", "silverwood"}) {
-            assertEquals(
-                    "thaumaturge:compat_tree",
-                    json("data/thaumaturge/worldgen/configured_feature/" + tree + "_tree.json")
-                            .get("type")
-                            .getAsString());
-            assertEquals(
-                    "minecraft:tree",
-                    json("data/thaumaturge/worldgen/configured_feature/" + tree + "_tree_grown.json")
-                            .get("type")
-                            .getAsString());
-        }
-        assertRarity("greatwood_natural", 25);
-        assertRarity("greatwood_natural_rare", 125);
-        assertRarity("silverwood_natural", 60);
-        JsonObject selection = json("data/thaumaturge/worldgen/configured_feature/magic_forest_trees.json");
-        var choices = selection.getAsJsonObject("config").getAsJsonArray("features");
-        assertEquals(
-                1.0F / 18.0F, choices.get(0).getAsJsonObject().get("chance").getAsFloat());
-        assertEquals(
-                1.0F / 12.0F, choices.get(1).getAsJsonObject().get("chance").getAsFloat());
-    }
-
-    private static void assertRarity(String feature, int rarity) throws Exception {
-        var placements = json("data/thaumaturge/worldgen/placed_feature/" + feature + ".json")
-                .getAsJsonArray("placement");
-        assertEquals(
-                "minecraft:rarity_filter",
-                placements.get(0).getAsJsonObject().get("type").getAsString());
-        assertEquals(rarity, placements.get(0).getAsJsonObject().get("chance").getAsInt());
     }
 
     private static Set<BlockPos> decode(String code) {
@@ -135,20 +104,25 @@ class DynamicTreesJoCodeResourceTest {
         return branches;
     }
 
-    private static JsonObject json(String path) throws Exception {
+    static JsonObject json(String path) throws Exception {
         return JsonParser.parseString(resource(path)).getAsJsonObject();
     }
 
     private static String resource(String path) throws Exception {
+        try (var stream = openResource(path)) {
+            return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        }
+    }
+
+    private static InputStream openResource(String path) throws Exception {
         InputStream stream =
                 DynamicTreesJoCodeResourceTest.class.getClassLoader().getResourceAsStream(path);
-        if (stream != null) {
-            try (stream) {
-                return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-            }
-        }
-        Path generated = Path.of("src/generated/resources", path);
+        if (stream != null) return stream;
+        Path main = Path.of(System.getProperty("thaumaturge.testResourceRoot", "src/main/resources"));
+        Path source = main.resolve(path);
+        if (Files.isRegularFile(source)) return Files.newInputStream(source);
+        Path generated = main.getParent().getParent().resolve("generated/resources").resolve(path);
         assertTrue(Files.isRegularFile(generated), path);
-        return Files.readString(generated, StandardCharsets.UTF_8);
+        return Files.newInputStream(generated);
     }
 }

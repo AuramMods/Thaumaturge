@@ -1,10 +1,4 @@
 {
-  "neoforge:conditions": [
-    {
-      "type": "neoforge:mod_loaded",
-      "modid": "dynamictrees"
-    }
-  ],
   "type": "minecraft:block",
   "pools": [
     {
@@ -20,7 +14,7 @@
               "function": "minecraft:explosion_decay"
             }
           ],
-          "name": "thaumaturge:stripped_log_greatwood"
+          "name": "thaumaturge:stripped_log_silverwood"
         }
       ],
       "rolls": 1.0
@@ -44,5 +38,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "thaumaturge:trees/branches/stripped_greatwood"
+  "random_sequence": "thaumaturge:trees/branches/stripped_silverwood"
 }

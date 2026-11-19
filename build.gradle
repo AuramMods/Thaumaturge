@@ -482,6 +482,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/client/warding/WardRenderType.java'
         java.include 'com/leclowndu93150/thaumaturge/client/effect/rendertype/VoidStreamRenderType.java'
         java.include 'com/leclowndu93150/thaumaturge/compat/iris/IrisCompat.java'
+        java.include 'com/leclowndu93150/thaumaturge/compat/dynamictrees/DynamicTreesResourcePack.java'
         java.include 'com/leclowndu93150/thaumaturge/client/warding/WardClientHandler.java'
         java.include 'com/leclowndu93150/thaumaturge/content/warding/ClientWardHolder.java'
         java.include 'com/leclowndu93150/thaumaturge/network/ClientboundWardChunkPayload.java'
@@ -594,10 +595,11 @@ dependencies {
     portDfuReferenceRuntimeOnly 'com.mojang:logging:1.2.7'
     portDfuReferenceRuntimeOnly 'org.slf4j:slf4j-api:2.0.9'
 
-    // Run with -PportIntegrations to exercise optional JEI and Jade integration.
+    // Run with -PportIntegrations to exercise JEI, Jade and Dynamic Trees integration.
     if (providers.gradleProperty('portIntegrations').isPresent()) {
         runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
         runtimeOnly fg.deobf("maven.modrinth:jade:${jade_version}")
+        runtimeOnly fg.deobf("maven.modrinth:vdjF5PL5:${dynamic_trees_version}")
     }
 }
 

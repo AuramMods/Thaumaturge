@@ -1,13 +1,14 @@
 package com.leclowndu93150.thaumaturge.compat.dynamictrees;
 
-import com.dtteam.dynamictrees.api.worldgen.LevelContext;
-import com.dtteam.dynamictrees.config.DTConfigs;
-import com.dtteam.dynamictrees.tree.TreeHelper;
-import com.dtteam.dynamictrees.tree.species.Species;
-import com.dtteam.dynamictrees.worldgen.DynamicTreeGenerationContext;
-import com.dtteam.dynamictrees.worldgen.JoCode;
-import com.dtteam.dynamictrees.worldgen.JoCodeRegistry;
-import com.dtteam.dynamictrees.worldgen.feature.DynamicTreeFeature;
+import com.ferreusveritas.dynamictrees.api.TreeHelper;
+import com.ferreusveritas.dynamictrees.init.DTConfigs;
+import com.ferreusveritas.dynamictrees.tree.species.Species;
+import com.ferreusveritas.dynamictrees.util.LevelContext;
+import com.ferreusveritas.dynamictrees.util.SafeChunkBounds;
+import com.ferreusveritas.dynamictrees.worldgen.DynamicTreeFeature;
+import com.ferreusveritas.dynamictrees.worldgen.GenerationContext;
+import com.ferreusveritas.dynamictrees.worldgen.JoCode;
+import com.ferreusveritas.dynamictrees.worldgen.JoCodeRegistry;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.world.tree.silverwood.ScatteredFlowersDecorator;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -30,7 +31,7 @@ public final class DynamicTreesPlacement {
     private DynamicTreesPlacement() {}
 
     public static boolean place(FeaturePlaceContext<TreeConfiguration> context) {
-        if (!DTConfigs.SERVER.worldGen.get()) return Feature.TREE.place(context);
+        if (!DTConfigs.WORLD_GEN.get()) return Feature.TREE.place(context);
         Block log = context.config()
                 .trunkProvider
                 .getState(context.random(), context.origin())
@@ -47,7 +48,7 @@ public final class DynamicTreesPlacement {
             return Feature.TREE.place(context);
         }
         ResourceLocation speciesId = log == Blocks.OAK_LOG
-                ? ResourceLocation.fromNamespaceAndPath("dynamictrees", speciesName)
+                ? ResourceLocation.fromNamespaceAndPath(TTIds.DYNAMIC_TREES, speciesName)
                 : TTIds.rl(speciesName);
         Species species = Species.REGISTRY.get(speciesId);
         if (!species.isValid()) return Feature.TREE.place(context);
@@ -61,7 +62,7 @@ public final class DynamicTreesPlacement {
         // JoCodes keep mutable rotation state. Each placement owns its copy during parallel generation.
         JoCode code = new JoCode(template.toString()).setCareful(true);
         Direction facing = Direction.from2DDataValue(context.random().nextInt(4));
-        code.generate(new DynamicTreeGenerationContext(
+        code.generate(new GenerationContext(
                 LevelContext.create(level),
                 species,
                 context.origin(),
@@ -69,7 +70,7 @@ public final class DynamicTreesPlacement {
                 level.getBiome(root),
                 facing,
                 radius,
-                true));
+                SafeChunkBounds.ANY_WG));
         boolean placed = TreeHelper.getBranchOpt(level.getBlockState(context.origin()))
                 .filter(branch -> branch.getFamily() == species.getFamily())
                 .isPresent();
