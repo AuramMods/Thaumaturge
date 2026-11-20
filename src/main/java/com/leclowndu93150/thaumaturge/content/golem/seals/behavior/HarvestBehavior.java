@@ -213,7 +213,7 @@ public final class HarvestBehavior implements ISealBehavior {
         }
         ItemStack seed = site.seed().copyWithCount(1);
         InteractionResult result = plant(level, golem, seed, ground, support);
-        if (result == InteractionResult.SUCCESS && !level.getBlockState(pos).isAir()) {
+        if (result.consumesAction() && !level.getBlockState(pos).isAir()) {
             level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(level.getBlockState(pos)));
             golem.hands().release(site.seed().copyWithCount(1));
             golem.grantRankExperience(1);
