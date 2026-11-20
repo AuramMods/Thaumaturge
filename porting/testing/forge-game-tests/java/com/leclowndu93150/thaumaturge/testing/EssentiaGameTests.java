@@ -6,6 +6,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
+import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTube;
@@ -21,7 +23,9 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -127,6 +131,69 @@ public final class EssentiaGameTests {
                     "Transfer duplicated essentia in the tray or tube");
             test.assertTrue(TTAspects.ORDO.equals(jar.aspectKey()), "Jar received the wrong aspect");
         });
+    }
+
+    @GameTest(template = ROOM, timeoutTicks = 200)
+    public static void energizedNodePowersFurnaceAndNozzleTransfer(GameTestHelper test) {
+        var corePos = new BlockPos(2, 2, 2);
+        var tubePos = corePos.north(2);
+        var jarPos = tubePos.below();
+        var nodePos = new BlockPos(0, 2, 4);
+        test.setBlock(corePos, TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get());
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                if (x == 0 && z == 0) continue;
+                boolean corner = x != 0 && z != 0;
+                var lower = corePos.offset(x, 0, z);
+                test.setBlock(lower, corner
+                        ? TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get()
+                        : TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get());
+                test.setBlock(lower.above(), corner
+                        ? TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get()
+                        : TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get());
+            }
+        }
+        test.setBlock(jarPos, TTBlocks.JAR_NORMAL.get());
+        test.setBlock(tubePos, TTBlocks.TUBE.get());
+        var jar = blockEntity(test, jarPos, BlockEntityJar.class);
+        var tube = blockEntity(test, tubePos, BlockEntityTube.class);
+        var core = blockEntity(test, corePos, BlockEntityAdvancedAlchemicalFurnace.class);
+        jar.setAspectFilter(TTAspects.ORDO);
+        var level = test.getLevel();
+        var position = Vec3.atBottomCenterOf(test.absolutePos(corePos)).add(0, 0.7, 0);
+        // With an odd entity ID, stationary collision callbacks miss every tenth item tick.
+        ItemEntity candidate;
+        do {
+            candidate = new ItemEntity(level, position.x, position.y, position.z, new ItemStack(Items.STONE));
+        } while (candidate.getId() % 2 == 0);
+        var dropped = candidate;
+        dropped.setDeltaMovement(Vec3.ZERO);
+        dropped.setOnGround(true);
+        level.addFreshEntity(dropped);
+
+        test.startSequence().thenWaitUntil(() -> {
+            test.assertTrue(core.isAssembled() && core.input().is(Items.STONE) && dropped.isRemoved(),
+                    "Waiting for the assembled furnace to collect the dropped stone");
+            test.assertTrue(core.aspects().isEmpty(), "The furnace processed the stone with empty reserves");
+        }).thenExecute(() -> {
+            test.setBlock(nodePos, TTBlocks.NODE.get());
+            var node = blockEntity(test, nodePos, BlockEntityNode.class);
+            var fire = Objects.requireNonNull(Aspects.resolve(level, TTAspects.IGNIS));
+            var entropy = Objects.requireNonNull(Aspects.resolve(level, TTAspects.PERDITIO));
+            var water = Objects.requireNonNull(Aspects.resolve(level, TTAspects.AQUA));
+            node.setAspects(AspectList.EMPTY.add(fire, 20).add(entropy, 20).add(water, 20));
+            node.setEnergized(true);
+        }).thenWaitUntil(() -> {
+            var earth = Objects.requireNonNull(Aspects.resolve(level, TTAspects.TERRA));
+            test.assertTrue(core.input().isEmpty() && core.aspects().amountOf(earth) == 5,
+                    "Waiting for the node to power the stone's conversion to Terra");
+            test.assertTrue(jar.amount() == 0, "The Ordo label accepted Terra");
+        }).thenExecute(() -> jar.setAspectFilter(TTAspects.TERRA)).thenWaitUntil(() -> {
+            test.assertTrue(jar.amount() == 5 && TTAspects.TERRA.equals(jar.aspectKey()),
+                    "Waiting for the Terra jar to draw all five points from the north nozzle");
+            test.assertTrue(core.aspects().isEmpty() && tube.essentiaAmountRaw() == 0,
+                    "Essentia remained in the furnace or tube after transfer");
+        }).thenSucceed();
     }
 
     private static <T extends BlockEntity> T blockEntity(GameTestHelper test, BlockPos pos, Class<T> type) {

@@ -13,8 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -46,7 +44,6 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock implem
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     private static final ResourceLocation RESEARCH = TTIds.rl("advanced_alchemical_furnace");
     private static final VoxelShape INPUT_COLLISION = Block.box(0.0, 0.0, 0.0, 16.0, 11.2, 16.0);
-    private static final int ITEM_INTAKE_INTERVAL = 10;
 
     public BlockAdvancedAlchemicalFurnace(Properties properties) {
         super(properties);
@@ -97,24 +94,6 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock implem
         }
         InvHelper.consume(stack, 1, player);
         return ItemInteractionResult.CONSUME;
-    }
-
-    @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (!level.isClientSide()
-                && entity instanceof ItemEntity item
-                && item.tickCount % ITEM_INTAKE_INTERVAL == 0
-                && level.getBlockEntity(pos) instanceof BlockEntityAdvancedAlchemicalFurnace furnace
-                && furnace.insertInput(item.getItem())) {
-            ItemStack remaining = item.getItem().copy();
-            remaining.shrink(1);
-            if (remaining.isEmpty()) {
-                item.discard();
-            } else {
-                item.setItem(remaining);
-            }
-        }
-        super.entityInside(state, level, pos, entity);
     }
 
     @Override

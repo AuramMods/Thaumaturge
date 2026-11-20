@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
@@ -54,6 +55,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
     private static final String CYCLE_KEY = "CycleDuration";
     private static final String ASSEMBLED_KEY = "Assembled";
     private static final int POWER_INTERVAL = 5;
+    private static final int ITEM_INTAKE_INTERVAL = 10;
     private static final int POWER_REQUEST = 50;
     private static final int HEAT_DECAY = 1;
     private static final int MIN_COOLDOWN = 5;
@@ -128,8 +130,28 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
         furnace.syncAssembly(server, pos);
         if (furnace.assembled) {
             furnace.runCycle(server, pos);
+            if (furnace.input.isEmpty() && server.getGameTime() % ITEM_INTAKE_INTERVAL == 0) {
+                furnace.collectDroppedInput(server, pos);
+            }
         }
         furnace.updateLit(server, pos, state);
+    }
+
+    private void collectDroppedInput(ServerLevel level, BlockPos pos) {
+        // Stationary Forge 1.20.1 items can skip every collision callback on the intake interval.
+        for (ItemEntity item : LevelSpaces.entitiesIn(level, ItemEntity.class, pos, new AABB(pos), ItemEntity::isAlive)) {
+            if (!insertInput(item.getItem())) {
+                continue;
+            }
+            ItemStack remaining = item.getItem().copy();
+            remaining.shrink(1);
+            if (remaining.isEmpty()) {
+                item.discard();
+            } else {
+                item.setItem(remaining);
+            }
+            return;
+        }
     }
 
     private void syncAssembly(ServerLevel server, BlockPos pos) {
