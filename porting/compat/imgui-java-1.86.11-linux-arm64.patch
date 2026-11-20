@@ -1,0 +1,22 @@
+diff --git a/buildSrc/src/main/groovy/tool/generator/GenerateLibs.groovy b/buildSrc/src/main/groovy/tool/generator/GenerateLibs.groovy
+index 52e70d0..c573090 100644
+--- a/buildSrc/src/main/groovy/tool/generator/GenerateLibs.groovy
++++ b/buildSrc/src/main/groovy/tool/generator/GenerateLibs.groovy
+@@ -93 +93,2 @@ class GenerateLibs extends DefaultTask {
+-            def linux64 = BuildTarget.newDefaultTarget(BuildTarget.TargetOs.Linux, true)
++            def linux64 = BuildTarget.newDefaultTarget(BuildTarget.TargetOs.Linux, true, true)
++            linux64.libName = 'libimgui-java64.so'
+@@ -118 +119 @@ class GenerateLibs extends DefaultTask {
+-            BuildExecutor.executeAnt(jniDir + '/build-linux64.xml', commonParams)
++            BuildExecutor.executeAnt(jniDir + '/build-linuxarm64.xml', commonParams)
+diff --git a/imgui-binding/build.gradle b/imgui-binding/build.gradle
+index 51d98d4..1a34ee6 100644
+--- a/imgui-binding/build.gradle
++++ b/imgui-binding/build.gradle
+@@ -11,4 +11,2 @@ plugins {
+-java {
+-    toolchain {
+-        languageVersion.set(JavaLanguageVersion.of(8))
+-    }
++tasks.withType(JavaCompile).configureEach {
++    options.release = 8
