@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.event.combat.DamagePhaseEvent;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -68,8 +69,12 @@ public final class GolemWorldEvents {
 
     @SubscribeEvent
     public static void onChunkWatch(ChunkWatchEvent.Watch event) {
-        for (SealEntity seal : SealHandler.getSealsInChunk(event.getChunk())) {
-            PayloadNetwork.sendToPlayer(event.getPlayer(), ClientboundSealPayload.update(seal));
+        syncChunkSeals(event.getPlayer(), event.getChunk());
+    }
+
+    public static void syncChunkSeals(ServerPlayer player, LevelChunk chunk) {
+        for (SealEntity seal : SealHandler.getSealsInChunk(chunk)) {
+            PayloadNetwork.sendToPlayer(player, ClientboundSealPayload.update(seal));
         }
     }
 

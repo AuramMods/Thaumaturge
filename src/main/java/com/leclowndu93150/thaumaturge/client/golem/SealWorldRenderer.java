@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealArea;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.golem.seals.ClientSealHolder;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
@@ -91,27 +92,29 @@ public final class SealWorldRenderer {
         float time = player.tickCount % 360 + partialTicks;
         for (SealEntity seal : ClientSealHolder.all().values()) {
             BlockPos pos = seal.pos().pos();
-            double distSqr = player.distanceToSqr(Vec3.atCenterOf(pos));
+            Vec3 center = Vec3.atCenterOf(pos);
+            double distSqr = player.position().distanceToSqr(ClientSpaces.renderPosition(mc.level, center));
             if (distSqr > MAX_DIST_SQR) {
                 continue;
             }
             float alpha = 1.0F - (float) (distSqr / MAX_DIST_SQR);
             boolean inactive = seal.isStoppedByRedstone(mc.level);
-            drawSealIcon(poseStack, effectBuffers, seal, cam, alpha, inactive);
-            drawSealRing(poseStack, effectBuffers, seal, cam, alpha, time);
+            poseStack.pushPose();
+            ClientSpaces.applyFrame(poseStack, mc.level, center, cam);
+            drawSealIcon(poseStack, effectBuffers, seal, alpha, inactive);
+            drawSealRing(poseStack, effectBuffers, seal, alpha, time);
             if (seal.type().hasArea()) {
-                drawAreaCorners(poseStack, effectBuffers, seal, cam, alpha, time);
+                drawAreaCorners(poseStack, effectBuffers, seal, alpha, time);
             }
+            poseStack.popPose();
         }
         SEAL_BUFFERS.endBatch();
     }
 
     private static void drawSealIcon(
-            PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, Vec3 cam, float alpha, boolean inactive) {
-        BlockPos pos = seal.pos().pos();
+            PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, float alpha, boolean inactive) {
         Direction face = seal.pos().face();
         poseStack.pushPose();
-        poseStack.translate(pos.getX() + 0.5 - cam.x, pos.getY() + 0.5 - cam.y, pos.getZ() + 0.5 - cam.z);
         poseStack.mulPose(new Quaternionf()
                 .rotationAxis((float) Math.toRadians(90.0), -face.getStepY(), face.getStepX(), -face.getStepZ()));
         poseStack.translate(0.0, 0.0, face.getStepZ() < 0 ? -0.55 : 0.55);
@@ -149,7 +152,7 @@ public final class SealWorldRenderer {
     }
 
     private static void drawSealRing(
-            PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, Vec3 cam, float alpha, float time) {
+            PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, float alpha, float time) {
         BlockPos pos = seal.pos().pos();
         Direction face = seal.pos().face();
         float r;
@@ -166,7 +169,6 @@ public final class SealWorldRenderer {
             b = 0.7F + Mth.sin((time + pos.getZ()) / 6.0F) * 0.1F;
         }
         poseStack.pushPose();
-        poseStack.translate(pos.getX() + 0.5 - cam.x, pos.getY() + 0.5 - cam.y, pos.getZ() + 0.5 - cam.z);
         poseStack.mulPose(new Quaternionf()
                 .rotationAxis((float) Math.toRadians(90.0), -face.getStepY(), face.getStepX(), -face.getStepZ()));
         poseStack.translate(0.0, 0.0, face.getStepZ() < 0 ? -0.51 : 0.51);
@@ -180,12 +182,12 @@ public final class SealWorldRenderer {
     }
 
     private static void drawAreaCorners(
-            PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, Vec3 cam, float alpha, float time) {
+            PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, float alpha, float time) {
         BlockPos pos = seal.pos().pos();
         float r = 0.7F + Mth.sin((time + pos.getX()) / 4.0F) * 0.1F;
         float g = 0.7F + Mth.sin((time + pos.getY()) / 5.0F) * 0.1F;
         float b = 0.7F + Mth.sin((time + pos.getZ()) / 6.0F) * 0.1F;
-        AABB area = SealArea.bounds(seal);
+        AABB area = SealArea.bounds(seal).move(-pos.getX(), -pos.getY(), -pos.getZ());
         double[][] corners = {
             {area.minX, area.minY, area.minZ},
             {area.minX, area.maxY - 1.0, area.minZ},
@@ -200,7 +202,7 @@ public final class SealWorldRenderer {
         VertexConsumer buffer = buffers.getBuffer(typeFor(CORNER_FRAME));
         for (int q = 0; q < corners.length; q++) {
             poseStack.pushPose();
-            poseStack.translate(corners[q][0] + 0.5 - cam.x, corners[q][1] + 0.5 - cam.y, corners[q][2] + 0.5 - cam.z);
+            poseStack.translate(corners[q][0], corners[q][1], corners[q][2]);
             for (int w = 0; w < ROT_FACES[q].length; w++) {
                 Direction cornerFace = ROT_FACES[q][w];
                 poseStack.pushPose();
