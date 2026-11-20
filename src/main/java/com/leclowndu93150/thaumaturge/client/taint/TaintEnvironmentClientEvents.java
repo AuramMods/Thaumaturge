@@ -14,7 +14,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.client.event.ViewportEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = TTIds.MODID)
 public final class TaintEnvironmentClientEvents {
@@ -82,10 +81,5 @@ public final class TaintEnvironmentClientEvents {
 
     private static float usablePlane(float plane, float fallback) {
         return !Float.isFinite(plane) || plane > MAX_SANE_FOG_PLANE ? fallback : plane;
-    }
-
-    @SubscribeEvent
-    public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        TaintEnvironmentClientState.reset();
     }
 }

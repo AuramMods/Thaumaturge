@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.client.aura.ClientAuraCache;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.effect.manager.FXManagerRegistry;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayCache;
+import com.leclowndu93150.thaumaturge.client.taint.TaintEnvironmentClientState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -18,17 +19,20 @@ public final class ClientSessionReset {
     @SubscribeEvent
     public static void onLevelUnload(LevelEvent.Unload event) {
         if (event.getLevel().isClientSide()) {
-            FXManagerRegistry.clearAll();
-            LateWorldRenderQueue.clear();
-            ClientAuraCache.clear();
+            clearLevelState();
         }
     }
 
     @SubscribeEvent
     public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        clearLevelState();
+        RecipeDisplayCache.clear();
+    }
+
+    private static void clearLevelState() {
         FXManagerRegistry.clearAll();
         LateWorldRenderQueue.clear();
         ClientAuraCache.clear();
-        RecipeDisplayCache.clear();
+        TaintEnvironmentClientState.reset();
     }
 }
