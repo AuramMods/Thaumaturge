@@ -5,6 +5,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
@@ -15,6 +16,11 @@ public final class DataMaps {
 
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> { ModLoader.get().postEvent(new RegisterDataMapTypesEvent(CATALOG)); CATALOG.freeze(); });
+    }
+
+    public static void registerReloadListener(AddReloadListenerEvent event) {
+        var resources = (ResourceDataMaps) event.getServerResources();
+        event.addListener(resources.thaumaturge$dataMapLoader());
     }
 
     @SuppressWarnings("unchecked")

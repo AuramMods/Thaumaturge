@@ -41,6 +41,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.fml.ModLoader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -101,11 +103,25 @@ public class DataMapReloadRuntimeTest {
         return new MultiPackResourceManager(PackType.SERVER_DATA, packs);
     }
     private DataMapLoader reload(ReloadableServerResources resources, RegistryAccess owner, boolean apply, Path... packs) throws Exception {
-        var participants = resources.listeners().stream().filter(listener -> listener instanceof TagManager || listener instanceof DataMapLoader).toList();
-        assertEquals(2, participants.size());
-        var loader = ((ResourceDataMaps) resources).thaumaturge$dataMapLoader(); assertTrue(participants.contains(loader));
-        try (var manager = manager(packs)) { reload(participants, manager, () -> { if (apply) resources.updateRegistryTags(owner); }); }
-        return loader;
+        List<PreparableReloadListener> participants = new ArrayList<>();
+        var tags = resources.listeners().stream().filter(TagManager.class::isInstance).findFirst().orElseThrow();
+        participants.add(tags);
+        var event = new AddReloadListenerEvent(resources, owner);
+        DataMaps.registerReloadListener(event);
+        assertEquals(1, event.getListeners().size());
+        participants.addAll(event.getListeners());
+        // The focused test launcher skips Forge's normal mod-loading lifecycle.
+        var modLoader = ModLoader.get();
+        var loadingState = ModLoader.class.getDeclaredField("loadingStateValid");
+        loadingState.setAccessible(true);
+        boolean originalState = loadingState.getBoolean(modLoader);
+        loadingState.setBoolean(modLoader, true);
+        try (var manager = manager(packs)) {
+            reload(participants, manager, () -> { if (apply) resources.updateRegistryTags(owner); });
+        } finally {
+            loadingState.setBoolean(modLoader, originalState);
+        }
+        return ((ResourceDataMaps) resources).thaumaturge$dataMapLoader();
     }
     private void reload(List<PreparableReloadListener> listeners, MultiPackResourceManager manager, Runnable apply) throws Exception {
         var background = Executors.newFixedThreadPool(2, work -> new Thread(work, "port-map-prepare"));
