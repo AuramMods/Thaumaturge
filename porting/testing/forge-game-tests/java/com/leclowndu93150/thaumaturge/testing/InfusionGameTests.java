@@ -112,12 +112,19 @@ public final class InfusionGameTests {
         player.setGameMode(GameType.SURVIVAL);
         var approach = Vec3.atBottomCenterOf(test.absolutePos(CENTER.south(2)));
         player.moveTo(approach.x, approach.y, approach.z);
+        for (int distance = 2; distance <= 4; distance++) {
+            test.setBlock(CENTER.offset(distance, 0, -2), Blocks.SKELETON_SKULL);
+            test.setBlock(CENTER.offset(-distance, 0, 2), Blocks.SKELETON_SKULL);
+        }
         assembleAltar(test, player);
         ResearchManager.complete(player, TTIds.rl("cloud_ring"));
 
         test.startSequence().thenWaitUntil(() -> test.assertTrue(
                 MatrixEnvironment.validLocation(test.getLevel(), test.absolutePos(MATRIX)), "Waiting for the finished altar"))
                 .thenExecute(() -> {
+                    test.assertTrue(MatrixEnvironment.survey(test.getLevel(), test.absolutePos(MATRIX))
+                                    .stabilityReplenish() > 0.2F,
+                            "The three matched skull pairs should offset the ring recipe's stability loss");
                     test.setBlock(SEEDS, TTBlocks.PEDESTAL_ARCANE.get());
                     test.setBlock(DUST, TTBlocks.PEDESTAL_ARCANE.get());
                     loadJar(test, ORDO, TTAspects.AER, 50);
