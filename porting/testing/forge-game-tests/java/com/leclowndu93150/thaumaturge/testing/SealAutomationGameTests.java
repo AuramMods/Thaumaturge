@@ -82,7 +82,7 @@ public final class SealAutomationGameTests {
         var level = test.getLevel();
         var server = level.getServer();
         boolean originalPvp = server.isPvpAllowed();
-        buildFloor(test);
+        prepareRoom(test);
         test.setBlock(HARVEST_SEAL, Blocks.SMOOTH_STONE);
         var guard = placeSeal(test, owner, HARVEST_SEAL, new ItemStack(TTItems.SEAL_GUARD_ADVANCED.get()));
         guard.setArea(new BlockPos(2, 1, 4));
@@ -130,7 +130,7 @@ public final class SealAutomationGameTests {
         var owner = ResearchGameTests.survivalPlayer(test);
         var visitor = ResearchGameTests.survivalPlayer(test);
         var level = test.getLevel();
-        buildFloor(test);
+        prepareRoom(test);
         test.setBlock(HARVEST_SEAL, Blocks.SMOOTH_STONE);
         test.setBlock(HARVEST_SEAL.south(), Blocks.REDSTONE_BLOCK);
         var guard = placeSeal(test, owner, HARVEST_SEAL, new ItemStack(TTItems.SEAL_GUARD_ADVANCED.get()));
@@ -327,7 +327,7 @@ public final class SealAutomationGameTests {
         var owner = ResearchGameTests.survivalPlayer(test);
         var visitor = ResearchGameTests.survivalPlayer(test);
         var level = test.getLevel();
-        buildFloor(test);
+        prepareRoom(test);
         SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(HARVEST_SEAL), FACE), true);
         test.setBlock(HARVEST_SEAL, Blocks.SMOOTH_STONE);
         var guard = placeSeal(test, owner, HARVEST_SEAL, new ItemStack(TTItems.SEAL_GUARD_ADVANCED.get()));
@@ -378,7 +378,7 @@ public final class SealAutomationGameTests {
     public static void bareHandedUseSealDoesNotDiscardCargo(GameTestHelper test) {
         var owner = ResearchGameTests.survivalPlayer(test);
         var level = test.getLevel();
-        buildFloor(test);
+        prepareRoom(test);
         SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(TARGET), FACE), true);
         test.setBlock(TARGET, Blocks.STONE_BUTTON.defaultBlockState().setValue(ButtonBlock.FACE, AttachFace.FLOOR));
         var use = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_USE.get()));
@@ -408,7 +408,7 @@ public final class SealAutomationGameTests {
     public static void useSealThrowsOneEggIntoAir(GameTestHelper test) {
         var owner = ResearchGameTests.survivalPlayer(test);
         var level = test.getLevel();
-        buildFloor(test);
+        prepareRoom(test);
         SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(TARGET), FACE), true);
         test.setBlock(TARGET, Blocks.SMOOTH_STONE);
         var use = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_USE.get()));
@@ -787,7 +787,7 @@ public final class SealAutomationGameTests {
     }
 
     private static void buildWorkshop(GameTestHelper test) {
-        buildFloor(test);
+        prepareRoom(test);
         for (var pos : new BlockPos[] {SOURCE, TARGET}) {
             SealHandler.removeSealEntity(test.getLevel(), new SealPos(test.absolutePos(pos), FACE), true);
             test.setBlock(pos, Blocks.CHEST);
@@ -797,14 +797,18 @@ public final class SealAutomationGameTests {
         chest(test, SOURCE).setItem(1, new ItemStack(Items.CARROT, 3));
     }
 
-    private static void buildFloor(GameTestHelper test) {
+    private static void prepareRoom(GameTestHelper test) {
         for (BlockPos floor : BlockPos.betweenClosed(new BlockPos(0, 1, 0), new BlockPos(8, 1, 8))) {
             test.setBlock(floor, Blocks.SMOOTH_STONE);
+        }
+        // The sparse room template leaves generated terrain in its unspecified cells.
+        for (BlockPos air : BlockPos.betweenClosed(new BlockPos(0, 2, 0), new BlockPos(8, 5, 8))) {
+            test.setBlock(air, Blocks.AIR);
         }
     }
 
     private static SealEntity buildHarvestPlot(GameTestHelper test, FakePlayer owner) {
-        buildFloor(test);
+        prepareRoom(test);
         test.setBlock(HARVEST_SEAL, Blocks.SMOOTH_STONE);
         test.setBlock(HARVEST_CROP.below(), Blocks.SOUL_SAND);
         test.setBlock(HARVEST_CROP, Blocks.NETHER_WART.defaultBlockState()
