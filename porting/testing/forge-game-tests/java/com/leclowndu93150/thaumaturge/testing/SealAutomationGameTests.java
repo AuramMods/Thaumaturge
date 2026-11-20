@@ -5,10 +5,12 @@ import com.leclowndu93150.thaumaturge.api.golems.GolemDispatch;
 import com.leclowndu93150.thaumaturge.api.golems.SupplyOrder;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
+import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.LogisticsTarget;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics;
+import com.leclowndu93150.thaumaturge.content.golem.seals.MenuSealBase;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealAccess;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
@@ -37,6 +39,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket;
 import net.minecraft.network.protocol.game.ClientboundContainerSetDataPacket;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.animal.Pig;
@@ -71,6 +74,89 @@ public final class SealAutomationGameTests {
     private static final Direction FACE = Direction.NORTH;
 
     private SealAutomationGameTests() {}
+
+    @GameTest(template = "golem_room", batch = "guard_player", timeoutTicks = 100)
+    public static void guardPlayerMarksRequirePvpAndExcludeTheOwner(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var visitor = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        var server = level.getServer();
+        boolean originalPvp = server.isPvpAllowed();
+        buildFloor(test);
+        test.setBlock(HARVEST_SEAL, Blocks.SMOOTH_STONE);
+        var guard = placeSeal(test, owner, HARVEST_SEAL, new ItemStack(TTItems.SEAL_GUARD_ADVANCED.get()));
+        guard.setArea(new BlockPos(2, 1, 4));
+        guard.setLocked(true);
+        guard.setSetting(GuardBehavior.MONSTERS, false);
+        var scout = createWorker(test, owner);
+        scout.applyBuild(scout.properties().withArms(TTGolemParts.ARMS_CLAWS.get()));
+        var ownerPosition = Vec3.atBottomCenterOf(test.absolutePos(HARVEST_SEAL.north(2)));
+        var visitorPosition = Vec3.atBottomCenterOf(test.absolutePos(HARVEST_SEAL.north(2).east()));
+        owner.moveTo(ownerPosition.x, ownerPosition.y, ownerPosition.z);
+        visitor.moveTo(visitorPosition.x, visitorPosition.y, visitorPosition.z);
+        level.addNewPlayer(owner);
+        level.addNewPlayer(visitor);
+        try {
+            server.setPvpAllowed(true);
+            test.assertTrue(guardPlayerMarks(test, guard, scout).isEmpty(), "Guard player targeting should be opt-in");
+            guard.setSetting(GuardBehavior.PLAYERS, true);
+            server.setPvpAllowed(false);
+            test.assertTrue(guardPlayerMarks(test, guard, scout).isEmpty(), "Disabled PvP should suppress all player marks");
+            server.setPvpAllowed(true);
+            var marks = guardPlayerMarks(test, guard, scout);
+            test.assertTrue(marks.stream().anyMatch(task -> task.entity() == owner && !task.canBePerformedBy(scout))
+                            && marks.stream().anyMatch(task -> task.entity() == visitor && task.canBePerformedBy(scout)),
+                    "An enabled guard should accept the visitor as a target and protect its owner");
+        } finally {
+            server.setPvpAllowed(originalPvp);
+            SealHandler.removeSealEntity(level, guard.pos(), true);
+            level.removePlayerImmediately(owner, Entity.RemovalReason.DISCARDED);
+            level.removePlayerImmediately(visitor, Entity.RemovalReason.DISCARDED);
+        }
+        test.succeed();
+    }
+
+    private static List<Task> guardPlayerMarks(GameTestHelper test, SealEntity guard, EntityThaumaturgeGolem golem) {
+        var level = test.getLevel();
+        for (int tick = 0; tick < 20; tick++) {
+            guard.behavior().tick(level, guard);
+        }
+        return TaskBoard.of(level).openEntityTasks(golem.getUUID(), golem).stream()
+                .filter(task -> guard.pos().equals(task.origin())).toList();
+    }
+
+    @GameTest(template = "golem_room", batch = "seal_redstone_lock", timeoutTicks = 100)
+    public static void guestCannotChangeRedstoneControlOnLockedSeal(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var visitor = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildFloor(test);
+        test.setBlock(HARVEST_SEAL, Blocks.SMOOTH_STONE);
+        test.setBlock(HARVEST_SEAL.south(), Blocks.REDSTONE_BLOCK);
+        var guard = placeSeal(test, owner, HARVEST_SEAL, new ItemStack(TTItems.SEAL_GUARD_ADVANCED.get()));
+        guard.setLocked(true);
+        var ownerMenu = new MenuSealBase(1, owner.getInventory(), guard);
+        var visitorMenu = new MenuSealBase(2, visitor.getInventory(), guard);
+        try {
+            test.assertTrue(visitorMenu.clickMenuButton(visitor, 0), "A visitor should be able to inspect a locked seal");
+            test.assertTrue(!visitorMenu.clickMenuButton(visitor, MenuSealBase.BUTTON_REDSTONE_ON)
+                            && !guard.isStoppedByRedstone(level),
+                    "A guest enabled redstone and stopped the owner's locked guard");
+            test.assertTrue(ownerMenu.clickMenuButton(owner, MenuSealBase.BUTTON_REDSTONE_ON)
+                            && guard.isStoppedByRedstone(level),
+                    "The owner should be able to stop the guard using redstone");
+            test.assertTrue(!visitorMenu.clickMenuButton(visitor, MenuSealBase.BUTTON_REDSTONE_OFF)
+                            && guard.isStoppedByRedstone(level),
+                    "A guest disabled redstone on the owner's locked guard");
+            test.assertTrue(ownerMenu.clickMenuButton(owner, MenuSealBase.BUTTON_UNLOCK)
+                            && visitorMenu.clickMenuButton(visitor, MenuSealBase.BUTTON_REDSTONE_OFF)
+                            && !guard.isStoppedByRedstone(level),
+                    "An unlocked seal should still accept a guest's redstone change");
+        } finally {
+            SealHandler.removeSealEntity(level, guard.pos(), true);
+        }
+        test.succeed();
+    }
 
     @GameTest(template = "golem_room", batch = "use_seal_tool", timeoutTicks = 460)
     public static void useSealRequestsPickaxeAndReusesItAfterWear(GameTestHelper test) {

@@ -111,13 +111,9 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
                         seal.isRedstoneControlled()
                                 ? "gui.thaumaturge.seal.setting.redon"
                                 : "gui.thaumaturge.seal.setting.redoff"),
-                () -> {
-                    seal.setRedstoneControlled(!seal.isRedstoneControlled());
-                    sendButton(
-                            seal.isRedstoneControlled()
-                                    ? MenuSealBase.BUTTON_REDSTONE_ON
-                                    : MenuSealBase.BUTTON_REDSTONE_OFF);
-                }));
+                () -> sendButton(seal.isRedstoneControlled()
+                        ? MenuSealBase.BUTTON_REDSTONE_OFF
+                        : MenuSealBase.BUTTON_REDSTONE_ON)));
         switch (menu.panel()) {
             case PRIORITY -> {
                 addRenderableWidget(TTPlusMinusButton.minus(

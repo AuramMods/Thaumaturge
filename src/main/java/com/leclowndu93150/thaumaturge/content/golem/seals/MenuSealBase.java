@@ -147,12 +147,12 @@ public final class MenuSealBase extends AbstractTTMenu {
             panel = panels.get(id);
             return true;
         }
+        if (!SealAccess.mayEdit(player, seal)) {
+            return false;
+        }
         if (id == BUTTON_REDSTONE_ON || id == BUTTON_REDSTONE_OFF) {
             seal.setRedstoneControlled(id == BUTTON_REDSTONE_ON);
             return true;
-        }
-        if (!SealAccess.mayEdit(player, seal)) {
-            return false;
         }
         if (seal.type().showsSettings()) {
             List<SealSetting> settings = seal.type().settings();
