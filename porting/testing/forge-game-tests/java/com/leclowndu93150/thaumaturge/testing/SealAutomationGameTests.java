@@ -55,6 +55,53 @@ public final class SealAutomationGameTests {
 
     private SealAutomationGameTests() {}
 
+    @GameTest(template = "golem_room", batch = "stock_seal", timeoutTicks = 900)
+    public static void stockSealRefillsThroughSingleItemProvider(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildWorkshop(test);
+        var source = chest(test, SOURCE);
+        var target = chest(test, TARGET);
+        var provider = placeSeal(test, owner, SOURCE, new ItemStack(TTItems.SEAL_PROVIDER.get()));
+        configureFilter(provider);
+        provider.setSetting(ProvideBehavior.SINGLE_ITEM, true);
+        provider.setSetting(ProvideBehavior.LEAVE_ONE, true);
+        provider.markChanged(level);
+        var stock = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_STOCK.get()));
+        configureFilter(stock).setLimit(0, 5);
+        stock.markChanged(level);
+
+        var worker = createWorker(test, owner);
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the stock worker");
+        test.startSequence().thenWaitUntil(() -> {
+            test.assertTrue(target.countItem(Items.IRON_INGOT) == 5,
+                    "Waiting for five stocked ingots. Stocked " + target.countItem(Items.IRON_INGOT)
+                            + ", source " + source.countItem(Items.IRON_INGOT) + ", held " + worker.getMainHandItem()
+                            + ", rank XP " + worker.getRankXp());
+        }).thenExecute(() -> {
+            test.assertTrue(worker.getRankXp() == 5 && worker.getMainHandItem().isEmpty(),
+                    "Five single-item trips should leave the golem empty-handed with five rank XP");
+            assertPreservedSource(test);
+            test.assertTrue(target.removeItem(0, 2).getCount() == 2, "Could not take two ingots from stock");
+        }).thenIdle(110).thenExecute(() -> {
+            test.assertTrue(target.countItem(Items.IRON_INGOT) == 3 && worker.getRankXp() == 5,
+                    "The provider should preserve its reserve while stock is low");
+            assertPreservedSource(test);
+            source.setItem(0, new ItemStack(Items.IRON_INGOT, 3));
+        }).thenWaitUntil(() -> {
+            test.assertTrue(target.countItem(Items.IRON_INGOT) == 5,
+                    "Waiting for the stock seal to refill the same container after replenishment");
+        }).thenIdle(110).thenExecute(() -> {
+            test.assertTrue(target.countItem(Items.IRON_INGOT) == 5 && worker.getRankXp() == 7
+                            && worker.getMainHandItem().isEmpty(),
+                    "Stock should have exactly five ingots after seven single-item trips");
+            assertPreservedSource(test);
+            SealHandler.removeSealEntity(level, provider.pos(), true);
+            SealHandler.removeSealEntity(level, stock.pos(), true);
+            worker.discard();
+        }).thenSucceed();
+    }
+
     @GameTest(template = "golem_room", batch = "harvest_supply", timeoutTicks = 600)
     public static void harvestSealRequestsOneSeedFromItsProvider(GameTestHelper test) {
         var owner = ResearchGameTests.survivalPlayer(test);
