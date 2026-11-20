@@ -9,6 +9,8 @@
     "network.LoginRegistryCodecsMixin",
     "sable.SableDatapackSyncMixin",
     "sable.SableForgePlayerReachMixin",
+    "sable.SableGolemNavigationMixin",
+    "sable.SableGolemWalkNodeMixin",
     "sable.SableLocalMovementMixin",
     "sable.SablePhysicsDefinitionsMixin",
     "sable.SablePlotChunkSyncMixin",
