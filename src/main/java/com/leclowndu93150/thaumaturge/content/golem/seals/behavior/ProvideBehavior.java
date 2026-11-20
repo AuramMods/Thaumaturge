@@ -11,7 +11,10 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.SealSetting;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.api.items.ItemMatch;
+import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealAccess;
+import com.leclowndu93150.thaumaturge.content.golem.tasks.GolemDelivery;
+import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.List;
 import java.util.Optional;
@@ -158,6 +161,9 @@ public final class ProvideBehavior implements ISealBehavior {
                 collect(level, seal, golem, task, request);
             } else {
                 deliver(level, seal, golem, request);
+                if (golem.asEntity() instanceof EntityThaumaturgeGolem carrier) {
+                    carrier.finishDelivery(task, request);
+                }
             }
         }
         task.end();
@@ -207,12 +213,51 @@ public final class ProvideBehavior implements ISealBehavior {
             }
             return;
         }
+        if (supplied > 0) {
+            EntityThaumaturgeGolem carrier = golem.asEntity() instanceof EntityThaumaturgeGolem body ? body : null;
+            Task delivery = postDelivery(level, at, request, task.priority(), carrier);
+            if (carrier != null) {
+                carrier.rememberDelivery(GolemDelivery.of(level, at, request, task.priority()), delivery);
+            }
+        }
+    }
+
+    private static Task postDelivery(
+            ServerLevel level, SealPos provider, SupplyOrder request, byte priority, @Nullable EntityThaumaturgeGolem carrier) {
         Entity receiver = request.recipient();
-        Task delivery = receiver != null ? Task.onEntity(at, receiver) : Task.atBlock(at, request.destinationBlock());
-        delivery.setPriority(task.priority());
+        Task delivery = receiver != null
+                ? Task.onEntity(provider, receiver) : Task.atBlock(provider, request.destinationBlock());
+        delivery.setPriority(priority);
         delivery.setLife(CARRY_LIFE);
         delivery.setData(receiver != null ? LEG_TO_ENTITY : LEG_TO_BLOCK);
+        if (carrier != null) {
+            delivery.assignTo(carrier.getUUID());
+        }
         post(level, delivery, request);
+        return delivery;
+    }
+
+    public static @Nullable Task resumeDelivery(ServerLevel level, EntityThaumaturgeGolem carrier, GolemDelivery saved) {
+        if (!level.dimension().equals(saved.dimension())) {
+            return null;
+        }
+        ISealEntity seal = GolemDispatch.sealAt(level, saved.provider()).orElse(null);
+        if (seal == null || !(seal.behavior() instanceof ProvideBehavior) || !SealAccess.allows(seal, carrier)) {
+            return null;
+        }
+        SupplyOrder request = saved.restoreOrder(level).orElse(null);
+        if (request == null) {
+            return null;
+        }
+        Task pending = request.servingTask();
+        if (pending != null && !pending.isEnded() && TaskBoard.of(level).find(pending.id()) == pending) {
+            if (legOf(pending.data()) != LEG_COLLECT) {
+                return carrier.getUUID().equals(pending.assignedGolem()) ? pending : null;
+            }
+            // A stock scan may have recreated the order before the carrier was loaded.
+            pending.end();
+        }
+        return postDelivery(level, saved.provider(), request, saved.priority(), carrier);
     }
 
     private static void deliver(ServerLevel level, ISealEntity seal, IGolemAPI golem, SupplyOrder request) {
@@ -224,9 +269,9 @@ public final class ProvideBehavior implements ISealBehavior {
         Direction face = request.destinationFace();
         if (shortfall > 0) {
             if (receiver != null) {
-                GolemDispatch.orderSupply(level, receiver, wanted.copyWithCount(shortfall));
+                GolemDispatch.orderSupply(level, receiver, wanted.copyWithCount(shortfall), request.batch());
             } else if (destination != null && face != null) {
-                GolemDispatch.orderSupply(level, destination, face, wanted.copyWithCount(shortfall));
+                GolemDispatch.orderSupply(level, destination, face, wanted.copyWithCount(shortfall), request.batch());
             }
         }
         if (!given.isEmpty()) {

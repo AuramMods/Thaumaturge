@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemHands;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemProperties;
+import com.leclowndu93150.thaumaturge.api.golems.SupplyOrder;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessories;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessory;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryBehavior;
@@ -23,6 +24,9 @@ import com.leclowndu93150.thaumaturge.content.golem.accessory.GolemAccessoryStat
 import com.leclowndu93150.thaumaturge.content.golem.ai.BlockTaskGoal;
 import com.leclowndu93150.thaumaturge.content.golem.ai.EntityTaskGoal;
 import com.leclowndu93150.thaumaturge.content.golem.ai.ReturnHomeGoal;
+import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ProvideBehavior;
+import com.leclowndu93150.thaumaturge.content.golem.tasks.GolemDelivery;
+import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -132,6 +136,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private static final ResourceLocation GOLEM_MASTERY_RESEARCH = TTIds.rl("golem_direct");
     private static final float RANK_UP_VOLUME = 0.25F;
     private static final int RANGED_TARGET_FORGET_DIST_SQR = 1024;
+    private static final String PENDING_DELIVERIES_KEY = "pending_deliveries";
+    private static final int DELIVERY_RETRY_TICKS = 20;
 
     public boolean redrawParts;
     public float wheelRotation;
@@ -142,6 +148,9 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private boolean accessorySyncOverBudget;
     private final GolemHands hands = new GolemHands(this);
     private Task task;
+    private final List<PendingDelivery> pendingDeliveries = new ArrayList<>();
+
+    private record PendingDelivery(GolemDelivery route, @Nullable Task task) {}
 
     public EntityThaumaturgeGolem(EntityType<? extends EntityThaumaturgeGolem> type, Level level) {
         super(type, level);
@@ -557,6 +566,10 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             if (task != null && task.isEnded()) {
                 task = null;
             }
+            if (level() instanceof ServerLevel serverLevel && !pendingDeliveries.isEmpty()
+                    && tickCount % DELIVERY_RETRY_TICKS == 1 && !isFollowingOwner() && isEffectiveAi()) {
+                resumeDeliveries(serverLevel);
+            }
             if (getTarget() != null && !getTarget().isAlive()) {
                 setTarget(null);
             }
@@ -802,6 +815,34 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         this.task = task;
     }
 
+    public void rememberDelivery(GolemDelivery delivery, Task task) {
+        pendingDeliveries.add(new PendingDelivery(delivery, task));
+    }
+
+    public void finishDelivery(Task task, SupplyOrder order) {
+        pendingDeliveries.removeIf(delivery -> delivery.task() == task
+                || delivery.route().matches(level(), task.origin(), order));
+    }
+
+    private void resumeDeliveries(ServerLevel level) {
+        var iterator = pendingDeliveries.listIterator();
+        while (iterator.hasNext()) {
+            PendingDelivery delivery = iterator.next();
+            Task task = delivery.task();
+            if (!hands.holds(delivery.route().wanted())) {
+                if (task != null) {
+                    task.end();
+                }
+                iterator.remove();
+            } else if (task == null || task.isEnded() || TaskBoard.of(level).find(task.id()) != task) {
+                Task resumed = ProvideBehavior.resumeDelivery(level, this, delivery.route());
+                if (resumed != null) {
+                    iterator.set(new PendingDelivery(delivery.route(), resumed));
+                }
+            }
+        }
+    }
+
     private void releaseTask() {
         if (task != null) {
             task.release();
@@ -872,6 +913,13 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         output.putInt("rankXP", rankXp);
         output.putByte("color", color());
         output.putString("accessories", entityData.get(ACCESSORIES));
+        if (!pendingDeliveries.isEmpty()) {
+            var deliveries = pendingDeliveries.stream().map(PendingDelivery::route)
+                    .filter(route -> hands.holds(route.wanted())).toList();
+            if (!deliveries.isEmpty()) {
+                TTNbt.store(output, PENDING_DELIVERIES_KEY, GolemDelivery.CODEC.listOf(), registries, deliveries);
+            }
+        }
         if (!accessoryStates.isEmpty()) {
             CompoundTag stored = new CompoundTag();
             accessoryStates.save(stored, registries);
@@ -893,6 +941,9 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         rankXp = (input.contains("rankXP") ? input.getInt("rankXP") : 0);
         setGolemColor((input.contains("color") ? input.getByte("color") : (byte) 0));
         entityData.set(ACCESSORIES, (input.contains("accessories") ? input.getString("accessories") : ""));
+        pendingDeliveries.clear();
+        TTNbt.read(input, PENDING_DELIVERIES_KEY, GolemDelivery.CODEC.listOf(), registries)
+                .ifPresent(deliveries -> deliveries.forEach(route -> pendingDeliveries.add(new PendingDelivery(route, null))));
         accessoryStates.load(input.getCompound(ACCESSORY_STATES_KEY), getAccessories(), registries);
         syncAccessoryStates();
         updateEntityAttributes();

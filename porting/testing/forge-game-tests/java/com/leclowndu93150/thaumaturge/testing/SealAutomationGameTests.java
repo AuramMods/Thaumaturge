@@ -27,7 +27,9 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -54,6 +56,101 @@ public final class SealAutomationGameTests {
     private static final Direction FACE = Direction.NORTH;
 
     private SealAutomationGameTests() {}
+
+    @GameTest(template = "golem_room", batch = "recipient_reload", timeoutTicks = 460)
+    public static void providerWaitsForItsSavedRecipient(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildWorkshop(test);
+        var source = chest(test, SOURCE);
+        var provider = placeSeal(test, owner, SOURCE, new ItemStack(TTItems.SEAL_PROVIDER.get()));
+        provider.setLocked(true);
+        provider.setSetting(ProvideBehavior.LEAVE_ONE, true);
+        provider.markChanged(level);
+        var recipientPos = Vec3.atBottomCenterOf(test.absolutePos(TARGET.north()));
+        var recipient = Objects.requireNonNull(EntityType.PIG.create(level));
+        recipient.setNoAi(true);
+        recipient.moveTo(recipientPos.x, recipientPos.y, recipientPos.z);
+        test.assertTrue(level.addFreshEntity(recipient), "Could not add the original recipient");
+        GolemDispatch.orderSupply(level, recipient, new ItemStack(Items.CARROT), 2);
+        var worker = createWorker(test, owner);
+        var restoredWorker = new AtomicReference<EntityThaumaturgeGolem>();
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the recipient delivery worker");
+
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(worker.getMainHandItem().is(Items.CARROT),
+                "Waiting for the provider to collect the recipient's carrot")).thenExecute(() -> {
+            GolemDispatch.supplyQueue(level).removeIf(order -> order.recipient() == recipient);
+            restoredWorker.set(reloadDeliveryWorker(test, owner, worker, provider));
+            recipient.discard();
+        }).thenIdle(60).thenExecute(() -> {
+            test.assertTrue(restoredWorker.get().getMainHandItem().is(Items.CARROT)
+                            && source.countItem(Items.CARROT) == 2,
+                    "The carrier should keep the original carrot while the recipient is unavailable");
+            Pig returned = Objects.requireNonNull(EntityType.PIG.create(level));
+            returned.setUUID(recipient.getUUID());
+            returned.setNoAi(true);
+            returned.moveTo(recipientPos.x, recipientPos.y, recipientPos.z);
+            test.assertTrue(level.addFreshEntity(returned), "Could not restore the recipient's UUID");
+        }).thenWaitUntil(() -> test.assertTrue(restoredWorker.get().getMainHandItem().isEmpty(),
+                "Waiting for the restored worker to deliver to the returning recipient")).thenExecute(() -> {
+            var dropped = level.getEntitiesOfClass(ItemEntity.class, new AABB(recipientPos, recipientPos).inflate(2));
+            test.assertTrue(dropped.size() == 1 && dropped.get(0).getItem().is(Items.CARROT)
+                            && dropped.get(0).getItem().getCount() == 1 && source.countItem(Items.CARROT) == 2
+                            && restoredWorker.get().getRankXp() == 1,
+                    "The returning recipient should receive the original carrot exactly once");
+            dropped.get(0).discard();
+            Objects.requireNonNull(level.getEntity(recipient.getUUID())).discard();
+            SealHandler.removeSealEntity(level, provider.pos(), true);
+            restoredWorker.get().discard();
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "golem_room", batch = "stock_reload", timeoutTicks = 460)
+    public static void providerResumesPaidDeliveryAfterReload(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildWorkshop(test);
+        var source = chest(test, SOURCE);
+        var target = chest(test, TARGET);
+        source.setItem(0, new ItemStack(Items.IRON_INGOT, 2));
+        var provider = placeSeal(test, owner, SOURCE, new ItemStack(TTItems.SEAL_PROVIDER.get()));
+        configureFilter(provider);
+        provider.setSetting(ProvideBehavior.LEAVE_ONE, true);
+        provider.markChanged(level);
+        var stock = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_STOCK.get()));
+        configureFilter(stock).setLimit(0, 1);
+        stock.markChanged(level);
+
+        var worker = createWorker(test, owner);
+        var workerId = worker.getUUID();
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the delivery worker");
+        test.startSequence().thenWaitUntil(() -> {
+            test.assertTrue(worker.getMainHandItem().is(Items.IRON_INGOT) && worker.getRankXp() == 1,
+                    "Waiting for the native provider pickup");
+        }).thenExecute(() -> {
+            test.assertTrue(target.isEmpty() && source.countItem(Items.IRON_INGOT) == 1,
+                    "The worker should have paid for one ingot and still be on its way to the target");
+            GolemDispatch.supplyQueue(level).removeIf(order -> stock.pos().pos().equals(order.destinationBlock()));
+            var restored = reloadDeliveryWorker(test, owner, worker, provider);
+            test.assertTrue(restored.getUUID().equals(workerId) && restored.getMainHandItem().getCount() == 1
+                            && restored.getRankXp() == 1 && restored.getTask() == null,
+                    "The work board should be empty but the saved worker should still be carrying the ingot");
+        }).thenWaitUntil(() -> {
+            var restored = Objects.requireNonNull((EntityThaumaturgeGolem) level.getEntity(workerId));
+            test.assertTrue(target.countItem(Items.IRON_INGOT) == 1 && restored.getMainHandItem().isEmpty(),
+                    "Waiting for the restored delivery. Stocked " + target.countItem(Items.IRON_INGOT)
+                            + ", source " + source.countItem(Items.IRON_INGOT) + ", held " + restored.getMainHandItem());
+        }).thenIdle(110).thenExecute(() -> {
+            var restored = Objects.requireNonNull((EntityThaumaturgeGolem) level.getEntity(workerId));
+            test.assertTrue(target.countItem(Items.IRON_INGOT) == 1 && restored.getRankXp() == 1
+                            && restored.getMainHandItem().isEmpty(),
+                    "One delivery should complete with no second pickup");
+            assertPreservedSource(test);
+            SealHandler.removeSealEntity(level, provider.pos(), true);
+            SealHandler.removeSealEntity(level, stock.pos(), true);
+            restored.discard();
+        }).thenSucceed();
+    }
 
     @GameTest(template = "golem_room", batch = "stock_seal", timeoutTicks = 900)
     public static void stockSealRefillsThroughSingleItemProvider(GameTestHelper test) {
@@ -378,6 +475,20 @@ public final class SealAutomationGameTests {
         ForgeEventFactory.onFinalizeSpawn(worker, test.getLevel(),
                 test.getLevel().getCurrentDifficultyAt(worker.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
         return worker;
+    }
+
+    private static EntityThaumaturgeGolem reloadDeliveryWorker(
+            GameTestHelper test, FakePlayer owner, EntityThaumaturgeGolem worker, SealEntity provider) {
+        var level = test.getLevel();
+        var saved = new CompoundTag();
+        test.assertTrue(worker.save(saved), "Could not save the worker and its paid delivery");
+        worker.discard();
+        TaskBoard.of(level).endAllFrom(provider.pos());
+        TaskBoard.of(level).sweep(level);
+        var restored = createWorker(test, owner);
+        restored.load(saved);
+        test.assertTrue(level.addFreshEntity(restored), "Could not add the restored delivery worker");
+        return restored;
     }
 
     private static void reloadSeals(GameTestHelper test, SealEntity emptySeal, SealEntity fillSeal, FakePlayer owner) {
