@@ -20,6 +20,7 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.GuardBehavior
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.HarvestBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ItemMatchSettings;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ProvideBehavior;
+import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.StoreBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.UseBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandoff;
@@ -60,6 +61,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -137,6 +139,148 @@ public final class SealAutomationGameTests {
         item.setNoPickUpDelay();
         test.assertTrue(level.addFreshEntity(item), "Could not drop " + stack);
         return item;
+    }
+
+    @GameTest(template = "golem_room", batch = "advanced_store_existing", timeoutTicks = 570)
+    public static void basicCollectAndAdvancedStoreRespectExistingTaggedStock(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildWorkshop(test);
+        chest(test, SOURCE).clearContent();
+        test.setBlock(SOURCE, Blocks.SMOOTH_STONE);
+        var collect = placeSeal(test, owner, SOURCE, new ItemStack(TTItems.SEAL_PICKUP.get()));
+        collect.setArea(new BlockPos(2, 1, 2));
+        var cargo = new ItemStack(Items.IRON_INGOT, 5);
+        cargo.getOrCreateTag().putString("PortCargo", "delivery");
+        configureFilter(collect).setStack(0, cargo.copyWithCount(1));
+        collect.markChanged(level);
+        var store = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_FILL_ADVANCED.get()));
+        var filter = configureFilter(store);
+        filter.setStack(8, cargo.copyWithCount(1));
+        filter.setStack(0, ItemStack.EMPTY);
+        filter.setLimit(8, 4);
+        store.setSetting(StoreBehavior.ONLY_EXISTING, true);
+        store.markChanged(level);
+        var target = chest(test, TARGET);
+        var existing = new ItemStack(Items.IRON_INGOT, 2);
+        existing.getOrCreateTag().putString("PortCargo", "existing");
+        target.setItem(0, existing.copy());
+
+        var accepted = dropForCollect(test, SOURCE.north(), cargo.copy());
+        var rejected = dropForCollect(test, SOURCE.north().west(), new ItemStack(Items.IRON_INGOT, 3));
+        var worker = createWorker(test, owner);
+        worker.applyBuild(worker.properties().withHead(TTGolemParts.HEAD_BASIC.get()));
+        test.assertTrue(SealAccess.allows(collect, worker) && !SealAccess.allows(store, worker),
+                "A basic head should work the Collect seal, and advanced Store should require a smart head");
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the basic worker");
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(ItemStack.matches(worker.getMainHandItem(), cargo),
+                "Waiting for the basic Collect seal to pick up the tagged stack")).thenExecute(() -> {
+            test.assertTrue(!accepted.isAlive() && rejected.isAlive() && target.countItem(Items.IRON_INGOT) == 2,
+                    "Basic Collect should pick up only the exact tagged cargo");
+            worker.applyBuild(worker.properties().withHead(TTGolemParts.HEAD_SMART.get()));
+        }).thenIdle(60).thenExecute(() -> {
+            test.assertTrue(ItemStack.matches(worker.getMainHandItem(), cargo)
+                            && target.countItem(Items.IRON_INGOT) == 2 && worker.getRankXp() == 0,
+                    "An existing stack with different tags should not qualify in exact mode");
+            store.setSetting(ItemMatchSettings.MATCH_COMPONENTS, false);
+            store.markChanged(level);
+            var task = TaskBoard.of(level).openBlockTasks(worker.getUUID(), worker).stream()
+                    .filter(offer -> store.pos().equals(offer.origin())).findFirst().orElseThrow();
+            test.assertTrue(SealAccess.allows(store, worker) && task.canBePerformedBy(worker),
+                    "A smart worker should qualify when relaxed matching recognizes the existing stock");
+            TaskHandoff.assign(worker, task);
+            store.behavior().onTaskStarted(level, store, worker, task);
+            target.removeItemNoUpdate(0);
+            var arrival = Vec3.atBottomCenterOf(test.absolutePos(TARGET.north()));
+            worker.moveTo(arrival.x, arrival.y, arrival.z);
+            TaskBoard.attempt(level, task, worker);
+            task.release();
+            worker.setTask(null);
+        }).thenIdle(45).thenExecute(() -> {
+            test.assertTrue(target.isEmpty() && ItemStack.matches(worker.getMainHandItem(), cargo)
+                            && worker.getRankXp() == 0,
+                    "Removing the matching stock after assignment should cancel the deposit");
+            target.setItem(0, existing.copy());
+        }).thenWaitUntil(() -> test.assertTrue(target.countItem(Items.IRON_INGOT) == 4,
+                "Waiting for matching stock to return so the rebuilt worker can fill to the configured limit"))
+                .thenIdle(60).thenExecute(() -> {
+            test.assertTrue(ItemStack.matches(target.getItem(0), existing)
+                            && ItemStack.matches(target.getItem(1), cargo.copyWithCount(2))
+                            && ItemStack.matches(worker.getMainHandItem(), cargo.copyWithCount(3))
+                            && worker.getRankXp() == 1 && rejected.isAlive() && rejected.getItem().getCount() == 3,
+                    "The ninth filter slot should count both variants toward its cap and preserve their tags");
+            SealHandler.removeSealEntity(level, collect.pos(), true);
+            SealHandler.removeSealEntity(level, store.pos(), true);
+            rejected.discard();
+            worker.discard();
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "golem_room", batch = "store_hauler", timeoutTicks = 250)
+    public static void storeSelectsTheHaulerCargoThatCanBeDeposited(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildWorkshop(test);
+        var target = chest(test, TARGET);
+        var store = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_FILL_ADVANCED.get()));
+        var filter = configureFilter(store);
+        filter.setStack(0, new ItemStack(Items.GOLD_INGOT));
+        filter.setStack(1, new ItemStack(Items.IRON_INGOT));
+        filter.setLimit(1, 3);
+        store.setSetting(StoreBehavior.ONLY_EXISTING, true);
+        store.markChanged(level);
+        target.setItem(0, new ItemStack(Items.IRON_INGOT));
+        var worker = createWorker(test, owner);
+        worker.applyBuild(worker.properties().withAddon(TTGolemParts.ADDON_HAULER.get()));
+        var refused = new ItemStack(Items.GOLD_INGOT, 3);
+        test.assertTrue(worker.hands().hold(refused.copy()).isEmpty()
+                        && worker.hands().hold(new ItemStack(Items.IRON_INGOT, 4)).isEmpty()
+                        && level.addFreshEntity(worker), "Could not start a hauler carrying both stacks");
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(target.countItem(Items.IRON_INGOT) == 3,
+                "Waiting for the Store seal to accept the eligible cargo in the hauler's other hand"))
+                .thenIdle(40).thenExecute(() -> {
+            test.assertTrue(ItemStack.matches(worker.getMainHandItem(), refused) && worker.getOffhandItem().is(Items.IRON_INGOT)
+                            && worker.getOffhandItem().getCount() == 2 && worker.getRankXp() == 1
+                            && target.countItem(Items.GOLD_INGOT) == 0 && target.countItem(Items.IRON_INGOT) == 3,
+                    "The store should preserve both the refused gold and the iron above the limit");
+            SealHandler.removeSealEntity(level, store.pos(), true);
+            worker.discard();
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "golem_room", batch = "basic_empty_sided", timeoutTicks = 270)
+    public static void basicEmptyOnlyExtractsFromItsForgeInventoryFace(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        prepareRoom(test);
+        SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(SOURCE), FACE), true);
+        test.setBlock(SOURCE, Blocks.FURNACE);
+        var furnace = (FurnaceBlockEntity) test.getBlockEntity(SOURCE);
+        furnace.setItem(0, new ItemStack(Items.DIRT, 2));
+        furnace.setItem(1, new ItemStack(Items.COAL, 3));
+        furnace.setItem(2, new ItemStack(Items.GOLD_INGOT, 4));
+        var empty = placeSeal(test, owner, SOURCE, new ItemStack(TTItems.SEAL_EMPTY.get()));
+        var filter = configureFilter(empty);
+        filter.setStack(0, new ItemStack(Items.GOLD_INGOT));
+        empty.markChanged(level);
+        var worker = createWorker(test, owner);
+        worker.applyBuild(worker.properties().withHead(TTGolemParts.HEAD_BASIC.get()));
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the basic extraction worker");
+        test.startSequence().thenIdle(60).thenExecute(() -> {
+            test.assertTrue(worker.getMainHandItem().isEmpty() && furnace.getItem(2).getCount() == 4,
+                    "A side-mounted Empty seal should not expose the furnace output");
+            filter.setStack(0, new ItemStack(Items.COAL));
+            empty.markChanged(level);
+        }).thenWaitUntil(() -> test.assertTrue(ItemStack.matches(worker.getMainHandItem(), new ItemStack(Items.COAL, 3)),
+                "Waiting for the basic worker to take the fuel from the side"))
+                .thenExecute(() -> {
+            test.assertTrue(furnace.getItem(1).isEmpty()
+                            && ItemStack.matches(furnace.getItem(0), new ItemStack(Items.DIRT, 2))
+                            && ItemStack.matches(furnace.getItem(2), new ItemStack(Items.GOLD_INGOT, 4)),
+                    "Extraction should only change the inventory slot accessible from the seal's face");
+            SealHandler.removeSealEntity(level, empty.pos(), true);
+            worker.discard();
+        }).thenSucceed();
     }
 
     @GameTest(template = "golem_room", batch = "butcher_seal", timeoutTicks = 900)
@@ -593,6 +737,40 @@ public final class SealAutomationGameTests {
                     "The two deliveries should preserve exact stock and complete without extra pickups");
             SealHandler.removeSealEntity(level, provider.pos(), true);
             worker.discard();
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "golem_room", batch = "basic_guard", timeoutTicks = 290)
+    public static void basicGuardAcceptsAClockworkFighter(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        prepareRoom(test);
+        SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(HARVEST_SEAL), FACE), true);
+        test.setBlock(HARVEST_SEAL, Blocks.SMOOTH_STONE);
+        var guard = placeSeal(test, owner, HARVEST_SEAL, new ItemStack(TTItems.SEAL_GUARD.get()));
+        guard.setArea(new BlockPos(2, 1, 4));
+        guard.markChanged(level);
+        var hostile = test.spawn(EntityType.HUSK, new BlockPos(4, 2, 4));
+        hostile.setNoAi(true);
+        hostile.setHealth(1);
+        var animal = test.spawn(EntityType.PIG, new BlockPos(5, 2, 5));
+        animal.setNoAi(true);
+        var fighter = createWorker(test, owner);
+        fighter.applyBuild(GolemProperties.createDefault());
+        test.assertTrue(!SealAccess.allows(guard, fighter) && level.addFreshEntity(fighter),
+                "A basic worker without the Fighter trait should not qualify");
+        test.startSequence().thenIdle(60).thenExecute(() -> {
+            test.assertTrue(hostile.isAlive() && fighter.getTarget() == null,
+                    "The basic Guard seal assigned a worker without the Fighter trait");
+            fighter.applyBuild(fighter.properties().withArms(TTGolemParts.ARMS_CLAWS.get()));
+            test.assertTrue(SealAccess.allows(guard, fighter), "A clockwork fighter should qualify for basic Guard");
+        }).thenWaitUntil(() -> test.assertTrue(hostile.isDeadOrDying(), "Waiting for the basic fighter to kill the husk"))
+                .thenExecute(() -> {
+            test.assertTrue(animal.isAlive() && fighter.getRankXp() == 0,
+                    "Basic Guard should spare the passive animal and its clockwork worker should stay unranked");
+            SealHandler.removeSealEntity(level, guard.pos(), true);
+            animal.discard();
+            fighter.discard();
         }).thenSucceed();
     }
 

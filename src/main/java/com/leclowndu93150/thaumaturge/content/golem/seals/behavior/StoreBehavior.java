@@ -9,9 +9,9 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealSetting;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
-import com.leclowndu93150.thaumaturge.api.items.ItemMatch;
 import com.leclowndu93150.thaumaturge.api.items.StackFilter;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
+import java.util.List;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -60,26 +60,15 @@ public final class StoreBehavior implements ISealBehavior {
 
     @Override
     public boolean completeTask(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
-        ItemMatch matching = ItemMatchSettings.of(seal);
-        InvHelper.FilterMatch carried = carriedMatch(seal, golem, matching);
-        if (!carried.stack().isEmpty()) {
-            SealPos at = seal.pos();
-            IItemHandler inventory = InvHelper.handlerAt(level, at.pos(), at.face());
-            int amount = carried.stack().getCount();
-            if (limited(seal, carried)) {
-                int present = inventory == null
-                        ? InvHelper.countDropped(level, at.pos(), carried.stack(), NEARBY_RANGE, matching)
-                        : InvHelper.count(inventory, carried.stack(), matching);
-                amount = Math.max(0, carried.sizeLimit() - present);
-            }
-            if (amount > 0) {
-                ItemStack load = golem.hands().release(carried.stack().copyWithCount(amount));
-                int delivered = deliver(level, golem, at, inventory, load);
-                if (delivered > 0) {
-                    HandlingSound.play(golem, HandlingSound.LOW);
-                    golem.grantRankExperience(1);
-                    golem.animateSwing();
-                }
+        SealPos at = seal.pos();
+        IItemHandler inventory = InvHelper.handlerAt(level, at.pos(), at.face());
+        ItemStack offered = offeredLoad(level, seal, golem, inventory);
+        if (!offered.isEmpty()) {
+            ItemStack load = golem.hands().release(offered);
+            if (deliver(level, golem, at, inventory, load) > 0) {
+                HandlingSound.play(golem, HandlingSound.LOW);
+                golem.grantRankExperience(1);
+                golem.animateSwing();
             }
         }
         task.end();
@@ -117,37 +106,44 @@ public final class StoreBehavior implements ISealBehavior {
         return new Vec3(random.triangle(0.0, TOSS_SPREAD), 0.0, random.triangle(0.0, TOSS_SPREAD));
     }
 
-    private static InvHelper.FilterMatch carriedMatch(ISealEntity seal, IGolemAPI golem, ItemMatch matching) {
-        ISealFilter filter = seal.filter().orElseThrow();
-        return new StackFilter(filter.stacks(), filter.limits(), filter.isBlacklist(), matching)
-                .firstAcceptedWithLimit(golem.hands().contents());
-    }
-
-    private static boolean limited(ISealEntity seal, InvHelper.FilterMatch match) {
-        return seal.filter().orElseThrow().usesLimits() && match.sizeLimit() > 0;
+    private static ItemStack offeredLoad(Level level, ISealEntity seal, IGolemAPI golem,
+                                         @Nullable IItemHandler inventory) {
+        var matching = ItemMatchSettings.of(seal);
+        ISealFilter sealFilter = seal.filter().orElseThrow();
+        var filter = new StackFilter(sealFilter.stacks(), sealFilter.limits(), sealFilter.isBlacklist(), matching);
+        boolean onlyExisting = inventory != null && seal.setting(ONLY_EXISTING);
+        for (ItemStack held : golem.hands().contents()) {
+            var match = filter.firstAcceptedWithLimit(List.of(held));
+            if (match.stack().isEmpty()) {
+                continue;
+            }
+            boolean limited = sealFilter.usesLimits() && match.sizeLimit() > 0;
+            int present = 0;
+            if (inventory != null && (limited || onlyExisting)) {
+                present = InvHelper.count(inventory, held, matching);
+            } else if (limited) {
+                present = InvHelper.countDropped(level, seal.pos().pos(), held, NEARBY_RANGE, matching);
+            }
+            if ((onlyExisting && present == 0) || (limited && present >= match.sizeLimit())) {
+                continue;
+            }
+            int amount = limited ? Math.min(held.getCount(), match.sizeLimit() - present) : held.getCount();
+            ItemStack offered = held.copyWithCount(amount);
+            if (inventory != null) {
+                amount = placedCount(amount, InvHelper.insertStack(inventory, offered, true));
+            }
+            if (amount > 0) {
+                return offered.copyWithCount(amount);
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
     public boolean canPerform(ISealEntity seal, IGolemAPI golem, Task task) {
-        ItemMatch matching = ItemMatchSettings.of(seal);
-        InvHelper.FilterMatch carried = carriedMatch(seal, golem, matching);
-        if (carried.stack().isEmpty()) {
-            return false;
-        }
         SealPos at = seal.pos();
         Level level = golem.level();
         IItemHandler inventory = InvHelper.handlerAt(level, at.pos(), at.face());
-        if (inventory == null) {
-            return !limited(seal, carried)
-                    || InvHelper.countDropped(level, at.pos(), carried.stack(), NEARBY_RANGE, matching)
-                            < carried.sizeLimit();
-        }
-        if (seal.setting(ONLY_EXISTING) && InvHelper.count(inventory, carried.stack(), matching) <= 0) {
-            return false;
-        }
-        if (!InvHelper.acceptsAny(level, at.pos(), at.face(), carried.stack())) {
-            return false;
-        }
-        return !limited(seal, carried) || InvHelper.count(inventory, carried.stack(), matching) < carried.sizeLimit();
+        return !offeredLoad(level, seal, golem, inventory).isEmpty();
     }
 }

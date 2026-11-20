@@ -72,9 +72,11 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
@@ -430,8 +432,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         boolean fighter = props.hasTrait(TTGolemTraits.FIGHTER.get());
         boolean following = isFollowingOwner();
         getNavigation().stop();
-        goalSelector.removeAllGoals(goal -> true);
-        targetSelector.removeAllGoals(goal -> true);
+        stopAndRemoveGoals(goalSelector);
+        stopAndRemoveGoals(targetSelector);
         navigation = createGolemNavigation();
         moveControl =
                 props.hasTrait(TTGolemTraits.FLYER.get()) ? new GolemFlyingMoveControl(this) : new MoveControl(this);
@@ -466,6 +468,11 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             targetSelector.addGoal(priority++, new ConstructOwnerHurtTargetGoal(this));
         }
         targetSelector.addGoal(priority, new HurtByTargetGoal(this).setUnseenMemoryTicks(RETALIATION_MEMORY_TICKS));
+    }
+
+    private static void stopAndRemoveGoals(GoalSelector selector) {
+        // The 1.20.1 bulk removal leaves running goals holding their control flags.
+        selector.getAvailableGoals().stream().map(WrappedGoal::getGoal).toList().forEach(selector::removeGoal);
     }
 
     public float getGolemMoveSpeed() {
