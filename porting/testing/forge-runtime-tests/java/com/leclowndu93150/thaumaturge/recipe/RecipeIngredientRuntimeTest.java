@@ -87,14 +87,17 @@ class RecipeIngredientRuntimeTest {
         Files.writeString(forgeNuggets.resolve("copper.json"), "{\"values\":[\"minecraft:iron_nugget\"]}");
         Files.writeString(forgeNuggets.resolve("silver.json"), "{\"values\":[\"minecraft:gold_nugget\"]}");
         Path forgeBlocks = Files.createDirectories(optionalMetals.resolve("data/forge/tags/blocks"));
-        Files.writeString(forgeBlocks.resolve("stone.json"), "{\"values\":[\"minecraft:polished_andesite\"]}");
+        Files.writeString(forgeBlocks.resolve("stone.json"),
+                "{\"values\":[\"minecraft:basalt\",\"minecraft:polished_andesite\"]}");
         try (var manager = new MultiPackResourceManager(PackType.SERVER_DATA, List.of(
                 new PathPackResources("thaumaturge", isolatedTags, false),
                 new PathPackResources("metal-fixture", optionalMetals, false)))) {
             var tags = items.loadAndBuild(manager);
             assertEquals(Set.of(Items.IRON_NUGGET), Set.copyOf(tags.get(TTItemTags.NUGGETS_COPPER.location())));
             assertEquals(Set.of(Items.GOLD_NUGGET), Set.copyOf(tags.get(TTItemTags.NUGGETS_SILVER.location())));
-            assertTrue(blocks.loadAndBuild(manager).get(TTBlockTags.STONES.location()).contains(Blocks.POLISHED_ANDESITE));
+            var stones = blocks.loadAndBuild(manager).get(TTBlockTags.STONES.location());
+            assertTrue(stones.contains(Blocks.BASALT));
+            assertFalse(stones.contains(Blocks.POLISHED_ANDESITE));
         }
     }
 

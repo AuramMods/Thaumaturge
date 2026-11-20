@@ -44,7 +44,9 @@ public final class TTBiomeTagsProvider extends TagsProvider<Biome> {
                 .add(Biomes.SUNFLOWER_PLAINS)
                 .add(Biomes.SWAMP)
                 .add(Biomes.MANGROVE_SWAMP)
-                .addOptionalTags(BiomeTags.IS_TAIGA, BiomeTags.IS_SAVANNA, Tags.Biomes.IS_PLAINS, Tags.Biomes.IS_SWAMP);
+                .addOptionalTags(BiomeTags.IS_TAIGA, BiomeTags.IS_SAVANNA, Tags.Biomes.IS_PLAINS, Tags.Biomes.IS_SWAMP)
+                .remove(Biomes.MEADOW)
+                .remove(Biomes.SNOWY_PLAINS);
         tag(TTBiomeTags.HAS_SILVERWOOD)
                 .add(Biomes.FOREST)
                 .add(Biomes.BIRCH_FOREST)
@@ -94,7 +96,8 @@ public final class TTBiomeTagsProvider extends TagsProvider<Biome> {
                         BiomeTags.IS_TAIGA,
                         Tags.Biomes.IS_SWAMP)
                 .addOptionalTag(BiomeTags.IS_FOREST)
-                .remove(Biomes.GROVE);
+                .remove(Biomes.GROVE)
+                .remove(Biomes.MEADOW);
 
         tag(TTBiomeTags.HAS_BRAINY_HUSK).add(Biomes.DESERT);
 
@@ -112,6 +115,7 @@ public final class TTBiomeTagsProvider extends TagsProvider<Biome> {
                 .add(TTBiomes.MAGICAL_FOREST)
                 .add(TTBiomes.EERIE)
                 .addOptionalTags(BiomeTags.IS_FOREST, Tags.Biomes.IS_PLAINS, BiomeTags.IS_TAIGA, BiomeTags.IS_SAVANNA)
-                .remove(Biomes.GROVE);
+                .remove(Biomes.GROVE)
+                .remove(Biomes.SNOWY_PLAINS);
     }
 }

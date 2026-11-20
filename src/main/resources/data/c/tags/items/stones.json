@@ -10,5 +10,13 @@
       "id": "#forge:stone",
       "required": false
     }
+  ],
+  "remove": [
+    "minecraft:infested_deepslate",
+    "minecraft:infested_stone",
+    "minecraft:polished_andesite",
+    "minecraft:polished_deepslate",
+    "minecraft:polished_diorite",
+    "minecraft:polished_granite"
   ]
 }
