@@ -19,6 +19,8 @@ public final class TubeGeometry {
     private static final double PIPE_CORE_HALF = 2.0;
     private static final double FILTER_CORE_HALF = 3.0;
     private static final double BUFFER_CORE_HALF = 4.0;
+    private static final Direction[] DIRECTIONS = Direction.values();
+    private static final int CONNECTION_MASK_COUNT = 1 << DIRECTIONS.length;
     private static final VoxelShape FLANGE = Block.box(5.0, 0.0, 5.0, 11.0, 2.0, 11.0);
     private static final VoxelShape ARM = Shapes.or(FLANGE, Block.box(6.0, 2.0, 6.0, 10.0, 6.0, 10.0));
     private static final VoxelShape RESTRICTED_ARM = Shapes.or(FLANGE, Block.box(7.0, 2.0, 7.0, 9.0, 6.0, 9.0));
@@ -31,37 +33,58 @@ public final class TubeGeometry {
     public static final TubeGeometry ONEWAY = new TubeGeometry(PIPE_CORE_HALF, ARM, INLET_MARKER);
 
     private final double coreHalf;
-    private final VoxelShape core;
-    private final Map<Direction, VoxelShape> arms;
-    private final Map<Direction, VoxelShape> inletMarkers;
+    private final VoxelShape[] baseShapes = new VoxelShape[CONNECTION_MASK_COUNT];
+    private final VoxelShape[][] inletShapes;
 
     private TubeGeometry(double coreHalf, VoxelShape downArm, VoxelShape downInletMarker) {
         this.coreHalf = coreHalf;
-        this.core = Block.box(
+        VoxelShape core = Block.box(
                 CENTER - coreHalf,
                 CENTER - coreHalf,
                 CENTER - coreHalf,
                 CENTER + coreHalf,
                 CENTER + coreHalf,
                 CENTER + coreHalf);
-        this.arms = DeviceShapes.facingShapesFromDown(downArm);
-        this.inletMarkers = DeviceShapes.facingShapesFromDown(downInletMarker);
+        Map<Direction, VoxelShape> arms = DeviceShapes.facingShapesFromDown(downArm);
+        Map<Direction, VoxelShape> inletMarkers = DeviceShapes.facingShapesFromDown(downInletMarker);
+        inletShapes = downInletMarker.isEmpty()
+                ? new VoxelShape[0][]
+                : new VoxelShape[DIRECTIONS.length][CONNECTION_MASK_COUNT];
+
+        // Forge rebuilds its block-state caches on tag reload. Reuse geometry for the same connections.
+        for (int mask = 0; mask < CONNECTION_MASK_COUNT; mask++) {
+            VoxelShape shape = core;
+            for (Direction direction : DIRECTIONS) {
+                if ((mask & connectionBit(direction)) != 0) {
+                    shape = Shapes.or(shape, arms.get(direction));
+                }
+            }
+            baseShapes[mask] = shape.optimize();
+            for (int inletIndex = 0; inletIndex < inletShapes.length; inletIndex++) {
+                Direction inlet = DIRECTIONS[inletIndex];
+                inletShapes[inletIndex][mask] = (mask & connectionBit(inlet)) != 0
+                        ? Shapes.or(shape, inletMarkers.get(inlet)).optimize()
+                        : baseShapes[mask];
+            }
+        }
     }
 
     public VoxelShape shape(BlockState state) {
-        VoxelShape shape = core;
-        for (Direction direction : Direction.values()) {
+        int mask = 0;
+        for (Direction direction : DIRECTIONS) {
             if (state.getValue(BlockEssentiaTransport.propertyFor(direction))) {
-                shape = Shapes.or(shape, arms.get(direction));
+                mask |= connectionBit(direction);
             }
         }
-        if (state.hasProperty(BlockStateProperties.FACING)) {
+        if (inletShapes.length > 0 && state.hasProperty(BlockStateProperties.FACING)) {
             Direction inlet = state.getValue(BlockStateProperties.FACING).getOpposite();
-            if (state.getValue(BlockEssentiaTransport.propertyFor(inlet))) {
-                shape = Shapes.or(shape, inletMarkers.get(inlet));
-            }
+            return inletShapes[inlet.ordinal()][mask];
         }
-        return shape.optimize();
+        return baseShapes[mask];
+    }
+
+    private static int connectionBit(Direction direction) {
+        return 1 << direction.ordinal();
     }
 
     public int subHit(Vec3 local) {
