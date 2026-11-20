@@ -2,10 +2,15 @@ package com.leclowndu93150.thaumaturge.testing;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
+import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
+import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
+import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -18,6 +23,11 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
@@ -134,5 +144,72 @@ public final class FluxRiftGameTests {
                             .stream().mapToInt(item -> item.getItem().getCount()).sum();
                     test.assertTrue(seeds == 4, "One size-16 collapse should drop exactly four Void Seeds");
                 }).thenSucceed();
+    }
+
+    @GameTest(template = "golem_room", batch = "rift_effects", timeoutTicks = 80)
+    public static void veryUnstableCollapseScalesEffectsAndKeepsWarpSeparate(GameTestHelper test) {
+        SealAutomationGameTests.prepareRoom(test);
+        var level = test.getLevel();
+        var center = new BlockPos(4, 2, 4);
+        var rift = Objects.requireNonNull(TTEntities.FLUX_RIFT.get().create(level));
+        rift.moveTo(Vec3.atBottomCenterOf(test.absolutePos(center)));
+        rift.reseed(46786);
+        rift.resize(5);
+        rift.adjustStability(-75);
+        test.assertTrue(level.addFreshEntity(rift), "Could not place the very unstable rift");
+
+        var nearby = ResearchGameTests.survivalPlayer(test);
+        var distant = ResearchGameTests.survivalPlayer(test);
+        nearby.moveTo(Vec3.atBottomCenterOf(test.absolutePos(center.north(4))));
+        distant.moveTo(Vec3.atBottomCenterOf(test.absolutePos(center.above(34))));
+        distant.setNoGravity(true);
+        var middle = test.spawnWithNoFreeWill(EntityType.PIG, center.above(16));
+        middle.setNoGravity(true);
+        var nearWarp = WarpHelper.getWarp(nearby);
+        var farWarp = WarpHelper.getWarp(distant);
+        nearWarp.set(WarpType.PERMANENT, 2);
+        nearWarp.set(WarpType.NORMAL, 3);
+        farWarp.set(WarpType.NORMAL, 4);
+        farWarp.set(WarpType.TEMPORARY, 2);
+        ResearchManager.complete(nearby, TTIds.rl("first_steps"));
+        ResearchManager.complete(distant, TTIds.rl("first_steps"));
+
+        level.addNewPlayer(nearby);
+        level.addNewPlayer(distant);
+        rift.beginCollapse();
+        test.runAfterDelay(10, () -> {
+            try {
+                test.assertTrue(rift.isRemoved() && nearby.isAlive() && middle.isAlive(),
+                        "The rift should finish collapsing and leave both exposed targets alive");
+                var taint = TTMobEffects.FLUX_TAINT.get();
+                assertEffectDuration(test, nearby, taint, 2360);
+                assertEffectDuration(test, nearby, MobEffects.WEAKNESS, 5900);
+                assertEffectDuration(test, middle, taint, 1800);
+                assertEffectDuration(test, middle, MobEffects.WEAKNESS, 4500);
+                test.assertTrue(!distant.hasEffect(taint) && !distant.hasEffect(MobEffects.WEAKNESS),
+                        "A player beyond 32 blocks should be outside both effects");
+                test.assertTrue(nearWarp.get(WarpType.PERMANENT) == 2 && nearWarp.get(WarpType.NORMAL) == 27
+                                && nearWarp.get(WarpType.TEMPORARY) == 24 && nearWarp.getCounter() == 53,
+                        "The nearby player should gain 24 normal and temporary Warp while retaining permanent Warp");
+                test.assertTrue(farWarp.get(WarpType.NORMAL) == 4 && farWarp.get(WarpType.TEMPORARY) == 2,
+                        "The distant player's Warp should be unchanged");
+                test.assertTrue(PlayerResearchAccess.of(nearby).hasCompleted(TTIds.rl("warp"))
+                                && !PlayerResearchAccess.of(distant).hasCompleted(TTIds.rl("warp")),
+                        "Only the exposed player should unlock the Warp research");
+                test.succeed();
+            } finally {
+                middle.discard();
+                level.removePlayerImmediately(nearby, Entity.RemovalReason.DISCARDED);
+                level.removePlayerImmediately(distant, Entity.RemovalReason.DISCARDED);
+            }
+        });
+    }
+
+    private static void assertEffectDuration(GameTestHelper test, LivingEntity target, MobEffect effect, int duration) {
+        var instance = target.getEffect(effect);
+        test.assertTrue(instance != null && instance.getAmplifier() == 0
+                        && instance.getDuration() >= duration - 10 && instance.getDuration() <= duration,
+                "Expected " + effect.getDescriptionId() + " near " + duration + " ticks for "
+                        + target.getName().getString() + ", got " + instance);
     }
 }
