@@ -55,19 +55,16 @@ public final class UseBehavior implements ISealBehavior {
     @Override
     public boolean completeTask(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
         if (targetReady(level, seal)) {
-            ItemStack tool = pickTool(seal, golem);
             boolean bareHanded = seal.setting(BARE_HANDED);
+            ItemStack tool = bareHanded ? ItemStack.EMPTY : pickTool(seal, golem);
             if (!tool.isEmpty() || bareHanded) {
-                ItemStack used = tool.copy();
-                if (!tool.isEmpty()) {
-                    golem.hands().release(tool.copy());
-                }
+                ItemStack used = bareHanded ? ItemStack.EMPTY : golem.hands().release(tool.copy());
                 GolemInteractionHelper.golemClick(
                         level,
                         golem,
                         task.pos(),
                         seal.pos().face(),
-                        bareHanded ? ItemStack.EMPTY : used,
+                        used,
                         seal.setting(SNEAKING),
                         !seal.setting(LEFT_CLICK));
             }

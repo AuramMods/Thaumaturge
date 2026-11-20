@@ -11,8 +11,10 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.SealAccess;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.EmptyBehavior;
+import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.GuardBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.HarvestBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ProvideBehavior;
+import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.UseBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTGolemParts;
@@ -31,12 +33,15 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.projectile.ThrownEgg;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -56,6 +61,121 @@ public final class SealAutomationGameTests {
     private static final Direction FACE = Direction.NORTH;
 
     private SealAutomationGameTests() {}
+
+    @GameTest(template = "golem_room", batch = "guard_seal", timeoutTicks = 360)
+    public static void lockedGuardSealTargetsHostileMobsAndConfiguredAnimals(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var visitor = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildFloor(test);
+        SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(HARVEST_SEAL), FACE), true);
+        test.setBlock(HARVEST_SEAL, Blocks.SMOOTH_STONE);
+        var guard = placeSeal(test, owner, HARVEST_SEAL, new ItemStack(TTItems.SEAL_GUARD_ADVANCED.get()));
+        guard.setLocked(true);
+        guard.setArea(new BlockPos(2, 1, 4));
+        guard.markChanged(level);
+        test.assertTrue(guard.setting(GuardBehavior.MONSTERS) && !guard.setting(GuardBehavior.ANIMALS)
+                        && !guard.setting(GuardBehavior.PLAYERS),
+                "Guard should target hostile mobs by default");
+        var hostile = test.spawn(EntityType.HUSK, new BlockPos(4, 2, 4));
+        hostile.setNoAi(true);
+        hostile.setHealth(1);
+        var animal = test.spawn(EntityType.PIG, new BlockPos(5, 2, 5));
+        animal.setNoAi(true);
+        animal.setHealth(1);
+        var outsider = createWorker(test, visitor);
+        outsider.applyBuild(outsider.properties().withArms(TTGolemParts.ARMS_CLAWS.get()));
+        var fighter = createWorker(test, owner);
+        fighter.applyBuild(fighter.properties().withArms(TTGolemParts.ARMS_CLAWS.get()));
+        test.assertTrue(SealAccess.allows(guard, fighter), "The smart fighter should qualify for advanced guard work");
+        test.assertTrue(level.addFreshEntity(outsider), "Could not add the visiting fighter");
+
+        test.startSequence().thenWaitUntil(() -> {
+            var marks = TaskBoard.of(level).openEntityTasks(outsider.getUUID(), outsider).stream()
+                    .filter(task -> guard.pos().equals(task.origin())).toList();
+            test.assertTrue(marks.stream().anyMatch(task -> task.entity() == hostile)
+                            && marks.stream().noneMatch(task -> task.entity() == animal),
+                    "Waiting for a hostile-only guard mark");
+        }).thenIdle(35).thenExecute(() -> {
+            test.assertTrue(hostile.isAlive() && outsider.getTarget() == null && outsider.getRankXp() == 0,
+                    "A visiting fighter should not act on the owner's locked guard seal");
+            outsider.discard();
+            test.assertTrue(level.addFreshEntity(fighter), "Could not add the owner's fighter");
+        }).thenWaitUntil(() -> test.assertTrue(hostile.isDeadOrDying(), "Waiting for the guard to kill the husk"))
+                .thenIdle(30).thenExecute(() -> {
+            test.assertTrue(animal.isAlive() && fighter.getRankXp() >= 9,
+                    "The guard should earn XP for the hostile kill and leave the animal alone");
+            guard.setSetting(GuardBehavior.ANIMALS, true);
+            guard.markChanged(level);
+        }).thenWaitUntil(() -> test.assertTrue(animal.isDeadOrDying(), "Waiting for the enabled animal rule"))
+                .thenExecute(() -> {
+            SealHandler.removeSealEntity(level, guard.pos(), true);
+            fighter.discard();
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "golem_room", batch = "use_seal_bare_hand", timeoutTicks = 280)
+    public static void bareHandedUseSealDoesNotDiscardCargo(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildFloor(test);
+        SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(TARGET), FACE), true);
+        test.setBlock(TARGET, Blocks.STONE_BUTTON.defaultBlockState().setValue(ButtonBlock.FACE, AttachFace.FLOOR));
+        var use = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_USE.get()));
+        use.setLocked(true);
+        use.setSetting(UseBehavior.BARE_HANDED, true);
+        use.markChanged(level);
+        var worker = createWorker(test, owner);
+        worker.applyBuild(worker.properties().withArms(TTGolemParts.ARMS_FINE.get()));
+        var load = new ItemStack(Items.IRON_INGOT, 3);
+        load.getOrCreateTag().putString("PortCargo", "bare-handed-use");
+        test.assertTrue(worker.hands().hold(load.copy()).isEmpty(), "The worker should carry the supplied cargo");
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the use worker");
+
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(test.getBlockState(TARGET).getValue(ButtonBlock.POWERED),
+                "Waiting for the Use seal to press the button")).thenExecute(() -> {
+            test.assertTrue(ItemStack.matches(worker.getMainHandItem(), load),
+                    "Bare-handed use should preserve all carried cargo, found " + worker.getMainHandItem());
+            var drops = level.getEntitiesOfClass(ItemEntity.class, new AABB(test.absolutePos(TARGET)).inflate(3));
+            test.assertTrue(drops.isEmpty() && worker.getRankXp() == 1,
+                    "One bare-handed click should earn one rank XP without dropping cargo");
+            SealHandler.removeSealEntity(level, use.pos(), true);
+            worker.discard();
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "golem_room", batch = "use_seal_air", timeoutTicks = 280)
+    public static void useSealThrowsOneEggIntoAir(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildFloor(test);
+        SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(TARGET), FACE), true);
+        test.setBlock(TARGET, Blocks.SMOOTH_STONE);
+        var use = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_USE.get()));
+        use.setLocked(true);
+        use.setSetting(UseBehavior.INTO_AIR, true);
+        var filter = use.filter().orElseThrow();
+        filter.setBlacklist(false);
+        filter.setStack(0, new ItemStack(Items.EGG));
+        use.markChanged(level);
+        test.setBlock(TARGET, Blocks.AIR);
+        var worker = createWorker(test, owner);
+        worker.applyBuild(worker.properties().withArms(TTGolemParts.ARMS_FINE.get()));
+        test.assertTrue(worker.hands().hold(new ItemStack(Items.EGG, 3)).isEmpty(), "The worker should accept the eggs");
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the use worker");
+
+        test.startSequence().thenWaitUntil(() -> {
+            var eggs = level.getEntitiesOfClass(ThrownEgg.class, worker.getBoundingBox().inflate(5));
+            test.assertTrue(eggs.size() == 1,
+                    "Waiting for one thrown egg. Held " + worker.getMainHandItem() + ", rank XP " + worker.getRankXp());
+        }).thenExecute(() -> {
+            test.assertTrue(worker.getMainHandItem().is(Items.EGG) && worker.getMainHandItem().getCount() == 2
+                            && worker.getRankXp() == 1 && test.getBlockState(TARGET).isAir(),
+                    "One air interaction should throw and spend exactly one egg");
+            SealHandler.removeSealEntity(level, use.pos(), true);
+            worker.discard();
+        }).thenSucceed();
+    }
 
     @GameTest(template = "golem_room", batch = "recipient_reload", timeoutTicks = 460)
     public static void providerWaitsForItsSavedRecipient(GameTestHelper test) {

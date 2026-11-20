@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -56,9 +57,13 @@ public final class GolemInteractionHelper {
                         golem.asEntity().getXRot());
             }
             try {
+                boolean intoAir = serverLevel.getBlockState(pos).isAir();
                 BlockHitResult hit = new BlockHitResult(hitLocation(pos, face), face, pos, false);
-                player.gameMode.useItemOn(
+                InteractionResult result = player.gameMode.useItemOn(
                         player, serverLevel, player.getMainHandItem(), InteractionHand.MAIN_HAND, hit);
+                if (intoAir && result == InteractionResult.PASS && !player.getMainHandItem().isEmpty()) {
+                    player.gameMode.useItem(player, serverLevel, player.getMainHandItem(), InteractionHand.MAIN_HAND);
+                }
             } catch (Exception e) {
                 Thaumaturge.LOGGER.error("Golem right-click at {} failed", pos, e);
             }
