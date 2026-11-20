@@ -228,6 +228,15 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
         persistedEntryId = entryId;
     }
 
+    public static void resetNavigation() {
+        persistedX = UNSET_PERSIST;
+        persistedY = UNSET_PERSIST;
+        persistedCategoryId = null;
+        persistedCatScrollPos = 0;
+        persistedSearching = false;
+        persistedEntryId = null;
+    }
+
     @Override
     protected void init() {
         super.init();
