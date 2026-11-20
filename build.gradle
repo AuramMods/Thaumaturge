@@ -626,7 +626,15 @@ tasks.withType(JavaCompile).configureEach {
     options.compilerArgs.addAll(['-Xmaxerrs', providers.gradleProperty('portMaxErrors').getOrElse('2000')])
 }
 
-tasks.named('compileJava', JavaCompile) {
+tasks.named('compileJava', JavaCompile) { compile ->
+    // MixinGradle writes these files outside javac's classes directory.
+    // Cache them with the classes so jar packaging and reobfuscation can reuse them.
+    outputs.file(providers.provider { compile.ext.refMapFile }).withPropertyName('mixinRefmap')
+    outputs.file(providers.provider { compile.ext.outTsrgFile }).withPropertyName('mixinMappings')
+    outputs.file(providers.provider { new File(compile.temporaryDir, compile.ext.refMap) })
+            .withPropertyName('packagedMixinRefmap')
+    inputs.file(layout.buildDirectory.file('createMcpToSrg/output.tsrg'))
+            .withPropertyName('mixinInputMappings').withPathSensitivity(PathSensitivity.NONE)
     if (providers.gradleProperty('portCommandLineCompiler').isPresent()) {
         // External javac reports its exit status without serializing thousands
         // of Compiler API diagnostics back through the Gradle client.
@@ -650,10 +658,14 @@ tasks.named('javadoc', Javadoc) {
 }
 
 tasks.named('compilePortMixinsJava', JavaCompile) {
+    def mappings = layout.buildDirectory.file('createMcpToSrg/output.tsrg')
+    def refmap = layout.buildDirectory.file('port-mixins.refmap.json')
     dependsOn 'createMcpToSrg'
+    inputs.file(mappings).withPropertyName('mixinInputMappings').withPathSensitivity(PathSensitivity.NONE)
+    outputs.file(refmap).withPropertyName('mixinRefmap')
     options.compilerArgs.addAll([
-            "-AreobfTsrgFile=${layout.buildDirectory.file('createMcpToSrg/output.tsrg').get().asFile}",
-            "-AoutRefMapFile=${layout.buildDirectory.file('port-mixins.refmap.json').get().asFile}",
+            "-AreobfTsrgFile=${mappings.get().asFile}",
+            "-AoutRefMapFile=${refmap.get().asFile}",
             '-AmappingTypes=tsrg', '-AdefaultObfuscationEnv=searge'])
 }
 
