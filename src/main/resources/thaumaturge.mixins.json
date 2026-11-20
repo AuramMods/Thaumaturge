@@ -130,7 +130,8 @@
     "client.multiplayer.ClientLevelEntityTickMixin",
     "client.multiplayer.ClientPacketListenerEffectMixin",
     "client.multiplayer.RemoteLoginReadMixin",
-    "client.sable.SableClientTagsMixin"
+    "client.sable.SableClientTagsMixin",
+    "client.veil.VeilForgeResourcePackMixin"
   ],
   "injectors": {
     "defaultRequire": 1

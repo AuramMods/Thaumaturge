@@ -20,6 +20,8 @@ public class TTMixinPlugin implements IMixinConfigPlugin {
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         if (mixinClassName.contains(".sable."))
             return FMLLoader.getLoadingModList().getModFileById(TTIds.SABLE) != null;
+        if (mixinClassName.contains(".veil."))
+            return FMLLoader.getLoadingModList().getModFileById(TTIds.VEIL) != null;
         if (mixinClassName.contains(".iris."))
             return FMLLoader.getLoadingModList().getModFileById(TTIds.OCULUS) != null;
         if (mixinClassName.contains(".ftblibrary."))

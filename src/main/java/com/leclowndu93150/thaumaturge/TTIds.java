@@ -17,6 +17,7 @@ public final class TTIds {
     public static final String DISTANT_HORIZONS = "distanthorizons";
     public static final String FTB_LIBRARY = "ftblibrary";
     public static final String SABLE = "sable";
+    public static final String VEIL = "veil";
     public static final String OCULUS = "oculus";
     public static final String DYNAMIC_TREES = "dynamictrees";
     public static final String BIOMES_O_PLENTY = "biomesoplenty";
