@@ -7,7 +7,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 
@@ -23,13 +22,6 @@ public final class SealClientHandler {
                 ClientSealHolder.remove(payload.pos());
             }
         });
-    }
-
-    @SubscribeEvent
-    public static void onChunkUnload(ChunkEvent.Unload event) {
-        if (event.getLevel().isClientSide()) {
-            ClientSealHolder.forgetChunk(event.getChunk().getPos());
-        }
     }
 
     @SubscribeEvent
