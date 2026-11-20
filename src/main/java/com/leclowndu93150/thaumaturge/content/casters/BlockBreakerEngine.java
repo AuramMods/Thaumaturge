@@ -107,23 +107,24 @@ public final class BlockBreakerEngine {
         }
     }
 
-    public static void harvestBlock(ServerLevel level, Player player, BlockPos pos, boolean silk, int fortune) {
+    public static boolean harvestBlock(ServerLevel level, Player player, BlockPos pos, boolean silk, int fortune) {
         if (!(player instanceof ServerPlayer serverPlayer)) {
-            return;
+            return false;
         }
         BlockState state = level.getBlockState(pos);
         if (!BlockBreakAccess.mayBreak(level, serverPlayer, pos, state)) {
-            return;
+            return false;
         }
         BlockEntity blockEntity = level.getBlockEntity(pos);
         level.levelEvent(null, LEVEL_EVENT_BLOCK_BREAK, pos, Block.getId(state));
         if (!level.removeBlock(pos, false)) {
-            return;
+            return false;
         }
         if (!player.getAbilities().instabuild) {
             Block.dropResources(
                     state, level, pos, blockEntity, player, EnchantMining.fortuneTool(level, player, silk, fortune));
         }
+        return true;
     }
 
     private static void tickSwappers(ServerLevel level, BlockWorkQueues queues) {

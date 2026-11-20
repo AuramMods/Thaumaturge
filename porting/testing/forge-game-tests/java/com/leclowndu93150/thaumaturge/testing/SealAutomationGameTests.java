@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.MenuSealBase;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealAccess;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
+import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.BreakBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.EmptyBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.GuardBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.HarvestBehavior;
@@ -27,7 +28,9 @@ import com.leclowndu93150.thaumaturge.registry.TTItems;
 import io.netty.buffer.Unpooled;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -47,6 +50,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.ThrownEgg;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerSynchronizer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
@@ -59,7 +63,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
@@ -74,6 +80,144 @@ public final class SealAutomationGameTests {
     private static final Direction FACE = Direction.NORTH;
 
     private SealAutomationGameTests() {}
+
+    @GameTest(template = "golem_room", batch = "lumber_seal", timeoutTicks = 300)
+    public static void lumberjackChopsConnectedLogsFromTheTop(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        prepareRoom(test);
+        var anchor = TARGET.south();
+        SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(anchor), FACE), true);
+        test.setBlock(anchor, Blocks.SMOOTH_STONE);
+        for (int height = 0; height < 3; height++) {
+            test.setBlock(TARGET.above(height), Blocks.OAK_LOG);
+        }
+        test.setBlock(TARGET.east(), Blocks.BIRCH_LOG);
+        var lumber = placeSeal(test, owner, anchor, new ItemStack(TTItems.SEAL_LUMBER.get()));
+        lumber.setArea(new BlockPos(1, 1, 1));
+        lumber.setLocked(true);
+        lumber.markChanged(level);
+        var worker = createBreaker(test, owner);
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the lumber worker");
+
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(test.getBlockState(TARGET.above(2)).isAir(),
+                "Waiting for the lumberjack to cut the highest connected log")).thenExecute(() -> {
+            test.assertTrue(test.getBlockState(TARGET).is(Blocks.OAK_LOG) && test.getBlockState(TARGET.above()).is(Blocks.OAK_LOG)
+                            && worker.getRankXp() == 1,
+                    "The first cut should remove the top log while preserving both lower logs");
+        }).thenWaitUntil(() -> test.assertTrue(test.getBlockState(TARGET).isAir(), "Waiting for the bottom log cut"))
+                .thenExecute(() -> {
+            test.assertTrue(test.getBlockState(TARGET.above()).isAir() && test.getBlockState(TARGET.east()).is(Blocks.BIRCH_LOG)
+                            && worker.getRankXp() == 3 && nearbyDrops(test, Items.OAK_LOG) == 3,
+                    "Lumberjack should harvest three oak logs and preserve the adjacent birch");
+            SealHandler.removeSealEntity(level, lumber.pos(), true);
+            worker.discard();
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "golem_room", batch = "breaker_seal", timeoutTicks = 380)
+    public static void advancedBreakerFiltersAndUsesSilkTouch(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        var breaker = prepareBreaker(test, owner, TTItems.SEAL_BREAKER_ADVANCED.get());
+        breaker.setArea(new BlockPos(2, 1, 1));
+        test.setBlock(TARGET.east(), Blocks.GRANITE);
+        var unqualified = createWorker(test, owner);
+        test.assertTrue(level.addFreshEntity(unqualified), "Could not add the worker without breaker arms");
+        var breakerWorker = createBreaker(test, owner);
+
+        test.startSequence().thenIdle(45).thenExecute(() -> {
+            test.assertTrue(test.getBlockState(TARGET).is(Blocks.STONE) && unqualified.getRankXp() == 0,
+                    "The seal should require breaker arms");
+            unqualified.discard();
+            test.assertTrue(level.addFreshEntity(breakerWorker), "Could not add the breaker worker");
+        }).thenWaitUntil(() -> test.assertTrue(test.getBlockState(TARGET).isAir(), "Waiting for the normal stone break"))
+                .thenExecute(() -> {
+            test.assertTrue(breakerWorker.getRankXp() == 1 && nearbyDrops(test, Items.COBBLESTONE) == 1
+                            && nearbyDrops(test, Items.STONE) == 0 && test.getBlockState(TARGET.east()).is(Blocks.GRANITE),
+                    "The normal break should drop cobblestone, award one XP and spare the unlisted block");
+            breaker.setSetting(BreakBehavior.SILK_TOUCH, true);
+            breaker.markChanged(level);
+            test.setBlock(TARGET, Blocks.STONE);
+        }).thenWaitUntil(() -> {
+            var task = breakerWorker.getTask();
+            test.assertTrue(task != null && task.data() > 0 && task.data() < 15 && test.getBlockState(TARGET).is(Blocks.STONE),
+                    "Silk Touch should need a further strike before the stone breaks");
+        }).thenWaitUntil(() -> test.assertTrue(test.getBlockState(TARGET).isAir(), "Waiting for the Silk Touch break"))
+                .thenExecute(() -> {
+            test.assertTrue(breakerWorker.getRankXp() == 2 && nearbyDrops(test, Items.STONE) == 1
+                            && nearbyDrops(test, Items.COBBLESTONE) == 1 && test.getBlockState(TARGET.east()).is(Blocks.GRANITE),
+                    "The Silk Touch break should drop exactly one stone and preserve the unlisted block");
+            SealHandler.removeSealEntity(level, breaker.pos(), true);
+            breakerWorker.discard();
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "golem_room", batch = "breaker_veto", timeoutTicks = 100)
+    public static void deniedBreakerDoesNotEarnRankExperience(GameTestHelper test) {
+        var level = test.getLevel();
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var breaker = prepareBreaker(test, owner, TTItems.SEAL_BREAKER.get());
+        breaker.setArea(new BlockPos(1, 1, 1));
+        var worker = createBreaker(test, owner);
+        var target = test.absolutePos(TARGET);
+        var denied = new AtomicInteger();
+        Consumer<BlockEvent.BreakEvent> veto = event -> {
+            if (event.getLevel() == level && event.getPos().equals(target)) {
+                denied.incrementAndGet();
+                event.setCanceled(true);
+            }
+        };
+        try {
+            MinecraftForge.EVENT_BUS.addListener(veto);
+            try {
+                TaskBoard.attempt(level, nextBreakTask(test, breaker, worker), worker);
+            } finally {
+                MinecraftForge.EVENT_BUS.unregister(veto);
+            }
+            test.assertTrue(denied.get() == 1 && test.getBlockState(TARGET).is(Blocks.STONE),
+                    "The real Forge veto should leave the stone in place");
+            test.assertTrue(worker.getRankXp() == 0 && nearbyDrops(test, Items.COBBLESTONE) == 0,
+                    "A vetoed break must leave rank XP and drops alone. Rank XP was " + worker.getRankXp());
+            TaskBoard.of(level).sweep(level);
+            TaskBoard.attempt(level, nextBreakTask(test, breaker, worker), worker);
+            test.assertTrue(test.getBlockState(TARGET).isAir() && worker.getRankXp() == 1
+                            && nearbyDrops(test, Items.COBBLESTONE) == 1,
+                    "Allowing the next break should produce the normal result");
+        } finally {
+            SealHandler.removeSealEntity(level, breaker.pos(), true);
+        }
+        test.succeed();
+    }
+
+    private static Task nextBreakTask(GameTestHelper test, SealEntity breaker, EntityThaumaturgeGolem worker) {
+        breaker.tick(test.getLevel());
+        return TaskBoard.of(test.getLevel()).openBlockTasks(worker.getUUID(), worker).stream()
+                .filter(task -> breaker.pos().equals(task.origin()) && !task.isEnded()).findFirst().orElseThrow();
+    }
+
+    private static SealEntity prepareBreaker(GameTestHelper test, FakePlayer owner, Item item) {
+        prepareRoom(test);
+        var pos = TARGET.south();
+        SealHandler.removeSealEntity(test.getLevel(), new SealPos(test.absolutePos(pos), FACE), true);
+        test.setBlock(pos, Blocks.SMOOTH_STONE);
+        test.setBlock(TARGET, Blocks.STONE);
+        var breaker = placeSeal(test, owner, pos, new ItemStack(item));
+        configureFilter(breaker).setStack(0, new ItemStack(Items.STONE));
+        breaker.markChanged(test.getLevel());
+        return breaker;
+    }
+
+    private static EntityThaumaturgeGolem createBreaker(GameTestHelper test, FakePlayer owner) {
+        var worker = createWorker(test, owner);
+        worker.applyBuild(worker.properties().withArms(TTGolemParts.ARMS_BREAKERS.get()));
+        return worker;
+    }
+
+    private static int nearbyDrops(GameTestHelper test, Item item) {
+        return test.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(test.absolutePos(TARGET)).inflate(4))
+                .stream().filter(drop -> drop.getItem().is(item)).mapToInt(drop -> drop.getItem().getCount()).sum();
+    }
 
     @GameTest(template = "golem_room", batch = "guard_player", timeoutTicks = 100)
     public static void guardPlayerMarksRequirePvpAndExcludeTheOwner(GameTestHelper test) {

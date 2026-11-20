@@ -73,9 +73,12 @@ public final class BreakBehavior extends CellWorkBehavior {
             level.destroyBlockProgress(crackId, pos, crackStage(workFor(level, pos, state), task.data()));
             return false;
         }
-        BlockBreakerEngine.harvestBlock(level, TTFakePlayer.GOLEM.at(level, golem.asEntity()), pos, silk, NO_FORTUNE);
+        boolean harvested = BlockBreakerEngine.harvestBlock(
+                level, TTFakePlayer.GOLEM.at(level, golem.asEntity()), pos, silk, NO_FORTUNE);
         level.destroyBlockProgress(crackId, pos, CRACK_CLEARED);
-        golem.grantRankExperience(BREAK_XP);
+        if (harvested) {
+            golem.grantRankExperience(BREAK_XP);
+        }
         return retire(task);
     }
 
