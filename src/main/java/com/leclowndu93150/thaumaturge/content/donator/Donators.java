@@ -52,7 +52,7 @@ public final class Donators {
     }
 
     public static boolean is(UUID id, String name) {
-        return IDS.contains(id) || (!FMLEnvironment.production && DEV_NAME.equals(name));
+        return (id != null && IDS.contains(id)) || (!FMLEnvironment.production && DEV_NAME.equals(name));
     }
 
     public static boolean is(Player player) {
