@@ -134,6 +134,7 @@
     "client.sable.SableClientTagsMixin",
     "client.veil.VeilBlitVaryingMixin",
     "client.veil.VeilForgeResourcePackMixin",
+    "client.veil.VeilImGuiFrameMixin",
     "client.veil.VeilImGuiNativesMixin",
     "client.veil.VeilShaderManagerMixin",
     "client.veil.VeilScreenShaderMixin"
