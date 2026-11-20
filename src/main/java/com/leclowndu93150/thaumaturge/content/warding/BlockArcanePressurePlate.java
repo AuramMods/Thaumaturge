@@ -4,6 +4,7 @@ import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCod
 
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import com.leclowndu93150.thaumaturge.content.world.space.SpaceFrame;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 
 public final class BlockArcanePressurePlate extends PressurePlateBlock implements BlockInteractions {
@@ -56,10 +58,14 @@ public final class BlockArcanePressurePlate extends PressurePlateBlock implement
     protected int getSignalStrength(Level level, BlockPos pos) {
         if (!(level instanceof ServerLevel server)) return 0;
         int mode = level.getBlockState(pos).getValue(MODE);
-        for (Entity entity : level.getEntities(null, LevelSpaces.worldBox(level, pos, TOUCH_AABB.move(pos)))) {
-            if (mode == 0
-                    || (entity instanceof Player player && (mode == 1) == ArcaneAccess.canAccess(server, pos, player)))
+        AABB touch = TOUCH_AABB.move(pos);
+        SpaceFrame frame = LevelSpaces.frameOf(level, pos);
+        for (Entity entity : level.getEntities(null, LevelSpaces.worldBox(level, pos, touch))) {
+            boolean triggersMode = mode == 0
+                    || (entity instanceof Player player && (mode == 1) == ArcaneAccess.canAccess(server, pos, player));
+            if (triggersMode && frame.intersects(level, touch, entity.getBoundingBox())) {
                 return 15;
+            }
         }
         return 0;
     }
