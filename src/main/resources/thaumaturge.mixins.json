@@ -131,7 +131,9 @@
     "client.multiplayer.ClientPacketListenerEffectMixin",
     "client.multiplayer.RemoteLoginReadMixin",
     "client.sable.SableClientTagsMixin",
+    "client.veil.VeilBlitVaryingMixin",
     "client.veil.VeilForgeResourcePackMixin",
+    "client.veil.VeilShaderManagerMixin",
     "client.veil.VeilScreenShaderMixin"
   ],
   "injectors": {

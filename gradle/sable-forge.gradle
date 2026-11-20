@@ -4,6 +4,7 @@ def sableRepository = 'https://github.com/NotAsher999/sable-1.20.1.git'
 def sableSource = layout.projectDirectory.dir(".gradle/sable-forge/${sable_forge_revision}")
 def sableClasses = sableSource.dir('forge/build/classes/java/main')
 def sableJar = sableSource.file("forge/build/libs/sable-forge-${minecraft_version}-${sable_forge_version}.jar")
+def veilNamedJar = sableSource.file("forge/build/devlibs/Veil-forge-${minecraft_version}-${veil_forge_version}-named-dev.jar")
 
 def checkoutSableForge = tasks.register('checkoutSableForge') {
     inputs.property 'repository', sableRepository
@@ -52,5 +53,5 @@ def buildSableForge = tasks.register('buildSableForge', Exec) {
 }
 
 dependencies {
-    compileOnly files(sableClasses).builtBy(buildSableForge)
+    compileOnly files(sableClasses, veilNamedJar).builtBy(buildSableForge)
 }
