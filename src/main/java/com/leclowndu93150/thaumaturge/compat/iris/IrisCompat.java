@@ -24,6 +24,11 @@ public final class IrisCompat {
         return isLoaded() && IrisCompatImpl.isSolidHandPass();
     }
 
+    /** Checks the current frame's level buffer even when no shader pack is active. */
+    public static boolean isBatchingEntities(MultiBufferSource.BufferSource buffers) {
+        return isLoaded() && IrisCompatImpl.isBatchingEntities(buffers);
+    }
+
     /**
      * Gets Oculus's translucent particle program for Thaumaturge's particle-format effects.
      */

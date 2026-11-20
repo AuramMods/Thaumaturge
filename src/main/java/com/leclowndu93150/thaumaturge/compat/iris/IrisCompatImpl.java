@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.compat.iris;
 import com.leclowndu93150.thaumaturge.client.render.NodeTexture;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.irisshaders.batchedentityrendering.impl.FullyBufferedMultiBufferSource;
 import net.irisshaders.iris.Iris;
 import net.irisshaders.iris.api.v0.IrisApi;
 import net.irisshaders.iris.layer.BlockEntityRenderStateShard;
@@ -22,6 +23,10 @@ final class IrisCompatImpl {
     private static final ResourceLocation NODE_TEXTURE = NodeTexture.TEXTURE;
 
     private IrisCompatImpl() {}
+
+    public static boolean isBatchingEntities(MultiBufferSource.BufferSource buffers) {
+        return buffers instanceof FullyBufferedMultiBufferSource;
+    }
 
     public static boolean shadersActive() {
         return IrisApi.getInstance().isShaderPackInUse();

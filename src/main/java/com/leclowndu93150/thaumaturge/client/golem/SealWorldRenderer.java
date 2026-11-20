@@ -87,7 +87,11 @@ public final class SealWorldRenderer {
         }
         PoseStack poseStack = event.getPoseStack();
         Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
-        MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(SEAL_BUFFERS);
+        // Oculus draws batched opaque block entities after this event, even with shaders disabled.
+        // Submit seals to the same buffer so it draws their translucent quads after the opaque models.
+        MultiBufferSource.BufferSource worldBuffers = mc.renderBuffers().bufferSource();
+        boolean batched = IrisCompat.isBatchingEntities(worldBuffers);
+        MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(batched ? worldBuffers : SEAL_BUFFERS);
         float partialTicks = event.getPartialTick();
         float time = player.tickCount % 360 + partialTicks;
         for (SealEntity seal : ClientSealHolder.all().values()) {
@@ -108,7 +112,9 @@ public final class SealWorldRenderer {
             }
             poseStack.popPose();
         }
-        SEAL_BUFFERS.endBatch();
+        if (!batched) {
+            SEAL_BUFFERS.endBatch();
+        }
     }
 
     private static void drawSealIcon(
