@@ -59,12 +59,10 @@ public final class FocusGameTests {
 
     @GameTest(template = "golem_room", timeoutTicks = 300)
     public static void inscribedFocusResumesAndCastsAProjectile(GameTestHelper test) {
+        SealAutomationGameTests.prepareRoom(test);
         var player = ResearchGameTests.survivalPlayer(test);
         var draft = Spell.empty().withRoot(SpellNode.of(Spell.ORIGIN)
                 .then(SpellNode.of(TTSpellParts.PROJECTILE).then(SpellNode.of(TTSpellParts.FIRE))));
-        for (BlockPos floor : BlockPos.betweenClosed(new BlockPos(0, 1, 0), new BlockPos(8, 1, 8))) {
-            test.setBlock(floor, Blocks.SMOOTH_STONE);
-        }
         test.setBlock(TABLE, TTBlocks.FOCAL_MANIPULATOR.get());
         placePlayer(test, player, TABLE.east());
         var aura = Objects.requireNonNull(AuraManager.chunkAt(test.getLevel(), test.absolutePos(TABLE)));

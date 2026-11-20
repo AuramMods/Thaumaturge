@@ -135,7 +135,22 @@ public final class GolemGameTests {
 
     @GameTest(template = "golem_room")
     public static void visorCreditsExperienceFromDart(GameTestHelper test) {
+        SealAutomationGameTests.prepareRoom(test);
         var player = ResearchGameTests.survivalPlayer(test);
+        var placer = new ItemStack(TTItems.GOLEM_PLACER.get());
+        ItemData.set(placer, TTDataComponents.GOLEM_PROPERTIES.get(), GolemProperties.createDefault());
+        deploy(test, player, placer);
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(
+                test.getEntities(TTEntities.THAUMATURGE_GOLEM.get(), DEPLOY, 1.5).stream()
+                        .anyMatch(golem -> player.getUUID().equals(golem.getOwnerUUID())),
+                "Waiting for the deployed golem to enter entity tracking")).thenExecute(() -> {
+            var golem = test.getEntities(TTEntities.THAUMATURGE_GOLEM.get(), DEPLOY, 1.5).stream()
+                    .filter(entity -> player.getUUID().equals(entity.getOwnerUUID())).findFirst().orElseThrow();
+            verifyVisorDart(test, player, golem);
+        });
+    }
+
+    private static void verifyVisorDart(GameTestHelper test, FakePlayer player, EntityThaumaturgeGolem golem) {
         var level = test.getLevel();
         var target = test.spawnWithNoFreeWill(EntityType.PIG, DEPLOY.east(3));
         target.setHealth(1);
@@ -148,7 +163,6 @@ public final class GolemGameTests {
         level.addNewPlayer(player);
         MinecraftForge.EVENT_BUS.addListener(observe);
         try {
-            var golem = deployDefaultGolem(test, player);
             fit(test, player, golem, new ItemStack(TTItems.GOLEM_VISOR.get()));
             golem.setNoAi(true);
             EntityGolemDart.loose(TTEntities.GOLEM_DART.get(), golem, target, 8, 0, 1.6F, 0);

@@ -111,10 +111,31 @@ public final class BlockEntityEtherealBloom extends RegistryBlockEntity {
                         SectionPos.sectionToBlockCoord(chunkX, CHUNK_CENTER),
                         origin.getY(),
                         SectionPos.sectionToBlockCoord(chunkZ, CHUNK_CENTER));
-                if (LoadedChunks.contains(level, cursor)
-                        && (TaintEcology.getSaturation(level, cursor) > 0.0F
-                                || TaintBiomeManager.isTainted(level, cursor))) {
+                if (LoadedChunks.contains(level, cursor) && TaintEcology.getSaturation(level, cursor) > 0.0F) {
                     return true;
+                }
+            }
+        }
+        return hasNearbyTaint(level, origin);
+    }
+
+    private boolean hasNearbyTaint(ServerLevel level, BlockPos origin) {
+        int radius = TaintBlooms.PROTECTION_RADIUS;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                int horizontalDistance = dx * dx + dz * dz;
+                cursor.set(origin.getX() + dx, origin.getY(), origin.getZ() + dz);
+                if (horizontalDistance > RADIUS_SQ || !LoadedChunks.contains(level, cursor)) {
+                    continue;
+                }
+                if (TaintBiomeManager.isTainted(level, cursor)) {
+                    return true;
+                }
+                for (int dy = -VERTICAL_SAMPLE_RANGE; dy <= VERTICAL_SAMPLE_RANGE; dy++) {
+                    if (horizontalDistance + dy * dy <= RADIUS_SQ
+                            && level.getBlockState(cursor.setY(origin.getY() + dy)).getBlock() instanceof ITaintBlock) {
+                        return true;
+                    }
                 }
             }
         }

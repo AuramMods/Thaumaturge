@@ -1342,7 +1342,7 @@ public final class SealAutomationGameTests {
         chest(test, SOURCE).setItem(1, new ItemStack(Items.CARROT, 3));
     }
 
-    private static void prepareRoom(GameTestHelper test) {
+    static void prepareRoom(GameTestHelper test) {
         for (BlockPos floor : BlockPos.betweenClosed(new BlockPos(0, 1, 0), new BlockPos(8, 1, 8))) {
             test.setBlock(floor, Blocks.SMOOTH_STONE);
             // Keep generated sand and gravel above the template out of the work area.
