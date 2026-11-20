@@ -283,7 +283,7 @@ public final class SealAutomationGameTests {
         }).thenSucceed();
     }
 
-    @GameTest(template = "golem_room", batch = "butcher_seal", timeoutTicks = 900)
+    @GameTest(template = "golem_room", batch = "butcher_seal", timeoutTicks = 1100)
     public static void butcherRechecksTheBreedingPairAfterItsScan(GameTestHelper test) {
         var owner = ResearchGameTests.survivalPlayer(test);
         var level = test.getLevel();
@@ -304,12 +304,16 @@ public final class SealAutomationGameTests {
         var baby = pasturePig(test, pasture.north());
         baby.setAge(-24_000);
 
-        test.startSequence().thenExecute(() -> {
-            for (int tick = 0; tick < 200; tick++) {
-                butcher.tick(level);
-            }
-            var marked = TaskBoard.of(level).openEntityTasks(worker.getUUID(), worker).stream()
-                    .filter(task -> butcher.pos().equals(task.origin())).findFirst().orElseThrow();
+        var markedTask = new AtomicReference<Task>();
+        var nextHunt = new AtomicReference<Task>();
+        test.startSequence().thenWaitUntil(() -> {
+            var pending = butcherWork(test, butcher, worker);
+            test.assertTrue(pending.isPresent(), "Waiting for the live Butcher seal to mark one of the three adults");
+            markedTask.set(pending.orElseThrow());
+        }).thenExecute(() -> {
+            var marked = markedTask.get();
+            test.assertTrue(marked.entity() == first || marked.entity() == second || marked.entity() == third,
+                    "The initial hunt should mark one of the three staged adults");
             var removed = marked.entity() == first ? second : first;
             removed.discard();
             test.assertTrue(!marked.canBePerformedBy(worker), "A queued task accepted one of the last two adult pigs");
@@ -320,9 +324,12 @@ public final class SealAutomationGameTests {
                     "With only the breeding pair and a baby the worker should do no hunting");
             worker.setNoAi(true);
             pasturePig(test, pasture.south().east());
-        }).thenWaitUntil(() -> test.assertTrue(butcherWork(test, butcher, worker).isPresent(),
-                "Waiting for a new hunt after another adult enters")).thenExecute(() -> {
-            var hunt = butcherWork(test, butcher, worker).orElseThrow();
+        }).thenWaitUntil(() -> {
+            var pending = butcherWork(test, butcher, worker);
+            test.assertTrue(pending.isPresent(), "Waiting for a new hunt after another adult enters");
+            nextHunt.set(pending.orElseThrow());
+        }).thenExecute(() -> {
+            var hunt = nextHunt.get();
             butcher.behavior().onTaskStarted(level, butcher, worker, hunt);
             test.assertTrue(worker.getTarget() == hunt.entity() && worker.getRankXp() == 1,
                     "The new hunt should assign the adult to the worker");
@@ -407,9 +414,12 @@ public final class SealAutomationGameTests {
             test.assertTrue(level.addFreshEntity(breakerWorker), "Could not add the breaker worker");
         }).thenWaitUntil(() -> test.assertTrue(test.getBlockState(TARGET).isAir(), "Waiting for the normal stone break"))
                 .thenExecute(() -> {
-            test.assertTrue(breakerWorker.getRankXp() == 1 && nearbyDrops(test, Items.COBBLESTONE) == 1
+            var cobblestone = nearbyDropEntities(test, Items.COBBLESTONE);
+            test.assertTrue(breakerWorker.getRankXp() == 1
+                            && cobblestone.size() == 1 && cobblestone.get(0).getItem().getCount() == 1
                             && nearbyDrops(test, Items.STONE) == 0 && test.getBlockState(TARGET.east()).is(Blocks.GRANITE),
                     "The normal break should drop cobblestone, award one XP and spare the unlisted block");
+            cobblestone.get(0).discard();
             breaker.setSetting(BreakBehavior.SILK_TOUCH, true);
             breaker.markChanged(level);
             test.setBlock(TARGET, Blocks.STONE);
@@ -419,9 +429,11 @@ public final class SealAutomationGameTests {
                     "Silk Touch should need a further strike before the stone breaks");
         }).thenWaitUntil(() -> test.assertTrue(test.getBlockState(TARGET).isAir(), "Waiting for the Silk Touch break"))
                 .thenExecute(() -> {
-            test.assertTrue(breakerWorker.getRankXp() == 2 && nearbyDrops(test, Items.STONE) == 1
-                            && nearbyDrops(test, Items.COBBLESTONE) == 1 && test.getBlockState(TARGET.east()).is(Blocks.GRANITE),
-                    "The Silk Touch break should drop exactly one stone and preserve the unlisted block");
+            test.assertTrue(breakerWorker.getRankXp() == 2, "The Silk Touch break should award the second rank XP");
+            test.assertTrue(nearbyDrops(test, Items.STONE) == 1 && nearbyDrops(test, Items.COBBLESTONE) == 0,
+                    "The Silk Touch break should drop exactly one stone");
+            test.assertTrue(test.getBlockState(TARGET.east()).is(Blocks.GRANITE),
+                    "The Silk Touch break should preserve the unlisted granite");
             SealHandler.removeSealEntity(level, breaker.pos(), true);
             breakerWorker.discard();
         }).thenSucceed();
@@ -489,8 +501,12 @@ public final class SealAutomationGameTests {
     }
 
     private static int nearbyDrops(GameTestHelper test, Item item) {
-        return test.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(test.absolutePos(TARGET)).inflate(4))
-                .stream().filter(drop -> drop.getItem().is(item)).mapToInt(drop -> drop.getItem().getCount()).sum();
+        return nearbyDropEntities(test, item).stream().mapToInt(drop -> drop.getItem().getCount()).sum();
+    }
+
+    private static List<ItemEntity> nearbyDropEntities(GameTestHelper test, Item item) {
+        return test.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(test.absolutePos(TARGET)).inflate(4),
+                drop -> drop.getItem().is(item));
     }
 
     @GameTest(template = "golem_room", batch = "guard_player", timeoutTicks = 100)
