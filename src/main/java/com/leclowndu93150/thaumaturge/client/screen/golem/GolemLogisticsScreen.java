@@ -64,6 +64,7 @@ public final class GolemLogisticsScreen extends AbstractTTContainerScreen<MenuGo
     private static final int SEARCH_HINT_Y = 197;
     private static final int SEARCH_HINT_COLOR = 0xFF4E4A52;
     private static final int COUNT_LABEL_COLOR = 0xFF38343C;
+    private static final float STOCK_COUNT_DEPTH = 300.0F;
     private static final float CLACK_VOLUME = 0.35F;
 
     private static final long REFRESH_INTERVAL_MS = 1000L;
@@ -204,8 +205,7 @@ public final class GolemLogisticsScreen extends AbstractTTContainerScreen<MenuGo
     }
 
     private int selectedCount() {
-        ItemStack stack = selectedStack();
-        return stack.isEmpty() ? MIN_REQUEST : stack.getCount();
+        return selectedStack().isEmpty() ? MIN_REQUEST : Math.max(MIN_REQUEST, menu.stockCount(selectedSlot));
     }
 
     @Override
@@ -284,6 +284,16 @@ public final class GolemLogisticsScreen extends AbstractTTContainerScreen<MenuGo
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+        graphics.pose().pushPose();
+        graphics.pose().translate(0.0F, 0.0F, STOCK_COUNT_DEPTH);
+        for (Slot slot : menu.slots) {
+            int count = menu.stockCount(slot.index);
+            if (slot.hasItem() && count > 1) {
+                String text = Integer.toString(count);
+                graphics.drawString(font, text, slot.x + 17 - font.width(text), slot.y + 9, 0xFFFFFF, true);
+            }
+        }
+        graphics.pose().popPose();
         if (selectedSlot >= 0) {
             String text = String.valueOf(requestCount);
             graphics.drawString(

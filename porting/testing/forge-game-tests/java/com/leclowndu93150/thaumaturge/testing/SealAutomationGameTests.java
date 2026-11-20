@@ -7,6 +7,8 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
+import com.leclowndu93150.thaumaturge.content.golem.logistics.LogisticsTarget;
+import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealAccess;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
@@ -19,21 +21,28 @@ import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTGolemParts;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import io.netty.buffer.Unpooled;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket;
+import net.minecraft.network.protocol.game.ClientboundContainerSetDataPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.ThrownEgg;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
@@ -61,6 +70,82 @@ public final class SealAutomationGameTests {
     private static final Direction FACE = Direction.NORTH;
 
     private SealAutomationGameTests() {}
+
+    @GameTest(template = "golem_room", batch = "logistics_stock", timeoutTicks = 460)
+    public static void logisticsSynchronizesLargeStockAndDeliversMultipleStacks(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildWorkshop(test);
+        var source = chest(test, SOURCE);
+        var target = chest(test, TARGET);
+        for (int slot = 2; slot < 5; slot++) {
+            source.setItem(slot, new ItemStack(Items.IRON_INGOT, 64));
+        }
+        source.setItem(0, new ItemStack(Items.IRON_INGOT, 8));
+        var provider = placeSeal(test, owner, SOURCE, new ItemStack(TTItems.SEAL_PROVIDER.get()));
+        configureFilter(provider);
+        provider.markChanged(level);
+        var destination = new LogisticsTarget(test.absolutePos(TARGET), FACE);
+        var menu = new MenuGolemLogistics(1, owner.getInventory(), destination);
+        menu.setSearchText("iron");
+        var mirrorPlayer = ResearchGameTests.survivalPlayer(test);
+        var mirror = new MenuGolemLogistics(1, mirrorPlayer.getInventory(), destination);
+        test.assertTrue(mirror.stockCount(0) == 0, "The mirror should start without displayed stock");
+        menu.setSynchronizer(new ContainerSynchronizer() {
+            @Override
+            public void sendInitialData(AbstractContainerMenu sourceMenu, NonNullList<ItemStack> slots,
+                                        ItemStack carried, int[] data) {
+                var wire = new FriendlyByteBuf(Unpooled.buffer());
+                try {
+                    new ClientboundContainerSetContentPacket(1, 0, slots, carried).write(wire);
+                    var received = new ClientboundContainerSetContentPacket(wire);
+                    mirror.initializeContents(received.getStateId(), received.getItems(), received.getCarriedItem());
+                } finally {
+                    wire.release();
+                }
+                for (int id = 0; id < data.length; id++) {
+                    sendDataChange(sourceMenu, id, data[id]);
+                }
+            }
+
+            @Override
+            public void sendSlotChange(AbstractContainerMenu sourceMenu, int slot, ItemStack stack) {}
+
+            @Override
+            public void sendCarriedChange(AbstractContainerMenu sourceMenu, ItemStack stack) {}
+
+            @Override
+            public void sendDataChange(AbstractContainerMenu sourceMenu, int id, int value) {
+                var wire = new FriendlyByteBuf(Unpooled.buffer());
+                try {
+                    new ClientboundContainerSetDataPacket(1, id, value).write(wire);
+                    var received = new ClientboundContainerSetDataPacket(wire);
+                    mirror.setData(received.getId(), received.getValue());
+                } finally {
+                    wire.release();
+                }
+            }
+        });
+        var received = mirror.getSlot(0).getItem();
+        test.assertTrue(received.is(Items.IRON_INGOT) && received.getCount() == 1 && mirror.stockCount(0) == 200,
+                "The native menu packets should carry one icon and all 200 available ingots");
+
+        menu.request(new ItemStack(Items.IRON_INGOT), 65);
+        var worker = createWorker(test, owner);
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the logistics worker");
+        test.startSequence().thenWaitUntil(() -> {
+            test.assertTrue(target.countItem(Items.IRON_INGOT) == 65,
+                    "Waiting for both delivery batches. Stocked " + target.countItem(Items.IRON_INGOT)
+                            + ", source " + source.countItem(Items.IRON_INGOT) + ", held " + worker.getMainHandItem()
+                            + ", rank XP " + worker.getRankXp() + ", worker " + worker.blockPosition());
+        }).thenIdle(60).thenExecute(() -> {
+            test.assertTrue(source.countItem(Items.IRON_INGOT) == 135 && source.countItem(Items.CARROT) == 3
+                            && worker.getRankXp() == 2 && worker.getMainHandItem().isEmpty(),
+                    "The two deliveries should preserve exact stock and complete without extra pickups");
+            SealHandler.removeSealEntity(level, provider.pos(), true);
+            worker.discard();
+        }).thenSucceed();
+    }
 
     @GameTest(template = "golem_room", batch = "guard_seal", timeoutTicks = 360)
     public static void lockedGuardSealTargetsHostileMobsAndConfiguredAnimals(GameTestHelper test) {

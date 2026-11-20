@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -55,6 +56,7 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
     private final @Nullable LogisticsTarget target;
     private final DataSlot start = DataSlot.standalone();
     private final DataSlot end = DataSlot.standalone();
+    private final SimpleContainerData stockCounts = new SimpleContainerData(SIZE * 2);
     private String searchText = "";
 
     public MenuGolemLogistics(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
@@ -74,6 +76,7 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
         }
         addDataSlot(start);
         addDataSlot(end);
+        addDataSlots(stockCounts);
         refresh(true);
     }
 
@@ -83,6 +86,18 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
 
     public int end() {
         return end.get();
+    }
+
+    public int stockCount(int slot) {
+        int low = Short.toUnsignedInt((short) stockCounts.get(slot * 2));
+        int high = stockCounts.get(slot * 2 + 1);
+        return (high << Short.SIZE) | low;
+    }
+
+    private void setStockCount(int slot, int count) {
+        // Forge's menu data packets transmit signed shorts.
+        stockCounts.set(slot * 2, (short) count);
+        stockCounts.set(slot * 2 + 1, count >>> Short.SIZE);
     }
 
     public void setSearchText(String text) {
@@ -189,11 +204,15 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
         int slot = 0;
         for (ItemStack stack : items) {
             if (++skipped > start.get() * COLUMNS) {
-                display.setItem(slot, stack.copy());
+                display.setItem(slot, stack.copyWithCount(1));
+                setStockCount(slot, stack.getCount());
                 if (++slot >= SIZE) {
                     break;
                 }
             }
+        }
+        for (; slot < SIZE; slot++) {
+            setStockCount(slot, 0);
         }
         end.set(lastPage());
     }
