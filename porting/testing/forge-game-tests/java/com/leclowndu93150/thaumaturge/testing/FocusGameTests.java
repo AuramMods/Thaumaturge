@@ -20,7 +20,10 @@ import com.leclowndu93150.thaumaturge.network.ServerboundSpellDraftPayload;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Consumer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,7 +39,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
@@ -88,6 +93,64 @@ public final class FocusGameTests {
             ItemStack focus = takeFocus(test, player, draft);
             castAndCheckImpact(test, player, focus, draft);
         });
+    }
+
+    @GameTest(template = "golem_room")
+    public static void frostBeamHonorsForgePlacementVeto(GameTestHelper test) {
+        var player = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        var wall = TARGET.above();
+        var allowed = wall.north().west();
+        var protectedWater = wall.north().east();
+        test.setBlock(wall, Blocks.STONE);
+        for (var source : Set.of(allowed, protectedWater)) {
+            test.setBlock(source.below(), Blocks.STONE);
+            test.setBlock(source, Blocks.WATER);
+        }
+        placePlayer(test, player, CASTER);
+        player.lookAt(EntityAnchorArgument.Anchor.EYES, Vec3.atCenterOf(test.absolutePos(wall)));
+        ResearchManager.complete(player, TTIds.rl("unlock_auromancy"));
+        ResearchManager.complete(player, TTIds.rl("base_auromancy"));
+        ResearchManager.complete(player, TTIds.rl("focus_beam"));
+        ResearchManager.complete(player, TTIds.rl("focus_elemental"));
+        var design = Spell.empty().withRoot(SpellNode.of(Spell.ORIGIN)
+                .then(SpellNode.of(TTSpellParts.BEAM).then(SpellNode.of(TTSpellParts.FROST))));
+        var focus = new ItemStack(TTItems.FOCUS_1.get());
+        Spells.setSpell(focus, design);
+        var wand = new ItemStack(TTItems.WAND.get());
+        TTItems.WAND.get().socketFocus(wand, focus);
+        int capacity = WandVisHelper.getMaxVis(wand);
+        for (var primal : TTAspects.PRIMALS) {
+            WandVisHelper.storeVis(wand, primal, capacity);
+        }
+        player.setItemInHand(InteractionHand.MAIN_HAND, wand);
+
+        var allowedPos = test.absolutePos(allowed);
+        var protectedPos = test.absolutePos(protectedWater);
+        Set<BlockPos> placementAttempts = new HashSet<>();
+        Consumer<BlockEvent.EntityPlaceEvent> veto = event -> {
+            if (event.getEntity() == player) {
+                placementAttempts.add(event.getPos().immutable());
+                if (event.getPos().equals(protectedPos)) {
+                    event.setCanceled(true);
+                }
+            }
+        };
+        MinecraftForge.EVENT_BUS.addListener(veto);
+        try {
+            test.assertTrue(wand.use(level, player, InteractionHand.MAIN_HAND).getResult() == InteractionResult.SUCCESS,
+                    "The loaded Frost focus did not cast");
+        } finally {
+            MinecraftForge.EVENT_BUS.unregister(veto);
+        }
+        test.assertTrue(placementAttempts.equals(Set.of(allowedPos, protectedPos)),
+                "Forge did not receive both water placement attempts from the caster");
+        test.assertBlockPresent(Blocks.FROSTED_ICE, allowed);
+        test.assertBlockPresent(Blocks.WATER, protectedWater);
+        test.assertTrue(level.getBlockTicks().hasScheduledTick(allowedPos, Blocks.FROSTED_ICE)
+                        && !level.getBlockTicks().hasScheduledTick(protectedPos, Blocks.FROSTED_ICE),
+                "Only the permitted ice should have a thaw tick");
+        test.succeed();
     }
 
     private static void startInscription(GameTestHelper test, FakePlayer player, Spell draft) {
