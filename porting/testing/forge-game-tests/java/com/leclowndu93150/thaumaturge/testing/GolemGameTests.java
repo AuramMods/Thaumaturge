@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+import com.leclowndu93150.thaumaturge.content.entity.EntityGolemDart;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
@@ -18,6 +19,8 @@ import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTGolemParts;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -25,6 +28,8 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -33,7 +38,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
@@ -50,24 +57,129 @@ public final class GolemGameTests {
 
     private GolemGameTests() {}
 
+    @GameTest(template = "golem_room", timeoutTicks = 160)
+    public static void fezRepairsBeforeBareGolem(GameTestHelper test) {
+        var player = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        level.addNewPlayer(player);
+        EntityThaumaturgeGolem equipped;
+        try {
+            equipped = deployDefaultGolem(test, player);
+            fit(test, player, equipped, new ItemStack(TTItems.GOLEM_FEZ.get()));
+        } finally {
+            level.removePlayerImmediately(player, Entity.RemovalReason.DISCARDED);
+        }
+
+        var bare = test.spawn(TTEntities.THAUMATURGE_GOLEM.get(), DEPLOY.west(2));
+        bare.setValidSpawn();
+        bare.applyBuild(GolemProperties.createDefault());
+        float woundedHealth = equipped.getMaxHealth() - 4;
+        for (var golem : new EntityThaumaturgeGolem[] {equipped, bare}) {
+            golem.tickCount = 0;
+            golem.setNoAi(true);
+            golem.setHealth(woundedHealth);
+        }
+        test.startSequence().thenIdle(63).thenExecute(() -> {
+            test.assertTrue(equipped.getHealth() == woundedHealth && bare.getHealth() == woundedHealth,
+                    "Neither golem should repair before tick 66");
+        }).thenIdle(6).thenExecute(() -> {
+            test.assertTrue(equipped.getHealth() == woundedHealth + 1 && bare.getHealth() == woundedHealth,
+                    "The Fez should repair at tick 66 while the bare golem is still wounded");
+        }).thenIdle(34).thenExecute(() -> {
+            test.assertTrue(equipped.getHealth() == woundedHealth + 1 && bare.getHealth() == woundedHealth + 1,
+                    "The bare golem should repair at tick 100");
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "golem_room")
+    public static void visorCreditsExperienceOnFirstLethalHit(GameTestHelper test) {
+        var player = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        level.addNewPlayer(player);
+        try {
+            var golem = deployDefaultGolem(test, player);
+            float armor = golem.getArmorValue();
+            var control = test.spawnWithNoFreeWill(EntityType.PIG, DEPLOY.east());
+            var target = test.spawnWithNoFreeWill(EntityType.PIG, DEPLOY.east(2));
+            control.setHealth(1);
+            target.setHealth(1);
+            var experience = new AtomicInteger();
+            Consumer<LivingExperienceDropEvent> observe = event -> {
+                if (event.getEntity() == target || event.getEntity() == control) {
+                    experience.set(event.getAttackingPlayer() == player ? event.getDroppedExperience() : -1);
+                }
+            };
+            MinecraftForge.EVENT_BUS.addListener(observe);
+            try {
+                Objects.requireNonNull(golem.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(8);
+                test.assertTrue(golem.doHurtTarget(control) && !control.isAlive() && experience.get() == 0,
+                        "An unequipped golem should not award player experience");
+                fit(test, player, golem, new ItemStack(TTItems.GOLEM_VISOR.get()));
+                test.assertTrue(golem.getArmorValue() == armor + 1, "The Visor should add one armor point");
+                Objects.requireNonNull(golem.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(8);
+                target.setInvulnerable(true);
+                test.assertTrue(!golem.doHurtTarget(target) && target.getKillCredit() == null,
+                        "Rejected damage should not give the owner kill credit");
+                target.setInvulnerable(false);
+                test.assertTrue(golem.doHurtTarget(target) && !target.isAlive(), "The first Visor hit should be lethal");
+                test.assertTrue(experience.get() > 0, "The first lethal Visor hit should award owner-credited experience");
+                test.assertTrue(target.lastHurtByPlayerTime == 100, "Visor credit should use the native player timeout");
+            } finally {
+                MinecraftForge.EVENT_BUS.unregister(observe);
+            }
+            test.succeed();
+        } finally {
+            level.removePlayerImmediately(player, Entity.RemovalReason.DISCARDED);
+        }
+    }
+
+    @GameTest(template = "golem_room")
+    public static void visorCreditsExperienceFromDart(GameTestHelper test) {
+        var player = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        var target = test.spawnWithNoFreeWill(EntityType.PIG, DEPLOY.east(3));
+        target.setHealth(1);
+        var experience = new AtomicInteger();
+        Consumer<LivingExperienceDropEvent> observe = event -> {
+            if (event.getEntity() == target && event.getAttackingPlayer() == player) {
+                experience.set(event.getDroppedExperience());
+            }
+        };
+        level.addNewPlayer(player);
+        MinecraftForge.EVENT_BUS.addListener(observe);
+        try {
+            var golem = deployDefaultGolem(test, player);
+            fit(test, player, golem, new ItemStack(TTItems.GOLEM_VISOR.get()));
+            golem.setNoAi(true);
+            EntityGolemDart.loose(TTEntities.GOLEM_DART.get(), golem, target, 8, 0, 1.6F, 0);
+            test.runAfterDelay(16, () -> {
+                try {
+                    test.assertTrue(!target.isAlive() && target.getLastHurtByMob() == golem,
+                            "The native golem dart should land one lethal hit");
+                    test.assertTrue(experience.get() > 0, "The Visor should credit the owner for the dart kill");
+                    test.succeed();
+                } finally {
+                    MinecraftForge.EVENT_BUS.unregister(observe);
+                    level.removePlayerImmediately(player, Entity.RemovalReason.DISCARDED);
+                }
+            });
+        } catch (RuntimeException | Error failure) {
+            MinecraftForge.EVENT_BUS.unregister(observe);
+            level.removePlayerImmediately(player, Entity.RemovalReason.DISCARDED);
+            throw failure;
+        }
+    }
+
     @GameTest(template = "golem_room")
     public static void topHatPreservesFullHealthAcrossReload(GameTestHelper test) {
         var player = ResearchGameTests.survivalPlayer(test);
         var level = test.getLevel();
         level.addNewPlayer(player);
         try {
-            var placer = new ItemStack(TTItems.GOLEM_PLACER.get());
-            ItemData.set(placer, TTDataComponents.GOLEM_PROPERTIES.get(), GolemProperties.createDefault());
-            deploy(test, player, placer);
-            var golems = test.getEntities(TTEntities.THAUMATURGE_GOLEM.get(), DEPLOY, 1.5);
-            test.assertTrue(golems.size() == 1, "Expected one deployed golem to fit");
-            var golem = golems.get(0);
+            var golem = deployDefaultGolem(test, player);
             float baseHealth = golem.getMaxHealth();
             golem.setHealth(baseHealth);
-            var hat = new ItemStack(TTItems.GOLEM_TOP_HAT.get());
-            player.setItemInHand(InteractionHand.MAIN_HAND, hat);
-            test.assertTrue(golem.interact(player, InteractionHand.MAIN_HAND).consumesAction() && hat.isEmpty(),
-                    "The owner could not fit a top hat");
+            fit(test, player, golem, new ItemStack(TTItems.GOLEM_TOP_HAT.get()));
             test.assertTrue(golem.getMaxHealth() == baseHealth + 5, "The fitted hat did not add five maximum health");
             golem.heal(5);
             float savedHealth = golem.getHealth();
@@ -228,6 +340,22 @@ public final class GolemGameTests {
         var use = new UseOnContext(player, InteractionHand.MAIN_HAND, topOf(test.absolutePos(DEPLOY.below())));
         test.assertTrue(placer.useOn(use).consumesAction() && placer.isEmpty(),
                 "Survival deployment did not consume one golem item");
+    }
+
+    private static EntityThaumaturgeGolem deployDefaultGolem(GameTestHelper test, FakePlayer player) {
+        var placer = new ItemStack(TTItems.GOLEM_PLACER.get());
+        ItemData.set(placer, TTDataComponents.GOLEM_PROPERTIES.get(), GolemProperties.createDefault());
+        deploy(test, player, placer);
+        var golems = test.getEntities(TTEntities.THAUMATURGE_GOLEM.get(), DEPLOY, 1.5);
+        test.assertTrue(golems.size() == 1, "Expected one deployed golem");
+        return golems.get(0);
+    }
+
+    private static void fit(GameTestHelper test, FakePlayer player, EntityThaumaturgeGolem golem, ItemStack accessory) {
+        String itemName = accessory.getHoverName().getString();
+        player.setItemInHand(InteractionHand.MAIN_HAND, accessory);
+        test.assertTrue(golem.interact(player, InteractionHand.MAIN_HAND).consumesAction() && accessory.isEmpty(),
+                "The owner could not fit " + itemName);
     }
 
     private static void verifyGolemSave(GameTestHelper test, FakePlayer player) {

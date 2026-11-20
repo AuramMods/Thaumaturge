@@ -287,7 +287,10 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         return factor;
     }
 
-    private boolean hasKillCreditAccessory() {
+    boolean grantsOwnerKillCredit() {
+        if (properties().hasTrait(TTGolemTraits.DEFT.get())) {
+            return true;
+        }
         for (GolemAccessory accessory : getAccessories()) {
             if (accessory.killCredit()) {
                 return true;
@@ -774,11 +777,6 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     public boolean doHurtTarget(Entity target) {
         if (!GolemCombat.tryMeleeHit(this, target)) {
             return false;
-        }
-        if (target instanceof LivingEntity living
-                && (properties().hasTrait(TTGolemTraits.DEFT.get()) || hasKillCreditAccessory())
-                && getOwner() instanceof Player owner) {
-            living.setLastHurtByPlayer(owner);
         }
         if (properties().arms().ability() != null) {
             properties().arms().ability().onMeleeHit(this, target);

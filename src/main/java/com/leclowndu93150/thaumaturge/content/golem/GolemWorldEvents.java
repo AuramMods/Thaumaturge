@@ -6,9 +6,11 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.world.space.BlocksMovedEvent;
+import com.leclowndu93150.thaumaturge.event.combat.DamagePhaseEvent;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -20,8 +22,21 @@ import com.leclowndu93150.thaumaturge.network.transport.PayloadNetwork;
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class GolemWorldEvents {
     private static final int TASK_CLEAR_INTERVAL_TICKS = 20;
+    private static final int PLAYER_KILL_CREDIT_TICKS = 100;
 
     private GolemWorldEvents() {}
+
+    @SubscribeEvent
+    public static void creditOwnerForGolemDamage(DamagePhaseEvent.AfterDamage event) {
+        if (event.getNewDamage() > 0.0F && event.getEntity().level() instanceof ServerLevel
+                && event.getSource().getEntity() instanceof EntityThaumaturgeGolem golem
+                && golem.grantsOwnerKillCredit() && golem.getOwner() instanceof Player owner) {
+            // Loot and experience are awarded before the attack returns, even for a first-hit kill.
+            var victim = event.getEntity();
+            victim.setLastHurtByPlayer(owner);
+            victim.lastHurtByPlayerTime = PLAYER_KILL_CREDIT_TICKS;
+        }
+    }
 
     @SubscribeEvent
     public static void onBlocksMoved(BlocksMovedEvent event) {
