@@ -15,7 +15,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
@@ -27,7 +26,7 @@ public final class BlockEntityArcaneEar extends RegistryBlockEntity {
 
     private byte note;
     private byte instrument;
-    private int redstoneSignal;
+    private long pulseEndsAt;
 
     public BlockEntityArcaneEar(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ARCANE_EAR.get(), pos, state);
@@ -44,8 +43,13 @@ public final class BlockEntityArcaneEar extends RegistryBlockEntity {
     @Override
     public void onLoad() {
         super.onLoad();
-        if (level != null && !level.isClientSide()) {
-            AttachmentData.get(level, TTAttachments.EAR_INDEX).add(getBlockPos().immutable());
+        if (level instanceof ServerLevel server) {
+            AttachmentData.get(server, TTAttachments.EAR_INDEX).add(getBlockPos().immutable());
+            BlockState state = getBlockState();
+            if (state.getBlock() instanceof BlockArcaneEar ear && !ear.isToggle()
+                    && state.getValue(BlockStateProperties.ENABLED)) {
+                schedulePulseEnd(server);
+            }
         }
     }
 
@@ -57,15 +61,20 @@ public final class BlockEntityArcaneEar extends RegistryBlockEntity {
         super.setRemoved();
     }
 
-    public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityArcaneEar ear) {
-        if (ear.redstoneSignal <= 0) {
+    void tickPulse(ServerLevel server, BlockState state) {
+        if (pulseEndsAt > server.getGameTime()) {
+            schedulePulseEnd(server);
             return;
         }
-        ear.redstoneSignal--;
-        if (ear.redstoneSignal == 0 && state.getValue(BlockStateProperties.ENABLED)) {
-            level.setBlock(pos, state.setValue(BlockStateProperties.ENABLED, false), Block.UPDATE_ALL);
-            notifyPower(level, pos, state);
-        }
+        pulseEndsAt = 0;
+        server.setBlock(getBlockPos(), state.setValue(BlockStateProperties.ENABLED, false), Block.UPDATE_ALL);
+        notifyPower(server, getBlockPos(), state);
+        setChanged();
+    }
+
+    private void schedulePulseEnd(ServerLevel server) {
+        int remaining = (int) Math.max(1, pulseEndsAt - server.getGameTime());
+        server.scheduleTick(getBlockPos(), getBlockState().getBlock(), remaining);
     }
 
     public void updateTone() {
@@ -107,21 +116,23 @@ public final class BlockEntityArcaneEar extends RegistryBlockEntity {
     }
 
     public void trigger() {
-        if (level == null || level.isClientSide()) {
+        if (!(level instanceof ServerLevel server)) {
             return;
         }
         playNote();
         BlockState state = getBlockState();
-        if (getBlockState().getBlock() instanceof BlockArcaneEar ear && ear.isToggle()) {
-            level.setBlock(
+        if (state.getBlock() instanceof BlockArcaneEar ear && ear.isToggle()) {
+            server.setBlock(
                     getBlockPos(),
                     state.setValue(BlockStateProperties.ENABLED, !state.getValue(BlockStateProperties.ENABLED)),
                     Block.UPDATE_ALL);
         } else {
-            redstoneSignal = PULSE_TICKS;
-            level.setBlock(getBlockPos(), state.setValue(BlockStateProperties.ENABLED, true), Block.UPDATE_ALL);
+            pulseEndsAt = server.getGameTime() + PULSE_TICKS;
+            server.setBlock(getBlockPos(), state.setValue(BlockStateProperties.ENABLED, true), Block.UPDATE_ALL);
+            schedulePulseEnd(server);
+            setChanged();
         }
-        notifyPower(level, getBlockPos(), getBlockState());
+        notifyPower(server, getBlockPos(), getBlockState());
     }
 
     private static void notifyPower(Level level, BlockPos pos, BlockState state) {
@@ -135,6 +146,7 @@ public final class BlockEntityArcaneEar extends RegistryBlockEntity {
         super.loadAdditional(input, registries);
         note = input.getByte("note");
         instrument = input.getByte("tone");
+        pulseEndsAt = input.getLong("pulseEndsAt");
         if (note < 0 || note > 24) {
             note = 0;
         }
@@ -145,5 +157,8 @@ public final class BlockEntityArcaneEar extends RegistryBlockEntity {
         super.saveAdditional(output, registries);
         output.putByte("note", note);
         output.putByte("tone", instrument);
+        if (pulseEndsAt != 0) {
+            output.putLong("pulseEndsAt", pulseEndsAt);
+        }
     }
 }

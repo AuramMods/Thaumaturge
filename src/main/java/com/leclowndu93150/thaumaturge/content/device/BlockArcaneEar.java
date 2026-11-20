@@ -3,13 +3,14 @@ package com.leclowndu93150.thaumaturge.content.device;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.propertiesCodec;
 
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
-import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -23,8 +24,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -182,12 +181,11 @@ public final class BlockArcaneEar extends BaseEntityBlock implements BlockIntera
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide()) {
-            return null;
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (!toggle && state.getValue(BlockStateProperties.ENABLED)
+                && level.getBlockEntity(pos) instanceof BlockEntityArcaneEar ear) {
+            ear.tickPulse(level, state);
         }
-        return createTickerHelper(type, TTBlockEntities.ARCANE_EAR.get(), BlockEntityArcaneEar::serverTick);
     }
 
     @Override
