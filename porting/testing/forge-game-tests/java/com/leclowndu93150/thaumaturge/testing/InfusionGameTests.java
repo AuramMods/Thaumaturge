@@ -146,6 +146,108 @@ public final class InfusionGameTests {
                 }).thenSucceed();
     }
 
+    @GameTest(template = "infusion_room", batch = "infusion_recovery", timeoutTicks = 650)
+    public static void missingInfusionIngredientResumesAfterReloadWithOneExtraAer(GameTestHelper test) {
+        var player = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        var approach = Vec3.atBottomCenterOf(test.absolutePos(CENTER.south(2)));
+        player.moveTo(approach.x, approach.y, approach.z);
+        assembleAltar(test, player);
+        ResearchManager.complete(player, TTIds.rl("cloud_ring"));
+
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(
+                MatrixEnvironment.validLocation(level, test.absolutePos(MATRIX)), "Waiting for the finished altar"))
+                .thenExecute(() -> startFundedCloudstepper(test, player))
+                .thenWaitUntil(() -> test.assertTrue(matrix(test).isCrafting() && pedestal(test, SEEDS).getItem().isEmpty(),
+                        "Waiting for the crystal to be consumed")).thenExecute(() -> {
+                    test.assertTrue(jar(test, ORDO).amount() == 0 && matrix(test).remainingEssentia().isEmpty(),
+                            "The original 50 Aer should already be paid");
+                    var pos = test.absolutePos(DUST);
+                    test.assertTrue(level.getBlockState(pos).use(level, player, InteractionHand.OFF_HAND, topOf(pos))
+                                    .consumesAction() && pedestal(test, DUST).getItem().isEmpty()
+                                    && player.getInventory().countItem(Items.FEATHER) == 1,
+                            "Picking up the outstanding feather should transfer exactly one item");
+                }).thenWaitUntil(() -> test.assertTrue(matrix(test).remainingEssentia().totalAmount() == 1,
+                        "Waiting for a single missing-ingredient surcharge")).thenExecute(() -> {
+                    var saved = matrix(test).saveWithFullMetadata();
+                    test.setBlock(MATRIX, Blocks.AIR);
+                    test.setBlock(MATRIX, TTBlocks.INFUSION_MATRIX.get());
+                    matrix(test).load(saved);
+                }).thenIdle(25).thenExecute(() -> {
+                    var aer = Objects.requireNonNull(Aspects.resolve(level, TTAspects.AER));
+                    test.assertTrue(matrix(test).isCrafting() && matrix(test).remainingEssentia().amountOf(aer) == 1
+                                    && pedestal(test, CENTER).getItem().is(TTItems.RING_MUNDANE.get()),
+                            "The restored job should stall on its one Aer debt without producing a ring");
+                    var inventory = player.getInventory();
+                    int slot = inventory.findSlotMatchingItem(new ItemStack(Items.FEATHER));
+                    test.assertTrue(slot >= 0, "The player should still have the original feather");
+                    placeItem(test, player, DUST, inventory.removeItem(slot, 1));
+                    jar(test, ORDO).setStorageContents(TTAspects.AER, 1);
+                }).thenWaitUntil(() -> test.assertTrue(!matrix(test).isCrafting()
+                                && pedestal(test, CENTER).getItem().is(TTItems.CLOUD_RING.get()),
+                        "Waiting for the restored infusion to finish")).thenExecute(() -> {
+                    test.assertTrue(pedestal(test, SEEDS).getItem().isEmpty() && pedestal(test, DUST).getItem().isEmpty()
+                                    && jar(test, ORDO).amount() == 0 && player.getInventory().countItem(Items.FEATHER) == 0,
+                            "The same job should complete after one additional Aer and consume the returned feather once");
+                }).thenSucceed();
+    }
+
+    @GameTest(template = "infusion_room", batch = "infusion_abort", timeoutTicks = 820)
+    public static void interruptedPullDoesNotShortenTheNextInfusion(GameTestHelper test) {
+        var player = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        var approach = Vec3.atBottomCenterOf(test.absolutePos(CENTER.south(2)));
+        player.moveTo(approach.x, approach.y, approach.z);
+        assembleAltar(test, player);
+        ResearchManager.complete(player, TTIds.rl("cloud_ring"));
+
+        BlockPos pillar = corners().get(0);
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(
+                MatrixEnvironment.validLocation(level, test.absolutePos(MATRIX)), "Waiting for the finished altar"))
+                .thenExecute(() -> startFundedCloudstepper(test, player))
+                .thenWaitUntil(() -> test.assertTrue(matrix(test).isCrafting() && matrix(test).remainingEssentia().isEmpty(),
+                        "Waiting for the first job to pay its Aer"))
+                .thenIdle(10).thenExecute(() -> test.setBlock(pillar, Blocks.AIR))
+                .thenWaitUntil(() -> test.assertTrue(!matrix(test).isActive() && !matrix(test).isCrafting(),
+                        "The missing pillar should abort the first infusion")).thenExecute(() -> {
+                    test.assertTrue(pedestal(test, SEEDS).getItem().is(TTItems.ESSENTIA_CRYSTAL.get())
+                                    && pedestal(test, DUST).getItem().is(Items.FEATHER) && jar(test, ORDO).amount() == 0,
+                            "The aborted job should retain both ingredients and leave the already spent Aer spent");
+                    test.setBlock(pillar, TTBlocks.PILLAR_ARCANE.get());
+                    jar(test, ORDO).setStorageContents(TTAspects.AER, 50);
+                    wandClick(test, player);
+                    wandClick(test, player);
+                }).thenWaitUntil(() -> test.assertTrue(matrix(test).isCrafting() && matrix(test).remainingEssentia().isEmpty(),
+                        "Waiting for the second job to pay its Aer"))
+                .thenIdle(20).thenExecute(() -> test.assertTrue(
+                        pedestal(test, SEEDS).getItem().is(TTItems.ESSENTIA_CRYSTAL.get()),
+                        "A new infusion should begin a full ingredient pull after the previous job is aborted"))
+                .thenWaitUntil(() -> test.assertTrue(!matrix(test).isCrafting()
+                                && pedestal(test, CENTER).getItem().is(TTItems.CLOUD_RING.get()),
+                        "Waiting for the second job to produce its result"))
+                .thenExecute(() -> test.assertTrue(pedestal(test, SEEDS).getItem().isEmpty()
+                                && pedestal(test, DUST).getItem().isEmpty() && jar(test, ORDO).amount() == 0,
+                        "The second job should consume both ingredients and its own 50 Aer")).thenSucceed();
+    }
+
+    private static void startFundedCloudstepper(GameTestHelper test, FakePlayer player) {
+        test.setBlock(SEEDS, TTBlocks.PEDESTAL_ARCANE.get());
+        test.setBlock(DUST, TTBlocks.PEDESTAL_ARCANE.get());
+        test.setBlock(ORDO, TTBlocks.JAR_NORMAL.get());
+        jar(test, ORDO).setStorageContents(TTAspects.AER, 50);
+        placeItem(test, player, CENTER, new ItemStack(TTItems.RING_MUNDANE.get()));
+        var crystal = new ItemStack(TTItems.ESSENTIA_CRYSTAL.get());
+        var aer = Objects.requireNonNull(Aspects.resolve(test.getLevel(), TTAspects.AER));
+        ItemData.set(crystal, TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aer, 1));
+        placeItem(test, player, SEEDS, crystal);
+        placeItem(test, player, DUST, new ItemStack(Items.FEATHER));
+        wandClick(test, player);
+        var ready = matrix(test).saveWithoutMetadata();
+        ready.putFloat("Stability", BlockEntityInfusionMatrix.STABILITY_CAP);
+        matrix(test).load(ready);
+        wandClick(test, player);
+    }
+
     @GameTest(template = "infusion_room")
     public static void creativePedestalPickupClearsRemoteDisplay(GameTestHelper test) {
         var level = test.getLevel();

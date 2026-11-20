@@ -277,6 +277,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
             return false;
         }
         job = pendingJob;
+        itemPullCountdown = 0;
         level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         setChanged();
         syncToClient();
