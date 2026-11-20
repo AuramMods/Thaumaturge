@@ -41,6 +41,14 @@ public final class HoverEvents {
     }
 
     @SubscribeEvent
+    public static void onDimensionChanged(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && HoverManager.isHovering(player)) {
+            // The respawn packet replaces the client player and its temporary flight permission.
+            player.onUpdateAbilities();
+        }
+    }
+
+    @SubscribeEvent
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
         Player player = event.getEntity();
         if (!player.onGround() && HoverManager.isHovering(player)) {
