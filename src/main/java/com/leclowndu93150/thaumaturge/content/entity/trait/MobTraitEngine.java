@@ -99,8 +99,9 @@ public final class MobTraitEngine {
     private static void stash(GoalSelector selector, boolean target, MobTraitRuntime runtime) {
         for (WrappedGoal wrapped : List.copyOf(selector.getAvailableGoals())) {
             runtime.stashed().add(new TraitGoal(target, wrapped.getPriority(), wrapped.getGoal()));
+            // Bulk removal in 1.20.1 leaves running goals holding their control flags.
+            selector.removeGoal(wrapped.getGoal());
         }
-        selector.removeAllGoals(goal -> true);
     }
 
     @SuppressWarnings("unchecked")
