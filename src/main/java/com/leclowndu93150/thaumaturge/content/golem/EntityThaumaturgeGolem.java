@@ -28,6 +28,7 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ProvideBehavi
 import com.leclowndu93150.thaumaturge.content.golem.tasks.GolemDelivery;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import com.leclowndu93150.thaumaturge.content.world.space.SpaceFrame;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntityDataSerializers;
@@ -647,15 +648,21 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     private void goHome() {
+        BlockPos home = getRestrictCenter();
+        SpaceFrame frame = LevelSpaces.frameOf(level(), home);
         Vec3 origin = position();
-        for (BlockPos spot = getRestrictCenter(); spot.getY() < level().getMaxBuildHeight(); spot = spot.above()) {
+        for (BlockPos spot = home; spot.getY() < level().getMaxBuildHeight(); spot = spot.above()) {
             Vec3 target = Vec3.atBottomCenterOf(spot);
-            if (level().noCollision(this, getBoundingBox().move(target.subtract(origin)))) {
-                Vec3 arrival = LevelSpaces.toWorld(level(), target);
-                teleportTo(arrival.x, arrival.y, arrival.z);
-                getNavigation().stop();
-                return;
+            if (!level().noCollision(this, getBoundingBox().move(target.subtract(origin)))) {
+                continue;
             }
+            Vec3 arrival = frame.toWorld(target);
+            if (!frame.isWorld() && !level().noCollision(this, getBoundingBox().move(arrival.subtract(origin)))) {
+                continue;
+            }
+            teleportTo(arrival.x, arrival.y, arrival.z);
+            getNavigation().stop();
+            return;
         }
     }
 
