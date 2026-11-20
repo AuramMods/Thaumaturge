@@ -21,6 +21,7 @@ public class SupplyOrder {
     private int batch;
     private @Nullable Task servingTask;
     private long expiresAt;
+    private boolean pickupOffered;
     private boolean spent;
 
     SupplyOrder(Level level, ItemStack wanted, Destination destination, int batch) {
@@ -73,6 +74,15 @@ public class SupplyOrder {
 
     public @Nullable Task servingTask() {
         return servingTask;
+    }
+
+    /** Links a possible pickup without reserving the order. The first offer extends the pickup window. */
+    public void offerPickup(Task task) {
+        task.serveOrder(this);
+        if (!pickupOffered) {
+            pickupOffered = true;
+            prolong();
+        }
     }
 
     public void assign(Task task) {

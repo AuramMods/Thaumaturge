@@ -107,6 +107,18 @@ class GolemDispatchPortTest {
         Task task = Task.atBlock(null, new BlockPos(1, 0, 0));
 
         assertEquals(220L, order.expiresAt());
+        gameTime.set(30L);
+        order.offerPickup(previousTask);
+        assertSame(order, previousTask.servedOrder());
+        assertNull(order.servingTask());
+        assertEquals(2430L, order.expiresAt());
+
+        gameTime.set(40L);
+        order.offerPickup(task);
+        assertSame(order, task.servedOrder());
+        assertNull(order.servingTask());
+        assertEquals(2430L, order.expiresAt());
+
         gameTime.set(50L);
         order.assign(previousTask);
         assertSame(order, previousTask.servedOrder());

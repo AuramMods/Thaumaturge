@@ -22,6 +22,7 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ItemMatchSett
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ProvideBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.UseBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
+import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandoff;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTGolemParts;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -854,6 +855,92 @@ public final class SealAutomationGameTests {
         }).thenSucceed();
     }
 
+    @GameTest(template = "golem_room", batch = "competing_providers", timeoutTicks = 550)
+    public static void stockContinuesPastLockedProviderAndPaysOnce(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var foreignOwner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildWorkshop(test);
+        var otherSource = new BlockPos(6, 2, 7);
+        var foreignSource = new BlockPos(2, 2, 7);
+        for (BlockPos pos : List.of(otherSource, foreignSource)) {
+            SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(pos), FACE), true);
+            test.setBlock(pos, Blocks.CHEST);
+            chest(test, pos).clearContent();
+            chest(test, pos).setItem(0, new ItemStack(Items.IRON_INGOT, 6));
+        }
+        var foreign = placeSeal(test, foreignOwner, foreignSource, new ItemStack(TTItems.SEAL_PROVIDER.get()));
+        configureFilter(foreign);
+        foreign.markChanged(level);
+        var first = placeSeal(test, owner, SOURCE, new ItemStack(TTItems.SEAL_PROVIDER.get()));
+        configureFilter(first);
+        first.markChanged(level);
+        var second = placeSeal(test, owner, otherSource, new ItemStack(TTItems.SEAL_PROVIDER.get()));
+        configureFilter(second);
+        second.markChanged(level);
+        var stock = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_STOCK.get()));
+        configureFilter(stock).setLimit(0, 5);
+        stock.markChanged(level);
+
+        for (int tick = 0; tick < 20; tick++) {
+            stock.tick(level);
+        }
+        var order = GolemDispatch.supplyQueue(level).stream()
+                .filter(request -> stock.pos().pos().equals(request.destinationBlock()))
+                .findFirst().orElseThrow();
+        for (int tick = 0; tick < 20; tick++) {
+            foreign.tick(level);
+        }
+        var primary = createWorker(test, owner);
+        var alternate = createWorker(test, owner);
+        var alternateSpawn = Vec3.atBottomCenterOf(test.absolutePos(new BlockPos(6, 2, 3)));
+        alternate.moveTo(alternateSpawn.x, alternateSpawn.y, alternateSpawn.z);
+        test.assertTrue(TaskBoard.of(level).openBlockTasks(primary.getUUID(), primary).stream()
+                        .anyMatch(task -> task.servedOrder() == order && foreign.pos().equals(task.origin())),
+                "The foreign provider should be the first to post a pickup");
+        test.assertTrue(!SealAccess.allows(foreign, primary) && !SealAccess.allows(foreign, alternate),
+                "Neither owner worker should be able to take from the foreign source");
+        for (int tick = 0; tick < 20; tick++) {
+            first.tick(level);
+            second.tick(level);
+        }
+        var choices = TaskBoard.of(level).openBlockTasks(primary.getUUID(), primary);
+        var firstOffer = choices.stream().filter(task -> task.servedOrder() == order && first.pos().equals(task.origin()))
+                .findFirst().orElseThrow();
+        var secondOffer = choices.stream().filter(task -> task.servedOrder() == order && second.pos().equals(task.origin()))
+                .findFirst().orElseThrow();
+        test.assertTrue(order.servingTask() == null && firstOffer.canBePerformedBy(primary)
+                        && secondOffer.canBePerformedBy(alternate), "All three providers should have nonexclusive offers");
+        TaskHandoff.assign(primary, firstOffer);
+        first.behavior().onTaskStarted(level, first, primary, firstOffer);
+        test.assertTrue(order.servingTask() == firstOffer && !secondOffer.canBePerformedBy(alternate),
+                "An active claim should prevent a second worker from claiming the order");
+        firstOffer.release();
+        primary.setTask(null);
+        test.assertTrue(secondOffer.canBePerformedBy(alternate),
+                "Releasing an unpaid claim should let another provider serve the same order");
+
+        test.assertTrue(level.addFreshEntity(primary) && level.addFreshEntity(alternate),
+                "Could not add both eligible stock workers");
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(chest(test, TARGET).countItem(Items.IRON_INGOT) == 5,
+                "Waiting for an eligible provider to stock five ingots while the foreign provider stays in place"))
+                .thenIdle(100).thenExecute(() -> {
+                    test.assertTrue(order.isSpent() && chest(test, TARGET).countItem(Items.IRON_INGOT) == 5
+                                    && chest(test, SOURCE).countItem(Items.IRON_INGOT)
+                                            + chest(test, otherSource).countItem(Items.IRON_INGOT) == 7
+                                    && chest(test, foreignSource).countItem(Items.IRON_INGOT) == 6,
+                            "Exactly five ingots should move from the eligible providers and none from the foreign chest");
+                    test.assertTrue(primary.getRankXp() + alternate.getRankXp() == 1
+                                    && primary.getMainHandItem().isEmpty() && alternate.getMainHandItem().isEmpty(),
+                            "Only one worker should pick up and complete the order");
+                    for (var seal : List.of(foreign, first, second, stock)) {
+                        SealHandler.removeSealEntity(level, seal.pos(), true);
+                    }
+                    primary.discard();
+                    alternate.discard();
+                }).thenSucceed();
+    }
+
     @GameTest(template = "golem_room", batch = "harvest_supply", timeoutTicks = 600)
     public static void harvestSealRequestsOneSeedFromItsProvider(GameTestHelper test) {
         var owner = ResearchGameTests.survivalPlayer(test);
@@ -899,13 +986,18 @@ public final class SealAutomationGameTests {
                     "The request should stay unique and the provider should retain its last seed");
             chest.setItem(0, new ItemStack(Items.NETHER_WART, 3));
             var order = firstRequest.get();
-            for (int ticks = 0; ticks < 20 && order.servingTask() == null; ticks++) {
+            for (int ticks = 0; ticks < 20; ticks++) {
                 provider.tick(level);
             }
-            var pickup = Objects.requireNonNull(order.servingTask(), "The provider did not publish a pickup");
+            var pickup = TaskBoard.of(level).openBlockTasks(worker.getUUID(), worker).stream()
+                    .filter(task -> task.servedOrder() == order && provider.pos().equals(task.origin()))
+                    .findFirst().orElseThrow();
             var approach = Vec3.atBottomCenterOf(test.absolutePos(SOURCE.north()));
             worker.moveTo(approach.x, approach.y, approach.z);
             test.assertTrue(pickup.canBePerformedBy(worker), "The worker should be able to take the seed");
+            TaskHandoff.assign(worker, pickup);
+            provider.behavior().onTaskStarted(level, provider, worker, pickup);
+            test.assertTrue(order.servingTask() == pickup, "The worker's claim should reserve the seed order");
             // A new crop can request supplies before the provider next cleans its queue.
             TaskBoard.attempt(level, pickup, worker);
             TaskBoard.of(level).sweep(level);
