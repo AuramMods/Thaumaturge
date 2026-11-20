@@ -87,6 +87,7 @@ public final class SealAutomationGameTests {
         var owner = ResearchGameTests.survivalPlayer(test);
         var level = test.getLevel();
         buildWorkshop(test);
+        chest(test, SOURCE).clearContent();
         test.setBlock(SOURCE, Blocks.SMOOTH_STONE);
         var target = chest(test, TARGET);
         for (int slot = 0; slot < target.getContainerSize(); slot++) {
@@ -715,6 +716,8 @@ public final class SealAutomationGameTests {
         var level = test.getLevel();
         buildWorkshop(test);
         var source = chest(test, SOURCE);
+        // This provider serves the pig's carrots. Leave iron orders to the stock fixtures.
+        source.removeItemNoUpdate(0);
         var provider = placeSeal(test, owner, SOURCE, new ItemStack(TTItems.SEAL_PROVIDER.get()));
         provider.setLocked(true);
         provider.setSetting(ProvideBehavior.LEAVE_ONE, true);
@@ -1072,9 +1075,11 @@ public final class SealAutomationGameTests {
     private static void prepareRoom(GameTestHelper test) {
         for (BlockPos floor : BlockPos.betweenClosed(new BlockPos(0, 1, 0), new BlockPos(8, 1, 8))) {
             test.setBlock(floor, Blocks.SMOOTH_STONE);
+            // Keep generated sand and gravel above the template out of the work area.
+            test.setBlock(floor.above(4), Blocks.SMOOTH_STONE);
         }
         // The sparse room template leaves generated terrain in its unspecified cells.
-        for (BlockPos air : BlockPos.betweenClosed(new BlockPos(0, 2, 0), new BlockPos(8, 5, 8))) {
+        for (BlockPos air : BlockPos.betweenClosed(new BlockPos(0, 2, 0), new BlockPos(8, 4, 8))) {
             test.setBlock(air, Blocks.AIR);
         }
     }
