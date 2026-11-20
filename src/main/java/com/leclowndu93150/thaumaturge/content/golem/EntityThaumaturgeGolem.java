@@ -885,7 +885,11 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     public void readAdditionalSaveData(CompoundTag input) {
         HolderLookup.Provider registries = level().registryAccess();
         super.readAdditionalSaveData(input);
-        TTNbt.read(input, "props", GolemProperties.CODEC, registries).ifPresent(this::applyBuild);
+        if (!level().isClientSide()) {
+            // Apply attributes after restoring accessories so the saved health keeps the hat bonus.
+            TTNbt.read(input, "props", GolemProperties.CODEC, registries)
+                    .ifPresent(build -> entityData.set(PROPS, build));
+        }
         restrictTo(TTNbt.read(input, "homepos", BlockPos.CODEC, registries).orElse(blockPosition()), HOME_RANGE);
         entityData.set(FLAGS, (input.contains("gflags") ? input.getByte("gflags") : (byte) 0));
         rankXp = (input.contains("rankXP") ? input.getInt("rankXP") : 0);

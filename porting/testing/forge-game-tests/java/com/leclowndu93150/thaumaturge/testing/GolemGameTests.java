@@ -24,6 +24,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -48,6 +49,41 @@ public final class GolemGameTests {
     private static final int MACHINA_COST = 14;
 
     private GolemGameTests() {}
+
+    @GameTest(template = "golem_room")
+    public static void topHatPreservesFullHealthAcrossReload(GameTestHelper test) {
+        var player = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        level.addNewPlayer(player);
+        try {
+            var placer = new ItemStack(TTItems.GOLEM_PLACER.get());
+            ItemData.set(placer, TTDataComponents.GOLEM_PROPERTIES.get(), GolemProperties.createDefault());
+            deploy(test, player, placer);
+            var golems = test.getEntities(TTEntities.THAUMATURGE_GOLEM.get(), DEPLOY, 1.5);
+            test.assertTrue(golems.size() == 1, "Expected one deployed golem to fit");
+            var golem = golems.get(0);
+            float baseHealth = golem.getMaxHealth();
+            golem.setHealth(baseHealth);
+            var hat = new ItemStack(TTItems.GOLEM_TOP_HAT.get());
+            player.setItemInHand(InteractionHand.MAIN_HAND, hat);
+            test.assertTrue(golem.interact(player, InteractionHand.MAIN_HAND).consumesAction() && hat.isEmpty(),
+                    "The owner could not fit a top hat");
+            test.assertTrue(golem.getMaxHealth() == baseHealth + 5, "The fitted hat did not add five maximum health");
+            golem.heal(5);
+            float savedHealth = golem.getHealth();
+            test.assertTrue(savedHealth == golem.getMaxHealth(), "The golem did not heal into its bonus health");
+
+            var saved = new CompoundTag();
+            test.assertTrue(golem.save(saved), "The equipped golem did not serialize");
+            var restored = Objects.requireNonNull(TTEntities.THAUMATURGE_GOLEM.get().create(level));
+            restored.load(saved);
+            test.assertTrue(restored.getMaxHealth() == savedHealth && restored.getHealth() == savedHealth,
+                    "Reload lost some of the golem's saved bonus health: " + restored.getHealth() + " / " + savedHealth);
+            test.succeed();
+        } finally {
+            level.removePlayerImmediately(player, Entity.RemovalReason.DISCARDED);
+        }
+    }
 
     @GameTest(template = "golem_room", timeoutTicks = 300)
     public static void pressBuildsAndDeploysOwnedGolemAcrossSaves(GameTestHelper test) {
