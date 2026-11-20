@@ -11,6 +11,8 @@ import snownee.jade.api.IServerDataProvider;
 public enum GolemDataProvider implements IServerDataProvider<EntityAccessor> {
     INSTANCE;
 
+    static final String RANK_XP = "RankXp";
+    static final String RANK_XP_REQUIRED = "RankXpRequired";
     private static final ResourceLocation UID = TTIds.rl("golem");
 
     @Override
@@ -25,7 +27,7 @@ public enum GolemDataProvider implements IServerDataProvider<EntityAccessor> {
                 || !golem.properties().hasTrait(TTGolemTraits.SMART.get())) return;
         int rank = golem.properties().rank();
         if (rank >= EntityThaumaturgeGolem.MAX_RANK) return;
-        tag.putInt("RankXp", golem.getRankXp());
-        tag.putInt("RankXpRequired", (rank + 1) * (rank + 1) * EntityThaumaturgeGolem.XP_PER_RANK_UNIT);
+        tag.putInt(RANK_XP, golem.getRankXp());
+        tag.putInt(RANK_XP_REQUIRED, EntityThaumaturgeGolem.xpForNextRank(rank));
     }
 }

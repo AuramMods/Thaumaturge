@@ -3,6 +3,8 @@ package com.leclowndu93150.thaumaturge.compat.jade;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.EntityAccessor;
@@ -35,10 +37,13 @@ public enum GolemComponentProvider implements IEntityComponentProvider {
         int rank = golem.properties().rank();
         tooltip.add(Component.translatable("jade.thaumaturge.golem.rank", rank));
         if (accessor.showDetails() && rank < EntityThaumaturgeGolem.MAX_RANK) {
-            tooltip.add(Component.translatable(
-                    "jade.thaumaturge.golem.xp",
-                    accessor.getServerData().getInt("RankXp"),
-                    accessor.getServerData().getInt("RankXpRequired")));
+            CompoundTag data = accessor.getServerData();
+            int required = EntityThaumaturgeGolem.xpForNextRank(rank);
+            if (data.getInt(GolemDataProvider.RANK_XP_REQUIRED) == required
+                    && data.contains(GolemDataProvider.RANK_XP, Tag.TAG_INT)) {
+                tooltip.add(Component.translatable(
+                        "jade.thaumaturge.golem.xp", data.getInt(GolemDataProvider.RANK_XP), required));
+            }
         }
     }
 }
