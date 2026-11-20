@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.particle;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.util.Mth;
 import org.joml.Quaternionf;
@@ -44,6 +45,7 @@ abstract class TTQuadParticle extends SingleQuadParticle {
     protected void renderRotatedQuad(
             VertexConsumer buffer, Quaternionf rotation, float x, float y, float z, float partialTick) {
         ParticleQuads.draw(buffer, rotation, x, y, z, getQuadSize(partialTick),
-                getU0(), getU1(), getV0(), getV1(), this.rCol, this.gCol, this.bCol, this.alpha, getLightColor(partialTick));
+                getU0(), getU1(), getV0(), getV1(), this.rCol, this.gCol, this.bCol, this.alpha, getLightColor(partialTick),
+                getRenderType() == ParticleRenderType.TERRAIN_SHEET);
     }
 }

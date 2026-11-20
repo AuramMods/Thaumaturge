@@ -24,6 +24,7 @@ abstract class TTBreakingItemParticle extends BreakingItemParticle {
             rotation = new Quaternionf(rotation).rotateZ(Mth.lerp(partialTick, this.oRoll, this.roll));
         }
         ParticleQuads.draw(buffer, rotation, x, y, z, getQuadSize(partialTick),
-                getU0(), getU1(), getV0(), getV1(), this.rCol, this.gCol, this.bCol, this.alpha, getLightColor(partialTick));
+                getU0(), getU1(), getV0(), getV1(), this.rCol, this.gCol, this.bCol, this.alpha, getLightColor(partialTick),
+                true);
     }
 }

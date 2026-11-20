@@ -110,7 +110,7 @@ class ParticleGeometryRuntimeTest {
     }
 
     @Test
-    void boreAndInfusionDebrisEachSampleAQuarterOfTheAtlasSprite() throws Exception {
+    void boreAndInfusionDebrisUseTerrainWindingAndKeepTheQuarterSpriteUvs() throws Exception {
         var level = mock(ClientLevel.class);
         var sprite = mock(TextureAtlasSprite.class);
         when(sprite.getU(anyDouble())).thenAnswer(call -> call.getArgument(0, Double.class).floatValue() / 16.0F);
@@ -125,11 +125,41 @@ class ParticleGeometryRuntimeTest {
                 new BoreDebrisParticleOptions(Blocks.STONE.defaultBlockState(), 2, 0, 0, 0, 0, 0), sprite);
         var infusionEffect = crumbs.newInstance(level, 0.0, 0.0, 0.0,
                 new InfusionCrumbsParticleOptions(new ItemStack(Items.GOLD_INGOT), 2, 0, 0, 0, 0, 0), sprite);
+        var camera = mock(Camera.class);
+        when(camera.getPosition()).thenReturn(Vec3.ZERO);
+        when(camera.rotation()).thenReturn(new Quaternionf());
         for (var effect : new TTParticle[] {boreEffect, infusionEffect}) {
             assertEquals(0.25F, effect.getU0() - effect.getU1(), 1.0E-6F);
             assertEquals(0.25F, effect.getV1() - effect.getV0(), 1.0E-6F);
             assertTrue(effect.getU1() >= 0.0F && effect.getU0() <= 1.0F);
             assertTrue(effect.getV0() >= 0.0F && effect.getV1() <= 1.0F);
+
+            var format = DefaultVertexFormat.PARTICLE;
+            var buffer = new BufferBuilder(64);
+            buffer.begin(VertexFormat.Mode.QUADS, format);
+            effect.render(buffer, camera, 0.0F);
+            var rendered = buffer.end();
+            try {
+                assertEquals(4, rendered.drawState().vertexCount());
+                var bytes = rendered.vertexBuffer().order(ByteOrder.nativeOrder());
+                float size = effect.getQuadSize(0.0F);
+                float[][] corners = {
+                    {-size, -size, effect.getU0(), effect.getV1()},
+                    {-size, size, effect.getU0(), effect.getV0()},
+                    {size, size, effect.getU1(), effect.getV0()},
+                    {size, -size, effect.getU1(), effect.getV1()}
+                };
+                int uv = format.getOffset(1);
+                for (int index = 0; index < corners.length; index++) {
+                    int vertex = index * format.getVertexSize();
+                    assertEquals(corners[index][0], bytes.getFloat(vertex), 1.0E-6F);
+                    assertEquals(corners[index][1], bytes.getFloat(vertex + 4), 1.0E-6F);
+                    assertEquals(corners[index][2], bytes.getFloat(vertex + uv), 1.0E-6F);
+                    assertEquals(corners[index][3], bytes.getFloat(vertex + uv + 4), 1.0E-6F);
+                }
+            } finally {
+                rendered.release();
+            }
         }
     }
 
