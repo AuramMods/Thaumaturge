@@ -63,7 +63,8 @@ public final class WallDelivery extends AbstractCarrierDelivery {
                 caster,
                 origin.position(),
                 origin.position().add(origin.direction().scale(reach)));
-        Vec3 end = SpellRayTrace.endOf(hit, origin.position(), origin.direction(), reach);
+        Vec3 end = LevelSpaces.toWorld(
+                ctx.level(), SpellRayTrace.endOf(hit, origin.position(), origin.direction(), reach));
         return end.subtract(origin.direction().scale(STAND_OFF));
     }
 }
