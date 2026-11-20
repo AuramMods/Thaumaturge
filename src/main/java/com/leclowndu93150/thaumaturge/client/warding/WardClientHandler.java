@@ -16,7 +16,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.event.level.ChunkEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import com.leclowndu93150.thaumaturge.network.transport.PayloadContext;
 import org.jspecify.annotations.Nullable;
 
@@ -65,9 +65,9 @@ public final class WardClientHandler {
     }
 
     @SubscribeEvent
-    public static void onChunkUnload(ChunkEvent.Unload event) {
+    public static void onLevelUnload(LevelEvent.Unload event) {
         if (event.getLevel().isClientSide()) {
-            ClientWardHolder.forgetChunk(event.getChunk().getPos());
+            ClientWardHolder.clear();
         }
     }
 
