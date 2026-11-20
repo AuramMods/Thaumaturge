@@ -4,27 +4,23 @@ These development tools are separate from the mod's production source set and
 distribution. They do not change Minecraft's normal sound or focus behavior for
 players installing the mod.
 
-`./gradlew runClient` prepares `run/client/options.txt` before each launch with
-zero master volume, narrator off, fullscreen off, accessibility onboarding off,
-and ticking while unfocused. It writes `earlyWindowControl = false` to that
-profile's `config/fml.toml`, and attaches the background agent to the test JVM.
-The JVM uses `apple.awt.UIElement=true` on the user's Mac.
+`./gradlew runClient` opens a visible, initially unfocused development client.
+Click the game window to give it keyboard and mouse input. The launch leaves
+normal macOS application activation and GLFW input available after startup.
 
-The agent instruments LWJGL's actual window-creation function to disable initial
-focus and focus on show, after the caller sets its hints. It also suppresses
-explicit GLFW focus requests within this test JVM. This covers a game or loading
-window using that GLFW instance. No shell backgrounding or application activation
-is needed.
+Use `./gradlew -PportHiddenWindow runForgeBackgroundClient` for unattended client
+testing. It uses its own profile in `build/background-client`, separate from the
+playable client's worlds and settings in `run/client`. The test JVM suppresses
+focus requests, and hidden mode also suppresses show requests.
 
-Use `./gradlew -PportHiddenWindow runClient` for unattended client testing.
-The agent forces GLFW's hidden window hint even when the game requests visibility
-and intercepts explicit show and focus requests. The isolated sound, narrator,
-fullscreen and early-window settings still apply.
+Both profiles start windowed with master volume zero, narrator and accessibility
+onboarding off, and ticking while unfocused. They set
+`earlyWindowControl = false` to keep the Forge loading window from taking focus.
 
 The window controls can be exercised before the mod compiles:
 
 ```sh
-./gradlew backgroundAgentJar backgroundSmokeClasses prepareClientProfile
+./gradlew backgroundAgentJar backgroundSmokeClasses prepareBackgroundClientProfile
 ./gradlew runBackgroundWindowSmoke
 ./gradlew -PportHiddenWindow runBackgroundWindowSmoke
 ```

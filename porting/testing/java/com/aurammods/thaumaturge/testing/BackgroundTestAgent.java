@@ -17,7 +17,10 @@ public final class BackgroundTestAgent {
 
     public static void premain(String arguments, Instrumentation instrumentation) {
         boolean hidden = "hidden".equals(arguments);
-        System.setProperty("apple.awt.UIElement", "true");
+        boolean interactive = "interactive".equals(arguments);
+        if (!interactive) {
+            System.setProperty("apple.awt.UIElement", "true");
+        }
         instrumentation.addTransformer(new ClassFileTransformer() {
             @Override
             public byte[] transform(ClassLoader loader, String name, Class<?> redefined,
@@ -25,13 +28,15 @@ public final class BackgroundTestAgent {
                 if (!GLFW.equals(name)) {
                     return null;
                 }
-                return instrumentGlfw(bytes, hidden);
+                return instrumentGlfw(bytes, hidden, interactive);
             }
         });
-        System.err.println("[background-test] GLFW focus suppression installed");
+        System.err.println(interactive
+                ? "[background-test] Unfocused startup enabled with normal window input"
+                : "[background-test] GLFW focus suppression installed");
     }
 
-    private static byte[] instrumentGlfw(byte[] bytes, boolean hidden) {
+    private static byte[] instrumentGlfw(byte[] bytes, boolean hidden, boolean interactive) {
         ClassReader reader = new ClassReader(bytes);
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
         reader.accept(new ClassVisitor(Opcodes.ASM9, writer) {
@@ -39,7 +44,7 @@ public final class BackgroundTestAgent {
             public MethodVisitor visitMethod(int access, String name, String descriptor,
                     String signature, String[] exceptions) {
                 MethodVisitor target = super.visitMethod(access, name, descriptor, signature, exceptions);
-                if (descriptor.equals("(J)V")
+                if (!interactive && descriptor.equals("(J)V")
                         && (name.equals("glfwFocusWindow") || (hidden && name.equals("glfwShowWindow")))) {
                     target.visitCode();
                     target.visitInsn(Opcodes.RETURN);
@@ -51,7 +56,7 @@ public final class BackgroundTestAgent {
                     @Override
                     public void visitCode() {
                         super.visitCode();
-                        if (name.equals("glfwInit") && descriptor.equals("()Z")) {
+                        if (!interactive && name.equals("glfwInit") && descriptor.equals("()Z")) {
                             hint("GLFW_COCOA_MENUBAR", "glfwInitHint");
                         }
                         if (name.equals("nglfwCreateWindow") && descriptor.equals("(IIJJJ)J")) {
@@ -72,9 +77,13 @@ public final class BackgroundTestAgent {
                 };
             }
         }, 0);
-        System.err.println(hidden
-                ? "[background-test] Instrumented GLFW to keep windows hidden and unfocused"
-                : "[background-test] Instrumented GLFW window creation and explicit focus requests");
+        if (interactive) {
+            System.err.println("[background-test] Instrumented only GLFW window creation for interactive use");
+        } else {
+            System.err.println(hidden
+                    ? "[background-test] Instrumented GLFW to keep windows hidden and unfocused"
+                    : "[background-test] Instrumented GLFW window creation and explicit focus requests");
+        }
         return writer.toByteArray();
     }
 }

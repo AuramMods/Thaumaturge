@@ -33,7 +33,6 @@ minecraft {
         }
         client {
             workingDirectory project.file('run/client')
-            property 'apple.awt.UIElement', 'true'
         }
         server {
             workingDirectory project.file('run/server')
@@ -721,14 +720,15 @@ def backgroundAgentJar = tasks.register('backgroundAgentJar', Zip) {
 }
 
 def hideTestWindow = providers.gradleProperty('portHiddenWindow').isPresent()
-def backgroundAgentOption = "-javaagent:${backgroundAgentJar.get().archiveFile.get().asFile}${hideTestWindow ? '=hidden' : ''}"
+def backgroundAgentPath = "-javaagent:${backgroundAgentJar.get().archiveFile.get().asFile}"
+ext.backgroundClientAgentOption = "${backgroundAgentPath}${hideTestWindow ? '=hidden' : ''}"
 
 tasks.register('runBackgroundWindowSmoke', JavaExec) {
     dependsOn backgroundAgentJar
     classpath = sourceSets.backgroundSmoke.runtimeClasspath
     mainClass = 'com.aurammods.thaumaturge.testing.BackgroundWindowSmoke'
     javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(17) }
-    jvmArgs backgroundAgentOption
+    jvmArgs project.backgroundClientAgentOption
     if (hideTestWindow) args 'hidden'
     jvmArgs '-XstartOnFirstThread', '-Dapple.awt.UIElement=true'
 }
@@ -752,7 +752,15 @@ ext.writeBackgroundClientProfile = { File profile ->
     fmlConfig.setText(fmlSettings.join('\n') + '\n', 'UTF-8')
 }
 def prepareClientProfile = tasks.register('prepareClientProfile') {
-    doLast { writeBackgroundClientProfile(file('run/client')) }
+    doLast { writeBackgroundClientProfile(file(minecraft.runs.client.workingDirectory)) }
+}
+minecraft.runs.create('forgeBackgroundClient') {
+    parent minecraft.runs.client
+    workingDirectory layout.buildDirectory.dir('background-client').get().asFile
+    property 'apple.awt.UIElement', 'true'
+}
+def prepareBackgroundClientProfile = tasks.register('prepareBackgroundClientProfile') {
+    doLast { writeBackgroundClientProfile(file(minecraft.runs.forgeBackgroundClient.workingDirectory)) }
 }
 def prepareTestServers = tasks.register('prepareTestServers') {
     doLast {
@@ -761,10 +769,13 @@ def prepareTestServers = tasks.register('prepareTestServers') {
         new File(directory, 'eula.txt').setText('eula=true\n', 'UTF-8')
     }
 }
-// This run configuration is solely for background testing on the user's Mac.
-minecraft.runs.client.jvmArg backgroundAgentOption
 tasks.matching { it.name == 'runClient' }.configureEach {
     dependsOn prepareClientProfile, backgroundAgentJar
+    jvmArgs "${backgroundAgentPath}=interactive"
+}
+tasks.matching { it.name == 'runForgeBackgroundClient' }.configureEach {
+    dependsOn prepareBackgroundClientProfile, backgroundAgentJar
+    jvmArgs project.backgroundClientAgentOption
 }
 tasks.matching { it.name == 'runServer' }.configureEach { dependsOn prepareTestServers }
 

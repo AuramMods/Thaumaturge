@@ -34,6 +34,7 @@ tasks.named('processForgeOriginalTestRunnerResources') {
 minecraft.runs.create('forgeOriginalTestClient') {
     parent minecraft.runs.client
     workingDirectory profile.get().asFile
+    property 'apple.awt.UIElement', 'true'
     property 'thaumaturge.testResourceRoot', file('src/main/resources').absolutePath
     property 'thaumaturge.originalTestClasses', classList.get().asFile.absolutePath
     property 'thaumaturge.originalTestResults', results.get().asFile.absolutePath
@@ -64,6 +65,7 @@ def prepareOriginalTests = tasks.register('prepareForgeOriginalTests') {
 
 tasks.matching { it.name == 'runForgeOriginalTestClient' }.configureEach {
     dependsOn prepareOriginalTests, tasks.named('forgeOriginalTestRunnerClasses'), tasks.named('backgroundAgentJar')
+    jvmArgs project.backgroundClientAgentOption
     doLast {
         if (!passed.get().asFile.exists()) {
             throw new GradleException("The Forge original tests did not pass. See ${report.get().asFile}.")

@@ -92,7 +92,7 @@ def runtimeJar = tasks.register('portTestRuntimeJar', Zip) {
                 def fml = new File(workingDir, 'config/fml.toml')
                 fml.parentFile.mkdirs()
                 fml.text = 'earlyWindowControl = false\n'
-                vm.add("-javaagent:${tasks.named('backgroundAgentJar').get().archiveFile.get().asFile.absolutePath}")
+                vm.add(project.backgroundClientAgentOption)
             }
             setJvmArgs(vm)
             config.properties.each { key, value ->
