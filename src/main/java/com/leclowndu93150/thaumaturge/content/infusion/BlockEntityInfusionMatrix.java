@@ -82,6 +82,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
     private static final double GOGGLES_TEXT_Y_OFFSET = 1.5;
 
     private static final DecimalFormat STABILITY_FORMAT = new DecimalFormat("#######.##");
+    private static final String KEY_NO_RECIPE = "message.thaumaturge.infusion.no_recipe";
     private static final String KEY_RESEARCH_LOCKED = "message.thaumaturge.infusion.research_locked";
     private static final String STABILITY_LANG_PREFIX = "gui.thaumaturge.infusion.stability.";
 
@@ -256,11 +257,11 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
         }
         MatrixEnvironment env = environment(level);
         InfusionInput input = stagedInput(level, env);
-        if (input.catalyst().isEmpty() || input.components().isEmpty()) {
-            return false;
-        }
-        InfusionRecipeMatcher.Match match = InfusionRecipeMatcher.find(level, player, input);
+        InfusionRecipeMatcher.Match match = input.catalyst().isEmpty() || input.components().isEmpty()
+                ? null
+                : InfusionRecipeMatcher.find(level, player, input);
         if (match == null) {
+            player.displayClientMessage(Component.translatable(KEY_NO_RECIPE), true);
             return false;
         }
         if (match.locked()) {

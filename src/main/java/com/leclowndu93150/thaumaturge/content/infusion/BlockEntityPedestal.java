@@ -53,9 +53,18 @@ public class BlockEntityPedestal extends AbstractSyncedBlockEntity implements Cl
     }
 
     @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
+        super.writeClientData(output, registries);
+        if (item.isEmpty()) {
+            // Forge 1.20.1 turns an empty update tag into a null packet payload.
+            TTNbt.store(output, "Item", ItemStackCodecs.OPTIONAL_CODEC, registries, item);
+        }
+    }
+
+    @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        item = TTNbt.read(input, "Item", ItemStackCodecs.CODEC, registries).orElse(ItemStack.EMPTY);
+        item = TTNbt.read(input, "Item", ItemStackCodecs.OPTIONAL_CODEC, registries).orElse(ItemStack.EMPTY);
     }
 
     @Override

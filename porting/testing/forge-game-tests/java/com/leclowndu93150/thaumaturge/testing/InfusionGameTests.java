@@ -15,17 +15,26 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.mojang.authlib.GameProfile;
+import io.netty.buffer.Unpooled;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -87,6 +96,94 @@ public final class InfusionGameTests {
                             && jar(test, VINCULUM).amount() == LEFTOVER,
                     "The infusion used the wrong total essentia across save and reload");
         }).thenSucceed();
+    }
+
+    @GameTest(template = "infusion_room", batch = "cloudstepper_ring", timeoutTicks = 640)
+    public static void cloudstepperRingReportsMissingIngredientsAndSpendsItsInputs(GameTestHelper test) {
+        var feedback = new AtomicReference<String>();
+        var player = new FakePlayer(test.getLevel(), new GameProfile(UUID.randomUUID(), "InfusionTest")) {
+            @Override
+            public void displayClientMessage(Component message, boolean overlay) {
+                if (overlay && message.getContents() instanceof TranslatableContents translated) {
+                    feedback.set(translated.getKey());
+                }
+            }
+        };
+        player.setGameMode(GameType.SURVIVAL);
+        var approach = Vec3.atBottomCenterOf(test.absolutePos(CENTER.south(2)));
+        player.moveTo(approach.x, approach.y, approach.z);
+        assembleAltar(test, player);
+        ResearchManager.complete(player, TTIds.rl("cloud_ring"));
+
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(
+                MatrixEnvironment.validLocation(test.getLevel(), test.absolutePos(MATRIX)), "Waiting for the finished altar"))
+                .thenExecute(() -> {
+                    test.setBlock(SEEDS, TTBlocks.PEDESTAL_ARCANE.get());
+                    test.setBlock(DUST, TTBlocks.PEDESTAL_ARCANE.get());
+                    loadJar(test, ORDO, TTAspects.AER, 50);
+                    placeItem(test, player, CENTER, new ItemStack(TTItems.RING_MUNDANE.get()));
+                    var aer = Objects.requireNonNull(Aspects.resolve(test.getLevel(), TTAspects.AER));
+                    var crystal = new ItemStack(TTItems.ESSENTIA_CRYSTAL.get());
+                    ItemData.set(crystal, TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aer, 1));
+                    placeItem(test, player, SEEDS, crystal);
+                    wandClick(test, player);
+                    wandClick(test, player);
+                    test.assertTrue(!matrix(test).isCrafting() && jar(test, ORDO).amount() == 50 + LEFTOVER
+                                    && "message.thaumaturge.infusion.no_recipe".equals(feedback.get()),
+                            "Missing the feather should explain the rejected recipe and spend nothing");
+
+                    placeItem(test, player, DUST, new ItemStack(Items.FEATHER));
+                    player.setGameMode(GameType.CREATIVE);
+                    wandClick(test, player);
+                    test.assertTrue(matrix(test).isCrafting() && matrix(test).remainingEssentia().amountOf(aer) == 50,
+                            "Adding a vanilla feather should start the Cloudstepper Ring infusion");
+                }).thenWaitUntil(() -> test.assertTrue(
+                        !matrix(test).isCrafting() && pedestal(test, CENTER).getItem().is(TTItems.CLOUD_RING.get()),
+                        "Waiting for the Cloudstepper Ring")).thenExecute(() -> {
+                    test.assertTrue(pedestal(test, SEEDS).getItem().isEmpty() && pedestal(test, DUST).getItem().isEmpty()
+                                    && jar(test, ORDO).amount() == LEFTOVER,
+                            "The creative caster should still use both altar ingredients and 50 Aer from a finite jar");
+                }).thenSucceed();
+    }
+
+    @GameTest(template = "infusion_room")
+    public static void creativePedestalPickupClearsRemoteDisplay(GameTestHelper test) {
+        var level = test.getLevel();
+        var player = ResearchGameTests.survivalPlayer(test);
+        player.setGameMode(GameType.CREATIVE);
+        test.setBlock(CENTER, TTBlocks.PEDESTAL_ARCANE.get());
+        var pos = test.absolutePos(CENTER);
+        var state = level.getBlockState(pos);
+        var hit = topOf(pos);
+        var actual = pedestal(test, CENTER);
+        var display = new BlockEntityPedestal(pos, state);
+        display.setLevel(level);
+        var ingredients = new ItemStack(Items.FEATHER, 3);
+        player.setItemInHand(InteractionHand.MAIN_HAND, ingredients);
+        test.assertTrue(state.use(level, player, InteractionHand.MAIN_HAND, hit).consumesAction()
+                        && ingredients.getCount() == 3, "Creative placement should keep the player's stack");
+        deliverPedestalUpdate(actual, display);
+        test.assertTrue(display.getItem().is(Items.FEATHER) && display.getItem().getCount() == 1,
+                "The displayed pedestal should receive the staged feather");
+
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        test.assertTrue(state.use(level, player, InteractionHand.MAIN_HAND, hit).consumesAction()
+                        && player.getInventory().countItem(Items.FEATHER) == 1 && actual.getItem().isEmpty(),
+                "An empty-hand click should take exactly one item and empty the server pedestal");
+        deliverPedestalUpdate(actual, display);
+        test.assertTrue(display.getItem().isEmpty(), "The native update packet should clear the displayed feather");
+        test.succeed();
+    }
+
+    private static void deliverPedestalUpdate(BlockEntityPedestal actual, BlockEntityPedestal display) {
+        var buffer = new FriendlyByteBuf(Unpooled.buffer());
+        try {
+            var packet = (ClientboundBlockEntityDataPacket) actual.getUpdatePacket();
+            packet.write(buffer);
+            display.onDataPacket(null, new ClientboundBlockEntityDataPacket(buffer));
+        } finally {
+            buffer.release();
+        }
     }
 
     private static void assembleAltar(GameTestHelper test, FakePlayer player) {
