@@ -135,6 +135,7 @@
     "client.veil.VeilBlitVaryingMixin",
     "client.veil.VeilForgeResourcePackMixin",
     "client.veil.VeilImGuiFrameMixin",
+    "client.veil.VeilImGuiGlfwMixin",
     "client.veil.VeilImGuiNativesMixin",
     "client.veil.VeilShaderManagerMixin",
     "client.veil.VeilScreenShaderMixin"
