@@ -163,7 +163,8 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.CLOTH_LEGS.get(),
                         TTItems.CLOTH_BOOTS.get(),
                         TTItems.GOGGLES_REVEALING.get(),
-                        TTItems.TRAVELLER_BOOTS.get());
+                        TTItems.TRAVELLER_BOOTS.get())
+                .addTag(TTItemTags.MODELLED_TRIMMABLE_ARMOR);
         tag(TTItemTags.MODELLED_TRIMMABLE_ARMOR)
                 .add(
                         TTItems.CRIMSON_PLATE_HELM.get(),
