@@ -228,12 +228,20 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
     }
 
     private int measureClearance(Level level, BlockPos pos, Direction facing) {
+        SpaceFrame own = LevelSpaces.frameOf(level, pos);
         int range = reach.blocks();
         for (int distance = 1; distance <= range; distance++) {
             probe.setWithOffset(
                     pos, facing.getStepX() * distance, facing.getStepY() * distance, facing.getStepZ() * distance);
-            if (!LoadedChunks.contains(level, probe)
-                    || level.getBlockState(probe).isSolidRender(level, probe)) {
+            if (!LoadedChunks.contains(level, probe)) {
+                if (own.isWorld()) {
+                    return distance;
+                }
+                // An active ship's plot only stores chunks that have been created.
+                continue;
+            }
+            if ((own.isWorld() || own.equals(LevelSpaces.frameOf(level, probe)))
+                    && level.getBlockState(probe).isSolidRender(level, probe)) {
                 return distance;
             }
         }
