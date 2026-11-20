@@ -79,7 +79,7 @@ public final class GolemDispatch {
         SupplyOrder order = new ProvisionRequest(level, stack, destination, batch);
         List<SupplyOrder> queue = supplyQueue(level);
         for (SupplyOrder queued : queue) {
-            if (queued.equals(order)) {
+            if (!queued.isSpent() && queued.equals(order)) {
                 return Optional.of(queued);
             }
         }

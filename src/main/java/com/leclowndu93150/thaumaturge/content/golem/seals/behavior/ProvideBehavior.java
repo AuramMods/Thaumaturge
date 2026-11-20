@@ -190,7 +190,10 @@ public final class ProvideBehavior implements ISealBehavior {
         if (taken.isEmpty()) {
             return;
         }
-        ItemStack spill = InvHelper.insertStack(store, golem.hands().hold(taken), false);
+        int extracted = taken.getCount();
+        ItemStack refused = golem.hands().hold(taken);
+        int supplied = extracted - refused.getCount();
+        ItemStack spill = InvHelper.insertStack(store, refused, false);
         if (!spill.isEmpty()) {
             dropToward(level, at.pos(), at.face(), spill);
         }
@@ -198,6 +201,10 @@ public final class ProvideBehavior implements ISealBehavior {
         golem.grantRankExperience(1);
         golem.animateSwing();
         if (request.requestingSeal() != null) {
+            // Seal orders are fulfilled by the pickup itself.
+            if (supplied >= wanted.getCount()) {
+                request.markSpent();
+            }
             return;
         }
         Entity receiver = request.recipient();

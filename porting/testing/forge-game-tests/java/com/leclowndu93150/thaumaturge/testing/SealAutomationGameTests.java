@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.testing;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.api.golems.GolemDispatch;
+import com.leclowndu93150.thaumaturge.api.golems.SupplyOrder;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
@@ -10,11 +12,14 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.EmptyBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.HarvestBehavior;
+import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ProvideBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTGolemParts;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -50,23 +55,90 @@ public final class SealAutomationGameTests {
 
     private SealAutomationGameTests() {}
 
+    @GameTest(template = "golem_room", batch = "harvest_supply", timeoutTicks = 600)
+    public static void harvestSealRequestsOneSeedFromItsProvider(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        var harvest = buildHarvestPlot(test, owner);
+        SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(SOURCE), FACE), true);
+        test.setBlock(SOURCE, Blocks.CHEST);
+        var chest = chest(test, SOURCE);
+        chest.clearContent();
+        chest.setItem(0, new ItemStack(Items.NETHER_WART));
+        chest.setItem(1, new ItemStack(Items.CARROT, 4));
+        var provider = placeSeal(test, owner, SOURCE, new ItemStack(TTItems.SEAL_PROVIDER.get()));
+        provider.setLocked(true);
+        provider.setSetting(ProvideBehavior.LEAVE_ONE, true);
+        var filter = provider.filter().orElseThrow();
+        filter.setBlacklist(false);
+        filter.setStack(0, new ItemStack(Items.NETHER_WART));
+        provider.markChanged(level);
+
+        var worker = createWorker(test, owner);
+        worker.applyBuild(worker.properties().withArms(TTGolemParts.ARMS_FINE.get()));
+        test.assertTrue(SealAccess.allows(harvest, worker) && SealAccess.allows(provider, worker),
+                "The worker should meet both seals' requirements");
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the seed-provisioning worker");
+        var firstRequest = new AtomicReference<SupplyOrder>();
+
+        test.startSequence().thenWaitUntil(() -> {
+            test.assertTrue(test.getBlockState(HARVEST_CROP).isAir() && worker.getRankXp() == 2,
+                    "Waiting for the worker to cut the mature crop");
+        }).thenIdle(30).thenExecute(() -> {
+            test.assertTrue(seedRequests(test, harvest).isEmpty() && worker.getMainHandItem().isEmpty(),
+                    "The Harvest seal requested supplies before the setting was enabled");
+            harvest.setSetting(HarvestBehavior.REQUEST_SEEDS, true);
+            harvest.markChanged(level);
+        }).thenWaitUntil(() -> {
+            var orders = seedRequests(test, harvest);
+            test.assertTrue(orders.size() == 1, "Waiting for one automatic seed request");
+            firstRequest.set(orders.get(0));
+        }).thenIdle(30).thenExecute(() -> {
+            test.assertTrue(seedRequests(test, harvest).equals(List.of(firstRequest.get()))
+                            && chest.countItem(Items.NETHER_WART) == 1
+                            && worker.getMainHandItem().isEmpty() && test.getBlockState(HARVEST_CROP).isAir(),
+                    "The request should stay unique and the provider should retain its last seed");
+            chest.setItem(0, new ItemStack(Items.NETHER_WART, 3));
+            var order = firstRequest.get();
+            for (int ticks = 0; ticks < 20 && order.servingTask() == null; ticks++) {
+                provider.tick(level);
+            }
+            var pickup = Objects.requireNonNull(order.servingTask(), "The provider did not publish a pickup");
+            var approach = Vec3.atBottomCenterOf(test.absolutePos(SOURCE.north()));
+            worker.moveTo(approach.x, approach.y, approach.z);
+            test.assertTrue(pickup.canBePerformedBy(worker), "The worker should be able to take the seed");
+            // A new crop can request supplies before the provider next cleans its queue.
+            TaskBoard.attempt(level, pickup, worker);
+            TaskBoard.of(level).sweep(level);
+            test.assertTrue(chest.countItem(Items.NETHER_WART) == 2 && worker.getRankXp() == 3,
+                    "The pickup should remove one seed and award one rank XP");
+            test.assertTrue(order.isSpent(), "A fully collected seed order should be spent");
+            var next = GolemDispatch.orderSupply(level, harvest, new ItemStack(Items.NETHER_WART)).orElseThrow();
+            test.assertTrue(next != order && !next.isSpent(), "A completed seed order blocked a new identical request");
+            next.markSpent();
+        }).thenWaitUntil(() -> {
+            test.assertTrue(test.getBlockState(HARVEST_CROP).is(Blocks.NETHER_WART),
+                    "Waiting for the worker to fetch and plant a seed from the chest");
+        }).thenIdle(120).thenExecute(() -> {
+            test.assertTrue(chest.countItem(Items.NETHER_WART) == 2 && chest.countItem(Items.CARROT) == 4
+                            && worker.getMainHandItem().isEmpty() && worker.getRankXp() == 4
+                            && firstRequest.get().isSpent() && seedRequests(test, harvest).isEmpty(),
+                    "Expected one completed delivery and one planting. Chest stock " + chest.countItem(Items.NETHER_WART)
+                            + ", hand " + worker.getMainHandItem() + ", rank XP " + worker.getRankXp()
+                            + ", spent " + firstRequest.get().isSpent()
+                            + ", pending requests " + seedRequests(test, harvest).size());
+            SealHandler.removeSealEntity(level, harvest.pos(), true);
+            SealHandler.removeSealEntity(level, provider.pos(), true);
+            worker.discard();
+        }).thenSucceed();
+    }
+
     @GameTest(template = "golem_room", batch = "harvest_seal", timeoutTicks = 460)
     public static void harvestSealReplantsWithOneSeedAfterCapabilityReload(GameTestHelper test) {
         var owner = ResearchGameTests.survivalPlayer(test);
         var level = test.getLevel();
         var cropPos = test.absolutePos(HARVEST_CROP);
-        buildFloor(test);
-        test.setBlock(HARVEST_SEAL, Blocks.SMOOTH_STONE);
-        test.setBlock(HARVEST_CROP.below(), Blocks.SOUL_SAND);
-        test.setBlock(HARVEST_CROP, Blocks.NETHER_WART.defaultBlockState()
-                .setValue(NetherWartBlock.AGE, NetherWartBlock.MAX_AGE));
-
-        SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(HARVEST_SEAL), FACE), true);
-        var harvest = placeSeal(test, owner, HARVEST_SEAL, new ItemStack(TTItems.SEAL_HARVEST.get()));
-        harvest.setArea(new BlockPos(1, 1, 1));
-        harvest.setLocked(true);
-        harvest.markChanged(level);
-        test.assertTrue(harvest.setting(HarvestBehavior.REPLANT), "Harvest seals should default to replanting");
+        var harvest = buildHarvestPlot(test, owner);
 
         var worker = createWorker(test, owner);
         worker.applyBuild(worker.properties().withArms(TTGolemParts.ARMS_FINE.get()));
@@ -205,6 +277,28 @@ public final class SealAutomationGameTests {
         for (BlockPos floor : BlockPos.betweenClosed(new BlockPos(0, 1, 0), new BlockPos(8, 1, 8))) {
             test.setBlock(floor, Blocks.SMOOTH_STONE);
         }
+    }
+
+    private static SealEntity buildHarvestPlot(GameTestHelper test, FakePlayer owner) {
+        buildFloor(test);
+        test.setBlock(HARVEST_SEAL, Blocks.SMOOTH_STONE);
+        test.setBlock(HARVEST_CROP.below(), Blocks.SOUL_SAND);
+        test.setBlock(HARVEST_CROP, Blocks.NETHER_WART.defaultBlockState()
+                .setValue(NetherWartBlock.AGE, NetherWartBlock.MAX_AGE));
+        var level = test.getLevel();
+        SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(HARVEST_SEAL), FACE), true);
+        var harvest = placeSeal(test, owner, HARVEST_SEAL, new ItemStack(TTItems.SEAL_HARVEST.get()));
+        harvest.setArea(new BlockPos(1, 1, 1));
+        harvest.setLocked(true);
+        harvest.markChanged(level);
+        test.assertTrue(harvest.setting(HarvestBehavior.REPLANT), "Harvest seals should default to replanting");
+        return harvest;
+    }
+
+    private static List<SupplyOrder> seedRequests(GameTestHelper test, SealEntity harvest) {
+        return GolemDispatch.supplyQueue(test.getLevel()).stream()
+                .filter(order -> harvest.equals(order.requestingSeal()) && order.wanted().is(Items.NETHER_WART))
+                .toList();
     }
 
     private static SealEntity placeSeal(GameTestHelper test, FakePlayer owner, BlockPos pos, ItemStack seal) {
