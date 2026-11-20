@@ -45,6 +45,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
+    private static final int ITEM_INTAKE_INTERVAL = 10;
+    private static final double ITEM_HOP = 0.1;
     private static final int OUTPUT_INVENTORY_DISTANCE = 2;
     private static final double OUTPUT_TOSS_SPEED = 0.3;
     private static final double ORB_DISTANCE = 1.2;
@@ -118,9 +120,12 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
     }
 
     private void tick() {
-        if (level == null || level.isClientSide()) return;
-        if (level instanceof ServerLevel serverLevel) {
-            pruneEjected(serverLevel);
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        pruneEjected(serverLevel);
+        if (serverLevel.getGameTime() % ITEM_INTAKE_INTERVAL == 0) {
+            collectDroppedInput(serverLevel);
         }
         if (facingX == -5) {
             setFacing();
@@ -316,8 +321,23 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
         });
     }
 
-    boolean isOwnThrow(ItemEntity item) {
-        return ejected.contains(item.getUUID());
+    private void collectDroppedInput(ServerLevel serverLevel) {
+        // Forge can stagger stationary item collision callbacks away from the intake interval.
+        for (ItemEntity item : LevelSpaces.entitiesIn(
+                serverLevel, ItemEntity.class, worldPosition, new AABB(worldPosition), ItemEntity::isAlive)) {
+            if (item.onGround()) {
+                if (ejected.contains(item.getUUID())) {
+                    continue;
+                }
+                ItemStack remainder = addItemsToInventory(item.getItem());
+                if (remainder.isEmpty()) {
+                    item.discard();
+                    continue;
+                }
+                item.setItem(remainder);
+            }
+            item.setDeltaMovement(item.getDeltaMovement().add(0.0, ITEM_HOP, 0.0));
+        }
     }
 
     static int rollExperiencePoints(float experience, RandomSource random) {

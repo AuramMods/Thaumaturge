@@ -17,7 +17,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -61,12 +60,11 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
 
     private static final int BLAZE_REGEN_TICKS = 6000;
     private static final int BLAZE_RESIST_TICKS = 12000;
-    private static final int ITEM_INTAKE_INTERVAL = 10;
+    private static final int CONTACT_INTERVAL = 10;
     private static final float CONTACT_DAMAGE = 3.0F;
     private static final int CONTACT_FIRE_SECONDS = 10;
     private static final double BLOCK_CENTER = 0.5;
     private static final double CENTER_PULL = 0.05;
-    private static final double ITEM_HOP = 0.1;
 
     public BlockInfernalFurnace(Properties properties) {
         super(properties);
@@ -171,13 +169,12 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         pullToCenter(entity, pos);
-        if (level instanceof ServerLevel serverLevel && entity.tickCount % ITEM_INTAKE_INTERVAL == 0) {
-            if (entity instanceof ItemEntity itemEntity) {
-                takeItem(serverLevel, pos, itemEntity);
-            } else if (entity instanceof LivingEntity living && !living.fireImmune()) {
-                living.hurt(serverLevel.damageSources().lava(), CONTACT_DAMAGE);
-                EntityIgnition.igniteForSeconds(living, CONTACT_FIRE_SECONDS);
-            }
+        if (level instanceof ServerLevel serverLevel
+                && entity.tickCount % CONTACT_INTERVAL == 0
+                && entity instanceof LivingEntity living
+                && !living.fireImmune()) {
+            living.hurt(serverLevel.damageSources().lava(), CONTACT_DAMAGE);
+            EntityIgnition.igniteForSeconds(living, CONTACT_FIRE_SECONDS);
         }
         super.entityInside(state, level, pos, entity);
     }
@@ -187,24 +184,6 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
         double pullX = (pos.getX() + BLOCK_CENTER - entity.getX()) * CENTER_PULL;
         double pullZ = (pos.getZ() + BLOCK_CENTER - entity.getZ()) * CENTER_PULL;
         entity.setDeltaMovement(motion.x + pullX, motion.y, motion.z + pullZ);
-    }
-
-    private static void takeItem(ServerLevel level, BlockPos pos, ItemEntity item) {
-        if (!item.isAlive()) {
-            return;
-        }
-        if (item.onGround() && level.getBlockEntity(pos) instanceof BlockEntityInfernalFurnace furnace) {
-            if (furnace.isOwnThrow(item)) {
-                return;
-            }
-            ItemStack remainder = furnace.addItemsToInventory(item.getItem());
-            if (remainder.isEmpty()) {
-                item.discard();
-                return;
-            }
-            item.setItem(remainder);
-        }
-        item.setDeltaMovement(item.getDeltaMovement().add(0.0, ITEM_HOP, 0.0));
     }
 
     @Override
