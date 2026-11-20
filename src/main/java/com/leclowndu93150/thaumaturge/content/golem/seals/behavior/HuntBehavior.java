@@ -14,13 +14,12 @@ abstract class HuntBehavior implements ISealBehavior {
 
     protected abstract boolean isQuarry(ServerLevel level, ISealEntity seal, LivingEntity target);
 
-    protected void onHuntOver() {}
-
-    protected static void mark(ServerLevel level, ISealEntity seal, LivingEntity target) {
+    protected static Task mark(ServerLevel level, ISealEntity seal, LivingEntity target) {
         Task task = Task.onEntity(seal.pos(), target);
         task.setPriority(seal.priority());
         task.setLife(MARK_LIFESPAN);
         GolemDispatch.postTask(level, task);
+        return task;
     }
 
     @Override
@@ -32,23 +31,11 @@ abstract class HuntBehavior implements ISealBehavior {
             golem.grantRankExperience(1);
         }
         task.end();
-        onHuntOver();
     }
 
     @Override
     public boolean completeTask(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
         task.end();
-        onHuntOver();
         return true;
-    }
-
-    @Override
-    public void onTaskSuspended(ServerLevel level, ISealEntity seal, Task task) {
-        onHuntOver();
-    }
-
-    @Override
-    public void onRemoved(ServerLevel level, ISealEntity seal) {
-        onHuntOver();
     }
 }

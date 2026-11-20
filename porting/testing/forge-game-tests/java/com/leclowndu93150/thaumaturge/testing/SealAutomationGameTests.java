@@ -28,6 +28,7 @@ import com.leclowndu93150.thaumaturge.registry.TTItems;
 import io.netty.buffer.Unpooled;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -80,6 +81,133 @@ public final class SealAutomationGameTests {
     private static final Direction FACE = Direction.NORTH;
 
     private SealAutomationGameTests() {}
+
+    @GameTest(template = "golem_room", batch = "collect_seal", timeoutTicks = 490)
+    public static void collectSealKeepsFilteredCargoUntilChestHasRoom(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildWorkshop(test);
+        test.setBlock(SOURCE, Blocks.SMOOTH_STONE);
+        var target = chest(test, TARGET);
+        for (int slot = 0; slot < target.getContainerSize(); slot++) {
+            target.setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
+        }
+        var wanted = new ItemStack(Items.IRON_INGOT, 3);
+        wanted.getOrCreateTag().putString("PortCargo", "collect");
+        var collect = placeSeal(test, owner, SOURCE, new ItemStack(TTItems.SEAL_PICKUP_ADVANCED.get()));
+        collect.setArea(new BlockPos(2, 1, 2));
+        configureFilter(collect).setStack(0, wanted.copyWithCount(1));
+        collect.markChanged(level);
+        var fill = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_FILL.get()));
+        configureFilter(fill).setStack(0, wanted.copyWithCount(1));
+        fill.markChanged(level);
+
+        var accepted = dropForCollect(test, SOURCE.north(), wanted.copy());
+        var rejected = dropForCollect(test, SOURCE.north().east(), new ItemStack(Items.IRON_INGOT, 2));
+        var carrot = dropForCollect(test, SOURCE.north().west(), new ItemStack(Items.CARROT, 4));
+        var worker = createWorker(test, owner);
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the collector");
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(ItemStack.matches(worker.getMainHandItem(), wanted),
+                "Waiting for the collector to pick up the filtered stack")).thenIdle(100).thenExecute(() -> {
+            test.assertTrue(!accepted.isAlive() && rejected.isAlive() && carrot.isAlive()
+                            && ItemStack.matches(worker.getMainHandItem(), wanted)
+                            && target.countItem(Items.COBBLESTONE) == 27 * 64 && worker.getRankXp() == 0,
+                    "The full chest should retain its contents and the golem should keep all the tagged cargo");
+            target.removeItemNoUpdate(0);
+        }).thenWaitUntil(() -> test.assertTrue(ItemStack.matches(target.getItem(0), wanted),
+                "Waiting for the same tagged stack to reach the opened slot")).thenExecute(() -> {
+            test.assertTrue(worker.getMainHandItem().isEmpty() && worker.getRankXp() == 1
+                            && rejected.isAlive() && rejected.getItem().getCount() == 2 && carrot.isAlive(),
+                    "Only the matching ground stack should have moved, and the deposit should award one XP");
+            SealHandler.removeSealEntity(level, collect.pos(), true);
+            SealHandler.removeSealEntity(level, fill.pos(), true);
+            rejected.discard();
+            carrot.discard();
+            worker.discard();
+        }).thenSucceed();
+    }
+
+    private static ItemEntity dropForCollect(GameTestHelper test, BlockPos pos, ItemStack stack) {
+        var level = test.getLevel();
+        var point = Vec3.atBottomCenterOf(test.absolutePos(pos));
+        var item = new ItemEntity(level, point.x, point.y + 0.15, point.z, stack);
+        item.setDeltaMovement(Vec3.ZERO);
+        item.setNoPickUpDelay();
+        test.assertTrue(level.addFreshEntity(item), "Could not drop " + stack);
+        return item;
+    }
+
+    @GameTest(template = "golem_room", batch = "butcher_seal", timeoutTicks = 900)
+    public static void butcherRechecksTheBreedingPairAfterItsScan(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        prepareRoom(test);
+        var anchor = HARVEST_SEAL;
+        SealHandler.removeSealEntity(level, new SealPos(test.absolutePos(anchor), FACE), true);
+        test.setBlock(anchor, Blocks.SMOOTH_STONE);
+        var butcher = placeSeal(test, owner, anchor, new ItemStack(TTItems.SEAL_BUTCHER.get()));
+        butcher.setArea(new BlockPos(2, 1, 4));
+        butcher.setLocked(true);
+        butcher.markChanged(level);
+        var worker = createWorker(test, owner);
+        worker.applyBuild(worker.properties().withArms(TTGolemParts.ARMS_CLAWS.get()));
+        var pasture = anchor.north(2);
+        var first = pasturePig(test, pasture.west());
+        var second = pasturePig(test, pasture.east());
+        var third = pasturePig(test, pasture);
+        var baby = pasturePig(test, pasture.north());
+        baby.setAge(-24_000);
+
+        test.startSequence().thenExecute(() -> {
+            for (int tick = 0; tick < 200; tick++) {
+                butcher.tick(level);
+            }
+            var marked = TaskBoard.of(level).openEntityTasks(worker.getUUID(), worker).stream()
+                    .filter(task -> butcher.pos().equals(task.origin())).findFirst().orElseThrow();
+            var removed = marked.entity() == first ? second : first;
+            removed.discard();
+            test.assertTrue(!marked.canBePerformedBy(worker), "A queued task accepted one of the last two adult pigs");
+            test.assertTrue(level.addFreshEntity(worker), "Could not add the butcher worker");
+        }).thenIdle(100).thenExecute(() -> {
+            test.assertTrue(Stream.of(first, second, third).filter(Entity::isAlive).count() == 2
+                            && baby.isAlive() && worker.getRankXp() == 0,
+                    "With only the breeding pair and a baby the worker should do no hunting");
+            worker.setNoAi(true);
+            pasturePig(test, pasture.south().east());
+        }).thenWaitUntil(() -> test.assertTrue(butcherWork(test, butcher, worker).isPresent(),
+                "Waiting for a new hunt after another adult enters")).thenExecute(() -> {
+            var hunt = butcherWork(test, butcher, worker).orElseThrow();
+            butcher.behavior().onTaskStarted(level, butcher, worker, hunt);
+            test.assertTrue(worker.getTarget() == hunt.entity() && worker.getRankXp() == 1,
+                    "The new hunt should assign the adult to the worker");
+            test.assertTrue(!hunt.canBePerformedBy(worker), "A handed-off hunt should not be claimable again");
+        }).thenIdle(210).thenExecute(() -> {
+            test.assertTrue(worker.getTarget() != null && worker.getTarget().isAlive()
+                            && butcherWork(test, butcher, worker).isEmpty(),
+                    "A seal should not post more work while its original hunt is in progress");
+            worker.setNoAi(false);
+        }).thenWaitUntil(() -> test.assertTrue(worker.getRankXp() == 9,
+                "Waiting for the worker to hunt once after another adult enters")).thenIdle(210).thenExecute(() -> {
+            var pigs = level.getEntitiesOfClass(Pig.class, new AABB(test.absolutePos(pasture)).inflate(4));
+            test.assertTrue(pigs.stream().filter(pig -> pig.isAlive() && !pig.isBaby()).count() == 2 && baby.isAlive()
+                            && worker.getRankXp() == 9,
+                    "The worker should leave two adults and the baby after one hunt");
+            pigs.forEach(Entity::discard);
+            SealHandler.removeSealEntity(level, butcher.pos(), true);
+            worker.discard();
+        }).thenSucceed();
+    }
+
+    private static Optional<Task> butcherWork(GameTestHelper test, SealEntity seal, EntityThaumaturgeGolem worker) {
+        return TaskBoard.of(test.getLevel()).openEntityTasks(worker.getUUID(), worker).stream()
+                .filter(task -> seal.pos().equals(task.origin()) && !task.isEnded()).findFirst();
+    }
+
+    private static Pig pasturePig(GameTestHelper test, BlockPos pos) {
+        var pig = test.spawnWithNoFreeWill(EntityType.PIG, pos);
+        pig.setHealth(1);
+        return pig;
+    }
 
     @GameTest(template = "golem_room", batch = "lumber_seal", timeoutTicks = 300)
     public static void lumberjackChopsConnectedLogsFromTheTop(GameTestHelper test) {
