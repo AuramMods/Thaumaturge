@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.EmptyBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.GuardBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.HarvestBehavior;
+import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ItemMatchSettings;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ProvideBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.UseBehavior;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
@@ -70,6 +71,94 @@ public final class SealAutomationGameTests {
     private static final Direction FACE = Direction.NORTH;
 
     private SealAutomationGameTests() {}
+
+    @GameTest(template = "golem_room", batch = "use_seal_tool", timeoutTicks = 460)
+    public static void useSealRequestsPickaxeAndReusesItAfterWear(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildWorkshop(test);
+        test.setBlock(TARGET, Blocks.STONE);
+        var source = chest(test, SOURCE);
+        var pickaxe = new ItemStack(Items.IRON_PICKAXE);
+        pickaxe.getOrCreateTag().putString("PortTool", "left-click");
+        source.setItem(0, pickaxe.copy());
+        source.setItem(2, pickaxe.copy());
+        var provider = placeSeal(test, owner, SOURCE, new ItemStack(TTItems.SEAL_PROVIDER.get()));
+        configureFilter(provider).setStack(0, pickaxe.copy());
+        provider.setSetting(ProvideBehavior.LEAVE_ONE, true);
+        provider.markChanged(level);
+
+        var use = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_USE.get()));
+        configureFilter(use).setStack(0, pickaxe.copy());
+        use.setSetting(ItemMatchSettings.MATCH_DAMAGE, false);
+        use.setSetting(UseBehavior.LEFT_CLICK, true);
+        use.markChanged(level);
+        var worker = createWorker(test, owner);
+        worker.applyBuild(worker.properties().withArms(TTGolemParts.ARMS_FINE.get()));
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the provisioned tool worker");
+
+        test.startSequence().thenIdle(45).thenExecute(() -> {
+            test.assertTrue(test.getBlockState(TARGET).is(Blocks.STONE) && worker.getMainHandItem().isEmpty()
+                            && source.countItem(Items.IRON_PICKAXE) == 2,
+                    "The use seal should wait until item requests are enabled");
+            use.setSetting(UseBehavior.REQUEST_ITEMS, true);
+            use.markChanged(level);
+        }).thenWaitUntil(() -> test.assertTrue(test.getBlockState(TARGET).isAir(),
+                "Waiting for provisioned pickaxe to break the first stone. Held " + worker.getMainHandItem()
+                        + ", source tools " + source.countItem(Items.IRON_PICKAXE) + ", rank XP " + worker.getRankXp()))
+                .thenExecute(() -> {
+            assertUseTool(test, worker, source, pickaxe, 1, 2);
+            test.setBlock(TARGET, Blocks.STONE);
+        }).thenWaitUntil(() -> test.assertTrue(test.getBlockState(TARGET).isAir(),
+                "Waiting for the filter to accept the same pickaxe after one use"))
+                .thenExecute(() -> {
+            assertUseTool(test, worker, source, pickaxe, 2, 3);
+            int drops = level.getEntitiesOfClass(ItemEntity.class, new AABB(test.absolutePos(TARGET)).inflate(3))
+                    .stream().filter(entity -> entity.getItem().is(Items.COBBLESTONE))
+                    .mapToInt(entity -> entity.getItem().getCount()).sum();
+            test.assertTrue(drops == 2, "Normal survival breaking should drop two cobblestone, found " + drops);
+            SealHandler.removeSealEntity(level, use.pos(), true);
+            SealHandler.removeSealEntity(level, provider.pos(), true);
+            worker.discard();
+        }).thenSucceed();
+    }
+
+    private static void assertUseTool(GameTestHelper test, EntityThaumaturgeGolem worker, ChestBlockEntity source,
+                                      ItemStack original, int damage, int rankXp) {
+        ItemStack expected = original.copy();
+        expected.setDamageValue(damage);
+        test.assertTrue(ItemStack.matches(worker.getMainHandItem(), expected) && worker.getRankXp() == rankXp
+                        && source.countItem(Items.IRON_PICKAXE) == 1 && source.countItem(Items.CARROT) == 3,
+                "Expected one reserved tool and one carried tagged pickaxe with damage " + damage + ", found "
+                        + worker.getMainHandItem().save(new CompoundTag()) + " and " + worker.getRankXp() + " rank XP");
+    }
+
+    @GameTest(template = "golem_room", batch = "use_seal_sneak", timeoutTicks = 300)
+    public static void sneakingUseSealPlacesAgainstAContainer(GameTestHelper test) {
+        var owner = ResearchGameTests.survivalPlayer(test);
+        var level = test.getLevel();
+        buildWorkshop(test);
+        var destination = chest(test, TARGET);
+        destination.setItem(0, new ItemStack(Items.CARROT, 4));
+        var use = placeSeal(test, owner, TARGET, new ItemStack(TTItems.SEAL_USE.get()));
+        configureFilter(use).setStack(0, new ItemStack(Items.GLASS));
+        use.setSetting(UseBehavior.SNEAKING, true);
+        use.markChanged(level);
+        var worker = createWorker(test, owner);
+        worker.applyBuild(worker.properties().withArms(TTGolemParts.ARMS_FINE.get()));
+        test.assertTrue(worker.hands().hold(new ItemStack(Items.GLASS, 3)).isEmpty(), "The worker should carry glass");
+        test.assertTrue(level.addFreshEntity(worker), "Could not add the sneaking use worker");
+
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(test.getBlockState(TARGET.north()).is(Blocks.GLASS),
+                "Waiting for sneak-use to place one glass block against the chest"))
+                .thenExecute(() -> {
+            test.assertTrue(destination.countItem(Items.CARROT) == 4 && worker.getMainHandItem().is(Items.GLASS)
+                            && worker.getMainHandItem().getCount() == 2 && worker.getRankXp() == 1,
+                    "Sneak placement should consume exactly one glass and leave the chest contents alone");
+            SealHandler.removeSealEntity(level, use.pos(), true);
+            worker.discard();
+        }).thenSucceed();
+    }
 
     @GameTest(template = "golem_room", batch = "logistics_stock", timeoutTicks = 460)
     public static void logisticsSynchronizesLargeStockAndDeliversMultipleStacks(GameTestHelper test) {
