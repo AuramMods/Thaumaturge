@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.mixin.sable;
 
 import com.leclowndu93150.thaumaturge.content.golem.GolemWorldEvents;
+import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.ryanhcode.sable.sublevel.plot.ServerLevelPlot;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,12 +12,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = ServerLevelPlot.class, remap = false)
-abstract class SablePlotSealSyncMixin {
+abstract class SablePlotChunkSyncMixin {
     @Inject(method = {"addChunkHolder", "load"}, at = @At(value = "INVOKE", shift = At.Shift.AFTER,
             target = "Ldev/ryanhcode/sable/sublevel/plot/SubLevelPlayerChunkSender;sendChunk("
                     + "Ljava/util/function/Consumer;Lnet/minecraft/world/level/lighting/LevelLightEngine;"
                     + "Lnet/minecraft/world/level/chunk/LevelChunk;)V"))
-    private void thaumaturge$syncChunkSeals(CallbackInfo ci, @Local ServerPlayer player, @Local LevelChunk chunk) {
+    private void thaumaturge$syncChunkAttachments(CallbackInfo ci, @Local ServerPlayer player, @Local LevelChunk chunk) {
         GolemWorldEvents.syncChunkSeals(player, chunk);
+        WardHandler.syncChunk(player, chunk);
     }
 }
