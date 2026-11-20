@@ -620,7 +620,11 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     public boolean isFettered() {
-        BlockState below = level().getBlockState(blockPosition().below());
+        BlockPos support = getOnPos();
+        if (!LevelSpaces.isDetached(level(), support)) {
+            support = blockPosition().below();
+        }
+        BlockState below = level().getBlockState(support);
         return below.is(TTBlocks.GOLEM_FETTER.get()) && below.getValue(BlockGolemFetter.POWERED);
     }
 
