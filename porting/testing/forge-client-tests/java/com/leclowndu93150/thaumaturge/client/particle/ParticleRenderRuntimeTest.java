@@ -13,6 +13,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -33,6 +34,7 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import org.junit.jupiter.api.Test;
+import org.lwjgl.opengl.GL11C;
 
 class ParticleRenderRuntimeTest {
     @Test
@@ -72,7 +74,7 @@ class ParticleRenderRuntimeTest {
     }
 
     @Test
-    void fabulousNitorDrawRestoresTheParticlesTargetEvenWhenDrawingThrows() throws Exception {
+    void customSheetDrawRestoresCullingAndFabulousFramebufferEvenWhenDrawingThrows() throws Exception {
         var minecraft = mock(Minecraft.class);
         var renderer = mock(LevelRenderer.class);
         var main = mock(RenderTarget.class);
@@ -99,19 +101,33 @@ class ParticleRenderRuntimeTest {
         var recordedGeometry = mock(BufferBuilder.RenderedBuffer.class);
         when(tesselator.getBuilder()).thenReturn(builder);
         when(builder.endOrDiscardIfEmpty()).thenReturn(recordedGeometry);
-        try (var client = mockStatic(Minecraft.class); var upload = mockStatic(BufferUploader.class)) {
+        try (var client = mockStatic(Minecraft.class); var upload = mockStatic(BufferUploader.class);
+                var render = mockStatic(RenderSystem.class); var gl = mockStatic(GlStateManager.class)) {
             client.when(Minecraft::getInstance).thenReturn(minecraft);
             client.when(Minecraft::useShaderTransparency).thenReturn(true);
+            gl.when(() -> GlStateManager._getInteger(GL11C.GL_CULL_FACE)).thenReturn(1);
+            render.when(RenderSystem::disableCull).thenAnswer(call -> {
+                framebufferOrder.add("disable cull");
+                return null;
+            });
+            render.when(RenderSystem::enableCull).thenAnswer(call -> {
+                framebufferOrder.add("enable cull");
+                return null;
+            });
             upload.when(() -> BufferUploader.drawWithShader(recordedGeometry)).thenAnswer(call -> {
                 framebufferOrder.add("draw");
                 throw drawFailure;
             });
 
             assertSame(drawFailure, assertThrows(IllegalStateException.class, () -> ordinary.end(tesselator)));
-            assertEquals(List.of("draw"), framebufferOrder);
+            assertEquals(List.of("disable cull", "draw", "enable cull"), framebufferOrder);
             framebufferOrder.clear();
             assertSame(drawFailure, assertThrows(IllegalStateException.class, () -> core.end(tesselator)));
-            assertEquals(List.of("main", "draw", "particles"), framebufferOrder);
+            assertEquals(List.of("main", "disable cull", "draw", "enable cull", "particles"), framebufferOrder);
+            framebufferOrder.clear();
+            gl.when(() -> GlStateManager._getInteger(GL11C.GL_CULL_FACE)).thenReturn(0);
+            assertSame(drawFailure, assertThrows(IllegalStateException.class, () -> ordinary.end(tesselator)));
+            assertEquals(List.of("draw"), framebufferOrder);
         }
     }
 

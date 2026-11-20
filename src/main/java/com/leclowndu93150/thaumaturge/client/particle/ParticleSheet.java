@@ -19,6 +19,7 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
+import org.lwjgl.opengl.GL11C;
 import org.slf4j.Logger;
 
 public final class ParticleSheet {
@@ -105,18 +106,26 @@ public final class ParticleSheet {
                 if (rendered == null) {
                     return;
                 }
-                if (!Minecraft.useShaderTransparency() || !TTParticleLayers.usesNitorAdditiveBlend(this)) {
-                    BufferUploader.drawWithShader(rendered);
-                    return;
-                }
-
                 // Fabulous composites its particle target with alpha, which dims the world behind Nitor.
-                var target = RenderStateShardAccessor.thaumaturge$particlesTarget();
-                target.clearRenderState();
+                var target = Minecraft.useShaderTransparency() && TTParticleLayers.usesNitorAdditiveBlend(this)
+                        ? RenderStateShardAccessor.thaumaturge$particlesTarget() : null;
+                if (target != null) {
+                    target.clearRenderState();
+                }
+                // Forge culls the back of these quads with the source winding and facing modes.
+                boolean restoreCull = GlStateManager._getInteger(GL11C.GL_CULL_FACE) != 0;
+                if (restoreCull) {
+                    RenderSystem.disableCull();
+                }
                 try {
                     BufferUploader.drawWithShader(rendered);
                 } finally {
-                    target.setupRenderState();
+                    if (restoreCull) {
+                        RenderSystem.enableCull();
+                    }
+                    if (target != null) {
+                        target.setupRenderState();
+                    }
                 }
             }
 
