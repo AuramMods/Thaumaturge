@@ -8,6 +8,7 @@
     "network.ClientboundLoginPacketRegistryMixin",
     "network.LoginRegistryCodecsMixin",
     "sable.SableDatapackSyncMixin",
+    "sable.SableLocalMovementMixin",
     "sable.SablePhysicsDefinitionsMixin",
     "sable.api.SubLevelAssemblyHelperMixin",
     "server.network.ServerGamePacketListenerImplAccessor",
