@@ -22,7 +22,11 @@ final class ThaumonomiconGuiHandler implements IScreenHandler<EntryDetailScreen>
 
     @Override
     public IGuiProperties apply(EntryDetailScreen screen) {
-        return new GuiProperties(screen.getClass(), 0, 0, screen.width, screen.height, screen.width, screen.height);
+        // Forge posts ScreenEvent.Opening before initializing the screen's width and height.
+        var window = Minecraft.getInstance().getWindow();
+        int width = window.getGuiScaledWidth();
+        int height = window.getGuiScaledHeight();
+        return new GuiProperties(screen.getClass(), 0, 0, width, height, width, height);
     }
 
     @Override
