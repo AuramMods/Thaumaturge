@@ -4,6 +4,8 @@ import com.ferreusveritas.dynamictrees.api.event.AddResourceLoadersEvent;
 import com.ferreusveritas.dynamictrees.api.resource.ResourceAccessor;
 import com.ferreusveritas.dynamictrees.api.resource.loading.AbstractResourceLoader;
 import com.ferreusveritas.dynamictrees.api.resource.loading.preparation.JsonResourcePreparer;
+import com.ferreusveritas.dynamictrees.compat.CompatHandler;
+import com.ferreusveritas.dynamictrees.compat.season.SeasonHelper;
 import com.ferreusveritas.dynamictrees.deserialisation.JsonHelper;
 import com.ferreusveritas.dynamictrees.event.BiomeSuitabilityEvent;
 import com.ferreusveritas.dynamictrees.init.DTConfigs;
@@ -24,9 +26,11 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 
 /** Reads the climate properties that Dynamic Trees 1.4.11 predates. */
 public final class DynamicTreesClimate {
+    private static final String SERENE_SEASONS = "sereneseasons";
     private static volatile Map<ResourceLocation, Preference> preferences = Map.of();
 
     private DynamicTreesClimate() {}
@@ -45,7 +49,7 @@ public final class DynamicTreesClimate {
         var preference = preferences.get(event.getSpecies().getRegistryName());
         if (preference == null) return;
 
-        Climate local = Climate.atTemperature(event.getBiome().getBaseTemperature());
+        Climate local = Climate.atBiome(event);
         double scale = DTConfigs.SCALE_BIOME_GROWTH_RATE.get();
         if (scale == 1.0 || preference.climate == Climate.NONE || preference.climate == local) {
             event.setSuitability(1.0F);
@@ -114,10 +118,18 @@ public final class DynamicTreesClimate {
             this.multipliers = multipliers;
         }
 
-        private static Climate atTemperature(float temperature) {
+        private static Climate atBiome(BiomeSuitabilityEvent event) {
+            float temperature = event.getBiome().getBaseTemperature();
             if (temperature < 0.2F) return COLD;
             if (temperature >= 1.0F) return ARID;
-            return temperature > 0.8F ? TROPICAL : TEMPERATE;
+
+            String seasonMod = DTConfigs.PREFERRED_SEASON_MOD.get();
+            boolean useSereneSeasons = ModList.get().isLoaded(SERENE_SEASONS)
+                    && (CompatHandler.ANY.equals(seasonMod) || SERENE_SEASONS.equals(seasonMod));
+            boolean tropical = useSereneSeasons
+                    ? SeasonHelper.isTropical(event.getLevel(), event.getPos())
+                    : temperature > 0.8F;
+            return tropical ? TROPICAL : TEMPERATE;
         }
 
         @Override
