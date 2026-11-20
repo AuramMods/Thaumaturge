@@ -3,8 +3,10 @@ package com.leclowndu93150.thaumaturge.compat.sable;
 import com.leclowndu93150.thaumaturge.content.world.space.SpaceFrame;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 final class SubLevelFrame implements SpaceFrame {
     private final SubLevelAccess subLevel;
@@ -41,9 +43,10 @@ final class SubLevelFrame implements SpaceFrame {
     }
 
     @Override
-    public void push(BlockPos source, Vec3 worldPoint, Vec3 worldDirection, double liftBlocks, double maxSpeed) {
+    public void push(
+            BlockPos source, Function<SpaceFrame, @Nullable Thrust> contact, double liftBlocks, double maxSpeed) {
         if (subLevel instanceof ServerSubLevel ship) {
-            pushes.queue(ship, source, worldPoint, worldDirection, liftBlocks, maxSpeed);
+            pushes.queue(ship, source, contact, liftBlocks, maxSpeed);
         }
     }
 

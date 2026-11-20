@@ -1,7 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.world.space;
 
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 public interface SpaceFrame {
     boolean isWorld();
@@ -14,5 +16,7 @@ public interface SpaceFrame {
 
     Vec3 directionToLocal(Vec3 world);
 
-    void push(BlockPos source, Vec3 worldPoint, Vec3 worldDirection, double liftBlocks, double maxSpeed);
+    void push(BlockPos source, Function<SpaceFrame, @Nullable Thrust> contact, double liftBlocks, double maxSpeed);
+
+    record Thrust(Vec3 point, Vec3 direction) {}
 }

@@ -126,9 +126,12 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
             if (frame.isWorld() || frame.equals(own)) {
                 continue;
             }
-            Vec3 contact = firstContact(level, frame, start, thrust, length);
-            if (contact != null) {
-                frame.push(pos, contact, thrust, SHIP_LIFT_BLOCKS, SPEED_CAP * SharedConstants.TICKS_PER_SECOND);
+            if (firstContact(level, frame, start, thrust, length) != null) {
+                frame.push(
+                        pos,
+                        target -> shipThrust(level, pos, target),
+                        SHIP_LIFT_BLOCKS,
+                        SPEED_CAP * SharedConstants.TICKS_PER_SECOND);
                 charge -= reach.visCost();
                 pushed++;
             }
@@ -137,6 +140,22 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
             setChanged();
         }
         return pushed;
+    }
+
+    private SpaceFrame.@Nullable Thrust shipThrust(ServerLevel level, BlockPos pos, SpaceFrame target) {
+        if (clearance <= 0 || !LoadedChunks.contains(level, pos) || level.getBlockEntity(pos) != this) {
+            return null;
+        }
+        BlockState state = getBlockState();
+        if (!state.getValue(BlockStateProperties.ENABLED)) {
+            return null;
+        }
+        SpaceFrame own = LevelSpaces.frameOf(level, pos);
+        Vec3 start = own.toWorld(Vec3.atCenterOf(pos));
+        Vec3 thrust = own.directionToWorld(Vec3.atLowerCornerOf(
+                state.getValue(BlockStateProperties.FACING).getNormal()));
+        Vec3 point = firstContact(level, target, start, thrust, clearance + BEAM_MARGIN);
+        return point == null ? null : new SpaceFrame.Thrust(point, thrust);
     }
 
     private static @Nullable Vec3 firstContact(Level level, SpaceFrame frame, Vec3 start, Vec3 thrust, double length) {

@@ -1,7 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.world.space;
 
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 public enum WorldFrame implements SpaceFrame {
     INSTANCE;
@@ -32,5 +34,6 @@ public enum WorldFrame implements SpaceFrame {
     }
 
     @Override
-    public void push(BlockPos source, Vec3 worldPoint, Vec3 worldDirection, double liftBlocks, double maxSpeed) {}
+    public void push(
+            BlockPos source, Function<SpaceFrame, @Nullable Thrust> contact, double liftBlocks, double maxSpeed) {}
 }

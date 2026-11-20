@@ -15,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.MinecraftForge;
 import org.jspecify.annotations.Nullable;
 
 public final class SableLevelSpaces implements LevelSpaceProvider {
@@ -22,6 +23,7 @@ public final class SableLevelSpaces implements LevelSpaceProvider {
 
     public SableLevelSpaces() {
         SableEventPlatform.INSTANCE.onPhysicsTick(pushes);
+        MinecraftForge.EVENT_BUS.addListener(pushes::onLevelUnload);
     }
 
     @Override
