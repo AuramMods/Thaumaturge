@@ -24,7 +24,8 @@ public final class SpellBatRenderer extends MobRenderer<SpellBat, FireBatModel<S
     public SpellBatRenderer(EntityRendererProvider.Context context) {
         super(
                 context,
-                new FireBatModel<>(context.bakeLayer(TTModelLayers.FIRE_BAT), RenderType::entityTranslucent),
+                // Each membrane already has a face in both directions.
+                new FireBatModel<>(context.bakeLayer(TTModelLayers.FIRE_BAT), RenderType::entityTranslucentCull),
                 SHADOW);
     }
 
