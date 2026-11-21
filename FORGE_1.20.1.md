@@ -33,7 +33,7 @@ The distributable is `build/libs/thaumaturge-1.1.1-mc1.20.1-forge.jar`. On macOS
 shasum -a 256 build/libs/thaumaturge-1.1.1-mc1.20.1-forge.jar
 ```
 
-The [port tracker](PORTING_1.20.1.md#cycle-424-evidence-and-next-work) records the tested checksum. Builds can differ in ZIP timestamps even when every archive member has identical contents.
+The tested distributable has SHA-256 `85213e77522c605a80e34d4ff32fd495239e03d290ddc98636bcc8b2362e4f05`. Its companion file is `thaumaturge-1.1.1-mc1.20.1-forge.jar.sha256`. With both files in the same directory, run `shasum -a 256 -c thaumaturge-1.1.1-mc1.20.1-forge.jar.sha256` on macOS or use `sha256sum -c` on Linux. Rebuilds can differ in ZIP timestamps even when every payload is identical. [Release audit](PORTING_1.20.1.md#cycle-438-evidence-and-next-work)
 
 ## Verify
 
@@ -48,3 +48,5 @@ Gradle writes the reports under `build/test-results/`. On CI hosts without a dis
 For an unattended development client, use `./gradlew -PportHiddenWindow runForgeBackgroundClient`. It starts in its own profile with sound muted, narration off and the window hidden. For interactive testing, use `./gradlew runClient` and click the window when you are ready for it to receive input. See the [background testing guide](porting/testing/README.md).
 
 For a packaged smoke test, start a clean Forge server with the three runtime JARs and join from a matching client. Open a fresh Survival world, collect a generated primal crystal, sleep for the dream journal, and use Salis Mundus on a bookshelf to obtain the Thaumonomicon. Craft and use a Thaumometer, save, and reopen the world to verify that research persists. The [acceptance matrix](PORTING_1.20.1.md#feature-and-acceptance-matrix) links the full progression, persistence, multiplayer and integration checks.
+
+The final audit reconciles 16 passing feature areas and 2,748 passing cases across the original suite, focused Forge suites, and native GameTests. It also compares all 8,748 distributable payloads against a clean build. The same JAR passed packaged Survival progression through the Outer Lands, two-player restart and reload tests, and the optional Oculus and moving Sable ship replays. [Release audit](PORTING_1.20.1.md#cycle-438-evidence-and-next-work)
