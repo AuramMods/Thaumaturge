@@ -146,6 +146,10 @@ public class EntityThaumaturgeBoss extends Monster {
     @Override
     public void tick() {
         super.tick();
+        // A superclass death tick can remove this boss and invalidate its Forge capabilities.
+        if (this.isRemoved()) {
+            return;
+        }
         if (this.spawnTimer > 0) {
             this.spawnTimer--;
         }
