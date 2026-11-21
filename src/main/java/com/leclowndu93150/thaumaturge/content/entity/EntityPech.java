@@ -74,6 +74,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
     public boolean atTradeTable;
     public float chatterLevel;
     private @Nullable Goal combatGoal;
+    private boolean combatGoalRefreshPending;
     private int chargeCooldown;
 
     public EntityPech(EntityType<? extends EntityPech> type, Level level) {
@@ -164,6 +165,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
         if (this.level().isClientSide()) {
             return;
         }
+        this.combatGoalRefreshPending = false;
         Goal stale = this.combatGoal;
         if (stale != null) {
             this.goalSelector.removeGoal(stale);
@@ -186,7 +188,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
     public void setItemSlot(EquipmentSlot slot, ItemStack stack) {
         super.setItemSlot(slot, stack);
         if (!this.level().isClientSide() && slot == EquipmentSlot.MAINHAND) {
-            this.refreshCombatGoal();
+            this.combatGoalRefreshPending = true;
         }
     }
 
@@ -271,6 +273,9 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
 
     @Override
     public void tick() {
+        if (this.combatGoalRefreshPending) {
+            this.refreshCombatGoal();
+        }
         PechMoods.decay(this);
         super.tick();
         if (this.level().isClientSide()) {
@@ -349,7 +354,8 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
             if (this.getRandom().nextInt(10) < value) {
                 this.level().broadcastEntityEvent(this, PechMoods.EVENT_HAPPY);
                 this.setDomesticated(true);
-                this.refreshCombatGoal();
+                // FetchItemGoal can tame the Pech while GoalSelector is iterating its goals.
+                this.combatGoalRefreshPending = true;
             }
             return rest;
         }
@@ -443,7 +449,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
             pech.setTarget(living);
             pech.setRageTicks(ANGER_MIN + pech.getRandom().nextInt(ANGER_SPREAD));
             pech.setDomesticated(false);
-            pech.refreshCombatGoal();
+            pech.combatGoalRefreshPending = true;
         }
 
         static void tickCharge(EntityPech pech) {

@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitEngine;
 import com.leclowndu93150.thaumaturge.content.taint.entity.TaintInfection;
 import com.leclowndu93150.thaumaturge.mixin.world.entity.MobAccessor;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -14,6 +15,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
@@ -22,6 +26,28 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class MobTraitGameTests {
     private MobTraitGameTests() {}
+
+    @GameTest(template = "golem_room", batch = "mob_traits", timeoutTicks = 120)
+    public static void pechTamesThroughItsNativeFetchGoal(GameTestHelper test) {
+        for (BlockPos pos : BlockPos.betweenClosed(new BlockPos(1, 1, 1), new BlockPos(7, 1, 7))) {
+            test.setBlock(pos, Blocks.SMOOTH_STONE);
+        }
+        var pech = test.spawn(TTEntities.PECH.get(), new BlockPos(4, 2, 4));
+        pech.setCanPickUpLoot(false);
+        var spot = test.absolutePos(new BlockPos(6, 2, 4));
+        var level = test.getLevel();
+        var pearl = new ItemEntity(level, spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5,
+                new ItemStack(Items.ENDER_PEARL));
+        pearl.setDeltaMovement(0.0, 0.0, 0.0);
+        test.assertTrue(level.addFreshEntity(pearl), "Could not offer the Pech an Ender Pearl");
+
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(pech.isDomesticated() && pearl.isRemoved(),
+                "Waiting for the Pech to collect the pearl through its native goal"))
+                .thenIdle(2).thenExecute(() -> {
+                    test.assertTrue(pech.isAlive() && pech.isDomesticated(), "The Pech should keep ticking after taming");
+                    pech.discard();
+                }).thenSucceed();
+    }
 
     @GameTest(template = "golem_room", batch = "mob_traits", timeoutTicks = 360)
     public static void taintReplacesAndRestoresActiveCowGoals(GameTestHelper test) {
