@@ -4,7 +4,7 @@
   ],
   "passes": [
     {
-      "name": "box_blur",
+      "name": "blur",
       "intarget": "minecraft:main",
       "outtarget": "swap",
       "uniforms": [
@@ -21,11 +21,10 @@
             10.0
           ]
         }
-      ],
-      "use_linear_filter": true
+      ]
     },
     {
-      "name": "box_blur",
+      "name": "blur",
       "intarget": "swap",
       "outtarget": "minecraft:main",
       "uniforms": [
@@ -42,8 +41,7 @@
             10.0
           ]
         }
-      ],
-      "use_linear_filter": true
+      ]
     }
   ]
 }
