@@ -3,10 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
@@ -329,17 +326,35 @@ class PortAndResonatorCompatibilityTest {
 
     @Test
     void resonatorReportsEachBufferCompartmentAndDoesNotDuplicateAggregateStock() {
-        when(tube.pull(Direction.UP)).thenReturn(EssentiaPull.NONE);
-        var buffer = mock(BlockEntityTubeBuffer.class);
+        MappedRegistry<IAspect> registry = new MappedRegistry<>(IAspect.REGISTRY_KEY, Lifecycle.stable());
+        var aqua = mock(IAspect.class);
+        var ignis = mock(IAspect.class);
+        when(aqua.tag()).thenReturn("aqua");
+        when(ignis.tag()).thenReturn("ignis");
+        Registry.register(registry, TTAspects.AQUA, aqua);
+        Registry.register(registry, TTAspects.IGNIS, ignis);
+        var aquaHolder = registry.getHolderOrThrow(TTAspects.AQUA);
+        var ignisHolder = registry.getHolderOrThrow(TTAspects.IGNIS);
+        var buffer = new BlockEntityTubeBuffer(BlockPos.ZERO, TTBlocks.TUBE_BUFFER.get().defaultBlockState());
+        for (int i = 0; i < 6; i++) {
+            assertEquals(1, buffer.insert(ignisHolder, 1, Direction.UP, false));
+        }
+        for (int i = 0; i < 4; i++) {
+            assertEquals(1, buffer.insert(aquaHolder, 1, Direction.UP, false));
+        }
         when(level.getBlockEntity(BlockPos.ZERO)).thenReturn(buffer);
-        BlockCapabilityFixture.expose(buffer, EssentiaCapabilities.CONDUIT, Direction.UP, tube);
-        var container = mock(IAspectContainer.class);
-        when(container.getAspects()).thenReturn(AspectList.EMPTY.add(aspect, 4));
-        BlockCapabilityFixture.expose(buffer, AspectCapabilities.CONTAINER, Direction.UP, container);
         var player = mock(Player.class);
-        TTItems.RESONATOR.get().onItemUseFirst(ItemStack.EMPTY, context(level, player));
-        verify(player, times(2)).sendSystemMessage(any());
-        verify(tube, never()).heldAmount(any());
+        assertEquals(InteractionResult.SUCCESS,
+                TTItems.RESONATOR.get().onItemUseFirst(ItemStack.EMPTY, context(level, player)));
+        var messages = ArgumentCaptor.forClass(Component.class);
+        verify(player, times(3)).sendSystemMessage(messages.capture());
+        assertEquals(List.of(
+                Component.translatable("message.thaumaturge.resonator.contents", "4",
+                        Component.translatable("aspect.thaumaturge.aqua")),
+                Component.translatable("message.thaumaturge.resonator.contents", "6",
+                        Component.translatable("aspect.thaumaturge.ignis")),
+                Component.translatable("message.thaumaturge.resonator.suction", "1",
+                        Component.translatable("message.thaumaturge.resonator.untyped"))), messages.getAllValues());
     }
 
     @Test

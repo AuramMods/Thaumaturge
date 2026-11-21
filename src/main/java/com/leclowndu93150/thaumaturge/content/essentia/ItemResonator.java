@@ -1,14 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.essentia;
 
-import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
-import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityAccess;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityCondenser;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeBuffer;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.TubeGeometry;
@@ -53,7 +50,8 @@ public final class ItemResonator extends Item {
         if (player == null) {
             return InteractionResult.FAIL;
         }
-        if (level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer) {
+        BlockEntity target = level.getBlockEntity(pos);
+        if (target instanceof BlockEntityTubeBuffer) {
             int part = TubeGeometry.BUFFER.subHit(context.getClickLocation().subtract(Vec3.atLowerCornerOf(pos)));
             // An arm's surface normal can point across the arm rather than along its connection.
             if (part != TubeGeometry.CORE_HIT) {
@@ -68,7 +66,7 @@ public final class ItemResonator extends Item {
             player.swing(context.getHand());
             return InteractionResult.SUCCESS;
         }
-        reportContents(player, level, pos, face, conduit);
+        reportContents(player, target, face, conduit);
         reportSuction(player, conduit, face);
         reportCondenser(player, level.getBlockEntity(pos));
         level.playSound(
@@ -84,12 +82,9 @@ public final class ItemResonator extends Item {
     }
 
     private static void reportContents(
-            Player player, Level level, BlockPos pos, Direction face, IEssentiaConduit conduit) {
-        IAspectContainer container = level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer
-                ? BlockCapabilityAccess.find(level, pos, AspectCapabilities.CONTAINER, face)
-                : null;
-        if (container != null) {
-            for (AspectInstance entry : container.getAspects().sortedByTag()) {
+            Player player, @Nullable BlockEntity target, Direction face, IEssentiaConduit conduit) {
+        if (target instanceof BlockEntityTubeBuffer buffer) {
+            for (AspectInstance entry : buffer.heldAspects().sortedByTag()) {
                 player.sendSystemMessage(contents(entry.amount(), entry.aspect()));
             }
             return;
