@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayWidget
 import com.leclowndu93150.thaumaturge.client.screen.research.EntryDetailScreen;
 import com.leclowndu93150.thaumaturge.client.screen.research.EntryDetailScreen.AspectHit;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
+import com.mojang.blaze3d.platform.Window;
 import java.util.Optional;
 import mezz.jei.api.gui.builder.IClickableIngredientFactory;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
@@ -21,6 +22,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
@@ -45,21 +48,32 @@ class ThaumonomiconGuiHandlerTest {
         assertSame(handler, globalHandler);
     }
 
-    @Test
-    void guiPropertiesEnableJeiInputAndReserveTheEntireBookViewport() {
-        screen.width = 640;
-        screen.height = 360;
+    @ParameterizedTest
+    @CsvSource({"0, 0, 640, 360", "640, 360, 427, 240"})
+    void guiPropertiesReserveTheScaledWindowBeforeScreenInitialization(
+            int screenWidth, int screenHeight, int windowWidth, int windowHeight) {
+        screen.width = screenWidth;
+        screen.height = screenHeight;
+        var window = mock(Window.class);
+        when(window.getGuiScaledWidth()).thenReturn(windowWidth);
+        when(window.getGuiScaledHeight()).thenReturn(windowHeight);
+        var minecraft = mock(Minecraft.class);
+        when(minecraft.getWindow()).thenReturn(window);
 
-        var properties = handler.apply(screen);
+        try (MockedStatic<Minecraft> minecraftStatic = mockStatic(Minecraft.class)) {
+            minecraftStatic.when(Minecraft::getInstance).thenReturn(minecraft);
 
-        assertNotNull(properties); // JEI skips all keyboard lookup when these are null.
-        assertEquals(EntryDetailScreen.class, properties.getScreenClass());
-        assertEquals(0, properties.getGuiLeft());
-        assertEquals(0, properties.getGuiTop());
-        assertEquals(properties.getScreenWidth(), properties.getGuiLeft() + properties.getGuiXSize());
-        assertEquals(properties.getScreenHeight(), properties.getGuiTop() + properties.getGuiYSize());
-        assertEquals(640, properties.getScreenWidth());
-        assertEquals(360, properties.getScreenHeight());
+            var properties = handler.apply(screen);
+
+            assertNotNull(properties); // JEI skips all keyboard lookup when these are null.
+            assertEquals(EntryDetailScreen.class, properties.getScreenClass());
+            assertEquals(0, properties.getGuiLeft());
+            assertEquals(0, properties.getGuiTop());
+            assertEquals(windowWidth, properties.getGuiXSize());
+            assertEquals(windowHeight, properties.getGuiYSize());
+            assertEquals(windowWidth, properties.getScreenWidth());
+            assertEquals(windowHeight, properties.getScreenHeight());
+        }
     }
 
     @Test
