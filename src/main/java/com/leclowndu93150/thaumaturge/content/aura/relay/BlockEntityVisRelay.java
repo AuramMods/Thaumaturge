@@ -259,6 +259,13 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
     }
 
     @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
+        super.writeClientData(output, registries);
+        // The client needs a nonempty update to clear its previous link.
+        output.putInt("Depth", depth);
+    }
+
+    @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         parentPos = TTNbt.read(input, "Parent", BlockPos.CODEC, registries).orElse(null);

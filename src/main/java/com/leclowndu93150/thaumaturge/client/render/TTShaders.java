@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.client.render;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
+import com.mojang.blaze3d.shaders.BlendMode;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import java.io.IOException;
 import net.minecraft.client.renderer.GameRenderer;
@@ -13,6 +14,13 @@ import net.minecraftforge.client.event.RegisterShadersEvent;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TTIds.MODID, value = Dist.CLIENT)
 public final class TTShaders {
+    private static final BlendMode RENDER_TYPE_BLEND = new BlendMode() {
+        @Override
+        public void apply() {
+            // The particle shaders are shared by render types with different blend modes.
+        }
+    };
+
     private static ShaderInstance ender;
     private static ShaderInstance entityFlat;
     private static ShaderInstance occludingEffect;
@@ -73,13 +81,8 @@ public final class TTShaders {
                 new ShaderInstance(
                         event.getResourceProvider(), TTIds.rl("tt_entity_flat"), DefaultVertexFormat.NEW_ENTITY),
                 shader -> entityFlat = shader);
-        event.registerShader(
-                new ShaderInstance(event.getResourceProvider(), TTIds.rl("tt_fx"), DefaultVertexFormat.PARTICLE),
-                shader -> fx = shader);
-        event.registerShader(
-                new ShaderInstance(
-                        event.getResourceProvider(), TTIds.rl("tt_fx_alpha_test"), DefaultVertexFormat.PARTICLE),
-                shader -> fxAlphaTest = shader);
+        event.registerShader(particleShader(event, "tt_fx"), shader -> fx = shader);
+        event.registerShader(particleShader(event, "tt_fx_alpha_test"), shader -> fxAlphaTest = shader);
         event.registerShader(
                 new ShaderInstance(
                         event.getResourceProvider(), TTIds.rl("tt_occluding_effect"), DefaultVertexFormat.NEW_ENTITY),
@@ -95,5 +98,11 @@ public final class TTShaders {
                 new ShaderInstance(
                         event.getResourceProvider(), TTIds.rl("ward_add"), DefaultVertexFormat.POSITION_TEX_COLOR),
                 shader -> wardAdd = shader);
+    }
+
+    private static ShaderInstance particleShader(RegisterShadersEvent event, String name) throws IOException {
+        ShaderInstance shader = new ShaderInstance(event.getResourceProvider(), TTIds.rl(name), DefaultVertexFormat.PARTICLE);
+        shader.blend = RENDER_TYPE_BLEND;
+        return shader;
     }
 }

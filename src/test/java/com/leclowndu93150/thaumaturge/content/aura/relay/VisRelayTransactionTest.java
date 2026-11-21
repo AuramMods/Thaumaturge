@@ -1,6 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.aura.relay;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -12,6 +16,7 @@ import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
 import com.leclowndu93150.thaumaturge.api.transaction.SnapshotJournal;
 import com.leclowndu93150.thaumaturge.api.transaction.Transaction;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.Lifecycle;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +25,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
@@ -68,6 +77,26 @@ class VisRelayTransactionTest {
 
         assertEquals(70, resources.source().stock());
         verify(resources.relay()).triggerConsumeEffect(resources.level(), resources.aspect());
+    }
+
+    @Test
+    void anUnlinkedUpdateClearsTheClientParent() {
+        var state = TTBlocks.VIS_RELAY.get().defaultBlockState();
+        var serverRelay = new BlockEntityVisRelay(BlockPos.ZERO, state);
+        var clientRelay = new BlockEntityVisRelay(BlockPos.ZERO, state);
+        var linked = new CompoundTag();
+        linked.putIntArray("Parent", new int[] {2, 0, 0});
+        linked.putInt("Depth", 1);
+        clientRelay.handleUpdateTag(linked);
+        assertTrue(clientRelay.isLinked());
+
+        var packet = (ClientboundBlockEntityDataPacket) serverRelay.getUpdatePacket();
+        assertNotNull(packet.getTag());
+        clientRelay.onDataPacket(new Connection(PacketFlow.CLIENTBOUND), packet);
+
+        assertFalse(clientRelay.isLinked());
+        assertNull(clientRelay.parentPos());
+        assertEquals(0, clientRelay.depth());
     }
 
     private static ResourceSetup resources() {
