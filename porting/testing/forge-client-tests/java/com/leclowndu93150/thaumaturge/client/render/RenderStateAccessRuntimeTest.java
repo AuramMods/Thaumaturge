@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mockStatic;
 
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.VoidStreamRenderType;
 import com.leclowndu93150.thaumaturge.client.warding.WardRenderType;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import java.lang.reflect.Modifier;
@@ -39,8 +41,19 @@ class RenderStateAccessRuntimeTest {
         assertSame(DefaultVertexFormat.POSITION_TEX_COLOR, noDepth.format());
         assertNativeStates(additive, RenderStateShard.ADDITIVE_TRANSPARENCY, RenderStateShard.LEQUAL_DEPTH_TEST,
                 RenderStateShard.COLOR_WRITE, RenderStateShard.NO_CULL, RenderStateShard.LIGHTMAP);
-        assertNativeStates(noDepth, RenderStateShard.ADDITIVE_TRANSPARENCY, RenderStateShard.NO_DEPTH_TEST,
-                RenderStateShard.COLOR_WRITE, RenderStateShard.NO_CULL);
+        assertNativeStates(noDepth, RenderStateShard.ADDITIVE_TRANSPARENCY, RenderStateShard.COLOR_WRITE,
+                RenderStateShard.NO_CULL);
+        var depth = renderStates(noDepth).stream()
+                .filter(RenderStateShard.DepthTestStateShard.class::isInstance)
+                .map(RenderStateShard.DepthTestStateShard.class::cast)
+                .findFirst()
+                .orElseThrow();
+        try (var render = mockStatic(RenderSystem.class)) {
+            depth.setupRenderState();
+            render.verify(RenderSystem::disableDepthTest);
+            depth.clearRenderState();
+            render.verify(RenderSystem::enableDepthTest);
+        }
         assertSame(DefaultVertexFormat.POSITION_TEX_COLOR, WardRenderType.ADDITIVE.format());
         assertNativeStates(WardRenderType.ADDITIVE, RenderStateShard.ADDITIVE_TRANSPARENCY,
                 RenderStateShard.LEQUAL_DEPTH_TEST, RenderStateShard.COLOR_WRITE, RenderStateShard.NO_CULL);
@@ -50,13 +63,17 @@ class RenderStateAccessRuntimeTest {
 
     private static void assertNativeStates(RenderType layer, RenderStateShard... expected) throws Exception {
         assertEquals(VertexFormat.Mode.QUADS, layer.mode());
+        var applied = renderStates(layer);
+        for (var shard : expected) {
+            assertTrue(applied.contains(shard), shard.toString());
+        }
+    }
+
+    private static List<?> renderStates(RenderType layer) throws Exception {
         var state = layer.getClass().getDeclaredField("state");
         state.setAccessible(true);
         var states = RenderType.CompositeState.class.getDeclaredField("states");
         states.setAccessible(true);
-        var applied = (List<?>) states.get(state.get(layer));
-        for (var shard : expected) {
-            assertTrue(applied.contains(shard), shard.toString());
-        }
+        return (List<?>) states.get(state.get(layer));
     }
 }
