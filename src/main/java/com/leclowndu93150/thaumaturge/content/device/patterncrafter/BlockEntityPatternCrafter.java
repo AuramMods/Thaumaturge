@@ -25,6 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
     public static final int PATTERN_COUNT = 10;
@@ -110,30 +111,67 @@ public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
             ItemStack resource = above.getStackInSlot(slot);
             if (resource.isEmpty()) continue;
             ItemStack testStack = resource.copyWithCount(inputCount);
-            ItemStack removed =
-                    InvHelper.extractAt(server, pos.above(), Direction.DOWN, testStack.copy(), ItemMatch.EXACT, true);
+            ItemStack removed = InvHelper.extract(above, testStack, ItemMatch.EXACT, true);
             if (removed.getCount() != inputCount) continue;
             CraftResult result = craft(server, testStack);
             if (result == null || power < 1.0F) continue;
-            if (!InvHelper.insertStack(below, result.output.copy(), true).isEmpty()) continue;
-            boolean remaindersFit = true;
-            for (ItemStack remainder : result.remainders) {
-                if (!InvHelper.insertStack(below, remainder.copy(), true).isEmpty()) {
-                    remaindersFit = false;
-                    break;
-                }
+            if (!outputsFit(below, result.output(), result.remainders())) continue;
+
+            ItemStack taken = InvHelper.extract(above, testStack, ItemMatch.EXACT, false);
+            if (taken.getCount() != inputCount) {
+                InvHelper.eject(server, pos, Direction.UP, taken);
+                continue;
             }
-            if (!remaindersFit) continue;
-            InvHelper.insertStack(below, result.output.copy(), false);
-            for (ItemStack remainder : result.remainders) {
-                InvHelper.insertStack(below, remainder.copy(), false);
+            InvHelper.eject(server, pos, Direction.DOWN, result.output());
+            for (ItemStack remainder : result.remainders()) {
+                InvHelper.eject(server, pos, Direction.DOWN, remainder);
             }
-            InvHelper.extractAt(server, pos.above(), Direction.DOWN, testStack, ItemMatch.EXACT, false);
             server.blockEvent(pos, state.getBlock(), SPIN_EVENT, 0);
             power--;
             setChanged();
             break;
         }
+    }
+
+    static boolean outputsFit(IItemHandler receiver, ItemStack output, List<ItemStack> remainders) {
+        if (remainders.isEmpty()) {
+            return InvHelper.insertStack(receiver, output, true).isEmpty();
+        }
+        ItemStack[] reserved = new ItemStack[receiver.getSlots()];
+        if (!reserveOutput(receiver, reserved, output)) return false;
+        for (ItemStack remainder : remainders) {
+            if (!reserveOutput(receiver, reserved, remainder)) return false;
+        }
+        return true;
+    }
+
+    private static boolean reserveOutput(IItemHandler receiver, ItemStack[] reserved, ItemStack offered) {
+        int remaining = offered.getCount();
+        if (offered.isStackable()) {
+            remaining = reserveSlots(receiver, reserved, offered, remaining, false);
+        }
+        return reserveSlots(receiver, reserved, offered, remaining, true) == 0;
+    }
+
+    private static int reserveSlots(
+            IItemHandler receiver, ItemStack[] reserved, ItemStack offered, int remaining, boolean emptySlots) {
+        for (int slot = 0; slot < reserved.length && remaining > 0; slot++) {
+            ItemStack reservation = reserved[slot];
+            ItemStack occupied = reservation == null ? receiver.getStackInSlot(slot) : reservation;
+            if (emptySlots ? !occupied.isEmpty() : !ItemHandlerHelper.canItemStacksStackRelaxed(occupied, offered)) {
+                continue;
+            }
+            // The receiver sees its original contents during simulation, so include and subtract earlier reservations.
+            int prior = reservation == null ? 0 : reservation.getCount();
+            int attempt = (int) Math.min(Integer.MAX_VALUE, (long) prior + remaining);
+            ItemStack rejected = receiver.insertItem(slot, offered.copyWithCount(attempt), true);
+            int accepted = attempt - rejected.getCount() - prior;
+            if (accepted > 0) {
+                reserved[slot] = offered.copyWithCount(prior + accepted);
+                remaining -= accepted;
+            }
+        }
+        return remaining;
     }
 
     private CraftResult craft(ServerLevel server, ItemStack input) {
