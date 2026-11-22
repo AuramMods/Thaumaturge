@@ -41,7 +41,7 @@ public final class RegionalBiomeSource extends BiomeSource {
 
     @Override
     protected Codec<? extends BiomeSource> codec() {
-        // The noise generator's codec serializes the delegate. Rebuild the runtime view after loading.
+        // The dispatch codec serializes the delegate. Rebuild the runtime view after loading.
         throw new UnsupportedOperationException("Regional biome source is only installed at world startup");
     }
 
