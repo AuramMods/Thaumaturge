@@ -147,7 +147,8 @@
     "client.veil.VeilImGuiGlfwMixin",
     "client.veil.VeilImGuiNativesMixin",
     "client.veil.VeilShaderManagerMixin",
-    "client.veil.VeilScreenShaderMixin"
+    "client.veil.VeilScreenShaderMixin",
+    "client.dh.LegacyFogShaderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

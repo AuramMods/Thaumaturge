@@ -28,6 +28,8 @@ public class TTMixinPlugin implements IMixinConfigPlugin {
             return FMLLoader.getLoadingModList().getModFileById(TTIds.FTB_LIBRARY) != null;
         if (mixinClassName.contains(".kubejs."))
             return FMLLoader.getLoadingModList().getModFileById("kubejs") != null;
+        if (mixinClassName.contains(".dh."))
+            return FMLLoader.getLoadingModList().getModFileById(TTIds.DISTANT_HORIZONS) != null;
         if (mixinClassName.contains(".jade."))
             return FMLLoader.getLoadingModList().getModFileById(TTIds.JADE) != null
                     && FMLLoader.getLoadingModList().getModFileById(TTIds.SABLE) != null;

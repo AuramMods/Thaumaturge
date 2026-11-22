@@ -8,7 +8,7 @@ Place these three runtime JARs in the instance's `mods` directory. For multiplay
 
 | Required mod | Tested version |
 | --- | --- |
-| Thaumaturge | `thaumaturge-1.1.2.jar` |
+| Thaumaturge | `thaumaturge-1.1.3.jar` |
 | Curios API | [5.14.1+1.20.1](https://modrinth.com/mod/curios/version/5.14.1%2B1.20.1) |
 | Lithostitched | [1.4.11-forge-1.20](https://modrinth.com/mod/lithostitched/version/srPoHKt8) |
 
@@ -29,13 +29,13 @@ From a checkout of the `1.20.1` branch, use a Java 17 JDK and the Gradle wrapper
 ./gradlew jarJar
 ```
 
-The distributable is `build/libs/thaumaturge-1.1.2-mc1.20.1-forge.jar`. On macOS, calculate its SHA-256 with the following command. On Linux, use `sha256sum` with the same path.
+The distributable is `build/libs/thaumaturge-1.1.3-mc1.20.1-forge.jar`. On macOS, calculate its SHA-256 with the following command. On Linux, use `sha256sum` with the same path.
 
 ```sh
-shasum -a 256 build/libs/thaumaturge-1.1.2-mc1.20.1-forge.jar
+shasum -a 256 build/libs/thaumaturge-1.1.3-mc1.20.1-forge.jar
 ```
 
-Rebuilds can differ in ZIP timestamps even when every payload is identical. [Auram compatibility results](PORTING_1.20.1.md#cycle-439-auram-dependency-compatibility)
+Rebuilds can differ in ZIP timestamps even when every payload is identical. [Auram compatibility results](PORTING_1.20.1.md#cycle-439-auram-dependency-compatibility), [Distant Horizons client verification](PORTING_1.20.1.md#cycle-440-distant-horizons-client-compatibility)
 
 ## Verify
 
