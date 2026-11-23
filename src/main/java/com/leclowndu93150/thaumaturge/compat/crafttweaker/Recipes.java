@@ -3,10 +3,15 @@ package com.leclowndu93150.thaumaturge.compat.crafttweaker;
 import com.blamejared.crafttweaker.api.CraftTweakerAPI;
 import com.blamejared.crafttweaker.api.CraftTweakerConstants;
 import com.blamejared.crafttweaker.api.action.recipe.ActionAddRecipe;
+import com.blamejared.crafttweaker.api.ingredient.IIngredient;
+import com.blamejared.crafttweaker.api.item.IItemStack;
 import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
+import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
+import com.leclowndu93150.thaumaturge.serialization.IngredientCodecs;
 import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
@@ -16,6 +21,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 
 final class Recipes {
     private Recipes() {}
@@ -23,6 +29,27 @@ final class Recipes {
     static RegistryAccess registries() {
         // CraftTweaker binds the registry access of the resources currently being loaded.
         return CraftTweakerAPI.getAccessibleElementsProvider().server().registryAccess();
+    }
+
+    static JsonObject recipe(RecipeSerializer<?> serializer, ResearchRequirement research) {
+        var json = new JsonObject();
+        json.addProperty("type", BuiltInRegistries.RECIPE_SERIALIZER.getKey(serializer).toString());
+        if (research != null) json.add("research", research.definition());
+        return json;
+    }
+
+    static JsonElement ingredient(IIngredient ingredient) {
+        return encode(IngredientCodecs.CODEC, ingredient.asVanillaIngredient());
+    }
+
+    static JsonArray ingredients(IIngredient[] ingredients) {
+        var json = new JsonArray();
+        for (IIngredient ingredient : ingredients) json.add(ingredient(ingredient));
+        return json;
+    }
+
+    static JsonElement stack(IItemStack stack) {
+        return encode(ItemStackCodecs.CODEC, stack.getInternal());
     }
 
     static <T extends Recipe<?>> void add(IRecipeManager<T> manager, String name, JsonObject definition) {

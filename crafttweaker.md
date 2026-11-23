@@ -8,11 +8,11 @@ This table identifies the server code and data used by each processing path. The
 
 | Processing | Native input and execution | Scripting | Stage and verification work |
 | --- | --- | --- | --- |
-| Arcane Workbench | Shaped and shapeless serializers share `thaumaturge:arcane_workbench`. `ArcaneCraftingTransactions` supplies the menu and external crafting API. The menu also handles ordinary crafting. | Typed managers and native JSON pending. Ordinary recipes use CraftTweaker's crafting manager. | Check player preview, result pickup, shift crafting, and external transactions with equal recipe inputs and different permissions. |
-| Crucible | `thaumaturge:crucible` selects a catalyst and pays from dissolved aspects. The Crucible also converts items into their authored or derived aspects. | Typed recipe manager and native JSON under verification. Aspect mapping pending. | Verify exact catalyst, aspect payment, output, and denial behavior. |
+| Arcane Workbench | Shaped and shapeless serializers share `thaumaturge:arcane_workbench`. `ArcaneCraftingTransactions` supplies the menu and external crafting API. The menu also handles ordinary crafting. | `addShaped`, `addShapeless`, and native JSON. Ordinary recipes use CraftTweaker's crafting manager. | Check player preview, result pickup, shift crafting, and external transactions with equal recipe inputs and different permissions. |
+| Crucible | `thaumaturge:crucible` selects a catalyst and pays from dissolved aspects. The Crucible also converts items into their authored or derived aspects. | `addRecipe` and native JSON. Aspect mapping pending. | Verify exact catalyst, aspect payment, output, and denial behavior. |
 | Thaumatorium | Uses the same Crucible recipe IDs. `BlockEntityThaumatorium` queues recipes, tracks requesters, and pulls essentia before completion. | Uses the Crucible manager. Machine rules pending. | Verify queue selection, owner eligibility, stage changes, and saved payment across reload and restart. |
-| Infusion Matrix | `thaumaturge:infusion`, `thaumaturge:infusion_enchantment`, and `thaumaturge:runic_augment` use `InfusionRecipeMatcher` and the matrix job. Item infusion can output a new stack or modify the existing catalyst. | Typed managers, native JSON, and infusion modifier maps pending. | Verify each variant, pedestal counts, instability, per-level costs, continuation, and dynamic output state. |
-| Salis Mundus | `SalisMundusItem` selects `thaumaturge:dust_trigger`. The simple, tag, and multiblock serializers share this recipe type. A multiblock references the Blueprint registry. | Typed managers, blueprint data, and native JSON pending. | Verify block, tag and rotated blueprint transformations and the delayed replacement queue. |
+| Infusion Matrix | `thaumaturge:infusion`, `thaumaturge:infusion_enchantment`, and `thaumaturge:runic_augment` use `InfusionRecipeMatcher` and the matrix job. Item infusion can output a new stack or modify the existing catalyst. | Each manager has `addRecipe` and native JSON. Item infusion also has `addCatalystPatch`. Infusion modifier map edits pending. | Verify each variant, pedestal counts, instability, per-level costs, continuation, and dynamic output state. |
+| Salis Mundus | `SalisMundusItem` selects `thaumaturge:dust_trigger`. The simple, tag, and multiblock serializers share this recipe type. A multiblock references the Blueprint registry. | `addBlock`, `addBlockTag`, `addMultiblock`, and native JSON. Blueprint edits pending. | Verify block, tag and rotated blueprint transformations and the delayed replacement queue. |
 | Special crafting | The crafting table uses Salis Mundus mixing, label filtering, and Primordial Pearl repair through Thaumaturge's special serializers. | Verify ordinary crafting manager operations and serializer-backed definitions. | Verify dynamic stack output and remainders with the pack's RecipeStages integration. |
 | Alchemical Furnaces | `BlockEntitySmelter` and `BlockEntityAdvancedAlchemicalFurnace` distill item aspects. They use fuel or external power and output essentia. | Aspect maps and machine rules pending. | Verify tag-driven input changes, capacity, output transfer, and the actor policy. |
 | Essentia Crystalizer | `BlockEntityEssentiaCrystalizer` converts a measured amount of one aspect into its crystal. | Aspect selection and conversion rule pending. | Verify the accepted aspect, exact cost, and full output behavior. |
@@ -24,6 +24,23 @@ This table identifies the server code and data used by each processing path. The
 | Spa | `BlockEntitySpa` places a fluid source and combines bath salts with water for purifying fluid. | Typed fluid and item rules pending. | Verify tank and item counts, source placement, and cancellation. |
 | Potion Sprayer | `BlockEntityPotionSprayer` uses `PotionAspects` to derive costs from potion brewing inputs and prepares doses for spraying. | Brewing manager and potion cost rules pending. | Verify altered inputs and the cost of a delivered dose. |
 | Other conversions and progression | Audit the Condenser, Flux Scrubber, Vis Generator, node jarring, Pech exchanges, crafting from research data, spell casting, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
+
+## Recipe manager methods
+
+Each manager can look up recipes by ID or remove them with CraftTweaker's standard `removeByName` method. `definition(id)` returns the recipe's JSON. `addJsonRecipe(name, data)` accepts a ZenScript data map, and `addJson(name, json)` accepts a JSON string. `replaceRecipe(id, data)` replaces a recipe of the same type after validating the replacement. Arcane Workbench and dust-trigger JSON must include `type` because each manager has more than one serializer.
+
+All typed methods accept a final optional `ResearchRequirement`. Use `ResearchRequirement.entry(id)` for a completed entry, `ResearchRequirement.stage(id, stage)` for a numbered stage, or call `.negated()` on either condition. Use `new AspectAmount(id, amount)` for each aspect cost. The shapes in the table use the same argument order as the methods.
+
+| Recipe manager | Typed methods and arguments |
+| --- | --- |
+| `<recipetype:thaumaturge:arcane_workbench>` | `addShaped(name, output, vis, crystals, pattern, key, research?)` · `addShapeless(name, output, vis, crystals, ingredients, research?)` |
+| `<recipetype:thaumaturge:crucible>` | `addRecipe(name, output, catalyst, aspects, research?)` |
+| `<recipetype:thaumaturge:infusion>` | `addRecipe(name, output, catalyst, components, aspects, instability, research?)` · `addCatalystPatch(name, patch, catalyst, components, aspects, instability, research?)` |
+| `<recipetype:thaumaturge:infusion_enchantment>` | `addRecipe(name, enchantment, displayCatalyst, components, aspects, research?)` |
+| `<recipetype:thaumaturge:runic_augment>` | `addRecipe(name, displayCatalyst, components, perLevel, aspects, research?)` |
+| `<recipetype:thaumaturge:dust_trigger>` | `addBlock(name, output, block, research?)` · `addBlockTag(name, output, tag, research?)` · `addMultiblock(name, output, blueprintId, research?)` |
+
+The [processing fixture](porting/testing/crafttweaker/processing.zs) shows each typed method. In the shaped recipe key, cast item stacks to `IIngredient` so ZenCode resolves the map's type. For a recipe with an input-dependent result, use its ID when removing it.
 
 ## Crucible and Thaumatorium recipes
 
