@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.recipe.RegistryRecipe;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import java.util.List;
 import net.minecraft.core.HolderLookup;
@@ -18,6 +19,11 @@ public interface InfusionJobRecipe extends IInfusionRecipe, RegistryRecipe<Infus
 
     default AspectList jobEssentia(InfusionInput input) {
         return aspects();
+    }
+
+    default AspectRequirements jobAspectRequirements(InfusionInput input) {
+        var requirements = aspectRequirements();
+        return requirements.hasTags() ? requirements : AspectRequirements.fixed(jobEssentia(input));
     }
 
     default int jobInstability(InfusionInput input) {

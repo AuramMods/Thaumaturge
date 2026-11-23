@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
@@ -33,7 +34,7 @@ public final class InfusionRecipe extends AbstractRecipe<InfusionInput> implemen
     public static final MapCodec<InfusionRecipe> MAP_CODEC = Codecs.validate(RecordCodecBuilder.<InfusionRecipe>mapCodec(i -> i.group(
                             IngredientCodecs.CODEC.fieldOf("catalyst").forGetter(r -> r.catalyst),
                             Codecs.list(IngredientCodecs.CODEC, 1, 64).fieldOf("components").forGetter(r -> r.components),
-                            AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
+                            AspectRequirements.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
                             Codecs.optionalFieldOf(Codec.intRange(0, 100), "instability", 0)
                                     .forGetter(r -> r.instability),
                             Codecs.optionalFieldOf(ItemStackCodecs.CODEC, "result").forGetter(r -> r.result),
@@ -57,7 +58,7 @@ public final class InfusionRecipe extends AbstractRecipe<InfusionInput> implemen
             (buffer, recipe) -> {
                 VanillaStreamCodecs.INGREDIENT.encode(buffer, recipe.catalyst);
                 COMPONENTS_STREAM_CODEC.encode(buffer, recipe.components);
-                AspectList.STREAM_CODEC.encode(buffer, recipe.aspects);
+                AspectRequirements.STREAM_CODEC.encode(buffer, recipe.aspects);
                 ByteBufCodecs.VAR_INT.encode(buffer, recipe.instability);
                 RESULT_STREAM_CODEC.encode(buffer, recipe.result);
                 PATCH_STREAM_CODEC.encode(buffer, recipe.catalystPatch);
@@ -66,7 +67,7 @@ public final class InfusionRecipe extends AbstractRecipe<InfusionInput> implemen
             buffer -> new InfusionRecipe(
                     VanillaStreamCodecs.INGREDIENT.decode(buffer),
                     COMPONENTS_STREAM_CODEC.decode(buffer),
-                    AspectList.STREAM_CODEC.decode(buffer),
+                    AspectRequirements.STREAM_CODEC.decode(buffer),
                     ByteBufCodecs.VAR_INT.decode(buffer),
                     RESULT_STREAM_CODEC.decode(buffer),
                     PATCH_STREAM_CODEC.decode(buffer),
@@ -77,7 +78,7 @@ public final class InfusionRecipe extends AbstractRecipe<InfusionInput> implemen
 
     private final Ingredient catalyst;
     private final List<Ingredient> components;
-    private final AspectList aspects;
+    private final AspectRequirements aspects;
     private final int instability;
     private final Optional<ItemStack> result;
     private final Optional<ItemDataPatch> catalystPatch;
@@ -97,6 +98,17 @@ public final class InfusionRecipe extends AbstractRecipe<InfusionInput> implemen
             Ingredient catalyst,
             List<Ingredient> components,
             AspectList aspects,
+            int instability,
+            Optional<ItemStack> result,
+            Optional<ItemDataPatch> catalystPatch,
+            Optional<ResearchGate> research) {
+        this(catalyst, components, AspectRequirements.fixed(aspects), instability, result, catalystPatch, research);
+    }
+
+    public InfusionRecipe(
+            Ingredient catalyst,
+            List<Ingredient> components,
+            AspectRequirements aspects,
             int instability,
             Optional<ItemStack> result,
             Optional<ItemDataPatch> catalystPatch,
@@ -130,6 +142,11 @@ public final class InfusionRecipe extends AbstractRecipe<InfusionInput> implemen
 
     @Override
     public AspectList aspects() {
+        return aspects.fixed();
+    }
+
+    @Override
+    public AspectRequirements aspectRequirements() {
         return aspects;
     }
 

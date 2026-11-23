@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectSource;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaAccess;
@@ -11,7 +13,9 @@ import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
@@ -94,6 +98,26 @@ public final class EssentiaSources {
         return fail(now);
     }
 
+    AspectList available(ServerLevel level, AspectRequirements.Resolved requirements) {
+        if (cache == null) {
+            cache = scan(level);
+        }
+        var seen = Collections.newSetFromMap(new IdentityHashMap<IAspectSource, Boolean>());
+        List<Holder<IAspect>> choices = requirements.choices();
+        int maximum = requirements.amount();
+        AspectList available = AspectList.EMPTY;
+        for (BlockPos pos : cache) {
+            var source = findSource(level, pos);
+            if (source == null || source.isBlocked() || !seen.add(source)) continue;
+            AspectList contents = source.getAspects();
+            for (Holder<IAspect> aspect : choices) {
+                int amount = Math.min(maximum - available.amountOf(aspect), contents.amountOf(aspect));
+                if (amount > 0) available = available.add(aspect, amount);
+            }
+        }
+        return available;
+    }
+
     public boolean insert(ServerLevel level, Holder<IAspect> aspect, int extend) {
         long now = level.getGameTime();
         if (now < retryAfter) {
@@ -153,9 +177,8 @@ public final class EssentiaSources {
         }
         List<Candidate> candidates = new ArrayList<>(cache.size());
         for (BlockPos pos : cache) {
-            if (LoadedChunks.contains(level, pos)
-                    && LevelSpaces.withinCube(level, owner, pos, range)
-                    && BlockCapabilityAccess.find(level, pos, AspectCapabilities.CONTAINER, null) instanceof IAspectSource source) {
+            var source = findSource(level, pos);
+            if (source != null) {
                 candidates.add(new Candidate(
                         pos,
                         source,
@@ -166,6 +189,12 @@ public final class EssentiaSources {
             }
         }
         return candidates;
+    }
+
+    private @Nullable IAspectSource findSource(ServerLevel level, BlockPos pos) {
+        if (!LoadedChunks.contains(level, pos) || !LevelSpaces.withinCube(level, owner, pos, range)) return null;
+        return BlockCapabilityAccess.find(level, pos, AspectCapabilities.CONTAINER, null)
+                instanceof IAspectSource source ? source : null;
     }
 
     private static int suction(ServerLevel level, BlockPos pos, Holder<IAspect> aspect) {

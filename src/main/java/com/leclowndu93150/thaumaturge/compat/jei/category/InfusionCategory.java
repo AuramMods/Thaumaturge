@@ -1,19 +1,14 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
-import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientRenderer;
-import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
 import com.leclowndu93150.thaumaturge.compat.jei.utils.ResearchUtils;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionEnchantmentRecipe;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRecipe;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRunicAugmentRecipe;
-import com.leclowndu93150.thaumaturge.content.item.PhialItem;
 import com.leclowndu93150.thaumaturge.content.spell.item.SpellPartIngredient;
-import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.Optional;
@@ -24,7 +19,6 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
@@ -132,19 +126,7 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
             currentRotation += (360f / recipe.components().size());
         }
 
-        int center = (recipe.aspects().size() * SPACE) / 2;
-        int x = 0;
-        for (AspectInstance aspect : recipe.aspects().sortedByAmount()) {
-            builder.addInputSlot(30 + ASPECT_X - center + x * SPACE, ASPECT_Y)
-                    .setCustomRenderer(AspectIngredientType.INSTANCE, AspectIngredientRenderer.INSTANCE)
-                    .addIngredient(AspectIngredientType.INSTANCE, aspect);
-
-            builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-                    .addItemStack(PhialItem.makeFilled(aspect.aspect()));
-            builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-                    .addItemStack(EssentiaCrystalFactory.of(aspect.aspect()));
-            ++x;
-        }
+        AspectCostSlots.add(builder, recipe.aspectRequirements(), 30 + ASPECT_X, ASPECT_Y, SPACE);
     }
 
     @Override

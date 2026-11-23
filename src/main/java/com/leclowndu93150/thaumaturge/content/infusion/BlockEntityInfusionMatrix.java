@@ -3,11 +3,13 @@ package com.leclowndu93150.thaumaturge.content.infusion;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
 import com.leclowndu93150.thaumaturge.api.infusion.InfusionCraftedEvent;
 import com.leclowndu93150.thaumaturge.api.items.IGogglesReadout;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
 import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import com.leclowndu93150.thaumaturge.content.aspect.ReadOnlyAspectContainer;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
@@ -85,6 +87,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
 
     private static final DecimalFormat STABILITY_FORMAT = new DecimalFormat("#######.##");
     private static final String KEY_NO_RECIPE = "message.thaumaturge.infusion.no_recipe";
+    private static final String KEY_ESSENTIA_UNAVAILABLE = "message.thaumaturge.infusion.essentia_unavailable";
     private static final String KEY_RESEARCH_LOCKED = "message.thaumaturge.infusion.research_locked";
     private static final String STABILITY_LANG_PREFIX = "gui.thaumaturge.infusion.stability.";
 
@@ -286,7 +289,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
                             Component.translatable(KEY_RESEARCH_LOCKED, researchName(level, gate.entry())), true));
             return false;
         }
-        InfusionCraftJob pendingJob = createCraftJob(match, input, env, player, level);
+        InfusionCraftJob pendingJob = createCraftJob(match, input, env, player, level, essentiaSources);
         if (pendingJob == null) {
             return false;
         }
@@ -308,30 +311,35 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
 
     static @Nullable InfusionCraftJob createCraftJob(
             InfusionRecipeMatcher.Match match, InfusionInput input, MatrixEnvironment env, Player player,
-            ServerLevel level) {
+            ServerLevel level, EssentiaSources sources) {
         InfusionJobRecipe recipe = match.recipe();
         List<ItemStack> ingredients = recipe.jobComponents(input);
         if (ingredients == null) {
             return null;
         }
-        AspectList cost = scaledCost(env, recipe.jobEssentia(input));
+        AspectList cost = resolveCost(level, env, recipe, input, sources);
+        if (cost == null) {
+            player.displayClientMessage(Component.translatable(KEY_ESSENTIA_UNAVAILABLE), true);
+            return null;
+        }
+        var target = StageTarget.recipe(StageTarget.INFUSION, match.holder().id());
         return new InfusionCraftJob(
                 ingredients,
                 cost,
                 recipe.jobResult(input, level.getRandom(), level.registryAccess()),
                 input.catalyst().copyWithCount(1),
                 recipe.jobInstability(input),
-                Optional.of(player.getUUID()),
+                StageAuthorization.capture(level, target, player).player(),
                 cost,
-                Optional.of(StageTarget.recipe(StageTarget.INFUSION, match.holder().id())));
+                Optional.of(target));
     }
 
     InfusionInput stagedInput(ServerLevel level) {
         return stagedInput(level, environmentSnapshot(level));
     }
 
-    AspectList projectedCost(ServerLevel level, AspectList essentia) {
-        return scaledCost(environmentSnapshot(level), essentia);
+    @Nullable AspectList projectedCost(ServerLevel level, InfusionJobRecipe recipe, InfusionInput input) {
+        return resolveCost(level, environmentSnapshot(level), recipe, input, new EssentiaSources(worldPosition));
     }
 
     private MatrixEnvironment environmentSnapshot(ServerLevel level) {
@@ -349,16 +357,20 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
         return new InfusionInput(pedestalItem(level, centralPedestal()), components);
     }
 
-    private static AspectList scaledCost(MatrixEnvironment env, AspectList essentia) {
-        float costMult = Math.max(MIN_COST_MULT, env.costMult());
-        AspectList scaled = AspectList.EMPTY;
-        for (AspectInstance instance : essentia.entries()) {
-            int amount = (int) (instance.amount() * costMult);
-            if (amount > 0) {
-                scaled = scaled.add(instance.aspect(), amount);
-            }
+    private static @Nullable AspectList resolveCost(ServerLevel level, MatrixEnvironment env, InfusionJobRecipe recipe,
+            InfusionInput input, EssentiaSources sources) {
+        AspectRequirements cost;
+        try {
+            float costMult = Math.max(MIN_COST_MULT, env.costMult());
+            cost = recipe.jobAspectRequirements(input).mapAmounts(amount -> (int) (amount * costMult));
+        } catch (IllegalArgumentException ex) {
+            return null;
         }
-        return scaled;
+        if (!cost.hasTags()) return cost.fixed();
+        var requirements = cost.resolve(level.registryAccess());
+        if (requirements.hasEmptyDemand()) return null;
+        AspectList payment = requirements.payment(sources.available(level, requirements));
+        return payment.totalAmount() == requirements.amount() ? payment : null;
     }
 
     static ItemStack preserveCatalystDamage(ItemStack result, ItemStack catalyst) {

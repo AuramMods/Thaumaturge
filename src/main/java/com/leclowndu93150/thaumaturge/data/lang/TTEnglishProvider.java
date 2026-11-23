@@ -183,6 +183,7 @@ public final class TTEnglishProvider extends LanguageProvider {
                 "message.thaumaturge.infusion.no_recipe",
                 "No matching infusion recipe. Check the center item and the ingredients on the side pedestals.");
         add("message.thaumaturge.infusion.research_locked", "This infusion needs the research \"%s\" first.");
+        add("message.thaumaturge.infusion.essentia_unavailable", "Nearby essentia sources cannot supply this infusion's cost.");
         add("message.thaumaturge.stage.locked", "Your GameStages progression locks this recipe.");
         add("message.thaumaturge.stage.all", "Requires all of these stages: %s");
         add("message.thaumaturge.stage.any", "Requires one of these stages: %s");

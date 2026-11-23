@@ -28,3 +28,5 @@ Stages.requireId(<resource:thaumaturge:pattern_crafter>, <resource:crafttweaker:
     StageRequirement.allOf(["pattern_work"]));
 Stages.requireId(<resource:thaumaturge:infernal_furnace>, <resource:crafttweaker:infernal_probe>,
     StageRequirement.allOf(["infernal_work"]));
+Stages.requireId(<resource:thaumaturge:infusion>, <resource:crafttweaker:tagged_matrix>,
+    StageRequirement.allOf(["tagged_infusion"]));

@@ -1,17 +1,11 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
-import com.leclowndu93150.thaumaturge.compat.jei.ThaumaturgeJEIPlugin;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
-import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientRenderer;
-import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
 import com.leclowndu93150.thaumaturge.compat.jei.utils.ResearchUtils;
-import com.leclowndu93150.thaumaturge.content.item.PhialItem;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
-import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.Optional;
@@ -21,7 +15,6 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
@@ -92,40 +85,7 @@ public final class CrucibleCategory implements IRecipeCategory<CrucibleRecipe> {
         builder.addOutputSlot(55, 8).addItemStack(recipe.rawResult());
         builder.addInputSlot(2, 2).addIngredients(recipe.catalyst());
 
-        if (recipe.requirements().hasTags()) {
-            var demands = recipe.requirements().resolve(ThaumaturgeJEIPlugin.clientRegistryAccess()).demands();
-            int center = (demands.size() * SPACE) / 2;
-            for (int index = 0; index < demands.size(); index++) {
-                var demand = demands.get(index);
-                var choices = demand.choices().stream().map(aspect -> new AspectInstance(aspect, demand.amount()))
-                        .toList();
-                var slot = builder.addInputSlot(ASPECT_X - center + index * SPACE, ASPECT_Y)
-                        .setCustomRenderer(AspectIngredientType.INSTANCE, AspectIngredientRenderer.INSTANCE)
-                        .addIngredients(AspectIngredientType.INSTANCE, choices);
-                demand.tag().ifPresent(tag -> slot.addRichTooltipCallback((view, tooltip) ->
-                        tooltip.add(Component.literal("#" + tag.location() + " ×" + demand.amount()))));
-                for (AspectInstance choice : choices) addUsages(builder, choice);
-            }
-            return;
-        }
-        int center = (recipe.aspects().size() * SPACE) / 2;
-        int x = 0;
-
-        for (AspectInstance instance : recipe.aspects().sortedByAmount()) {
-            builder.addInputSlot(ASPECT_X - center + x * SPACE, ASPECT_Y)
-                    .setCustomRenderer(AspectIngredientType.INSTANCE, AspectIngredientRenderer.INSTANCE)
-                    .addIngredient(AspectIngredientType.INSTANCE, instance);
-
-            addUsages(builder, instance);
-            x += 1;
-        }
-    }
-
-    private static void addUsages(IRecipeLayoutBuilder builder, AspectInstance instance) {
-        builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-                .addItemStack(PhialItem.makeFilled(instance.aspect()));
-        builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-                .addItemStack(EssentiaCrystalFactory.of(instance.aspect()));
+        AspectCostSlots.add(builder, recipe.requirements(), ASPECT_X, ASPECT_Y, SPACE);
     }
 
     @Override

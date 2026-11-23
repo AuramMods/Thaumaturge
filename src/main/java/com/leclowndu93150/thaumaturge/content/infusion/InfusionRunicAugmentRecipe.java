@@ -7,8 +7,8 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
-import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -39,7 +39,7 @@ public final class InfusionRunicAugmentRecipe extends AbstractRecipe<InfusionInp
     public static final MapCodec<InfusionRunicAugmentRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     Codecs.list(IngredientCodecs.CODEC, 1, 64).fieldOf("components").forGetter(r -> r.baseComponents),
                     IngredientCodecs.CODEC.fieldOf("per_level").forGetter(r -> r.perLevel),
-                    AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.baseAspects),
+                    AspectRequirements.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.baseAspects),
                     IngredientCodecs.CODEC.fieldOf("display_catalyst").forGetter(r -> r.displayCatalyst),
                     Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))
             .apply(i, InfusionRunicAugmentRecipe::new));
@@ -50,7 +50,7 @@ public final class InfusionRunicAugmentRecipe extends AbstractRecipe<InfusionInp
                     r -> r.baseComponents,
                     VanillaStreamCodecs.INGREDIENT,
                     r -> r.perLevel,
-                    AspectList.STREAM_CODEC,
+                    AspectRequirements.STREAM_CODEC,
                     r -> r.baseAspects,
                     VanillaStreamCodecs.INGREDIENT,
                     r -> r.displayCatalyst,
@@ -63,7 +63,7 @@ public final class InfusionRunicAugmentRecipe extends AbstractRecipe<InfusionInp
 
     private final List<Ingredient> baseComponents;
     private final Ingredient perLevel;
-    private final AspectList baseAspects;
+    private final AspectRequirements baseAspects;
     private final Ingredient displayCatalyst;
     private final Optional<ResearchGate> research;
 
@@ -71,6 +71,15 @@ public final class InfusionRunicAugmentRecipe extends AbstractRecipe<InfusionInp
             List<Ingredient> baseComponents,
             Ingredient perLevel,
             AspectList baseAspects,
+            Ingredient displayCatalyst,
+            Optional<ResearchGate> research) {
+        this(baseComponents, perLevel, AspectRequirements.fixed(baseAspects), displayCatalyst, research);
+    }
+
+    public InfusionRunicAugmentRecipe(
+            List<Ingredient> baseComponents,
+            Ingredient perLevel,
+            AspectRequirements baseAspects,
             Ingredient displayCatalyst,
             Optional<ResearchGate> research) {
         this.baseComponents = List.copyOf(baseComponents);
@@ -125,15 +134,12 @@ public final class InfusionRunicAugmentRecipe extends AbstractRecipe<InfusionInp
     }
 
     public AspectList scaledAspects(ItemStack catalyst) {
+        return scaledRequirements(catalyst).fixed();
+    }
+
+    private AspectRequirements scaledRequirements(ItemStack catalyst) {
         double factor = (1.0 + Math.pow(2.0, charge(catalyst))) / 2.0;
-        AspectList out = AspectList.EMPTY;
-        for (AspectInstance instance : baseAspects.entries()) {
-            int amount = (int) (instance.amount() * factor);
-            if (amount > 0) {
-                out = out.add(instance.aspect(), amount);
-            }
-        }
-        return out;
+        return baseAspects.mapAmounts(amount -> (int) (amount * factor));
     }
 
     public int scaledInstability(ItemStack catalyst) {
@@ -166,6 +172,11 @@ public final class InfusionRunicAugmentRecipe extends AbstractRecipe<InfusionInp
 
     @Override
     public AspectList aspects() {
+        return baseAspects.fixed();
+    }
+
+    @Override
+    public AspectRequirements aspectRequirements() {
         return baseAspects;
     }
 
@@ -234,6 +245,11 @@ public final class InfusionRunicAugmentRecipe extends AbstractRecipe<InfusionInp
     @Override
     public AspectList jobEssentia(InfusionInput input) {
         return scaledAspects(input.catalyst());
+    }
+
+    @Override
+    public AspectRequirements jobAspectRequirements(InfusionInput input) {
+        return scaledRequirements(input.catalyst());
     }
 
     @Override

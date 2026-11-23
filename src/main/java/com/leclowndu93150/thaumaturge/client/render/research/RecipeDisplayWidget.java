@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintPart;
@@ -282,30 +283,12 @@ public final class RecipeDisplayWidget {
         int cy = y + CENTER_OFFSET;
         Recipe<?> recipeValue = holder.value();
         if (recipeValue instanceof CrucibleRecipe crucible) {
-            if (crucible.requirements().hasTags()) {
-                var demands = crucible.requirements().resolve(registries()).demands();
-                int rows = (demands.size() - 1) / 3;
-                for (int index = 0; index < demands.size(); index++) {
-                    int[] pos = aspectCell(cx + CRUCIBLE_ASPECT_X,
-                            cy + CRUCIBLE_ASPECT_Y - ASPECT_HALF_CELL * rows, index, demands.size(), 3, rows);
-                    if (!hitItem(pos[0], pos[1], mouseX, mouseY)) continue;
-
-                    var demand = demands.get(index);
-                    if (demand.tag().isPresent()) {
-                        return List.of(Component.literal("#" + demand.tag().get().location() + " ×" + demand.amount()));
-                    }
-                    var aspect = AspectTagRenderer.displayedChoice(demand);
-                    return aspect == null ? null : List.of(AspectComponents.name(aspect),
-                            AspectComponents.description(aspect));
-                }
-                return null;
-            }
-            List<AspectInstance> sorted = sortedAspects(crucible.aspects());
-            return hoverAspectGrid(cx + CRUCIBLE_ASPECT_X, cy + CRUCIBLE_ASPECT_Y, sorted, 3, mouseX, mouseY);
+            return hoverAspectRequirements(cx + CRUCIBLE_ASPECT_X, cy + CRUCIBLE_ASPECT_Y,
+                    crucible.requirements(), 3, mouseX, mouseY);
         }
         if (recipeValue instanceof IInfusionRecipe infusion) {
-            List<AspectInstance> sorted = sortedAspects(infusion.aspects());
-            return hoverAspectGrid(cx + INFUSION_ASPECT_X, cy + INFUSION_ASPECT_Y, sorted, 5, mouseX, mouseY);
+            return hoverAspectRequirements(cx + INFUSION_ASPECT_X, cy + INFUSION_ASPECT_Y,
+                    infusion.aspectRequirements(), 5, mouseX, mouseY);
         }
         Layout layout = collect(holder, registries());
         if (layout.kind != Kind.ARCANE_SHAPED && layout.kind != Kind.ARCANE_SHAPELESS) {
@@ -715,6 +698,43 @@ public final class RecipeDisplayWidget {
     private static final int ASPECT_CELL = 20;
     private static final int ASPECT_HALF_CELL = 10;
 
+    private static void drawAspectRequirements(
+            GuiGraphics graphics, Font font, int x, int y, AspectRequirements requirements, int columns) {
+        if (!requirements.hasTags()) {
+            drawAspectGrid(graphics, font, x, y, requirements.fixed(), columns);
+            return;
+        }
+        var demands = requirements.resolve(registries()).demands();
+        int rows = (demands.size() - 1) / columns;
+        for (int index = 0; index < demands.size(); index++) {
+            int[] pos = aspectCell(x, y - ASPECT_HALF_CELL * rows, index, demands.size(), columns, rows);
+            var demand = demands.get(index);
+            AspectTagRenderer.renderDemand(graphics, font, pos[0], pos[1],
+                    AspectTagRenderer.displayedChoice(demand), demand.amount());
+        }
+    }
+
+    private static @Nullable List<Component> hoverAspectRequirements(
+            int x, int y, AspectRequirements requirements, int columns, double mouseX, double mouseY) {
+        if (!requirements.hasTags()) {
+            return hoverAspectGrid(x, y, sortedAspects(requirements.fixed()), columns, mouseX, mouseY);
+        }
+        var demands = requirements.resolve(registries()).demands();
+        int rows = (demands.size() - 1) / columns;
+        for (int index = 0; index < demands.size(); index++) {
+            int[] pos = aspectCell(x, y - ASPECT_HALF_CELL * rows, index, demands.size(), columns, rows);
+            if (!hitItem(pos[0], pos[1], mouseX, mouseY)) continue;
+
+            var demand = demands.get(index);
+            if (demand.tag().isPresent()) {
+                return List.of(Component.literal("#" + demand.tag().get().location() + " ×" + demand.amount()));
+            }
+            var aspect = AspectTagRenderer.displayedChoice(demand);
+            return aspect == null ? null : List.of(AspectComponents.name(aspect), AspectComponents.description(aspect));
+        }
+        return null;
+    }
+
     private static void drawCruciblePage(GuiGraphics graphics, int cx, int cy, CrucibleRecipe display) {
         Font font = Minecraft.getInstance().font;
         drawKindLabel(graphics, font, cx, cy, "gui.thaumaturge.recipe_type.crucible");
@@ -725,19 +745,8 @@ public final class RecipeDisplayWidget {
         blitOverlay(graphics, -28, CRUCIBLE_BODY_Y, 0, 20, 56, 48);
         blitOverlay(graphics, CRUCIBLE_DRIP_X, CRUCIBLE_DRIP_Y, 100, 84, 11, 13);
         graphics.pose().popPose();
-        if (display.requirements().hasTags()) {
-            var demands = display.requirements().resolve(registries()).demands();
-            int rows = (demands.size() - 1) / 3;
-            for (int index = 0; index < demands.size(); index++) {
-                int[] pos = aspectCell(cx + CRUCIBLE_ASPECT_X,
-                        cy + CRUCIBLE_ASPECT_Y - ASPECT_HALF_CELL * rows, index, demands.size(), 3, rows);
-                var demand = demands.get(index);
-                AspectTagRenderer.renderDemand(graphics, font, pos[0], pos[1],
-                        AspectTagRenderer.displayedChoice(demand), demand.amount());
-            }
-        } else {
-            drawAspectGrid(graphics, font, cx + CRUCIBLE_ASPECT_X, cy + CRUCIBLE_ASPECT_Y, display.aspects(), 3);
-        }
+        drawAspectRequirements(graphics, font, cx + CRUCIBLE_ASPECT_X, cy + CRUCIBLE_ASPECT_Y,
+                display.requirements(), 3);
         ItemStack result = resultOf(display, registries());
         if (!result.isEmpty()) {
             drawStack(graphics, result, cx + CRUCIBLE_RESULT_X, cy + CRUCIBLE_RESULT_Y);
@@ -757,7 +766,8 @@ public final class RecipeDisplayWidget {
         blitOverlay(graphics, -28, INFUSION_HEADER_Y, 0, 3, 56, 17);
         blitOverlay(graphics, -28, INFUSION_BODY_Y, 200, 77, 56, 44);
         graphics.pose().popPose();
-        drawAspectGrid(graphics, font, cx + INFUSION_ASPECT_X, cy + INFUSION_ASPECT_Y, display.aspects(), 5);
+        drawAspectRequirements(graphics, font, cx + INFUSION_ASPECT_X, cy + INFUSION_ASPECT_Y,
+                display.aspectRequirements(), 5);
         ItemStack result = display.resultItem();
         if (!result.isEmpty()) {
             drawStack(graphics, result, cx + CRUCIBLE_RESULT_X, cy + INFUSION_RESULT_Y);

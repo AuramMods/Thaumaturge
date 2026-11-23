@@ -7,8 +7,8 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
-import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantmentHelper;
@@ -39,7 +39,7 @@ public final class InfusionEnchantmentRecipe extends AbstractRecipe<InfusionInpu
     public static final MapCodec<InfusionEnchantmentRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     InfusionEnchantment.CODEC.fieldOf("enchantment").forGetter(r -> r.enchantment),
                     Codecs.list(IngredientCodecs.CODEC, 1, 64).fieldOf("components").forGetter(r -> r.components),
-                    AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
+                    AspectRequirements.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
                     IngredientCodecs.CODEC.fieldOf("display_catalyst").forGetter(r -> r.displayCatalyst),
                     Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))
             .apply(i, InfusionEnchantmentRecipe::new));
@@ -50,7 +50,7 @@ public final class InfusionEnchantmentRecipe extends AbstractRecipe<InfusionInpu
                     r -> r.enchantment,
                     VanillaStreamCodecs.INGREDIENT.apply(ByteBufCodecs.list()),
                     r -> r.components,
-                    AspectList.STREAM_CODEC,
+                    AspectRequirements.STREAM_CODEC,
                     r -> r.aspects,
                     VanillaStreamCodecs.INGREDIENT,
                     r -> r.displayCatalyst,
@@ -63,7 +63,7 @@ public final class InfusionEnchantmentRecipe extends AbstractRecipe<InfusionInpu
 
     private final InfusionEnchantment enchantment;
     private final List<Ingredient> components;
-    private final AspectList aspects;
+    private final AspectRequirements aspects;
     private final Ingredient displayCatalyst;
     private final Optional<ResearchGate> research;
 
@@ -71,6 +71,15 @@ public final class InfusionEnchantmentRecipe extends AbstractRecipe<InfusionInpu
             InfusionEnchantment enchantment,
             List<Ingredient> components,
             AspectList aspects,
+            Ingredient displayCatalyst,
+            Optional<ResearchGate> research) {
+        this(enchantment, components, AspectRequirements.fixed(aspects), displayCatalyst, research);
+    }
+
+    public InfusionEnchantmentRecipe(
+            InfusionEnchantment enchantment,
+            List<Ingredient> components,
+            AspectRequirements aspects,
             Ingredient displayCatalyst,
             Optional<ResearchGate> research) {
         this.enchantment = enchantment;
@@ -97,21 +106,18 @@ public final class InfusionEnchantmentRecipe extends AbstractRecipe<InfusionInpu
     }
 
     public AspectList scaledAspects(ItemStack catalyst) {
+        return scaledRequirements(catalyst).fixed();
+    }
+
+    private AspectRequirements scaledRequirements(ItemStack catalyst) {
         int nextLevel = InfusionEnchantmentHelper.level(catalyst, enchantment) + 1;
         if (nextLevel > enchantment.maxLevel()) {
-            return AspectList.EMPTY;
+            return AspectRequirements.fixed(AspectList.EMPTY);
         }
         List<InfusionEnchantment> existing = InfusionEnchantmentHelper.list(catalyst);
         int others = existing.size() - (existing.contains(enchantment) ? 1 : 0);
         float modifier = nextLevel + others * OTHER_ENCHANT_COST_STEP;
-        AspectList out = AspectList.EMPTY;
-        for (AspectInstance instance : aspects.entries()) {
-            int amount = (int) (instance.amount() * modifier);
-            if (amount > 0) {
-                out = out.add(instance.aspect(), amount);
-            }
-        }
-        return out;
+        return aspects.mapAmounts(amount -> (int) (amount * modifier));
     }
 
     public ItemStack enchantedResult(ItemStack catalyst, RandomSource random) {
@@ -140,6 +146,11 @@ public final class InfusionEnchantmentRecipe extends AbstractRecipe<InfusionInpu
 
     @Override
     public AspectList aspects() {
+        return aspects.fixed();
+    }
+
+    @Override
+    public AspectRequirements aspectRequirements() {
         return aspects;
     }
 
@@ -205,6 +216,11 @@ public final class InfusionEnchantmentRecipe extends AbstractRecipe<InfusionInpu
     @Override
     public AspectList jobEssentia(InfusionInput input) {
         return scaledAspects(input.catalyst());
+    }
+
+    @Override
+    public AspectRequirements jobAspectRequirements(InfusionInput input) {
+        return scaledRequirements(input.catalyst());
     }
 
     @Override

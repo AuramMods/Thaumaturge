@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.IntUnaryOperator;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -96,6 +97,18 @@ public final class AspectRequirements {
 
     public boolean hasTags() {
         return !tagged.isEmpty();
+    }
+
+    public AspectRequirements mapAmounts(IntUnaryOperator transform) {
+        List<Either<AspectInstance, Tagged>> mapped = new ArrayList<>(entries.size());
+        for (var entry : entries) {
+            int amount = transform.applyAsInt(entry.map(AspectInstance::amount, Tagged::amount));
+            if (amount > 0) {
+                mapped.add(entry.mapBoth(exact -> new AspectInstance(exact.aspect(), amount),
+                        tag -> new Tagged(tag.key(), amount)));
+            }
+        }
+        return new AspectRequirements(mapped);
     }
 
     @Override

@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import java.util.List;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +26,7 @@ class InfusionCraftJobPlanningTest {
 
         var match = new InfusionRecipeMatcher.Match(new RecipeHolder<>(TTIds.rl("test"), recipe), false);
         assertNull(BlockEntityInfusionMatrix.createCraftJob(
-                match, input, environment, mock(Player.class), mock(ServerLevel.class)));
+                match, input, environment, mock(Player.class), mock(ServerLevel.class), new EssentiaSources(BlockPos.ZERO)));
         verify(recipe, never()).jobResult(input, null, null);
     }
 }

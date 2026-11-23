@@ -108,6 +108,8 @@ public final class InfusionCraftingTransaction {
         RESEARCH_LOCKED,
         /** A matching recipe requires a GameStages stage that the actor does not have. */
         STAGE_LOCKED,
+        /** Nearby sources cannot supply the full combination of a tagged essentia cost. */
+        ESSENTIA_UNAVAILABLE,
         /** The staged items no longer resolve to the expected recipe. */
         INGREDIENTS_CHANGED,
         /** The recipe still matched but the matrix did not start the craft. */

@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.item.ItemStack;
@@ -28,6 +29,11 @@ public interface IInfusionRecipe extends ResearchGated {
      * @return the essentia drained over the course of the craft, before cost modifiers
      */
     AspectList aspects();
+
+    /** The full essentia cost, including any aspect tag alternatives. */
+    default AspectRequirements aspectRequirements() {
+        return AspectRequirements.fixed(aspects());
+    }
 
     /**
      * @return the base instability of the craft; higher values destabilize the matrix faster

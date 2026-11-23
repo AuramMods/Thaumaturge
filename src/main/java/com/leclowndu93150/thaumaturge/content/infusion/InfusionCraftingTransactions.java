@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction.Failure;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction.Inspection;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionMatrixContext;
@@ -79,11 +80,13 @@ public final class InfusionCraftingTransactions implements InfusionCraftingTrans
         }
         ItemStack output = BlockEntityInfusionMatrix.preserveCatalystDamage(
                 recipe.assemble(input, level.registryAccess()), input.catalyst());
+        var cost = matrix.projectedCost(level, recipe, input);
         return new Inspection(
                 match.stageDenial() != null ? Failure.STAGE_LOCKED
-                        : match.researchLocked() ? Failure.RESEARCH_LOCKED : Failure.NONE,
+                        : match.researchLocked() ? Failure.RESEARCH_LOCKED
+                        : cost == null ? Failure.ESSENTIA_UNAVAILABLE : Failure.NONE,
                 match.holder().key(),
-                matrix.projectedCost(level, recipe.jobEssentia(input)),
+                cost == null ? AspectList.EMPTY : cost,
                 recipe.jobInstability(input),
                 recipe.gateStatus(player),
                 output,

@@ -11,7 +11,7 @@ This table identifies the server code and data used by each processing path. The
 | Arcane Workbench | Shaped and shapeless serializers share `thaumaturge:arcane_workbench`. `ArcaneCraftingTransactions` supplies the menu and external crafting API. The menu also handles ordinary crafting. | `addShaped`, `addShapeless`, and native JSON. Ordinary recipes use CraftTweaker's crafting manager. | Recipe stage checks run in the transaction. Verify result pickup, shift crafting, and external transactions with different permissions. |
 | Crucible | `thaumaturge:crucible` selects a catalyst and pays from dissolved aspects. The Crucible also converts items into their authored or derived aspects. | `addRecipe`, native JSON, aspect tag costs, and the base aspect data map. | Recipe stages are checked before the Crucible spends its inputs, including through the automation API. The script tests check exact payment and overlapping aspect tags. |
 | Thaumatorium | Uses the same Crucible recipe IDs. `BlockEntityThaumatorium` queues recipes, tracks requesters, and pulls essentia before completion. | Uses the Crucible manager and its aspect tag costs. Other machine rules pending. | Script GameTests cover stages, tagged capability transfers, and a queued recipe resumed from saved block data. Dedicated restart remains to be tested. |
-| Infusion Matrix | `thaumaturge:infusion`, `thaumaturge:infusion_enchantment`, and `thaumaturge:runic_augment` use `InfusionRecipeMatcher` and the matrix job. Item infusion can output a new stack or modify the existing catalyst. | Each manager has `addRecipe` and native JSON. Item infusion also has `addCatalystPatch`. Infusion modifier map edits pending. | Stage checks run at recipe selection and in-flight work. Verify each variant, costs, continuation, and dynamic output state. |
+| Infusion Matrix | `thaumaturge:infusion`, `thaumaturge:infusion_enchantment`, and `thaumaturge:runic_augment` use `InfusionRecipeMatcher` and the matrix job. Item infusion can output a new stack or modify the existing catalyst. | All three managers accept aspect tag costs. Item infusion also has `addCatalystPatch`. Block data maps configure altar modifiers. | Stage checks run at recipe selection and in-flight work. A tagged job records its concrete payment before starting. |
 | Salis Mundus | `SalisMundusItem` selects `thaumaturge:dust_trigger`. The simple, tag, and multiblock serializers share this recipe type. A multiblock references the Blueprint registry. | `addBlock`, `addBlockTag`, `addMultiblock`, and native JSON. Blueprint edits pending. | Stage GameTest covers block and tag transformations, stage revocation, and resumed placement. Verify scripted rotated blueprints. |
 | Special crafting | The crafting table uses Salis Mundus mixing, label filtering, and Primordial Pearl repair through Thaumaturge's special serializers. | Verify ordinary crafting manager operations and serializer-backed definitions. | Verify dynamic stack output and remainders with the pack's RecipeStages integration. |
 | Alchemical Furnaces | `BlockEntitySmelter` and `BlockEntityAdvancedAlchemicalFurnace` distill item aspects. They use fuel or external power and output essentia. | Aspect maps and machine rules pending. | Verify tag-driven input changes, capacity, output transfer, and the actor policy. |
@@ -178,6 +178,33 @@ ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:infernal_bo
 ```
 
 The [machine fixture](porting/testing/crafttweaker/machine-crafting.zs) uses these recipes and adds a small test blueprint for the Infernal Furnace.
+
+### Infusion essentia and altar modifiers
+
+All three infusion managers accept `AspectAmount.tag(tag, amount)` in addition to the exact `new AspectAmount(id, amount)` constructor. A tagged requirement accepts any combination of current members. The enchantment or runic level scales the base costs first, and the altar applies its cost multiplier to each resulting requirement. A positive demand with an empty tag blocks the job.
+
+The matrix checks that nearby, accessible essentia sources can satisfy the entire tagged cost. Exact and tagged demands share a single allocation so one unit only counts toward one requirement. The matrix saves that concrete allocation and drains it at the usual cadence. If a source is removed mid-job, reconnect a source of the chosen aspect to resume payment. Recipes made exclusively of exact costs can still start while their jars are empty.
+
+The block data maps `thaumaturge:infusion_pillar_set`, `thaumaturge:infusion_matrix_upgrade`, and `thaumaturge:infusion_pedestal` accept `cycle_time`, `cost`, and `stability`. These fields add to the altar's cycle interval in ticks, its cost multiplier, and the stability gained during cycles. The pillar modifier applies once for a matched set of four. The upgrade modifier applies to each block below the four corner pillars. The pedestal modifier applies to each nearby side pedestal.
+
+```zenscript
+import mods.thaumaturge.AspectAmount;
+import mods.thaumaturge.ProcessingData;
+
+val infusion = <recipetype:thaumaturge:infusion>;
+infusion.addRecipe("tagged_matrix", <item:minecraft:diamond>, <item:minecraft:packed_mud>,
+    [<item:minecraft:nether_wart>], [
+        AspectAmount.tag(<tag:thaumaturge/aspect:crafttweaker:flexible_cost>, 4),
+        AspectAmount.tag(<tag:thaumaturge/aspect:crafttweaker:probe_aspects>, 2),
+        new AspectAmount(<resource:thaumaturge:terra>, 2)
+    ], 0);
+
+ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:infusion_matrix_upgrade>, {
+    values: {"minecraft:blue_wool": {cost: 0.5, cycle_time: -4}}
+});
+```
+
+The [infusion fixture](porting/testing/crafttweaker/infusion-tags.zs) uses the aspect tags from the [tag loader fixture](porting/testing/crafttweaker/tags.zs).
 
 ## GameStages
 
