@@ -24,3 +24,7 @@ Stages.requireTag(<resource:thaumaturge:spa>, <tag:items:forge:ingots/copper>,
     StageRequirement.allOf(["spa_mix"]));
 Stages.requireId(<resource:thaumaturge:spa>, <resource:thaumaturge:spa_placement>,
     StageRequirement.allOf(["spa_placement"]));
+Stages.requireId(<resource:thaumaturge:pattern_crafter>, <resource:crafttweaker:pattern_milk>,
+    StageRequirement.allOf(["pattern_work"]));
+Stages.requireId(<resource:thaumaturge:infernal_furnace>, <resource:crafttweaker:infernal_probe>,
+    StageRequirement.allOf(["infernal_work"]));

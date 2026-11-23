@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import com.leclowndu93150.thaumaturge.stage.StageRules;
 import com.leclowndu93150.thaumaturge.stage.StageTarget;
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -40,7 +41,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity implements IEssentiaConduit {
+public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity implements IEssentiaConduit, OwnedProcessing {
     public static final int TARGET_PROGRESS = Crystallization.DEFAULT_PROGRESS;
 
     private static final String ASPECT_KEY = "Aspect";
@@ -254,7 +255,8 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
         changedForClients();
     }
 
-    void setOwner(UUID owner) {
+    @Override
+    public void setOwner(UUID owner) {
         this.owner = owner;
         setChanged();
     }

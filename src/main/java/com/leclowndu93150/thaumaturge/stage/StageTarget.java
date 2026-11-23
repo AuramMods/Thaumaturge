@@ -21,6 +21,8 @@ public record StageTarget(ResourceLocation family, Optional<ResourceLocation> id
     public static final ResourceLocation SCAN = TTIds.rl("scan");
     public static final ResourceLocation ESSENTIA_CRYSTALIZER = TTIds.rl("essentia_crystalizer");
     public static final ResourceLocation SPA = TTIds.rl("spa");
+    public static final ResourceLocation PATTERN_CRAFTER = TTIds.rl("pattern_crafter");
+    public static final ResourceLocation INFERNAL_FURNACE = TTIds.rl("infernal_furnace");
 
     public static final Codec<StageTarget> CODEC = RecordCodecBuilder.create(i -> i.group(
                     ResourceLocation.CODEC.fieldOf("family").forGetter(StageTarget::family),

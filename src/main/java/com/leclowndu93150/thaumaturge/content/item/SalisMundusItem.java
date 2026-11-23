@@ -109,7 +109,7 @@ public final class SalisMundusItem extends Item {
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        var authority = new StageAuthorization(target, player.getUUID());
+        var authority = StageAuthorization.capture(serverLevel, target, player);
         if (!trigger.isMultiblock()) {
             PendingSwap swap = result.getItem() instanceof BlockItem blockItem
                     ? PendingSwap.placeBlock(pos, clicked, blockItem.getBlock().defaultBlockState(), SWAP_DELAY_TICKS)

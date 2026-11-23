@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.stage.StageRules;
 import com.leclowndu93150.thaumaturge.stage.StageTarget;
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,7 +32,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
-public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuProvider {
+public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuProvider, OwnedProcessing {
     public static final int TANK_CAPACITY = 5000;
     private static final int WORK_INTERVAL_TICKS = 40;
     private static final int SPREAD_RADIUS = 2;
@@ -82,7 +83,8 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
         return mix;
     }
 
-    void setOwner(UUID owner) {
+    @Override
+    public void setOwner(UUID owner) {
         this.owner = owner;
         setChanged();
     }

@@ -17,8 +17,8 @@ This table identifies the server code and data used by each processing path. The
 | Alchemical Furnaces | `BlockEntitySmelter` and `BlockEntityAdvancedAlchemicalFurnace` distill item aspects. They use fuel or external power and output essentia. | Aspect maps and machine rules pending. | Verify tag-driven input changes, capacity, output transfer, and the actor policy. |
 | Essentia Crystalizer | `BlockEntityEssentiaCrystalizer` buffers one concrete aspect and converts it into a matching crystal or a scripted item output. | The `thaumaturge:crystallization` aspect data map selects costs and results by aspect ID or tag. | Stage checks run at essentia intake and before work or output. The fixture covers exact intake, stage revocation, and resuming a saved batch. |
 | Deconstruction Table | `BlockEntityDeconstructionTable` consumes an item and produces a research aspect. | Aspect mappings and any conversion override pending. | Verify consumption, the claimed result, and the research update. |
-| Infernal Furnace | `BlockEntityInfernalFurnace` uses native smelting recipes with the `InfernalBonus` data map for extra output. | Vanilla smelting manager and bonus data map. Script edits pending verification. | Verify altered smelting and bonus output, including queued input and full output. |
-| Pattern Crafter | `BlockEntityPatternCrafter` uses the ordinary crafting recipe manager and neighboring storage. | Vanilla crafting manager. Machine rules pending. | Verify changed recipes, container remainders, and denied automation. |
+| Infernal Furnace | `BlockEntityInfernalFurnace` uses native smelting recipes with the `InfernalBonus` data map for extra output. | Vanilla smelting manager and `thaumaturge:infernal_bonus` item data map. | Stage rules apply to intake and queued work via the builder or placer. |
+| Pattern Crafter | `BlockEntityPatternCrafter` uses the ordinary crafting recipe manager and neighboring storage. | Vanilla crafting manager and `thaumaturge:pattern_crafter` block data map. | Stage rules apply before charging vis or extracting crafting inputs. |
 | Golem Press | `BlockEntityGolemBuilder` assembles a configured golem from material and part definitions, then pays Machina. | Golem part and trait selectors, costs, and press rules pending. | Verify item costs, essentia costs, saved work, stage checks, and exact final golem state. |
 | Focal Manipulator | `BlockEntityFocalManipulator` validates a spell tree and charges vis against focus tiers, spell parts, and affinities. | Focus data and inscription rules pending. | Verify setup through the menu packet, an exact charge, saved completion, and casting restrictions. |
 | Spa | `BlockEntitySpa` either mixes the tank fluid with an additive or places a fluid from its tank. | The `thaumaturge:spa_mixing` and `thaumaturge:spa_placement` fluid data maps select costs and outputs by fluid or fluid tag. Mixing takes a native item ingredient. | Stage checks run before placement. The script fixture tests blocked outlets, saved contents and owner, and exact costs for both modes. |
@@ -157,6 +157,28 @@ ProcessingData.edit(<resource:minecraft:fluid>, <resource:thaumaturge:spa_placem
 
 The [Spa fixture](porting/testing/crafttweaker/spa.zs) uses 700 millibuckets of water and two copper ingots for a lava source in mixing mode. Placement mode uses 400 millibuckets of water for a water source.
 
+### Pattern Crafter and Infernal Furnace
+
+Add recipes through `craftingTable` and `furnace`. The Pattern Crafter still uses the selected pattern and a single item type, and checks space for both the result and container remainders. Edit the `thaumaturge:pattern_crafter` block data map to set `enabled` (default `true`), `interval` (default 20 ticks), or `vis` (default 1 vis per craft). Set `vis` to zero for free operation.
+
+The Infernal Furnace retains its own cook time and bellows bonuses. Change its additional outputs through the `thaumaturge:infernal_bonus` item data map. Each selector identifies the smelting input, and each bonus specifies an output item, an item list, or an item tag in `items`. `count` defaults to 1 and accepts an integer or vanilla integer provider. `chance` defaults to 1.0 and can range from 0.0 to 1.0. Normal inventory insertion and excess item ejection still apply.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+craftingTable.addShapeless("pattern_milk", <item:minecraft:diamond> * 2, [<item:minecraft:milk_bucket>]);
+furnace.addRecipe("infernal_probe", <item:minecraft:emerald> * 2, <item:minecraft:echo_shard>, 0.0f, 20);
+
+ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:pattern_crafter>, {
+    values: {"thaumaturge:pattern_crafter": {interval: 5, vis: 0.0}}
+});
+ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:infernal_bonus>, {
+    values: {"minecraft:echo_shard": [{items: "minecraft:gold_nugget", count: 3, chance: 1.0}]}
+});
+```
+
+The [machine fixture](porting/testing/crafttweaker/machine-crafting.zs) uses these recipes and adds a small test blueprint for the Infernal Furnace.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -179,6 +201,8 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:scan` | Datapack scan IDs, or the research IDs awarded by code-driven scans. Supports `thaumaturge:scan` and `thaumaturge:research_entry` selectors, plus the directly scanned target in `minecraft:block`, `minecraft:item`, or `minecraft:entity_type`. |
 | `thaumaturge:essentia_crystalizer` | The concrete input aspect ID. Supports tags and entries in `thaumaturge:aspect`. |
 | `thaumaturge:spa` | `thaumaturge:spa_mixing` or `thaumaturge:spa_placement`. Supports the actual tank fluid in `minecraft:fluid` and the mixing additive in `minecraft:item`. |
+| `thaumaturge:pattern_crafter` | Ordinary crafting recipe IDs and the actual input in `minecraft:item`. |
+| `thaumaturge:infernal_furnace` | Ordinary smelting recipe IDs and the actual input in `minecraft:item`. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -200,6 +224,8 @@ Research stage rules apply to unlocking, advancing, completing, and working on a
 The Crystalizer records the player who placed it. For restricted aspects the owner must be online and eligible for intake and progress. When the owner loses the stage, the device retains its input and work across saves. To use a restricted recipe in an older Crystalizer without a recorded owner, re-place an empty device as the intended owner.
 
 The Spa records the player who placed it and checks that owner's current stages before placing a restricted source. Players can fill the tank and load additives while placement is suspended. Re-place an empty legacy Spa to record its owner.
+
+The Pattern Crafter records its placer. The Infernal Furnace records its Salis Mundus builder or its placer when placed directly. Restricted work uses that player's current stages. The Infernal Furnace keeps its queued inputs and pauses its timer when no queued input is eligible. Re-place or reassemble empty legacy devices to record their owner.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 

@@ -7,6 +7,8 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -105,7 +107,10 @@ public final class DustTriggerTickHandler {
         BlockState resultState = entry.stateResult();
         ItemStack resultStack = entry.stackResult();
         if (resultState != null) {
-            level.setBlock(pos, resultState, 3);
+            if (level.setBlock(pos, resultState, 3)) {
+                entry.authority().flatMap(StageAuthorization::player)
+                        .ifPresent(owner -> OwnedProcessing.setAt(level, pos, owner));
+            }
         } else {
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
             if (resultStack != null && !resultStack.isEmpty()) {

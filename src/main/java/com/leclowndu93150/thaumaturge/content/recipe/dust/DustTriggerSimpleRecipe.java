@@ -99,7 +99,7 @@ public final class DustTriggerSimpleRecipe extends AbstractRecipe<DustTriggerInp
             return;
         }
         DustTriggerSwapQueue.enqueue(serverLevel, PendingSwap.dropItem(input.pos(), input.clicked(), this.result, 50)
-                .withAuthority(new StageAuthorization(target, player.getUUID())));
+                .withAuthority(StageAuthorization.capture(serverLevel, target, player)));
     }
 
     @Override

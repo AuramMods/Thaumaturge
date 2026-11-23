@@ -1,5 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
+import net.minecraft.resources.ResourceLocation;
+import org.jspecify.annotations.Nullable;
+
 import com.leclowndu93150.thaumaturge.datamap.DataMaps;
 
 import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
@@ -44,7 +50,8 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
+public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity implements OwnedProcessing {
+    private static final String OWNER_KEY = "Owner";
     private static final int ITEM_INTAKE_INTERVAL = 10;
     private static final double ITEM_HOP = 0.1;
     private static final int OUTPUT_INVENTORY_DISTANCE = 2;
@@ -54,6 +61,7 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
     private static final double ORB_RETURN_SPEED = 0.13;
     private static final double ORB_SIDE_SPEED = 0.025;
     private boolean contentsDirty = true;
+    private @Nullable UUID owner;
     private final Set<UUID> ejected = new HashSet<>();
 
     private final ItemStackHandler inventory = new ItemStackHandler(32) {
@@ -104,15 +112,28 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
     }
 
     @Override
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
+    }
+
+    @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         furnaceCookTime = input.getShort("CookTime");
         speedyTime = input.getShort("SpeedyTime");
+        owner = input.hasUUID(OWNER_KEY) ? input.getUUID(OWNER_KEY) : null;
         inventory.deserializeNBT(input.getCompound("inventory"));
     }
 
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+        writeClientData(output, registries);
+        if (owner != null) output.putUUID(OWNER_KEY, owner);
+    }
+
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         output.putShort("CookTime", (short) furnaceCookTime);
         output.putShort("SpeedyTime", (short) speedyTime);
@@ -130,6 +151,9 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
         if (facingX == -5) {
             setFacing();
         }
+
+        boolean staged = StageRules.of(serverLevel).hasRules(StageTarget.INFERNAL_FURNACE);
+        if (staged && !hasEligibleInput()) return;
 
         int previousCookTime = furnaceCookTime;
         int previousSpeedyTime = speedyTime;
@@ -152,7 +176,7 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
                     if (recipe.isPresent()) {
                         if (speedyTime > 0) speedyTime--;
 
-                        ejectItem(
+                        emitSmelting(
                                 recipe.get().assemble(new SingleRecipeInput(inputStack), level.registryAccess()),
                                 inputStack.copy(),
                                 recipe.get());
@@ -204,7 +228,7 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
 
         if (speedyTime <= 0) this.speedyTime = (int) AuraHelper.drainVis(level, getBlockPos(), 20, false);
 
-        if (this.furnaceCookTime == 0 && !cooking && contentsDirty) {
+        if (this.furnaceCookTime == 0 && !cooking && (contentsDirty || staged)) {
             contentsDirty = false;
             for (int slot = 0; slot < inventory.getSlots(); slot++) {
                 if (inventory.getStackInSlot(slot).getCount() > 0) {
@@ -248,6 +272,12 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
     }
 
     public void ejectItem(ItemStack item, ItemStack furnaceStack, AbstractCookingRecipe recipe) {
+        if (level instanceof ServerLevel server && stageAllows(server, recipe.getId(), furnaceStack)) {
+            emitSmelting(item, furnaceStack, recipe);
+        }
+    }
+
+    private void emitSmelting(ItemStack item, ItemStack furnaceStack, AbstractCookingRecipe recipe) {
         if (item == null || item.isEmpty()) return;
         if (level == null || level.isClientSide()) return;
         Direction direction =
@@ -413,10 +443,24 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
     }
 
     private Optional<AbstractCookingRecipe> getCookingRecipe(ItemStack input) {
-        if (level == null || level.isClientSide()) return Optional.empty();
-        return RecipeAccess.of(((ServerLevel) level).getRecipeManager())
+        if (!(level instanceof ServerLevel server)) return Optional.empty();
+        return RecipeAccess.of(server.getRecipeManager())
                 .getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(input), level)
+                .filter(recipe -> stageAllows(server, recipe.id(), input))
                 .map(RecipeHolder::value);
+    }
+
+    private boolean stageAllows(ServerLevel server, ResourceLocation id, ItemStack input) {
+        return StageRules.allowsOwner(server, StageTarget.recipe(StageTarget.INFERNAL_FURNACE, id)
+                .withSubject(input.getItem().builtInRegistryHolder().key()), owner);
+    }
+
+    private boolean hasEligibleInput() {
+        for (int slot = 0; slot < inventory.getSlots(); slot++) {
+            ItemStack stack = inventory.getStackInSlot(slot);
+            if (!stack.isEmpty() && canSmelt(stack)) return true;
+        }
+        return false;
     }
 
     private boolean canSmelt(ItemStack stack) {

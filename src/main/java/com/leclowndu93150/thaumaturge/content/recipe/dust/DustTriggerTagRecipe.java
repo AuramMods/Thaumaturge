@@ -111,7 +111,7 @@ public final class DustTriggerTagRecipe extends AbstractRecipe<DustTriggerInput>
             ResearchManager.complete(serverPlayer, TTIds.rl("gotthaumonomicon"));
         }
         DustTriggerSwapQueue.enqueue(serverLevel, PendingSwap.dropItem(input.pos(), input.clicked(), this.result, 50)
-                .withAuthority(new StageAuthorization(target, player.getUUID())));
+                .withAuthority(StageAuthorization.capture(serverLevel, target, player)));
     }
 
     @Override

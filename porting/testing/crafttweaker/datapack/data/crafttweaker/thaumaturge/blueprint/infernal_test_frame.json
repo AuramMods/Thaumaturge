@@ -1,0 +1,12 @@
+{
+  "keys": {
+    "D": {
+      "source": {"type": "block", "block": "minecraft:diamond_block"},
+      "target": {"type": "block", "block": "thaumaturge:infernal_furnace"}
+    }
+  },
+  "pattern": [["D"]],
+  "x_size": 1,
+  "y_size": 1,
+  "z_size": 1
+}

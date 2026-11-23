@@ -7,8 +7,11 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
+import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockEntityPatternCrafter;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEntityEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.BlockEntityThaumatorium;
+import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockEntityInfernalFurnace;
+import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockInfernalFurnace;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInput;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
@@ -22,6 +25,7 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -338,6 +342,83 @@ public final class StageGameTests {
                     "Placement spent an incorrect amount of water or additive");
             remove(test, actor);
         }).thenSucceed();
+    }
+
+    @GameTest(template = "essentia_room", batch = "crafttweaker_pattern", timeoutTicks = 120)
+    public static void patternCraftsScriptedRecipeWithItsContainerRemainder(GameTestHelper test) {
+        var actor = player(test);
+        var block = TTBlocks.PATTERN_CRAFTER.get();
+        var state = block.defaultBlockState();
+        test.setBlock(POS, state);
+        test.setBlock(POS.above(), Blocks.CHEST);
+        test.setBlock(POS.below(), Blocks.CHEST);
+        var machine = (BlockEntityPatternCrafter) test.getBlockEntity(POS);
+        var input = (ChestBlockEntity) test.getBlockEntity(POS.above());
+        var output = (ChestBlockEntity) test.getBlockEntity(POS.below());
+        block.setPlacedBy(test.getLevel(), test.absolutePos(POS), state, actor, new ItemStack(block));
+        machine.cycle();
+        input.setItem(0, new ItemStack(Items.MILK_BUCKET));
+        test.startSequence().thenIdle(12).thenExecute(() -> {
+            test.assertTrue(output.isEmpty() && input.countItem(Items.MILK_BUCKET) == 1
+                            && machine.saveWithFullMetadata().getFloat("Power") == 0,
+                    "Stage-denied crafting consumed an input or charged vis");
+            for (int slot = 0; slot < output.getContainerSize(); slot++) {
+                output.setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
+            }
+            GameStageHelper.getPlayerData(actor).addStage("pattern_work");
+        }).thenIdle(10).thenExecute(() -> {
+            test.assertTrue(input.countItem(Items.MILK_BUCKET) == 1,
+                    "The Pattern Crafter paid with a full receiver");
+            output.clearContent();
+        }).thenWaitUntil(() -> test.assertTrue(output.countItem(Items.DIAMOND) == 2,
+                "Waiting for the scripted crafting result")).thenExecute(() -> {
+            test.assertTrue(input.isEmpty() && output.countItem(Items.BUCKET) == 1,
+                    "Crafting did not spend one milk bucket and return its container");
+            remove(test, actor);
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "essentia_room", batch = "crafttweaker_infernal", timeoutTicks = 390)
+    public static void infernalUsesItsBuilderStageAndScriptedSmeltingBonus(GameTestHelper test) {
+        var actor = player(test);
+        var stages = GameStageHelper.getPlayerData(actor);
+        var block = TTBlocks.INFERNAL_FURNACE.get();
+        test.setBlock(POS, Blocks.DIAMOND_BLOCK);
+        dust(test, actor);
+        test.startSequence().thenWaitUntil(() -> test.assertBlockPresent(block, POS))
+                .thenExecute(() -> {
+                    var furnace = (BlockEntityInfernalFurnace) test.getBlockEntity(POS);
+                    test.assertTrue(furnace.saveWithFullMetadata().hasUUID("Owner")
+                                    && furnace.saveWithFullMetadata().getUUID("Owner").equals(actor.getUUID()),
+                            "The Salis blueprint did not retain the builder's verified identity");
+                    var outputPos = POS.relative(furnace.getBlockState().getValue(BlockInfernalFurnace.FACING)
+                            .getOpposite(), 2);
+                    test.setBlock(outputPos, Blocks.CHEST);
+                    var output = (ChestBlockEntity) test.getBlockEntity(outputPos);
+                    furnace.inventory().setStackInSlot(0, new ItemStack(Items.ECHO_SHARD));
+                    var remaining = new AtomicInteger();
+                    test.startSequence().thenIdle(10).thenExecute(() -> {
+                        test.assertTrue(output.isEmpty() && furnace.furnaceCookTime == 0,
+                                "The furnace worked before its builder had the recipe stage");
+                        stages.addStage("infernal_work");
+                    }).thenWaitUntil(() -> test.assertTrue(furnace.furnaceCookTime > 0,
+                            "Waiting for the staged smelting to begin")).thenExecute(() -> {
+                        stages.removeStage("infernal_work");
+                        furnace.load(furnace.saveWithFullMetadata());
+                        remaining.set(furnace.furnaceCookTime);
+                    }).thenIdle(12).thenExecute(() -> {
+                        test.assertTrue(furnace.inventory().getStackInSlot(0).is(Items.ECHO_SHARD)
+                                        && furnace.furnaceCookTime == remaining.get() && output.isEmpty(),
+                                "A saved furnace charged or progressed after its owner's stage was revoked");
+                        stages.addStage("infernal_work");
+                    }).thenWaitUntil(() -> test.assertTrue(output.countItem(Items.EMERALD) == 2
+                                    && output.countItem(Items.GOLD_NUGGET) == 3,
+                            "Waiting for exactly two emeralds and the three-nugget bonus")).thenExecute(() -> {
+                        test.assertTrue(furnace.inventory().getStackInSlot(0).isEmpty(),
+                                "The furnace kept its smelted input");
+                        remove(test, actor);
+                    }).thenSucceed();
+                });
     }
 
     private static ServerPlayer player(GameTestHelper test) {

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
 import com.leclowndu93150.thaumaturge.content.entity.EntityIgnition;
 import com.leclowndu93150.thaumaturge.serialization.EffectCodecs;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
@@ -38,6 +39,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public class BlockInfernalFurnace extends BaseEntityBlock {
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        OwnedProcessing.onPlaced(level, pos, placer);
+    }
+
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!level.isClientSide() && !state.is(newState.getBlock())) {

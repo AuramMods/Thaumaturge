@@ -149,7 +149,7 @@ public final class DustTriggerMultiblockRecipe extends AbstractRecipe<DustTrigge
         if (!StageRules.check(serverLevel, target, player)) {
             return false;
         }
-        var authority = new StageAuthorization(target, player.getUUID());
+        var authority = StageAuthorization.capture(serverLevel, target, player);
         BlockPos origin = input.pos().offset(placement.xOffset(), placement.yOffset(), placement.zOffset());
         List<BlueprintCell> cells =
                 new RotatedBlueprint(blueprint, MultiblockMatcher.rotationsFor(placement.facing())).cells();

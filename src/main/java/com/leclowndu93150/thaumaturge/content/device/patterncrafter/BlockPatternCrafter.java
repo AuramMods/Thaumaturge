@@ -1,5 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.device.patterncrafter;
 
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
@@ -99,6 +103,12 @@ public final class BlockPatternCrafter extends BaseEntityBlock implements BlockI
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BlockEntityPatternCrafter(pos, state);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        OwnedProcessing.onPlaced(level, pos, placer);
     }
 
     @Override

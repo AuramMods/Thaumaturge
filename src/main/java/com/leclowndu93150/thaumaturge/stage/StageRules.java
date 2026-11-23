@@ -61,6 +61,14 @@ public final class StageRules {
                 || allows(level, target, owner == null ? null : level.getServer().getPlayerList().getPlayer(owner));
     }
 
+    static @Nullable ServerPlayer verifiedActor(ServerLevel level, @Nullable Player player) {
+        if (!(player instanceof ServerPlayer serverPlayer) || player instanceof FakePlayer
+                || level.getServer().getPlayerList().getPlayer(player.getUUID()) != player) {
+            return null;
+        }
+        return serverPlayer;
+    }
+
     public static boolean check(ServerLevel level, StageTarget target, Player player) {
         Requirement denial = denial(level, target, player);
         if (denial == null) {
@@ -113,9 +121,11 @@ public final class StageRules {
         }
 
         private boolean satisfied(ServerLevel level, @Nullable Player player) {
-            if (!(player instanceof ServerPlayer serverPlayer) || player instanceof FakePlayer
-                    || level.getServer().getPlayerList().getPlayer(player.getUUID()) != player
-                    || !ModList.get().isLoaded("gamestages")) {
+            if (!ModList.get().isLoaded("gamestages")) {
+                return false;
+            }
+            ServerPlayer serverPlayer = verifiedActor(level, player);
+            if (serverPlayer == null) {
                 return false;
             }
             return all

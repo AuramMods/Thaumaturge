@@ -1,5 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.device.patterncrafter;
 
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
+import java.util.UUID;
+import org.jspecify.annotations.Nullable;
+
 import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
@@ -27,10 +33,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
+public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity implements OwnedProcessing {
     public static final int PATTERN_COUNT = 10;
-    private static final int WORK_INTERVAL = 20;
     private static final float VIS_DRAIN = 5.0F;
+    private static final String OWNER_KEY = "Owner";
     private static final int SPIN_EVENT = 1;
     private static final int SPIN_TICKS = 10;
     private static final int[] PATTERN_INPUT_COUNTS = {9, 1, 2, 2, 4, 3, 3, 6, 6, 8};
@@ -50,6 +56,7 @@ public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
     private byte patternType;
     private float power;
     private int counter;
+    private @Nullable UUID owner;
 
     public float rot;
     public float rotSpeed;
@@ -61,6 +68,12 @@ public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
 
     public byte patternType() {
         return patternType;
+    }
+
+    @Override
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
     }
 
     public void cycle() {
@@ -94,11 +107,14 @@ public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
             rot += rotSpeed;
             return;
         }
-        if (counter++ % WORK_INTERVAL != 0 || !state.getValue(BlockStateProperties.ENABLED)) {
+        var rules = PatternCrafterRules.of(state.getBlock());
+        if (!rules.enabled() || counter++ % rules.interval() != 0 || !state.getValue(BlockStateProperties.ENABLED)) {
             return;
         }
         ServerLevel server = (ServerLevel) level;
-        if (power <= 0.0F) {
+        boolean legacyCharging = rules == PatternCrafterRules.DEFAULT
+                && !StageRules.of(server).hasRules(StageTarget.PATTERN_CRAFTER);
+        if (legacyCharging && power <= 0.0F) {
             power += AuraHelper.drainVis(server, pos, VIS_DRAIN, false);
         }
         int inputCount = PATTERN_INPUT_COUNTS[patternType];
@@ -114,8 +130,13 @@ public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
             ItemStack removed = InvHelper.extract(above, testStack, ItemMatch.EXACT, true);
             if (removed.getCount() != inputCount) continue;
             CraftResult result = craft(server, testStack);
-            if (result == null || power < 1.0F) continue;
+            if (result == null) continue;
             if (!outputsFit(below, result.output(), result.remainders())) continue;
+            if (!legacyCharging && power < rules.vis()) {
+                power += AuraHelper.drainVis(server, pos, Math.min(VIS_DRAIN, rules.vis() - power), false);
+                setChanged();
+            }
+            if (power < rules.vis()) return;
 
             ItemStack taken = InvHelper.extract(above, testStack, ItemMatch.EXACT, false);
             if (taken.getCount() != inputCount) {
@@ -127,7 +148,7 @@ public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
                 InvHelper.eject(server, pos, Direction.DOWN, remainder);
             }
             server.blockEvent(pos, state.getBlock(), SPIN_EVENT, 0);
-            power--;
+            power -= rules.vis();
             setChanged();
             break;
         }
@@ -185,7 +206,9 @@ public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
         CraftingInput craftingInput = CraftingInput.of(3, 3, grid);
         Optional<RecipeHolder<CraftingRecipe>> match =
                 RecipeAccess.of(server.getRecipeManager()).getRecipeFor(RecipeType.CRAFTING, craftingInput, server);
-        if (match.isEmpty()) {
+        if (match.isEmpty() || !StageRules.allowsOwner(server,
+                StageTarget.recipe(StageTarget.PATTERN_CRAFTER, match.get().id())
+                        .withSubject(input.getItem().builtInRegistryHolder().key()), owner)) {
             return null;
         }
         CraftingRecipe recipe = match.get().value();
@@ -215,6 +238,12 @@ public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
 
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+        writeClientData(output, registries);
+        if (owner != null) output.putUUID(OWNER_KEY, owner);
+    }
+
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         output.putByte("Type", patternType);
         output.putFloat("Power", power);
@@ -225,6 +254,7 @@ public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
         super.loadAdditional(input, registries);
         patternType = input.getByte("Type");
         power = input.getFloat("Power");
+        owner = input.hasUUID(OWNER_KEY) ? input.getUUID(OWNER_KEY) : null;
     }
 
     private record CraftResult(ItemStack output, List<ItemStack> remainders) {}
