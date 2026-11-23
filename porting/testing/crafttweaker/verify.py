@@ -58,7 +58,8 @@ def wait_for(process, logfile, pattern, count=1):
 def verify_recipes(log):
     errors = [line for line in log.splitlines() if "[ERROR]" in line]
     assert not errors, errors
-    for marker in ("CRUCIBLE_REMOVED", "SPECIAL_REMOVED", "SPECIAL_SALIS", "SPECIAL_LABEL", "SPECIAL_PEARL"):
+    for marker in ("CRUCIBLE_REMOVED", "SPECIAL_REMOVED", "SPECIAL_SALIS", "SPECIAL_LABEL", "SPECIAL_PEARL",
+                   "TAG_ASPECT", "TAG_MATERIAL"):
         assert log.count(f"TT_{marker}=true") == 2, marker
 
     def snapshots(marker):
@@ -89,6 +90,11 @@ def verify_recipes(log):
     assert snapshots("REPLACER_JSON_COPY") == shaped
     shaped["key"]["I"] = {"item": "minecraft:copper_ingot"}
     assert snapshots("REPLACER_SHAPED") == shaped
+
+
+def verify_distillation_input(profile):
+    index = json.loads((profile / "config/thaumaturge/aspect_index.json").read_text())
+    assert index["aspects"]["minecraft:dirt"] == [{"aspect": "thaumaturge:terra", "amount": 71}]
 
 
 def main():
@@ -124,6 +130,8 @@ def main():
                     server.kill()
                     server.wait(timeout=10)
     assert server.returncode == 0 and "All dimensions are saved" in read(server_log), server.returncode
+    if not args.standalone:
+        verify_distillation_input(args.profile)
     print("Headless Forge startup and world save passed." if args.standalone else
           "CraftTweaker recipe fixtures passed at startup and after reload.")
 

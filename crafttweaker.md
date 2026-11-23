@@ -23,6 +23,7 @@ This table identifies the server code and data used by each processing path. The
 | Focal Manipulator | `BlockEntityFocalManipulator` validates a spell tree and charges vis against focus tiers, spell parts, and affinities. | Focus data and inscription rules pending. | Verify setup through the menu packet, an exact charge, saved completion, and casting restrictions. |
 | Spa | `BlockEntitySpa` places a fluid source and combines bath salts with water for purifying fluid. | Typed fluid and item rules pending. | Verify tank and item counts, source placement, and cancellation. |
 | Potion Sprayer | `BlockEntityPotionSprayer` uses `PotionAspects` to derive costs from potion brewing inputs and prepares doses for spraying. | Brewing manager and potion cost rules pending. | Verify altered inputs and the cost of a delivered dose. |
+| Wand and scepter assembly | `WandAssemblyPackResources` generates Arcane Workbench recipes from the wand cap and rod registries. | Use the Arcane Workbench manager for the generated recipe IDs. Caps and rods have typed tags. | Verify edits to generated recipes and the normal post-craft assembly hook. |
 | Other conversions and progression | Audit the Condenser, Flux Scrubber, Vis Generator, node jarring, Pech exchanges, crafting from research data, spell casting, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
 
 ## Recipe manager methods
@@ -53,6 +54,39 @@ CraftTweaker's `Replacer` can edit the item ingredients and fixed results using 
 Use `craftingTable` for ordinary crafting, `furnace` for smelting, `blastFurnace` for blasting, `smithing` for smithing, and `stoneCutter` for stonecutting. Thaumaturge's Pattern Crafter reads ordinary crafting recipes. Its Infernal Furnace reads ordinary smelting recipes.
 
 The native special crafting recipes have the IDs `thaumaturge:salis_mundus`, `thaumaturge:label_filter`, and `thaumaturge:primordial_pearl_repair`. Use `craftingTable.removeByName` to remove them. Use `craftingTable.addJsonRecipe` with the corresponding serializer ID as `type` to register the existing processing behavior under a new ID. The [special crafting fixture](porting/testing/crafttweaker/special-crafting.zs) demonstrates both operations.
+
+## Custom registry tags
+
+Use `<tag:thaumaturge/aspect:namespace:tag_name>` for aspect tags. To edit membership early, put this in a separate `.zs` file.
+
+```zenscript
+#loader tags
+
+val aspects = <tag:thaumaturge/aspect:crafttweaker:probe_aspects>;
+aspects.addId(<resource:thaumaturge:aqua>, <resource:thaumaturge:terra>);
+aspects.removeId(<resource:thaumaturge:terra>);
+```
+
+In the default loader, the same bracket returns `KnownTag<Aspect>`. Use `.contains(id)` to check membership or `.idElements` to list the member IDs. The [tag fixture](porting/testing/crafttweaker/tag-lookup.zs) shows typed lookups for aspects and golem materials. The custom registry folders include `aspect`, `blueprint`, `golem_material`, `golem_head`, `golem_arm`, `golem_leg`, `golem_addon`, `golem_trait`, `seal`, `spell_part`, `spell_affinity`, `research_entry`, `research_category`, `scan`, `wand_cap`, `wand_rod`, `labyrinth`, `labyrinth_room`, and `obelisk_site`. Prefix these folders with `thaumaturge/` in tag brackets.
+
+## Processing data maps
+
+`ProcessingData.edit(registry, map, definition)` adds a layer to an existing native data map. Pass the same `values` and `remove` fields as a datapack data-map file. A selector can be an entry ID or a tag ID prefixed with `#`. For one entry, wrap its value with `{replace: true, value: ...}` to replace the existing entry. Use top-level `replace: true` to start with an empty map before processing that layer.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:base_aspects>, {
+    values: {
+        "minecraft:dirt": {
+            replace: true,
+            value: [{aspect: "thaumaturge:terra", amount: 71}]
+        }
+    }
+});
+```
+
+Run data-map edits in the default loader. The server reads the values through the native codec and applies membership after tags bind. This example changes the base aspect value read by the processing machines. The isolated fixture verifies the edited value in the server's written aspect index after startup and datapack reload.
 
 ## Crucible and Thaumatorium recipes
 

@@ -32,6 +32,7 @@ public final class DataMapLoader implements PreparableReloadListener {
     private final ICondition.IContext conditions;
     private final DataMapCatalog catalog;
     private List<Parsed<?, ?>> prepared;
+    private final List<Parsed<?, ?>> scriptLayers = new ArrayList<>();
     private final List<String> diagnostics = new ArrayList<>();
     private record Raw(ResourceLocation path, String pack, JsonElement json) {}
     private record Parsed<R, T>(DataMapType<R, T> type, List<DataMapFile<R, T>> files) {}
@@ -80,6 +81,18 @@ public final class DataMapLoader implements PreparableReloadListener {
         return new Parsed<>(type, List.copyOf(result));
     }
 
+    /** Queues a final layer for this reload. Selectors use the tags bound at publication time. */
+    public void addScriptLayer(ResourceLocation registry, ResourceLocation id, JsonElement definition) {
+        var type = catalog.get(ResourceKey.createRegistryKey(registry), id);
+        if (type == null) throw new IllegalArgumentException("Unknown data map " + registry + "/" + id);
+        scriptLayers.add(readScriptLayer(type, definition));
+    }
+
+    private <R, T> Parsed<R, T> readScriptLayer(DataMapType<R, T> type, JsonElement definition) {
+        var ops = RegistryOps.create(JsonOps.INSTANCE, owner);
+        return new Parsed<>(type, List.of(DataMapFile.read(type, ops, definition, conditions)));
+    }
+
     /** Called after native tag rebinding, once all resource listeners have finished. */
     public void apply(RegistryAccess registries) {
         if (prepared == null) throw new IllegalStateException("Data maps have not completed resource preparation");
@@ -88,6 +101,7 @@ public final class DataMapLoader implements PreparableReloadListener {
         changes.forEach(this::publish);
         changes.forEach(change -> MinecraftForge.EVENT_BUS.post(new DataMapsUpdatedEvent(registries, change.registry(), DataMapsUpdatedEvent.UpdateCause.SERVER_RELOAD)));
         prepared = null;
+        scriptLayers.clear();
     }
 
     @SuppressWarnings("unchecked")
@@ -101,7 +115,14 @@ public final class DataMapLoader implements PreparableReloadListener {
         if (!values.isEmpty()) changes.add(new Change<>(registry, values));
     }
     private <R, T> Map<ResourceKey<R>, T> build(Registry<R> registry, Parsed<R, T> parsed) {
-        return DataMapAssembler.build(registry, parsed.type(), parsed.files(), message -> error(parsed.type().id() + ": " + message, null));
+        List<DataMapFile<R, T>> layers = new ArrayList<>(parsed.files());
+        for (var script : scriptLayers) {
+            if (script.type() != parsed.type()) continue;
+            @SuppressWarnings("unchecked")
+            var typed = (Parsed<R, T>) script;
+            layers.addAll(typed.files());
+        }
+        return DataMapAssembler.build(registry, parsed.type(), layers, message -> error(parsed.type().id() + ": " + message, null));
     }
     private <R> void publish(Change<R> change) { DataMaps.replace(change.registry(), change.values()); }
     private void error(String message, Throwable failure) {
