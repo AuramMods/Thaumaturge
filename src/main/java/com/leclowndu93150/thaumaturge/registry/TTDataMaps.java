@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.content.essentia.smeltery.DistillationRule
 import com.leclowndu93150.thaumaturge.content.golem.GolemAssemblyCosts;
 import com.leclowndu93150.thaumaturge.content.spell.manipulator.InscriptionRules;
 import com.leclowndu93150.thaumaturge.content.device.sprayer.SprayerRules;
+import com.leclowndu93150.thaumaturge.content.device.AuraMachineRules;
 import com.leclowndu93150.thaumaturge.content.research.decon.DeconstructionRules;
 import com.leclowndu93150.thaumaturge.content.spa.SpaRules;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.PatternCrafterRules;
@@ -74,5 +75,8 @@ public final class TTDataMaps {
         event.register(FocusTier.DATA_MAP);
         event.register(InscriptionRules.DATA_MAP);
         event.register(SprayerRules.DATA_MAP);
+        event.register(AuraMachineRules.CONDENSER);
+        event.register(AuraMachineRules.VIS_GENERATOR);
+        event.register(AuraMachineRules.FLUX_SCRUBBER);
     }
 }

@@ -14,6 +14,8 @@ import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,7 +41,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityCondenser extends RegistryBlockEntity implements IEssentiaConduit {
+public final class BlockEntityCondenser extends RegistryBlockEntity implements IEssentiaConduit, OwnedProcessing {
     private static final int CAPACITY = 100;
     private static final int INTAKE_INTERVAL = 5;
     private static final int RECHECK_INTERVAL = 100;
@@ -53,7 +56,6 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
     private static final float INTERVAL_PER_SCORE = 15.0F;
     private static final int MIN_INTERVAL = 5;
     private static final int BASE_COST = 4;
-    private static final float FLUX_PER_CONVERSION = 1.0F;
     private static final float UNSCANNED = -1.0F;
     private static final int ABSORB_AMOUNT = 1;
     private static final int ENTRY_CLOG_WEIGHT = 1;
@@ -74,6 +76,7 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
     private float score = UNSCANNED;
     private int interval;
     private int cost;
+    private @Nullable UUID owner;
     private List<BlockPos> dirtyCandidates = List.of();
 
     public BlockEntityCondenser(BlockPos pos, BlockState state) {
@@ -82,11 +85,27 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
     }
 
     public int interval() {
-        return interval;
+        return interval > 0 ? rules().interval().orElse(interval) : 0;
     }
 
     public int cost() {
-        return cost;
+        return rules().essentia().orElse(cost);
+    }
+
+    @Override
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
+    }
+
+    private AuraMachineRules.Condenser rules() {
+        return AuraMachineRules.of(getBlockState().getBlock(), AuraMachineRules.CONDENSER,
+                AuraMachineRules.Condenser.DEFAULT);
+    }
+
+    private boolean permitsWork(@Nullable Level currentLevel, AuraMachineRules.Condenser rules) {
+        return rules.enabled() && (!(currentLevel instanceof ServerLevel server) || AuraMachineRules.allows(
+                server, StageTarget.CONDENSER, getBlockState().getBlock(), owner, TTAspects.VITIUM));
     }
 
     public void triggerCheck() {
@@ -104,17 +123,19 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
         if (score == UNSCANNED || ticks % RECHECK_INTERVAL == 0) {
             rescan(level);
         }
-        if (!state.getValue(BlockStateProperties.ENABLED) || score <= 0.0F) {
+        AuraMachineRules.Condenser rules = rules();
+        if (!state.getValue(BlockStateProperties.ENABLED) || score <= 0.0F || !permitsWork(level, rules)) {
             return;
         }
         if (ticks % INTAKE_INTERVAL == 0 && essentia < CAPACITY) {
             draw(level);
         }
-        if (interval > 0 && ticks % interval == 0) {
-            condense(level);
+        int pace = rules.interval().orElse(interval);
+        if (pace > 0 && ticks % pace == 0) {
+            condense(level, rules);
         }
         if (essentia > 0 && level instanceof ServerLevel serverLevel) {
-            sparkle(serverLevel);
+            sparkle(serverLevel, pace);
         }
     }
 
@@ -151,13 +172,15 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
         absorb(source.extract(offered, ABSORB_AMOUNT, face, false));
     }
 
-    private void condense(Level level) {
-        if (essentia < cost || flux >= CAPACITY || AuraHelper.getFlux(level, worldPosition) < FLUX_PER_CONVERSION) {
+    private void condense(Level level, AuraMachineRules.Condenser rules) {
+        int payment = rules.essentia().orElse(cost);
+        if (essentia < payment || CAPACITY - flux < rules.vitium()
+                || AuraHelper.getFlux(level, worldPosition) < rules.flux()) {
             return;
         }
-        AuraHelper.drainFlux(level, worldPosition, FLUX_PER_CONVERSION, false);
-        essentia -= cost;
-        flux++;
+        AuraHelper.drainFlux(level, worldPosition, rules.flux(), false);
+        essentia -= payment;
+        flux += rules.vitium();
         setChanged();
         if (level.getRandom().nextInt(DIRTY_CHANCE) == 0) {
             makeDirty(level);
@@ -193,9 +216,9 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
         return Java17.last(dirtyCandidates);
     }
 
-    private void sparkle(ServerLevel level) {
+    private void sparkle(ServerLevel level, int pace) {
         RandomSource random = level.getRandom();
-        if (dirtyCandidates.isEmpty() || random.nextInt(Math.max(1, interval / SPARK_PACE)) != 0) {
+        if (dirtyCandidates.isEmpty() || random.nextInt(Math.max(1, pace / SPARK_PACE)) != 0) {
             return;
         }
         BlockPos cell = dirtyCandidates.get(random.nextInt(dirtyCandidates.size()));
@@ -371,7 +394,7 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
         if (Direction.DOWN.equals(face)) {
             return 0;
         }
-        return essentia < CAPACITY ? SUCTION : 0;
+        return essentia < CAPACITY && permitsWork(level, rules()) ? SUCTION : 0;
     }
 
     @Override
@@ -406,7 +429,7 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
 
     @Override
     public int insert(@Nullable Holder<IAspect> aspect, int amount, Direction face, boolean simulate) {
-        if (!receivesOn(face)) {
+        if (!receivesOn(face) || !permitsWork(level, rules())) {
             return 0;
         }
         if (aspect != null && aspect.is(TTAspects.VITIUM)) {
@@ -428,7 +451,7 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
 
     @Override
     public int roomFor(Holder<IAspect> aspect, Direction face) {
-        return receivesOn(face) ? Math.max(0, CAPACITY - essentia) : 0;
+        return receivesOn(face) && permitsWork(level, rules()) ? Math.max(0, CAPACITY - essentia) : 0;
     }
 
     void releaseStoredFluxOnBreak(BlockPos pos) {
@@ -442,6 +465,7 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
         super.loadAdditional(input, registries);
         essentia = input.getInt(ESSENTIA_KEY);
         flux = input.getInt(FLUX_KEY);
+        owner = input.hasUUID("Owner") ? input.getUUID("Owner") : null;
     }
 
     @Override
@@ -449,5 +473,8 @@ public final class BlockEntityCondenser extends RegistryBlockEntity implements I
         super.saveAdditional(output, registries);
         output.putInt(ESSENTIA_KEY, essentia);
         output.putInt(FLUX_KEY, flux);
+        if (owner != null) {
+            output.putUUID("Owner", owner);
+        }
     }
 }

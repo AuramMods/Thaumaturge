@@ -24,9 +24,10 @@ This table identifies the server code and data used by each processing path. The
 | Focal Manipulator and spells | `BlockEntityFocalManipulator` validates and inscribes a spell tree. `SpellCasting` and `SpellEngine` control player casts. | Item data maps edit focus tiers and inscription costs. World datapacks define spell parts and affinities. | Stage rules apply to inscription payment, queued work, and new casts through a wand or the spell API. |
 | Spa | `BlockEntitySpa` either mixes the tank fluid with an additive or places a fluid from its tank. | The `thaumaturge:spa_mixing` and `thaumaturge:spa_placement` fluid data maps select costs and outputs by fluid or fluid tag. Mixing takes a native item ingredient. | Stage checks run before placement. The script fixture tests blocked outlets, saved contents and owner, and exact costs for both modes. |
 | Potion Sprayer | `BlockEntityPotionSprayer` uses `PotionAspects` to derive costs from potion brewing inputs and prepares doses for spraying. | The native brewing manager changes derived costs. The `thaumaturge:potion_sprayer` potion data map sets explicit costs and capacity. | The fixture covers scripted brewing, exact essentia, a saved prepared dose, stage revocation, and delivery to an entity. |
+| Condenser, Vis Generator, and Flux Scrubber | These block entities convert aura flux and essentia into Vitium, aura vis into Forge Energy, or physical flux and Aer into Praecantatio. | The `thaumaturge:condenser`, `thaumaturge:vis_generator`, and `thaumaturge:flux_scrubber` block data maps configure the conversions. | Stage checks use the verified placer before new inputs or costs. The fixture verifies exact conversion costs and retained outputs. |
 | Wand and scepter assembly | `WandAssemblyPackResources` generates Arcane Workbench recipes from the wand cap and rod registries. | Use the Arcane Workbench manager for the generated recipe IDs. Caps and rods have typed tags. | Verify edits to generated recipes and the normal post-craft assembly hook. |
 | Research and scanning | `ResearchManager`, `ResearchNotes`, and the Research Table process research costs and notes. `ScanningManager` processes scanned targets and datapack scan definitions. | World-startup datapack definitions and typed registry tags. | Stage checks run before advancing research, paying note costs, or applying scan effects. |
-| Other conversions and progression | Audit the Condenser, Flux Scrubber, Vis Generator, node jarring, Pech exchanges, crafting from research data, spell casting, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
+| Other conversions and progression | Audit the Void Siphon, node jarring, Pech exchanges, crafting from research data, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
 
 ## Recipe manager methods
 
@@ -296,6 +297,26 @@ ProcessingData.edit(<resource:minecraft:potion>, <resource:thaumaturge:potion_sp
 
 Rules select the base potion by ID or potion tag. Omit `essentia` to derive the cost from brewing, or use `essentia: []` for a free dose. An explicit cost uses concrete aspect IDs and totals at most 1000 essentia. `max_charges` sets capacity from one to eight. `enabled: false` suspends preparation and spraying. A partially funded dose keeps its original cost across reloads and saves.
 
+### Aura machines
+
+These rule maps select a block by ID or block tag. Omitted fields retain the usual calculations. Use `enabled: false` to suspend new work. The Condenser still requires a lattice. The Flux Scrubber still uses its native scan range and the Forge configuration's output capacity.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:condenser>, {
+    values: {"thaumaturge:condenser": {essentia: 2, interval: 1, flux: 3.0, vitium: 2}}
+});
+ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:vis_generator>, {
+    values: {"thaumaturge:vis_generator": {vis: 2.0, energy: 600, max_push: 12}}
+});
+ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:flux_scrubber>, {
+    values: {"thaumaturge:flux_scrubber": {power: 3, removal: 2, charges_per_roll: 2, chance: 1.0, essentia: 2}}
+});
+```
+
+The Condenser uses two buffered essentia and three local aura flux per conversion to yield two Vitium. `interval` is measured in ticks. The generator draws up to two local aura vis for 600 Forge Energy, with proportional output if less vis is available. It sends up to 12 FE per tick from its buffer. The scrubber spends three Aer per successful action and removes up to two units of physical flux. Each removed unit adds a charge. Here every two charges recover two Praecantatio, up to the storage capacity. Omit `charges_per_roll`, `chance`, or `essentia` to use the corresponding Forge configuration.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -326,6 +347,7 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:golem_seal` | The seal type ID. Supports `thaumaturge:seal` and the attached block in `minecraft:block`. |
 | `thaumaturge:focus_inscription` and `thaumaturge:spell_cast` | The focus item ID, when present. Supports the focus in `minecraft:item`, and the spell tree's entries in `thaumaturge:spell_part`, `thaumaturge:aspect`, and `thaumaturge:spell_affinity`. |
 | `thaumaturge:potion_sprayer` | The base potion ID. Supports selectors for the potion in `minecraft:potion` and the received bottle in `minecraft:item`. |
+| `thaumaturge:condenser`, `thaumaturge:vis_generator`, and `thaumaturge:flux_scrubber` | The device block ID and its entry or tag in `minecraft:block`. The Condenser also supports Vitium as an aspect selector. The Flux Scrubber supports Aer and Praecantatio. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -357,6 +379,8 @@ The Golem Press checks the requester before collecting items. The requester's st
 The Focal Manipulator saves the original requester and the paid job's aura balance and timing. It pauses a restricted inscription while the requester is offline or lacks a stage. The casting family applies to new player casts and to each channeled pulse. Existing projectiles and other effects from an authorized cast continue their native behavior.
 
 The Potion Sprayer records its placer and checks that owner's stages before drawing essentia or spraying. Changing the owner's stages preserves partial payment and prepared doses. Once the owner is eligible again, a new rising redstone edge can release an existing dose.
+
+The [aura machine fixture](porting/testing/crafttweaker/aura-machines.zs) stages the Condenser, Vis Generator, and Flux Scrubber. These machines retain their recorded owners and buffers when saved. Suspending new work leaves completed essentia available for transfer and lets the Vis Generator send energy it already produced.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 

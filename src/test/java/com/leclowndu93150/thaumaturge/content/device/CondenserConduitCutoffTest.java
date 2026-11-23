@@ -26,6 +26,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -53,6 +54,7 @@ class CondenserConduitCutoffTest {
         level = mock(ServerLevel.class);
         random = mock(RandomSource.class);
         when(level.registryAccess()).thenReturn(registries);
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
         when(level.getRandom()).thenReturn(random);
         when(random.nextInt(anyInt())).thenReturn(1);
         when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);

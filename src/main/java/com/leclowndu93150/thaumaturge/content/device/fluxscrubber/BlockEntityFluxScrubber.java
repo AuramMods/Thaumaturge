@@ -9,12 +9,16 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
+import com.leclowndu93150.thaumaturge.content.device.AuraMachineRules;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.List;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -33,7 +37,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityFluxScrubber extends RegistryBlockEntity implements IEssentiaConduit {
+public final class BlockEntityFluxScrubber extends RegistryBlockEntity implements IEssentiaConduit, OwnedProcessing {
     public static final int WORK_POWER = 5;
 
     private static final int NONE = 0;
@@ -48,7 +52,6 @@ public final class BlockEntityFluxScrubber extends RegistryBlockEntity implement
     private static final int SCAN_CELLS = SCAN_SIDE * SCAN_SIDE * SCAN_SIDE;
     private static final int SCAN_RADIUS_SQUARED = SCAN_RADIUS * SCAN_RADIUS;
     private static final int CELL_BUDGET = 16;
-    private static final int REMOVAL_AMOUNT = 1;
     private static final float SPARKLE_RED = 0xDD / 255.0F;
     private static final float SPARKLE_GREEN = 0.0F;
     private static final float SPARKLE_BLUE = 1.0F;
@@ -57,6 +60,7 @@ public final class BlockEntityFluxScrubber extends RegistryBlockEntity implement
     private int essentia;
     private int charges;
     private int power;
+    private @Nullable UUID owner;
     private final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
     private int refillWait;
     private int scanOffset;
@@ -82,6 +86,21 @@ public final class BlockEntityFluxScrubber extends RegistryBlockEntity implement
 
     public int power() {
         return power;
+    }
+
+    public int workPower() {
+        return rules().power();
+    }
+
+    @Override
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
+    }
+
+    private AuraMachineRules.FluxScrubber rules() {
+        return AuraMachineRules.of(getBlockState().getBlock(), AuraMachineRules.FLUX_SCRUBBER,
+                AuraMachineRules.FluxScrubber.DEFAULT);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityFluxScrubber scrubber) {
@@ -161,17 +180,23 @@ public final class BlockEntityFluxScrubber extends RegistryBlockEntity implement
         essentia = Math.min(storedOrZero(input, ESSENTIA_KEY), essentiaCapacity());
         charges = storedOrZero(input, CHARGES_KEY);
         power = storedOrZero(input, POWER_KEY);
+        owner = input.hasUUID("Owner") ? input.getUUID("Owner") : null;
     }
 
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         writeCounters(output);
+        if (owner != null) {
+            output.putUUID("Owner", owner);
+        }
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
+        CompoundTag update = saveWithoutMetadata(registries);
+        update.remove("Owner");
+        return update;
     }
 
     @Override
@@ -202,14 +227,19 @@ public final class BlockEntityFluxScrubber extends RegistryBlockEntity implement
     }
 
     private void work(ServerLevel level, BlockPos pos) {
-        if (power < WORK_POWER) {
+        AuraMachineRules.FluxScrubber rules = rules();
+        if (!rules.enabled() || !AuraMachineRules.allows(level, StageTarget.FLUX_SCRUBBER,
+                getBlockState().getBlock(), owner, TTAspects.AER, TTAspects.PRAECANTATIO)) {
+            return;
+        }
+        if (power < rules.power()) {
             refill(level, pos);
         } else {
-            scan(level, pos);
+            scan(level, pos, rules);
         }
     }
 
-    private void scan(ServerLevel level, BlockPos pos) {
+    private void scan(ServerLevel level, BlockPos pos, AuraMachineRules.FluxScrubber rules) {
         RandomSource random = level.getRandom();
         List<BlockPos> foreign = LevelSpaces.foreignCentersNear(level, pos, SCAN_RADIUS);
         for (int checked = 0; checked < CELL_BUDGET; checked++) {
@@ -224,40 +254,43 @@ public final class BlockEntityFluxScrubber extends RegistryBlockEntity implement
             if (dx * dx + dy * dy + dz * dz >= SCAN_RADIUS_SQUARED) {
                 continue;
             }
-            if (scrubAt(level, pos, dx, dy, dz, random)) {
+            if (scrubAt(level, pos, dx, dy, dz, random, rules)) {
                 return;
             }
             for (BlockPos center : foreign) {
-                if (scrubAt(level, center, dx, dy, dz, random)) {
+                if (scrubAt(level, center, dx, dy, dz, random, rules)) {
                     return;
                 }
             }
         }
     }
 
-    private boolean scrubAt(ServerLevel level, BlockPos center, int dx, int dy, int dz, RandomSource random) {
+    private boolean scrubAt(ServerLevel level, BlockPos center, int dx, int dy, int dz, RandomSource random,
+            AuraMachineRules.FluxScrubber rules) {
         cursor.setWithOffset(center, dx, dy, dz);
         if (!LoadedChunks.contains(level, cursor) || !PhysicalFlux.isScrubbable(level.getBlockState(cursor))) {
             return false;
         }
-        if (PhysicalFlux.reduce(level, cursor, REMOVAL_AMOUNT) > 0) {
-            power -= WORK_POWER;
-            charges++;
+        int removed = PhysicalFlux.reduce(level, cursor, rules.removal());
+        if (removed > 0) {
+            power -= rules.power();
+            charges += removed;
             Effects.simpleSparkle(level, Vec3.atCenterOf(cursor))
                     .color(SPARKLE_RED, SPARKLE_GREEN, SPARKLE_BLUE)
                     .scale(SPARKLE_SCALE)
                     .send();
-            roll(random);
+            roll(random, rules);
             setChangedAndSend();
             return true;
         }
         return false;
     }
 
-    private void roll(RandomSource random) {
-        int perRoll = ThaumaturgeCommonConfig.FLUX_SCRUBBER_CHARGES_PER_ROLL.get();
-        double chance = ThaumaturgeCommonConfig.FLUX_SCRUBBER_ESSENTIA_CHANCE.get();
-        int yield = ThaumaturgeCommonConfig.FLUX_SCRUBBER_ESSENTIA_PER_ROLL.get();
+    private void roll(RandomSource random, AuraMachineRules.FluxScrubber rules) {
+        int perRoll = rules.perRoll().orElseGet(ThaumaturgeCommonConfig.FLUX_SCRUBBER_CHARGES_PER_ROLL::get);
+        double chance = rules.chance().map(Float::doubleValue)
+                .orElseGet(ThaumaturgeCommonConfig.FLUX_SCRUBBER_ESSENTIA_CHANCE::get);
+        int yield = rules.yield().orElseGet(ThaumaturgeCommonConfig.FLUX_SCRUBBER_ESSENTIA_PER_ROLL::get);
         int capacity = essentiaCapacity();
         while (charges >= perRoll) {
             charges -= perRoll;

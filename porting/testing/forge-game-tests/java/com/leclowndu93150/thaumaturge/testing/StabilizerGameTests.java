@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.testing;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.content.aura.AuraManager;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityStabilizer;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
@@ -97,20 +98,28 @@ public final class StabilizerGameTests {
         var nearby = placeRift(test, STABILIZER.east(4).above(), 25);
         var veryStable = placeRift(test, STABILIZER.east(4).south(2).above(), 75);
         var distant = placeRift(test, STABILIZER.east(4).above(16), 25);
-        float startingFlux = AuraHelper.getFlux(level, source);
+        var aura = Objects.requireNonNull(AuraManager.chunkAt(level, source));
+        short oldBase = aura.getBase();
+        float oldFlux = aura.getFlux();
+        aura.setBase((short) 0);
+        aura.setFlux(0);
 
         test.startSequence().thenWaitUntil(() -> test.assertTrue(nearby.stabilityValue() > 25,
                 "Waiting for a charged Stabilizer to improve the nearby rift")).thenExecute(() -> {
             test.assertTrue(nearby.stabilityValue() == 25.125F
                             && veryStable.stabilityValue() == 75 && distant.stabilityValue() == 25,
                     "One pulse should improve the nearby rift and leave both controls alone");
-            test.assertTrue(stabilizer.charge() == 0 && AuraHelper.getFlux(level, source) >= startingFlux + 0.25F,
+            test.assertTrue(stabilizer.charge() == 0 && AuraHelper.getFlux(level, source) == 0.25F,
                     "Charging should produce flux and the first pulse should spend the generated charge");
             nearby.discard();
             veryStable.discard();
             distant.discard();
-        }).thenIdle(25).thenExecute(() -> test.assertTrue(stabilizer.charge() == 1,
-                "The device should retain its next charge after the rifts are removed")).thenSucceed();
+        }).thenIdle(25).thenExecute(() -> {
+            aura.setBase(oldBase);
+            aura.setFlux(oldFlux);
+            test.assertTrue(stabilizer.charge() == 1,
+                    "The device should retain its next charge after the rifts are removed");
+        }).thenSucceed();
     }
 
     private static int chargeAt(GameTestHelper test, BlockPos pos) {
