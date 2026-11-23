@@ -1,0 +1,16 @@
+{
+  "keys": {
+    "A": {
+      "source": {"type": "block", "block": "minecraft:amethyst_block"},
+      "target": {"type": "block", "block": "minecraft:barrel"}
+    },
+    "B": {
+      "source": {"type": "block", "block": "minecraft:emerald_block"},
+      "target": {"type": "block", "block": "minecraft:glass"}
+    }
+  },
+  "pattern": [["A", "B"]],
+  "x_size": 2,
+  "y_size": 1,
+  "z_size": 1
+}

@@ -11,7 +11,7 @@ import subprocess
 import time
 
 
-def prepare(profile, auram, jar, standalone):
+def prepare(profile, auram, jar, standalone, pack_compat):
     mods = profile / "mods"
     mods.mkdir(parents=True)
     (profile / "libraries").symlink_to(auram / "server/libraries", target_is_directory=True)
@@ -33,6 +33,16 @@ def prepare(profile, auram, jar, standalone):
         for script in fixtures.glob("*.zs"):
             shutil.copy2(script, scripts)
         shutil.copytree(fixtures / "datapack", profile / "world/datapacks/thaumaturge-script-fixtures")
+        if pack_compat:
+            dependencies.extend([
+                "architectury-9.2.14-forge.jar",
+                "rhino-forge-2001.2.3-build.10.jar",
+                "kubejs-forge-2001.6.5-build.16.jar",
+            ])
+            shutil.copy2(fixtures / "pack-compat/stages.zs", scripts / "pack-compat-stages.zs")
+            kube_scripts = profile / "kubejs/server_scripts"
+            kube_scripts.mkdir(parents=True)
+            shutil.copy2(fixtures / "pack-compat/recipes.js", kube_scripts / "thaumaturge-probe.js")
     for filename in dependencies:
         (mods / filename).symlink_to(auram / "minecraft/mods" / filename)
     shutil.copy2(jar, mods)
@@ -67,7 +77,7 @@ def wait_for(process, logfile, pattern, count=1, timeout=180):
 def verify_recipes(log):
     errors = [line for line in log.splitlines() if "[ERROR]" in line]
     assert not errors, errors
-    for family, rules in (("thaumatorium", 1), ("arcane_workbench", 2), ("crucible", 1), ("dust_trigger", 3),
+    for family, rules in (("thaumatorium", 1), ("arcane_workbench", 2), ("crucible", 1), ("dust_trigger", 4),
                           ("research", 1), ("scan", 2), ("essentia_crystalizer", 1), ("spa", 2),
                           ("pattern_crafter", 1), ("infernal_furnace", 1), ("infusion", 1),
                           ("alchemical_furnace", 1), ("advanced_alchemical_furnace", 1),
@@ -95,7 +105,7 @@ def verify_recipes(log):
                               ("thaumaturge:obelisk_site", "eldritch_ritual")):
         assert log.count(f"Editing Thaumaturge data map {registry}/thaumaturge:{machine}") == 2
     for marker in ("CRUCIBLE_REMOVED", "SPECIAL_REMOVED", "SPECIAL_SALIS", "SPECIAL_LABEL", "SPECIAL_PEARL",
-                   "TAG_ASPECT", "TAG_MATERIAL", "TAG_PECH", "TAG_ENCOUNTER", "ID_EDIT"):
+                   "TAG_ASPECT", "TAG_MATERIAL", "TAG_PECH", "TAG_ENCOUNTER", "ID_EDIT", "WAND_EDIT"):
         assert log.count(f"TT_{marker}=true") == 2, marker
 
     def snapshots(marker):
@@ -147,6 +157,11 @@ def verify_recipes(log):
     assert snapshots("REPLACER_SHAPED") == shaped
     assert snapshots("DOC_CLAY")["result"] == {"id": "minecraft:clay_ball", "count": 2}
     assert [entry["amount"] for entry in snapshots("DOC_NITOR")["aspects"]] == [8, 8, 8]
+    wand = snapshots("WAND_DEFINITION")
+    assert wand["key"]["R"] == {"item": "minecraft:blaze_rod"}
+    assert wand["result"]["components"]["thaumaturge:wand_parts"] == {
+        "cap": "thaumaturge:gold", "rod": "thaumaturge:wood",
+    }
 
 
 def verify_distillation_input(profile):
@@ -201,10 +216,11 @@ def main():
     parser.add_argument("--java", required=True, type=Path, help="Java 17 executable")
     parser.add_argument("--standalone", action="store_true", help="Start without CraftTweaker or GameStages")
     parser.add_argument("--restart", action="store_true", help="Verify a paid batch and its owner survive a restart")
+    parser.add_argument("--pack-compat", action="store_true", help="Load Auram's KubeJS and exercise its stage add-ons")
     args = parser.parse_args()
-    if args.standalone and args.restart:
-        parser.error("--restart needs the scripted Crystalizer stage rules")
-    prepare(args.profile, args.auram.resolve(), args.jar, args.standalone)
+    if args.standalone and (args.restart or args.pack_compat):
+        parser.error("--restart and --pack-compat need the scripting integrations")
+    prepare(args.profile, args.auram.resolve(), args.jar, args.standalone, args.pack_compat)
     server_log = args.profile / "console.log"
     ct_log = args.profile / "logs/crafttweaker.log"
     command = [str(args.java.resolve()), "-Xmx4G", "-XX:ActiveProcessorCount=4", "-Djava.awt.headless=true",
@@ -214,6 +230,10 @@ def main():
             send(server, "reload")
             wait_for(server, ct_log, "Execution for loader 'crafttweaker' completed successfully", 2)
             verify_recipes(read(ct_log))
+            if args.pack_compat:
+                wait_for(server, ct_log, "TT_PACK_STAGES_LOADED", 2)
+                wait_for(server, server_log, "TT_PACK_KUBEJS_APPLY", 2)
+                wait_for(server, server_log, "Added 1 recipes, removed 0 recipes, modified 0 recipes, with 0 failed recipes", 2)
             if args.restart:
                 plant_restart_fixture(server, server_log)
     if not args.standalone:
