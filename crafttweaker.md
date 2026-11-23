@@ -42,6 +42,18 @@ All typed methods accept a final optional `ResearchRequirement`. Use `ResearchRe
 
 The [processing fixture](porting/testing/crafttweaker/processing.zs) shows each typed method. In the shaped recipe key, cast item stacks to `IIngredient` so ZenCode resolves the map's type. For a recipe with an input-dependent result, use its ID when removing it.
 
+### Recipe dumps and selective edits
+
+Run `/ct recipes manager thaumaturge:arcane_workbench` in game and open the CraftTweaker log for the dumped definitions. The same command accepts the other recipe type IDs in the table. The dump calls `addJson` with the full ID and its serializer's JSON.
+
+CraftTweaker's `Replacer` can edit the item ingredients and fixed results using `<recipecomponent:crafttweaker:input/ingredients>` and `<recipecomponent:crafttweaker:output/items>`. The [replacement fixture](porting/testing/crafttweaker/replacer.zs) changes one material in a shaped recipe while preserving its pattern, result stack, vis and crystal costs, and research requirement. Replacer assigns its usual generated ID. Use `replaceRecipe` when a book entry, stage rule, or other data needs to keep referencing the original ID.
+
+### Vanilla and special crafting recipes
+
+Use `craftingTable` for ordinary crafting, `furnace` for smelting, `blastFurnace` for blasting, `smithing` for smithing, and `stoneCutter` for stonecutting. Thaumaturge's Pattern Crafter reads ordinary crafting recipes. Its Infernal Furnace reads ordinary smelting recipes.
+
+The native special crafting recipes have the IDs `thaumaturge:salis_mundus`, `thaumaturge:label_filter`, and `thaumaturge:primordial_pearl_repair`. Use `craftingTable.removeByName` to remove them. Use `craftingTable.addJsonRecipe` with the corresponding serializer ID as `type` to register the existing processing behavior under a new ID. The [special crafting fixture](porting/testing/crafttweaker/special-crafting.zs) demonstrates both operations.
+
 ## Crucible and Thaumatorium recipes
 
 Use the same manager for both stations. Put the following in a `.zs` file under `scripts/` on the server.

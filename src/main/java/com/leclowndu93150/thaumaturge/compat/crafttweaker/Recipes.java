@@ -64,7 +64,7 @@ final class Recipes {
 
     private static <T extends Recipe<?>> void write(
             IRecipeManager<T> manager, ResourceLocation id, JsonObject definition, boolean replace) {
-        Recipe<?> recipe = RegistryContext.withRegistries(registries(), () -> RecipeManager.fromJson(id, definition));
+        Recipe<?> recipe = decode(id, definition);
         if (recipe.getType() != manager.getRecipeType()) {
             throw new IllegalArgumentException("Recipe " + id + " has type " + recipe.getType()
                     + ", expected " + manager.getBracketResourceLocation());
@@ -83,6 +83,10 @@ final class Recipes {
         CraftTweakerAPI.apply(new ActionAddRecipe<>(manager, typed));
     }
 
+    static Recipe<?> decode(ResourceLocation id, JsonObject definition) {
+        return RegistryContext.withRegistries(registries(), () -> RecipeManager.fromJson(id, definition));
+    }
+
     static JsonObject definition(Recipe<?> recipe) {
         var serializer = recipe.getSerializer();
         if (!(serializer instanceof SimpleRecipeSerializer<?> simple)) {
@@ -99,6 +103,13 @@ final class Recipes {
         RegistryAccess registries = registries();
         return RegistryContext.withRegistries(registries, () ->
                 codec.encodeStart(RegistryOps.create(JsonOps.INSTANCE, registries), value)
+                        .getOrThrow(false, message -> { throw new IllegalArgumentException(message); }));
+    }
+
+    static <T> T decode(Codec<T> codec, JsonElement value) {
+        RegistryAccess registries = registries();
+        return RegistryContext.withRegistries(registries, () ->
+                codec.parse(RegistryOps.create(JsonOps.INSTANCE, registries), value)
                         .getOrThrow(false, message -> { throw new IllegalArgumentException(message); }));
     }
 }
