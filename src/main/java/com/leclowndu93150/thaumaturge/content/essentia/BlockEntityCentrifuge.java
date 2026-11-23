@@ -294,6 +294,8 @@ public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity imple
     protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
         super.writeClientData(output, registries);
         output.remove("Owner");
+        output.remove("ProcessLeft");
+        output.remove("PlannedProduct");
     }
 
     @Override

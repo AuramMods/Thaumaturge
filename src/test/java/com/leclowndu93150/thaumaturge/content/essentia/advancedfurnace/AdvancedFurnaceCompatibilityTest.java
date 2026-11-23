@@ -24,6 +24,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -46,6 +47,7 @@ class AdvancedFurnaceCompatibilityTest {
                                 .toList())
                 .freeze();
         level = mock(ServerLevel.class);
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
         when(level.registryAccess()).thenReturn(registries);
         when(level.getGameTime()).thenReturn(1L);
         when(level.getRandom()).thenReturn(mock(RandomSource.class));

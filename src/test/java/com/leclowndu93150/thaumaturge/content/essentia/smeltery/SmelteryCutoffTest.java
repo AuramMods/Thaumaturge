@@ -39,6 +39,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -68,6 +69,7 @@ class SmelteryCutoffTest {
                                 .toList())
                 .freeze();
         level = mock(ServerLevel.class);
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
         random = mock(RandomSource.class);
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRandom()).thenReturn(random);

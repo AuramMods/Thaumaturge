@@ -34,6 +34,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -73,6 +74,8 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
     private final BlockPos.MutableBlockPos formedCursor = new BlockPos.MutableBlockPos();
     private AspectList aspects = AspectList.EMPTY;
     private ItemStack input = ItemStack.EMPTY;
+    private @Nullable RecipeManager inputRecipes;
+    private @Nullable AspectList cachedInputContent;
     private @Nullable UUID owner;
     private int heat;
     private int perditio;
@@ -242,7 +245,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
         perditio -= points;
         aqua -= points;
         aspects = aspects.add(content);
-        input = ItemStack.EMPTY;
+        clearInput();
         cooldown = MIN_COOLDOWN + COOLDOWN_RANGE * (MAX_POWER - heat) / MAX_POWER;
         cycleDuration = cooldown;
         float pitch = BUBBLE_PITCH_LOW + server.getRandom().nextFloat() * BUBBLE_PITCH_RANGE;
@@ -251,7 +254,24 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
     }
 
     private AspectList inputContent() {
-        return DistillationRules.contents(DistillationRules.ADVANCED, input);
+        if (input.isEmpty()) {
+            return AspectList.EMPTY;
+        }
+        if (!(level instanceof ServerLevel server)) {
+            return DistillationRules.contents(DistillationRules.ADVANCED, input);
+        }
+        RecipeManager recipes = server.getRecipeManager();
+        if (cachedInputContent == null || inputRecipes != recipes) {
+            cachedInputContent = DistillationRules.contents(DistillationRules.ADVANCED, input);
+            inputRecipes = recipes;
+        }
+        return cachedInputContent;
+    }
+
+    private void clearInput() {
+        input = ItemStack.EMPTY;
+        cachedInputContent = null;
+        inputRecipes = null;
     }
 
     private void changed() {
@@ -280,6 +300,8 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
             return false;
         }
         input = stack.copyWithCount(1);
+        cachedInputContent = content;
+        inputRecipes = server.getRecipeManager();
         changed();
         return true;
     }
@@ -367,7 +389,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
             if (stored > 0) {
                 AuraHelper.polluteAura(server, pos, stored, true);
             }
-            input = ItemStack.EMPTY;
+            clearInput();
             aspects = AspectList.EMPTY;
         }
     }
@@ -393,6 +415,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
         super.loadAdditional(stored, registries);
         assembled = stored.getBoolean(ASSEMBLED_KEY);
         owner = stored.hasUUID("Owner") ? stored.getUUID("Owner") : null;
+        clearInput();
         input = TTNbt.read(stored, INPUT_KEY, ItemStackCodecs.CODEC, registries).orElse(ItemStack.EMPTY);
         aspects = TTNbt.read(stored, ASPECTS_KEY, AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         heat = readReserve(stored, HEAT_KEY);

@@ -34,6 +34,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -78,6 +79,7 @@ class GolemBuilderCutoffTest {
                         .toList())
                 .freeze();
         level = mock(ServerLevel.class);
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
         player = mock(Player.class);
         random = mock(RandomSource.class);
         when(level.registryAccess()).thenReturn(registries);
@@ -342,7 +344,8 @@ class GolemBuilderCutoffTest {
         assertEquals(1, original.insert(machina, 1, null, false));
         verify(original).setChanged();
         CompoundTag saved = original.saveWithoutMetadata();
-        assertEquals(Set.of("inventory", "golem", "cost", "mcost", "buffered"), saved.getAllKeys());
+        assertEquals(Set.of("inventory", "golem", "cost", "mcost", "buffered", "Authority"), saved.getAllKeys());
+        assertFalse(original.getUpdateTag().contains("Authority"));
         assertTrue(saved.getBoolean("buffered"));
 
         BlockEntityGolemBuilder loaded = builder();

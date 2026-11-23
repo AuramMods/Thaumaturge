@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -14,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
@@ -23,6 +25,7 @@ class BlockEntityVoidSiphonTest {
     @Test
     void disabledSiphonProducesFromStoredProgressWithoutDrainingRifts() {
         ServerLevel level = mock(ServerLevel.class);
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
         BlockState disabled =
                 TTBlocks.VOID_SIPHON.get().defaultBlockState().setValue(BlockStateProperties.ENABLED, false);
         BlockEntityVoidSiphon siphon = new BlockEntityVoidSiphon(BlockPos.ZERO, disabled);

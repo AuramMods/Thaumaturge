@@ -30,6 +30,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -59,6 +60,7 @@ class AdvancedFurnaceCutoffTest {
                                 .toList())
                 .freeze();
         level = mock(ServerLevel.class);
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
         random = mock(RandomSource.class);
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRandom()).thenReturn(random);
@@ -273,6 +275,21 @@ class AdvancedFurnaceCutoffTest {
         assertFalse(loaded.isAssembled());
         assertTrue(loaded.input().isEmpty());
         assertTrue(loaded.aspects().isEmpty());
+    }
+
+    @Test
+    void bufferedInputUsesTheCurrentRecipeManagerAfterReload() {
+        BlockEntityAdvancedAlchemicalFurnace furnace = furnace(500, 500, 500);
+        offer(furnace, 2);
+        assertEquals(2, furnace.inputCost());
+
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
+        try (var index = mockStatic(AspectIndexAccess.class)) {
+            index.when(() -> AspectIndexAccess.of(any(ItemStack.class))).thenReturn(AspectList.EMPTY.add(order, 3));
+            assertEquals(3, furnace.inputCost());
+            assertEquals(3, furnace.inputCost());
+            index.verify(() -> AspectIndexAccess.of(any(ItemStack.class)), times(1));
+        }
     }
 
     @Test
