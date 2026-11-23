@@ -1,5 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.device.sprayer;
 
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -47,6 +51,12 @@ public final class BlockPotionSprayer extends BaseEntityBlock implements BlockIn
         super(properties);
         registerDefaultState(
                 stateDefinition.any().setValue(FACING, Direction.UP).setValue(BlockStateProperties.ENABLED, true));
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        OwnedProcessing.onPlaced(level, pos, placer);
     }
 
     protected MapCodec<BlockPotionSprayer> codec() {

@@ -23,7 +23,7 @@ This table identifies the server code and data used by each processing path. The
 | Golem seals | `SealHandler` places and ticks seals. `SealAccess` checks editors and golem task eligibility together with native ownership and traits. | Stage rules select seal types and the attached blocks. | The fixture uses a block selector to verify placement, editing, and work eligibility before and after a stage grant. |
 | Focal Manipulator and spells | `BlockEntityFocalManipulator` validates and inscribes a spell tree. `SpellCasting` and `SpellEngine` control player casts. | Item data maps edit focus tiers and inscription costs. World datapacks define spell parts and affinities. | Stage rules apply to inscription payment, queued work, and new casts through a wand or the spell API. |
 | Spa | `BlockEntitySpa` either mixes the tank fluid with an additive or places a fluid from its tank. | The `thaumaturge:spa_mixing` and `thaumaturge:spa_placement` fluid data maps select costs and outputs by fluid or fluid tag. Mixing takes a native item ingredient. | Stage checks run before placement. The script fixture tests blocked outlets, saved contents and owner, and exact costs for both modes. |
-| Potion Sprayer | `BlockEntityPotionSprayer` uses `PotionAspects` to derive costs from potion brewing inputs and prepares doses for spraying. | Brewing manager and potion cost rules pending. | Verify altered inputs and the cost of a delivered dose. |
+| Potion Sprayer | `BlockEntityPotionSprayer` uses `PotionAspects` to derive costs from potion brewing inputs and prepares doses for spraying. | The native brewing manager changes derived costs. The `thaumaturge:potion_sprayer` potion data map sets explicit costs and capacity. | The fixture covers scripted brewing, exact essentia, a saved prepared dose, stage revocation, and delivery to an entity. |
 | Wand and scepter assembly | `WandAssemblyPackResources` generates Arcane Workbench recipes from the wand cap and rod registries. | Use the Arcane Workbench manager for the generated recipe IDs. Caps and rods have typed tags. | Verify edits to generated recipes and the normal post-craft assembly hook. |
 | Research and scanning | `ResearchManager`, `ResearchNotes`, and the Research Table process research costs and notes. `ScanningManager` processes scanned targets and datapack scan definitions. | World-startup datapack definitions and typed registry tags. | Stage checks run before advancing research, paying note costs, or applying scan effects. |
 | Other conversions and progression | Audit the Condenser, Flux Scrubber, Vis Generator, node jarring, Pech exchanges, crafting from research data, spell casting, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
@@ -279,6 +279,23 @@ ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:focus_inscr
 
 The [focus fixture](porting/testing/crafttweaker/focus.zs) uses these values. To edit the spell parts and affinities themselves, put their native definitions under `data/<namespace>/thaumaturge/spell_part/` and `data/<namespace>/thaumaturge/spell_affinity/` in a world datapack. The [projectile definition](porting/testing/crafttweaker/datapack/data/crafttweaker/thaumaturge/spell_part/tagged_projectile.json) adds a part with a native carrier, research requirement, and setting. Close and reopen the world or restart the dedicated server to load changes to those registry entries.
 
+### Potion Sprayer
+
+The sprayer derives essentia costs from the current vanilla brewing table and Forge brewing recipes that expose their ingredients and output. Use CraftTweaker's `brewing` manager to write these recipes. For other custom brewing implementations, specify the cost directly with `thaumaturge:potion_sprayer` on `minecraft:potion`.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+brewing.addRecipe(<item:minecraft:potion>.withTag({Potion: "minecraft:luck"}),
+    <item:minecraft:diamond>, <item:minecraft:potion>.withTag({Potion: "minecraft:water"}));
+
+ProcessingData.edit(<resource:minecraft:potion>, <resource:thaumaturge:potion_sprayer>, {
+    values: {"minecraft:swiftness": {essentia: [{aspect: "thaumaturge:aqua", amount: 3}], max_charges: 1}}
+});
+```
+
+Rules select the base potion by ID or potion tag. Omit `essentia` to derive the cost from brewing, or use `essentia: []` for a free dose. An explicit cost uses concrete aspect IDs and totals at most 1000 essentia. `max_charges` sets capacity from one to eight. `enabled: false` suspends preparation and spraying. A partially funded dose keeps its original cost across reloads and saves.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -308,6 +325,7 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:golem_assembly` and `thaumaturge:golem_deployment` | The design's material ID. Supports the selected material, head, arms, legs, add-on, and effective traits as registry entries and tags. |
 | `thaumaturge:golem_seal` | The seal type ID. Supports `thaumaturge:seal` and the attached block in `minecraft:block`. |
 | `thaumaturge:focus_inscription` and `thaumaturge:spell_cast` | The focus item ID, when present. Supports the focus in `minecraft:item`, and the spell tree's entries in `thaumaturge:spell_part`, `thaumaturge:aspect`, and `thaumaturge:spell_affinity`. |
+| `thaumaturge:potion_sprayer` | The base potion ID. Supports selectors for the potion in `minecraft:potion` and the received bottle in `minecraft:item`. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -337,6 +355,8 @@ The Alchemical Furnaces and Deconstruction Table record their placer or Salis Mu
 The Golem Press checks the requester before collecting items. The requester's stages govern Machina intake, progress, and delivery. A seal checks the actor placing or editing it and uses the current seal owner's stages for golem work. A suspended seal remains placed and resumes accepting eligible tasks when its owner returns with the required stages. Native trait and ownership checks still apply.
 
 The Focal Manipulator saves the original requester and the paid job's aura balance and timing. It pauses a restricted inscription while the requester is offline or lacks a stage. The casting family applies to new player casts and to each channeled pulse. Existing projectiles and other effects from an authorized cast continue their native behavior.
+
+The Potion Sprayer records its placer and checks that owner's stages before drawing essentia or spraying. Changing the owner's stages preserves partial payment and prepared doses. Once the owner is eligible again, a new rising redstone edge can release an existing dose.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 

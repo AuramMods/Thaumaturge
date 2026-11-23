@@ -111,6 +111,7 @@ public final class GolemStageGameTests {
         var stages = GameStageHelper.getPlayerData(actor);
         test.setBlock(PRESS, Blocks.AMETHYST_BLOCK);
         var position = new SealPos(test.absolutePos(PRESS), Direction.UP);
+        SealHandler.removeSealEntity(level, position, true);
         var type = TTSeals.GUARD_ADVANCED;
         test.assertTrue(!SealHandler.place(level, position, type.getId(), type.get(), actor),
                 "The seal anchor did not gate the server placement API");
@@ -129,6 +130,7 @@ public final class GolemStageGameTests {
         stages.addStage("guard_advanced_seal");
         test.assertTrue(SealAccess.allows(seal, golem) && SealHandler.getSealEntity(level, position) == seal,
                 "Restoring the stage did not retain the native seal");
+        SealHandler.removeSealEntity(level, position, true);
         StageGameTests.remove(test, actor);
         test.succeed();
     }

@@ -31,6 +31,7 @@ public record StageTarget(ResourceLocation family, Optional<ResourceLocation> id
     public static final ResourceLocation GOLEM_SEAL = TTIds.rl("golem_seal");
     public static final ResourceLocation FOCUS_INSCRIPTION = TTIds.rl("focus_inscription");
     public static final ResourceLocation SPELL_CAST = TTIds.rl("spell_cast");
+    public static final ResourceLocation POTION_SPRAYER = TTIds.rl("potion_sprayer");
 
     public static final Codec<StageTarget> CODEC = RecordCodecBuilder.create(i -> i.group(
                     ResourceLocation.CODEC.fieldOf("family").forGetter(StageTarget::family),

@@ -48,3 +48,5 @@ Stages.requireTag(<resource:thaumaturge:focus_inscription>, <tag:thaumaturge/spe
     StageRequirement.allOf(["inscribe_test_spell"]));
 Stages.requireTag(<resource:thaumaturge:spell_cast>, <tag:thaumaturge/spell_part:crafttweaker:staged_spell_parts>,
     StageRequirement.allOf(["cast_test_spell"]));
+Stages.requireEntry(<resource:thaumaturge:potion_sprayer>, <resource:minecraft:potion>, <resource:minecraft:swiftness>,
+    StageRequirement.allOf(["spray_swiftness"]));

@@ -1,5 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.device.sprayer;
 
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
+import java.util.UUID;
+import net.minecraft.world.item.crafting.RecipeManager;
+
 import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
 
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
@@ -41,7 +47,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity implements IEssentiaConduit {
+public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity
+        implements IEssentiaConduit, OwnedProcessing {
     public static final int MAX_CHARGES = 8;
 
     private static final int CHARGE_INTERVAL = 5;
@@ -78,6 +85,8 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
     private boolean redstoneKnown;
     private int ticks;
     private int mistLeft;
+    private @Nullable UUID owner;
+    private @Nullable RecipeManager preparedRecipes;
 
     public BlockEntityPotionSprayer(BlockPos pos, BlockState state) {
         super(TTBlockEntities.POTION_SPRAYER.get(), pos, state);
@@ -100,9 +109,11 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
         potion = stack;
         charges = 0;
         stored = AspectList.EMPTY;
-        needed = level instanceof ServerLevel serverLevel && !potion.isEmpty()
-                ? PotionAspects.of(serverLevel, potion)
-                : AspectList.EMPTY;
+        needed = AspectList.EMPTY;
+        preparedRecipes = null;
+        if (level instanceof ServerLevel server && !potion.isEmpty()) {
+            prepareDose(server, SprayerRules.of(contents()));
+        }
         color = potion.isEmpty() ? NO_POTION_COLOR : contents().getColor();
         setChangedAndSync();
     }
@@ -121,6 +132,12 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
 
     public int color() {
         return color;
+    }
+
+    @Override
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
     }
 
     private PotionData contents() {
@@ -155,14 +172,12 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
     }
 
     private void charge(ServerLevel serverLevel) {
-        if (potion.isEmpty() || charges >= MAX_CHARGES) {
+        var rule = SprayerRules.of(contents());
+        if (potion.isEmpty() || charges >= rule.maxCharges() || !mayWork(serverLevel, rule)) {
             dropSuction();
             return;
         }
-        if (needed.isEmpty()) {
-            needed = PotionAspects.of(serverLevel, potion);
-            setChangedAndSync();
-        }
+        if (prepareDose(serverLevel, rule)) setChangedAndSync();
         AspectInstance shortfall = firstShortfall();
         if (shortfall == null) {
             charges++;
@@ -173,6 +188,24 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
         }
         wanted = EssentiaPull.of(shortfall.aspect(), SUCTION);
         drawAspect(serverLevel, shortfall.aspect());
+    }
+
+    private boolean prepareDose(ServerLevel server, SprayerRules rule) {
+        if (!stored.isEmpty() || preparedRecipes == server.getRecipeManager()) return false;
+        needed = rule.essentia().orElseGet(() -> PotionAspects.of(server, potion));
+        preparedRecipes = server.getRecipeManager();
+        return true;
+    }
+
+    private boolean mayWork(ServerLevel server, SprayerRules rule) {
+        if (!rule.enabled()) return false;
+        if (!StageRules.of(server).hasRules(StageTarget.POTION_SPRAYER)) return true;
+        var item = potion.getItem().builtInRegistryHolder().key();
+        var potionKey = contents().potion().flatMap(Holder::unwrapKey);
+        var target = StageTarget.recipe(StageTarget.POTION_SPRAYER,
+                potionKey.map(key -> key.location()).orElse(item.location())).withSubject(item);
+        if (potionKey.isPresent()) target = target.withSubject(potionKey.get());
+        return StageRules.allowsOwner(server, target, owner);
     }
 
     private @Nullable AspectInstance firstShortfall() {
@@ -233,7 +266,7 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
     }
 
     private void spray(ServerLevel serverLevel, Direction facing) {
-        if (charges <= 0) {
+        if (charges <= 0 || !mayWork(serverLevel, SprayerRules.of(contents()))) {
             return;
         }
         charges--;
@@ -287,10 +320,10 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
 
     @Override
     public int insert(Holder<IAspect> type, int count, Direction side, boolean simulate) {
-        if (!receivesOn(side) || potion.isEmpty() || charges >= MAX_CHARGES || count <= 0) {
+        if (count <= 0) {
             return 0;
         }
-        int accepted = Math.min(count, shortBy(type));
+        int accepted = Math.min(count, roomFor(type, side));
         if (accepted > 0 && !simulate) {
             stored = stored.add(type, accepted);
             setChangedAndSync();
@@ -300,7 +333,14 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
 
     @Override
     public int roomFor(Holder<IAspect> type, Direction side) {
-        return receivesOn(side) && !potion.isEmpty() && charges < MAX_CHARGES ? shortBy(type) : 0;
+        if (!receivesOn(side) || potion.isEmpty()) return 0;
+        var rule = SprayerRules.of(contents());
+        if (charges >= rule.maxCharges()) return 0;
+        if (level instanceof ServerLevel server) {
+            if (!mayWork(server, rule)) return 0;
+            prepareDose(server, rule);
+        }
+        return shortBy(type);
     }
 
     @Override
@@ -320,7 +360,8 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
 
     @Override
     public EssentiaPull pull(@Nullable Direction side) {
-        return side == front() ? EssentiaPull.NONE : wanted;
+        return side == front() || level instanceof ServerLevel server && !mayWork(server, SprayerRules.of(contents()))
+                ? EssentiaPull.NONE : wanted;
     }
 
     @Override
@@ -359,10 +400,18 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
         stored = TTNbt.read(input, PROGRESS_KEY, AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         charges = Java17.clamp(input.getInt(CHARGES_KEY), 0, MAX_CHARGES);
         color = input.contains(COLOR_KEY) ? input.getInt(COLOR_KEY) : NO_POTION_COLOR;
+        owner = input.hasUUID("Owner") ? input.getUUID("Owner") : null;
+        preparedRecipes = null;
     }
 
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+        writeClientData(output, registries);
+        if (owner != null) output.putUUID("Owner", owner);
+    }
+
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         if (!potion.isEmpty()) TTNbt.store(output, POTION_KEY, ItemStackCodecs.CODEC, registries, potion);
         TTNbt.store(output, RECIPE_KEY, AspectList.CODEC, registries, needed);
