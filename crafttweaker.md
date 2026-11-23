@@ -15,7 +15,7 @@ This table identifies the server code and data used by each processing path. The
 | Salis Mundus | `SalisMundusItem` selects `thaumaturge:dust_trigger`. The simple, tag, and multiblock serializers share this recipe type. A multiblock references the Blueprint registry. | `addBlock`, `addBlockTag`, `addMultiblock`, and native JSON. Blueprint edits pending. | Stage GameTest covers block and tag transformations, stage revocation, and resumed placement. Verify scripted rotated blueprints. |
 | Special crafting | The crafting table uses Salis Mundus mixing, label filtering, and Primordial Pearl repair through Thaumaturge's special serializers. | Verify ordinary crafting manager operations and serializer-backed definitions. | Verify dynamic stack output and remainders with the pack's RecipeStages integration. |
 | Alchemical Furnaces | `BlockEntitySmelter` and `BlockEntityAdvancedAlchemicalFurnace` distill item aspects. They use fuel or external power and output essentia. | Aspect maps and machine rules pending. | Verify tag-driven input changes, capacity, output transfer, and the actor policy. |
-| Essentia Crystalizer | `BlockEntityEssentiaCrystalizer` converts a measured amount of one aspect into its crystal. | Aspect selection and conversion rule pending. | Verify the accepted aspect, exact cost, and full output behavior. |
+| Essentia Crystalizer | `BlockEntityEssentiaCrystalizer` buffers one concrete aspect and converts it into a matching crystal or a scripted item output. | The `thaumaturge:crystallization` aspect data map selects costs and results by aspect ID or tag. | Stage checks run at essentia intake and before work or output. The fixture covers exact intake, stage revocation, and resuming a saved batch. |
 | Deconstruction Table | `BlockEntityDeconstructionTable` consumes an item and produces a research aspect. | Aspect mappings and any conversion override pending. | Verify consumption, the claimed result, and the research update. |
 | Infernal Furnace | `BlockEntityInfernalFurnace` uses native smelting recipes with the `InfernalBonus` data map for extra output. | Vanilla smelting manager and bonus data map. Script edits pending verification. | Verify altered smelting and bonus output, including queued input and full output. |
 | Pattern Crafter | `BlockEntityPatternCrafter` uses the ordinary crafting recipe manager and neighboring storage. | Vanilla crafting manager. Machine rules pending. | Verify changed recipes, container remainders, and denied automation. |
@@ -108,6 +108,29 @@ ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:base_aspect
 
 Run data-map edits in the default loader. The server reads the values through the native codec and applies membership after tags bind. This example changes the base aspect value read by the processing machines. The isolated fixture verifies the edited value in the server's written aspect index after startup and datapack reload.
 
+### Essentia Crystalizer
+
+Edit `thaumaturge:crystallization` on the `thaumaturge:aspect` registry. Each entry can set `enabled` (default `true`), `essentia` (default `1`), `progress` (default `200` work units), and `crystals` (default `1`, range `1–64`). The device advances every five ticks while unpowered, with faster progress when it can draw aura vis.
+
+Set `result` to a concrete item stack for a fixed output. Otherwise it produces the specified number of crystals for the batch's actual input aspect. Matching an aspect tag gives every member that rule. Each batch still collects a single aspect, selected by the first unit received. Existing batches keep their original amount and result when rules reload. New batches use the updated rules.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:thaumaturge:aspect>, <resource:thaumaturge:crystallization>, {
+    values: {
+        "#crafttweaker:probe_aspects": {
+            essentia: 3,
+            progress: 1,
+            result: {id: "minecraft:amethyst_shard", count: 2}
+        },
+        "thaumaturge:ignis": {enabled: false}
+    }
+});
+```
+
+This [fixture](porting/testing/crafttweaker/crystallizer.zs) converts three Aqua to two amethyst shards using the earlier tag definition. Ignis is disabled. The device uses its normal adjacent inventory and item ejection behavior.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -128,6 +151,7 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:dust_trigger` | Salis Mundus recipe IDs, clicked blocks in `minecraft:block`, and multiblock blueprints in `thaumaturge:blueprint`. |
 | `thaumaturge:research` | Progression IDs, including authored research entries and discovery flags. Supports `thaumaturge:research_entry` and `thaumaturge:research_category` selectors. |
 | `thaumaturge:scan` | Datapack scan IDs, or the research IDs awarded by code-driven scans. Supports `thaumaturge:scan` and `thaumaturge:research_entry` selectors, plus the directly scanned target in `minecraft:block`, `minecraft:item`, or `minecraft:entity_type`. |
+| `thaumaturge:essentia_crystalizer` | The concrete input aspect ID. Supports tags and entries in `thaumaturge:aspect`. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -145,6 +169,8 @@ The [stage fixture](porting/testing/crafttweaker/stages.zs) adds a recipe-specif
 The Thaumatorium checks the player who queued each recipe before drawing essentia, accepting an essentia transfer, or completing the recipe. If that player logs off or loses a required stage, the recipe and buffered essentia are retained. Queue ownership and buffered essentia survive saving and loading. For an older queue saved without its player, remove and requeue its restricted recipe with an eligible player. Infusion jobs and deferred Salis Mundus changes check their saved initiator before continuing. Grant the stage again to let a suspended job resume its existing progress.
 
 Research stage rules apply to unlocking, advancing, completing, and working on an entry's notes. Existing knowledge remains available. Revoking a stage suspends new progress and preserves research and notes already earned. A scan rule can gate a whole target or an individual matching scan definition. The direct scan API uses its research key when no target or definition is available.
+
+The Crystalizer records the player who placed it. For restricted aspects the owner must be online and eligible for intake and progress. When the owner loses the stage, the device retains its input and work across saves. To use a restricted recipe in an older Crystalizer without a recorded owner, re-place an empty device as the intended owner.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 

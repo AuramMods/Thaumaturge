@@ -53,6 +53,7 @@ class CrystalizerCompatibilityTest {
         fire = registry.getHolderOrThrow(TTAspects.IGNIS);
         registries = new RegistryAccess.ImmutableRegistryAccess(List.of(registry)).freeze();
         level = mock(ServerLevel.class);
+        when(level.getRecipeManager()).thenReturn(new net.minecraft.world.item.crafting.RecipeManager());
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRandom()).thenReturn(mock(RandomSource.class));
         when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);

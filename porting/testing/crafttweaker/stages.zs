@@ -18,3 +18,5 @@ Stages.requireTag(<resource:thaumaturge:scan>, <tag:thaumaturge/scan:crafttweake
     StageRequirement.anyOf(["observe", "study"]));
 Stages.requireId(<resource:thaumaturge:scan>, <resource:crafttweaker:scanned_honeycomb>,
     StageRequirement.anyOf(["observe", "study"]));
+Stages.requireTag(<resource:thaumaturge:essentia_crystalizer>, <tag:thaumaturge/aspect:crafttweaker:probe_aspects>,
+    StageRequirement.allOf(["crystallize"]));

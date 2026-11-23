@@ -5,7 +5,6 @@ import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCrystalAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
@@ -14,7 +13,9 @@ import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
-import java.util.Optional;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -40,10 +41,13 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity implements IEssentiaConduit {
-    public static final int TARGET_PROGRESS = 200;
+    public static final int TARGET_PROGRESS = Crystallization.DEFAULT_PROGRESS;
 
     private static final String ASPECT_KEY = "Aspect";
     private static final String PROGRESS_KEY = "Progress";
+    private static final String BATCH_KEY = "Batch";
+    private static final String ESSENTIA_KEY = "Essentia";
+    private static final String OWNER_KEY = "Owner";
     private static final int STEP_INTERVAL = 5;
     private static final int IDLE_SUCTION = 128;
     private static final int BUSY_SUCTION = 64;
@@ -80,6 +84,9 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
     private static final float FINISH_PITCH_SPREAD = 0.2F;
 
     private @Nullable ResourceKey<IAspect> aspect;
+    private @Nullable UUID owner;
+    private Crystallization batch = Crystallization.DEFAULT;
+    private int held;
     private int progress;
     private int ventTicks;
     private float rotation;
@@ -108,7 +115,8 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
         if (!stepTick || server.hasNeighborSignal(pos)) {
             return;
         }
-        if (crystalizer.aspect != null) {
+        if (crystalizer.aspect != null && crystalizer.held >= crystalizer.batch.essentia()) {
+            if (!crystalizer.allows(server, crystalizer.aspect)) return;
             crystalizer.advance(server, output);
             return;
         }
@@ -136,7 +144,7 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
             return;
         }
         Holder<IAspect> offered = source.heldAspect(touching);
-        if (offered == null || source.heldAmount(touching) < ONE_POINT) {
+        if (offered == null || source.heldAmount(touching) < ONE_POINT || roomFor(offered, inputFace) == NOTHING_MOVED) {
             return;
         }
         int ownPull = pullStrength(inputFace);
@@ -144,31 +152,34 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
             return;
         }
         if (source.extract(offered, ONE_POINT, touching, false) == ONE_POINT) {
-            hold(offered.unwrapKey().orElse(null));
+            accept(offered, ONE_POINT);
         }
     }
 
     private void advance(ServerLevel server, Direction output) {
-        int needed = TARGET_PROGRESS - progress;
+        int needed = batch.progress() - progress;
         int request = Math.min(MAX_VIS_REQUEST, Math.max(MIN_VIS_REQUEST, needed / REQUEST_DIVISOR));
         float drained = AuraHelper.drainVis(server, worldPosition, request / HUNDREDTHS, false);
         int units = Math.min(request, Math.round(drained * HUNDREDTHS));
-        progress += BASE_PROGRESS_STEP + VIS_PROGRESS_FACTOR * Math.max(units, 0);
-        if (progress >= TARGET_PROGRESS) {
+        int gained = BASE_PROGRESS_STEP + VIS_PROGRESS_FACTOR * Math.max(units, 0);
+        if (gained >= needed) {
             finish(server, output);
             return;
         }
+        progress += gained;
         setChanged();
     }
 
     private void finish(ServerLevel server, Direction output) {
-        Holder<IAspect> held = heldHolder();
+        Holder<IAspect> input = heldHolder();
+        ItemStack result = input == null ? ItemStack.EMPTY : batch.assemble(input);
         aspect = null;
+        batch = Crystallization.DEFAULT;
+        held = 0;
         progress = 0;
-        if (held != null) {
-            ItemStack crystal = EssentiaCrystalAccess.create(held, ONE_POINT);
+        if (!result.isEmpty()) {
             ItemStack leftover =
-                    InvHelper.insertAt(server, worldPosition.relative(output), output.getOpposite(), crystal, false);
+                    InvHelper.insertAt(server, worldPosition.relative(output), output.getOpposite(), result, false);
             if (!leftover.isEmpty()) {
                 dropOutward(server, output, leftover);
                 ventTicks = VENT_TICKS;
@@ -233,15 +244,37 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
         rotation = (rotation + rotationSpeed) % FULL_TURN;
     }
 
-    private void hold(@Nullable ResourceKey<IAspect> incoming) {
-        aspect = incoming;
-        progress = 0;
+    private void accept(Holder<IAspect> offered, int count) {
+        if (aspect == null) {
+            aspect = offered.unwrapKey().orElseThrow();
+            batch = Crystallization.of(offered);
+            progress = 0;
+        }
+        held += count;
         changedForClients();
+    }
+
+    void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
+    }
+
+    private boolean allows(ServerLevel server, @Nullable ResourceKey<IAspect> input) {
+        StageTarget target = input == null
+                ? StageTarget.family(StageTarget.ESSENTIA_CRYSTALIZER)
+                : StageTarget.recipe(StageTarget.ESSENTIA_CRYSTALIZER, input.location()).withSubject(input);
+        return StageRules.allowsOwner(server, target, owner);
     }
 
     @Override
     public int roomFor(Holder<IAspect> candidate, Direction side) {
-        return heldPoints() == NOTHING_MOVED && isInputSide(side) ? ONE_POINT : NOTHING_MOVED;
+        ResourceKey<IAspect> key = candidate.unwrapKey().orElse(null);
+        if (key == null || !isInputSide(side) || aspect != null && !aspect.equals(key)
+                || level instanceof ServerLevel server && !allows(server, key)) {
+            return NOTHING_MOVED;
+        }
+        Crystallization rule = aspect == null ? Crystallization.of(candidate) : batch;
+        return rule.enabled() ? Math.max(NOTHING_MOVED, rule.essentia() - held) : NOTHING_MOVED;
     }
 
     private static double jitter(RandomSource random) {
@@ -297,13 +330,6 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
         return crystalBlue;
     }
 
-    private int heldPoints() {
-        if (aspect != null) {
-            return ONE_POINT;
-        }
-        return NOTHING_MOVED;
-    }
-
     @Override
     public boolean receivesOn(Direction face) {
         return face == inputFace();
@@ -311,18 +337,10 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
 
     @Override
     public int insert(Holder<IAspect> offered, int count, Direction side, boolean simulate) {
-        return admit(offered, count, side, simulate) ? ONE_POINT : NOTHING_MOVED;
-    }
-
-    private boolean admit(Holder<IAspect> offered, int count, Direction side, boolean simulate) {
-        if (aspect != null || count <= 0 || !isInputSide(side)) {
-            return false;
-        }
-        Optional<ResourceKey<IAspect>> key = offered.unwrapKey();
-        if (!simulate) {
-            key.ifPresent(this::hold);
-        }
-        return key.isPresent();
+        if (count <= 0) return NOTHING_MOVED;
+        int accepted = Math.min(count, roomFor(offered, side));
+        if (accepted > 0 && !simulate) accept(offered, accepted);
+        return accepted;
     }
 
     @Override
@@ -342,12 +360,17 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
     private int pullStrength(@Nullable Direction face) {
         int base = aspect == null ? IDLE_SUCTION : BUSY_SUCTION;
         boolean listening = isInputSide(face) && level != null && !level.hasNeighborSignal(worldPosition);
+        if (listening && level instanceof ServerLevel server && !allows(server, aspect)) {
+            return SUCTION_FLOOR;
+        }
         return listening ? base : SUCTION_FLOOR;
     }
 
     @Override
     public EssentiaPull pull(@Nullable Direction face) {
-        return EssentiaPull.any(pullStrength(face));
+        int strength = pullStrength(face);
+        Holder<IAspect> input = held < batch.essentia() ? heldHolder() : null;
+        return input == null ? EssentiaPull.any(strength) : EssentiaPull.of(input, strength);
     }
 
     @Override
@@ -362,23 +385,37 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
                 ? TTNbt.read(input, ASPECT_KEY, LegacyIds.ASPECT_KEY_CODEC, registries)
                         .orElse(null)
                 : null;
-        progress = aspect == null ? 0 : Mth.clamp(input.getInt(PROGRESS_KEY), 0, TARGET_PROGRESS);
+        owner = input.hasUUID(OWNER_KEY) ? input.getUUID(OWNER_KEY) : null;
+        batch = aspect == null ? Crystallization.DEFAULT
+                : TTNbt.read(input, BATCH_KEY, Crystallization.CODEC, registries).orElse(Crystallization.DEFAULT);
+        held = aspect == null ? 0
+                : input.contains(ESSENTIA_KEY) ? Mth.clamp(input.getInt(ESSENTIA_KEY), 1, batch.essentia()) : 1;
+        progress = held < batch.essentia() ? 0 : Mth.clamp(input.getInt(PROGRESS_KEY), 0, batch.progress());
     }
 
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
+        if (owner != null) output.putUUID(OWNER_KEY, owner);
+        storeBatch(output, registries);
+    }
+
+    private void storeBatch(CompoundTag output, HolderLookup.Provider registries) {
         output.putBoolean("HasAspect", aspect != null);
         if (aspect == null) {
             return;
         }
         output.putInt(PROGRESS_KEY, progress);
         TTNbt.store(output, ASPECT_KEY, LegacyIds.ASPECT_KEY_CODEC, registries, aspect);
+        if (batch != Crystallization.DEFAULT) {
+            TTNbt.store(output, BATCH_KEY, Crystallization.CODEC, registries, batch);
+        }
+        if (held != ONE_POINT) output.putInt(ESSENTIA_KEY, held);
     }
 
     @Override
     public int heldAmount(@Nullable Direction face) {
-        return heldPoints();
+        return held;
     }
 
     @Override
@@ -388,7 +425,10 @@ public final class BlockEntityEssentiaCrystalizer extends RegistryBlockEntity im
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
+        CompoundTag output = new CompoundTag();
+        super.saveAdditional(output, registries);
+        storeBatch(output, registries);
+        return output;
     }
 
     @Override

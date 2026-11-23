@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
+import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEntityEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.BlockEntityThaumatorium;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInput;
@@ -37,6 +38,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -240,6 +242,58 @@ public final class StageGameTests {
                 "Advancing charged an incorrect amount of gold");
         remove(test, actor);
         test.succeed();
+    }
+
+    @GameTest(template = "essentia_room", batch = "crafttweaker_crystallization", timeoutTicks = 220)
+    public static void crystalizerUsesTaggedCostsAndRestoresPaidEssentia(GameTestHelper test) {
+        var actor = player(test);
+        var stages = GameStageHelper.getPlayerData(actor);
+        var level = test.getLevel();
+        var aqua = Objects.requireNonNull(Aspects.resolve(level, TTAspects.AQUA));
+        var terra = Objects.requireNonNull(Aspects.resolve(level, TTAspects.TERRA));
+        var ignis = Objects.requireNonNull(Aspects.resolve(level, TTAspects.IGNIS));
+        var block = TTBlocks.ESSENTIA_CRYSTALIZER.get();
+        var state = block.defaultBlockState().setValue(BlockStateProperties.FACING, Direction.EAST);
+        test.setBlock(POS, state);
+        test.setBlock(POS.west(), Blocks.CHEST);
+        var machine = (BlockEntityEssentiaCrystalizer) test.getBlockEntity(POS);
+        var output = (ChestBlockEntity) test.getBlockEntity(POS.west());
+        stages.addStage("crystallize");
+        test.assertTrue(machine.insert(aqua, 1, Direction.EAST, false) == 0,
+                "An ownerless machine accepted a staged input");
+        block.setPlacedBy(level, test.absolutePos(POS), state, actor, new ItemStack(block));
+        stages.removeStage("crystallize");
+        test.assertTrue(machine.insert(aqua, 3, Direction.EAST, false) == 0
+                        && machine.heldAmount(Direction.EAST) == 0,
+                "A stage-denied machine accepted essentia");
+        test.assertTrue(machine.roomFor(terra, Direction.EAST) == 1 && machine.roomFor(ignis, Direction.EAST) == 0,
+                "The rule changed a nonmember or allowed a disabled aspect");
+        stages.addStage("crystallize");
+        test.assertTrue(machine.insert(aqua, 8, Direction.EAST, true) == 3
+                        && machine.heldAmount(Direction.EAST) == 0,
+                "A simulated insert changed the stored intake");
+        test.assertTrue(machine.insert(aqua, 1, Direction.EAST, false) == 1
+                        && machine.roomFor(terra, Direction.EAST) == 0,
+                "A partially filled batch admitted the wrong input");
+        stages.removeStage("crystallize");
+        machine.load(machine.saveWithFullMetadata());
+        test.startSequence().thenIdle(15).thenExecute(() -> {
+            test.assertTrue(output.isEmpty() && machine.heldAmount(Direction.EAST) == 1
+                            && machine.insert(aqua, 2, Direction.EAST, false) == 0,
+                    "A paused batch lost its held unit or accepted input while its owner lacked the stage");
+            stages.addStage("crystallize");
+            test.assertTrue(machine.insert(aqua, 8, Direction.EAST, false) == 2,
+                    "The saved batch collected the wrong remaining amount");
+            stages.removeStage("crystallize");
+        }).thenIdle(10).thenExecute(() -> {
+            test.assertTrue(output.isEmpty() && machine.heldAmount(Direction.EAST) == 3 && machine.progress() == 0,
+                    "A fully paid batch continued after stage revocation");
+            stages.addStage("crystallize");
+        }).thenWaitUntil(() -> test.assertTrue(output.countItem(Items.AMETHYST_SHARD) == 2,
+                "The machine did not issue its scripted output")).thenExecute(() -> {
+            test.assertTrue(machine.heldAmount(Direction.EAST) == 0, "The result left paid essentia in the machine");
+            remove(test, actor);
+        }).thenSucceed();
     }
 
     private static ServerPlayer player(GameTestHelper test) {

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -53,6 +54,11 @@ public final class StageRules {
 
     public static boolean allows(ServerLevel level, StageTarget target, @Nullable Player player) {
         return denial(level, target, player) == null;
+    }
+
+    public static boolean allowsOwner(ServerLevel level, StageTarget target, @Nullable UUID owner) {
+        return !of(level).hasRules(target.family())
+                || allows(level, target, owner == null ? null : level.getServer().getPlayerList().getPlayer(owner));
     }
 
     public static boolean check(ServerLevel level, StageTarget target, Player player) {

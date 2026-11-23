@@ -8,6 +8,9 @@ import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -26,6 +29,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.util.FakePlayer;
 import org.jspecify.annotations.Nullable;
 
 /** Automated essentia-to-crystal endpoint. */
@@ -74,6 +78,15 @@ public final class BlockEssentiaCrystalizer extends BaseEntityBlock {
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState()
                 .setValue(BlockStateProperties.FACING, context.getClickedFace().getOpposite());
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (placer instanceof ServerPlayer player && !(player instanceof FakePlayer)
+                && level.getBlockEntity(pos) instanceof BlockEntityEssentiaCrystalizer crystalizer) {
+            crystalizer.setOwner(player.getUUID());
+        }
     }
 
     @Override

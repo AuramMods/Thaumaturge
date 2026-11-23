@@ -19,6 +19,7 @@ public record StageTarget(ResourceLocation family, Optional<ResourceLocation> id
     public static final ResourceLocation DUST_TRIGGER = TTIds.rl("dust_trigger");
     public static final ResourceLocation RESEARCH = TTIds.rl("research");
     public static final ResourceLocation SCAN = TTIds.rl("scan");
+    public static final ResourceLocation ESSENTIA_CRYSTALIZER = TTIds.rl("essentia_crystalizer");
 
     public static final Codec<StageTarget> CODEC = RecordCodecBuilder.create(i -> i.group(
                     ResourceLocation.CODEC.fieldOf("family").forGetter(StageTarget::family),
