@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.recipe;
 
 import com.google.gson.JsonElement;
 import com.leclowndu93150.thaumaturge.serialization.RegistryContext;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ public final class RecipeAccess {
     }
 
     private final RecipeManager manager;
+    private final StageRules stages = new StageRules();
     private final Map<Recipe<?>, RecipeHolder<?>> holders = new IdentityHashMap<>();
     private final Map<Recipe<?>, JsonElement> definitions = new IdentityHashMap<>();
     private volatile HolderLookup.Provider registries;
@@ -36,6 +38,10 @@ public final class RecipeAccess {
 
     public static RecipeAccess of(RecipeManager manager) {
         return ((Owner) manager).thaumaturge$recipeAccess();
+    }
+
+    public StageRules stages() {
+        return stages;
     }
 
     public synchronized void invalidate() {

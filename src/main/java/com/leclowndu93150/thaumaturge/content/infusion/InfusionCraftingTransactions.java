@@ -80,7 +80,8 @@ public final class InfusionCraftingTransactions implements InfusionCraftingTrans
         ItemStack output = BlockEntityInfusionMatrix.preserveCatalystDamage(
                 recipe.assemble(input, level.registryAccess()), input.catalyst());
         return new Inspection(
-                match.locked() ? Failure.RESEARCH_LOCKED : Failure.NONE,
+                match.stageDenial() != null ? Failure.STAGE_LOCKED
+                        : match.researchLocked() ? Failure.RESEARCH_LOCKED : Failure.NONE,
                 match.holder().key(),
                 matrix.projectedCost(level, recipe.jobEssentia(input)),
                 recipe.jobInstability(input),

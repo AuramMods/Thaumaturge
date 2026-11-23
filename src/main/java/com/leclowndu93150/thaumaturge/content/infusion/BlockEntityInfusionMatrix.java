@@ -7,6 +7,8 @@ import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
 import com.leclowndu93150.thaumaturge.api.infusion.InfusionCraftedEvent;
 import com.leclowndu93150.thaumaturge.api.items.IGogglesReadout;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import com.leclowndu93150.thaumaturge.content.aspect.ReadOnlyAspectContainer;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
@@ -170,6 +172,12 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
             setChanged();
             syncToClient();
         }
+        if (job != null && StageRules.of(level).hasRules(StageTarget.INFUSION)) {
+            ServerPlayer owner = job.player().map(level.getServer().getPlayerList()::getPlayer).orElse(null);
+            if (!StageRules.allows(level, job.stageTarget(), owner)) {
+                return;
+            }
+        }
         if (active && isCrafting() && count % countDelay == 0) {
             craftCycle(level, env, countDelay);
             setChanged();
@@ -247,6 +255,9 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
     }
 
     public boolean tryStartCraft(ServerLevel level, Player player) {
+        if (!active || isCrafting()) {
+            return false;
+        }
         checkSurroundings = true;
         essentiaSources.invalidate();
         if (!MatrixEnvironment.validLocation(level, worldPosition)) {
@@ -264,15 +275,18 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
             player.displayClientMessage(Component.translatable(KEY_NO_RECIPE), true);
             return false;
         }
-        if (match.locked()) {
+        if (match.stageDenial() != null) {
+            match.stageDenial().tell(player);
+            return false;
+        }
+        if (match.researchLocked()) {
             match.recipe()
                     .researchGate()
                     .ifPresent(gate -> player.displayClientMessage(
                             Component.translatable(KEY_RESEARCH_LOCKED, researchName(level, gate.entry())), true));
             return false;
         }
-        InfusionJobRecipe recipe = match.recipe();
-        InfusionCraftJob pendingJob = createCraftJob(recipe, input, env, player, level);
+        InfusionCraftJob pendingJob = createCraftJob(match, input, env, player, level);
         if (pendingJob == null) {
             return false;
         }
@@ -293,7 +307,9 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
     }
 
     static @Nullable InfusionCraftJob createCraftJob(
-            InfusionJobRecipe recipe, InfusionInput input, MatrixEnvironment env, Player player, ServerLevel level) {
+            InfusionRecipeMatcher.Match match, InfusionInput input, MatrixEnvironment env, Player player,
+            ServerLevel level) {
+        InfusionJobRecipe recipe = match.recipe();
         List<ItemStack> ingredients = recipe.jobComponents(input);
         if (ingredients == null) {
             return null;
@@ -306,7 +322,8 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
                 input.catalyst().copyWithCount(1),
                 recipe.jobInstability(input),
                 Optional.of(player.getUUID()),
-                cost);
+                cost,
+                Optional.of(StageTarget.recipe(StageTarget.INFUSION, match.holder().id())));
     }
 
     InfusionInput stagedInput(ServerLevel level) {

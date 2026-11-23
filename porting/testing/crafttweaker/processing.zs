@@ -33,7 +33,7 @@ println("TT_PROCESS_RUNIC=" + runic.definition(<resource:crafttweaker:test_runic
 val dust = <recipetype:thaumaturge:dust_trigger>;
 dust.addBlock("test_dust_block", <item:minecraft:gold_block>, <block:minecraft:iron_block>);
 dust.addBlockTag("test_dust_tag", <item:minecraft:iron_block>, <tag:blocks:minecraft:gold_ores>);
-dust.addMultiblock("test_dust_blueprint", <item:thaumaturge:golem_builder>, <resource:thaumaturge:golem_press>);
+dust.addMultiblock("test_dust_blueprint", <item:thaumaturge:golem_builder>, <resource:thaumaturge:infusion_altar_ancient>);
 println("TT_PROCESS_DUST_BLOCK=" + dust.definition(<resource:crafttweaker:test_dust_block>));
 println("TT_PROCESS_DUST_TAG=" + dust.definition(<resource:crafttweaker:test_dust_tag>));
 println("TT_PROCESS_DUST_BLUEPRINT=" + dust.definition(<resource:crafttweaker:test_dust_blueprint>));

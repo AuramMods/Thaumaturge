@@ -287,7 +287,9 @@ public final class ArcaneCraftingTransaction {
         /** The store no longer matched the input when the craft tried to consume it. */
         INGREDIENTS_CHANGED,
         /** The wand, sources, crystals or aura cannot pay the cost. */
-        PAYMENT_UNAVAILABLE
+        PAYMENT_UNAVAILABLE,
+        /** A matching recipe requires a GameStages stage that the actor does not have. */
+        STAGE_LOCKED
     }
 
     /**

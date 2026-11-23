@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
@@ -23,7 +24,8 @@ public final class InfusionCraftJob {
                     ItemStackCodecs.CODEC.fieldOf("catalyst").forGetter(j -> j.catalyst),
                     Codec.INT.fieldOf("instability").forGetter(j -> j.instability),
                     Codecs.optionalFieldOf(UUIDUtil.CODEC, "player").forGetter(j -> j.player),
-                    Codecs.optionalFieldOf(AspectList.CODEC, "cost", AspectList.EMPTY).forGetter(j -> j.cost))
+                    Codecs.optionalFieldOf(AspectList.CODEC, "cost", AspectList.EMPTY).forGetter(j -> j.cost),
+                    Codecs.optionalFieldOf(StageTarget.CODEC, "stage_target").forGetter(j -> j.stageTarget))
             .apply(i, InfusionCraftJob::new));
 
     private final List<ItemStack> ingredients;
@@ -33,6 +35,7 @@ public final class InfusionCraftJob {
     private final int instability;
     private final Optional<UUID> player;
     private final AspectList cost;
+    private final Optional<StageTarget> stageTarget;
 
     public InfusionCraftJob(
             List<ItemStack> ingredients,
@@ -52,6 +55,18 @@ public final class InfusionCraftJob {
             int instability,
             Optional<UUID> player,
             AspectList cost) {
+        this(ingredients, essentia, result, catalyst, instability, player, cost, Optional.empty());
+    }
+
+    public InfusionCraftJob(
+            List<ItemStack> ingredients,
+            AspectList essentia,
+            ItemStack result,
+            ItemStack catalyst,
+            int instability,
+            Optional<UUID> player,
+            AspectList cost,
+            Optional<StageTarget> stageTarget) {
         this.ingredients = new ArrayList<>(ingredients);
         this.essentia = essentia;
         this.result = result;
@@ -59,6 +74,7 @@ public final class InfusionCraftJob {
         this.instability = instability;
         this.player = player;
         this.cost = cost.isEmpty() ? essentia : cost;
+        this.stageTarget = stageTarget;
     }
 
     public List<ItemStack> ingredients() {
@@ -91,6 +107,10 @@ public final class InfusionCraftJob {
 
     public AspectList cost() {
         return cost;
+    }
+
+    StageTarget stageTarget() {
+        return stageTarget.orElseGet(() -> StageTarget.family(StageTarget.INFUSION));
     }
 
     public void oweOneMore(RandomSource random) {

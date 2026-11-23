@@ -68,6 +68,12 @@ public final class RequirementTracker {
         received = stored;
     }
 
+    public void payForRecipe() {
+        for (AspectInstance cost : needs) {
+            received = received.remove(cost.aspect(), cost.amount());
+        }
+    }
+
     public void clearReceived() {
         received = AspectList.EMPTY;
     }

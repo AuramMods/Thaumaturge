@@ -17,6 +17,9 @@ import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.StreamCodec;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -73,6 +76,11 @@ public final class DustTriggerMultiblockRecipe extends AbstractRecipe<DustTrigge
         return this.blueprintId;
     }
 
+    @Override
+    public StageTarget stageTarget(DustTriggerInput input) {
+        return DustTrigger.super.stageTarget(input).withSubject(ResourceKey.create(Blueprint.REGISTRY_KEY, blueprintId));
+    }
+
     public ItemStack result() {
         return this.result.copy();
     }
@@ -120,20 +128,35 @@ public final class DustTriggerMultiblockRecipe extends AbstractRecipe<DustTrigge
     @Override
     public void execute(
             DustTriggerInput input, Player player, @Nullable DustTriggerPlacement placement, Direction useFace) {
+        tryExecute(input, player, placement, useFace);
+    }
+
+    @Override
+    public boolean tryExecute(
+            DustTriggerInput input, Player player, @Nullable DustTriggerPlacement placement, Direction useFace) {
         Level level = input.level();
         if (!(level instanceof ServerLevel serverLevel)) {
-            return;
+            return false;
         }
         if (placement == null || placement.facing() == null) {
-            return;
+            return false;
         }
         Blueprint blueprint = lookupBlueprint(level);
         if (blueprint == null) {
-            return;
+            return false;
         }
+        var target = stageTarget(input);
+        if (!StageRules.check(serverLevel, target, player)) {
+            return false;
+        }
+        var authority = new StageAuthorization(target, player.getUUID());
         BlockPos origin = input.pos().offset(placement.xOffset(), placement.yOffset(), placement.zOffset());
-        for (BlueprintCell cell :
-                new RotatedBlueprint(blueprint, MultiblockMatcher.rotationsFor(placement.facing())).cells()) {
+        List<BlueprintCell> cells =
+                new RotatedBlueprint(blueprint, MultiblockMatcher.rotationsFor(placement.facing())).cells();
+        if (cells.stream().anyMatch(cell -> DustTriggerSwapQueue.isBlocked(level, origin.offset(cell.offset())))) {
+            return false;
+        }
+        for (BlueprintCell cell : cells) {
             BlockPos cellPos = origin.offset(cell.offset());
             enqueueForPart(
                     serverLevel,
@@ -143,8 +166,10 @@ public final class DustTriggerMultiblockRecipe extends AbstractRecipe<DustTrigge
                     placement.facing(),
                     useFace,
                     player,
+                    authority,
                     cell.part().priority());
         }
+        return true;
     }
 
     private static void enqueueForPart(
@@ -155,13 +180,14 @@ public final class DustTriggerMultiblockRecipe extends AbstractRecipe<DustTrigge
             Direction placementFacing,
             Direction useFace,
             Player player,
+            StageAuthorization authority,
             int delay) {
         BlueprintTarget target = part.target();
         if (target instanceof BlueprintTarget.Keep) {
             return;
         }
         if (target instanceof BlueprintTarget.Air) {
-            DustTriggerSwapQueue.enqueueClear(level, pos, original, delay);
+            DustTriggerSwapQueue.enqueue(level, PendingSwap.clearOnly(pos, original, delay).withAuthority(authority));
             return;
         }
         if (target instanceof BlueprintTarget.BlockTarget blockTarget) {
@@ -182,15 +208,18 @@ public final class DustTriggerMultiblockRecipe extends AbstractRecipe<DustTrigge
             } else if (placed.hasProperty(BlockStateProperties.FACING)) {
                 placed = placed.setValue(BlockStateProperties.FACING, facing);
             }
-            DustTriggerSwapQueue.enqueuePlace(level, pos, original, placed, delay);
+            DustTriggerSwapQueue.enqueue(level, PendingSwap.placeBlock(pos, original, placed, delay)
+                    .withAuthority(authority));
             return;
         }
         if (target instanceof BlueprintTarget.StateTarget stateTarget) {
-            DustTriggerSwapQueue.enqueuePlace(level, pos, original, stateTarget.state(), delay);
+            DustTriggerSwapQueue.enqueue(level, PendingSwap.placeBlock(pos, original, stateTarget.state(), delay)
+                    .withAuthority(authority));
             return;
         }
         if (target instanceof BlueprintTarget.StackTarget stackTarget) {
-            DustTriggerSwapQueue.enqueueDrop(level, pos, original, stackTarget.stack(), delay);
+            DustTriggerSwapQueue.enqueue(level, PendingSwap.dropItem(pos, original, stackTarget.stack(), delay)
+                    .withAuthority(authority));
         }
     }
 

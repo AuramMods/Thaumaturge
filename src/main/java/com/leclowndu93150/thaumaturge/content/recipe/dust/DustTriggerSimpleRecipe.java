@@ -5,6 +5,8 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
 
 import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerInput;
@@ -92,7 +94,12 @@ public final class DustTriggerSimpleRecipe extends AbstractRecipe<DustTriggerInp
         if (!(input.level() instanceof ServerLevel serverLevel)) {
             return;
         }
-        DustTriggerSwapQueue.enqueueDrop(serverLevel, input.pos(), input.clicked(), this.result.copy(), 50);
+        var target = stageTarget(input);
+        if (DustTriggerSwapQueue.isBlocked(serverLevel, input.pos()) || !StageRules.check(serverLevel, target, player)) {
+            return;
+        }
+        DustTriggerSwapQueue.enqueue(serverLevel, PendingSwap.dropItem(input.pos(), input.clicked(), this.result, 50)
+                .withAuthority(new StageAuthorization(target, player.getUUID())));
     }
 
     @Override

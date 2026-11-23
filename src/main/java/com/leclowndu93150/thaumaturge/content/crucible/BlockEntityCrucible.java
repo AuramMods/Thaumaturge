@@ -370,8 +370,13 @@ public class BlockEntityCrucible extends AbstractSyncedBlockEntity implements Re
         int count = stack.getCount();
 
         for (int i = 0; i < count && tank.getFluidAmount() > 0; i++) {
-            CrucibleRecipe recipe = ThaumaturgeCraftingManager.findMatchingCrucibleRecipe(
+            var match = ThaumaturgeCraftingManager.matchCrucible(
                     (ServerLevel) level, owner, this.aspects, stack);
+            if (match.denial() != null) {
+                match.denial().tell(owner);
+                break;
+            }
+            CrucibleRecipe recipe = match.recipe();
             if (recipe != null) {
                 ItemStack out = recipe.assemble(new CrucibleRecipeInput(stack, this.aspects), level.registryAccess());
                 this.aspects = recipe.removeMatching(aspects);

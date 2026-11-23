@@ -106,6 +106,8 @@ public final class InfusionCraftingTransaction {
         INVALID_RECIPE,
         /** A recipe matches, but the player has not unlocked it. */
         RESEARCH_LOCKED,
+        /** A matching recipe requires a GameStages stage that the actor does not have. */
+        STAGE_LOCKED,
         /** The staged items no longer resolve to the expected recipe. */
         INGREDIENTS_CHANGED,
         /** The recipe still matched but the matrix did not start the craft. */

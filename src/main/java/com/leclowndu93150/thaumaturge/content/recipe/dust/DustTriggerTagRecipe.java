@@ -15,6 +15,8 @@ import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
@@ -98,13 +100,18 @@ public final class DustTriggerTagRecipe extends AbstractRecipe<DustTriggerInput>
         if (!(input.level() instanceof ServerLevel serverLevel)) {
             return;
         }
+        var target = stageTarget(input);
+        if (DustTriggerSwapQueue.isBlocked(serverLevel, input.pos()) || !StageRules.check(serverLevel, target, player)) {
+            return;
+        }
         if (this.targetTag.equals(Tags.Blocks.BOOKSHELVES)
                 && this.result.is(TTItems.THAUMONOMICON.get())
                 && player instanceof ServerPlayer serverPlayer
                 && !(player instanceof FakePlayer)) {
             ResearchManager.complete(serverPlayer, TTIds.rl("gotthaumonomicon"));
         }
-        DustTriggerSwapQueue.enqueueDrop(serverLevel, input.pos(), input.clicked(), this.result.copy(), 50);
+        DustTriggerSwapQueue.enqueue(serverLevel, PendingSwap.dropItem(input.pos(), input.clicked(), this.result, 50)
+                .withAuthority(new StageAuthorization(target, player.getUUID())));
     }
 
     @Override

@@ -7,6 +7,8 @@ import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInpu
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingRecipe;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +23,8 @@ public final class ThaumaturgeCraftingManager {
         return RecipeAccess.of(level.getRecipeManager()).getAllRecipesFor(TTRecipeTypes.ARCANE.get()).stream()
                 .filter(r -> r.value().matches(input, level))
                 .filter(r -> r.value().doesPassGate(player))
+                .filter(r -> !(level instanceof ServerLevel server)
+                        || StageRules.allows(server, StageTarget.recipe(StageTarget.ARCANE_WORKBENCH, r.id()), player))
                 .findFirst()
                 .map(RecipeHolder::value)
                 .orElse(null);
@@ -28,15 +32,29 @@ public final class ThaumaturgeCraftingManager {
 
     public static @Nullable CrucibleRecipe findMatchingCrucibleRecipe(
             ServerLevel level, Player player, AspectList aspects, ItemStack lastDrop) {
+        return matchCrucible(level, player, aspects, lastDrop).recipe();
+    }
+
+    public static CrucibleMatch matchCrucible(
+            ServerLevel level, Player player, AspectList aspects, ItemStack lastDrop) {
         int highest = 0;
         CrucibleRecipe out = null;
+        StageRules.Requirement denial = null;
 
         CrucibleRecipeInput input = new CrucibleRecipeInput(lastDrop, aspects);
         for (RecipeHolder<CrucibleRecipe> holder :
                 RecipeAccess.of(level.getRecipeManager()).getAllRecipesFor(TTRecipeTypes.CRUCIBLE.get())) {
             CrucibleRecipe recipe = holder.value();
 
-            if (player != null && recipe.matches(input, level) && recipe.doesPassGate(player)) {
+            if (player != null && recipe.matches(input, level)) {
+                var restriction = StageRules.denial(level, StageTarget.recipe(StageTarget.CRUCIBLE, holder.id()), player);
+                if (restriction != null) {
+                    denial = restriction;
+                    continue;
+                }
+                if (!recipe.doesPassGate(player)) {
+                    continue;
+                }
                 int result = recipe.aspects().totalAmount();
                 if (result > highest) {
                     highest = result;
@@ -45,6 +63,8 @@ public final class ThaumaturgeCraftingManager {
             }
         }
 
-        return out;
+        return new CrucibleMatch(out, out == null ? denial : null);
     }
+
+    public record CrucibleMatch(@Nullable CrucibleRecipe recipe, @Nullable StageRules.Requirement denial) {}
 }

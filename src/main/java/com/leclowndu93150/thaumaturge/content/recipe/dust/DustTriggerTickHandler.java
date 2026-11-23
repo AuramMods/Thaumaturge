@@ -77,6 +77,14 @@ public final class DustTriggerTickHandler {
         List<PendingSwap> entries = queue.entries();
         List<PendingSwap> next = new ArrayList<>(entries.size());
         for (PendingSwap entry : entries) {
+            if (!level.getBlockState(entry.pos()).is(entry.originalState().getBlock())) {
+                DustTriggerSwapQueue.clearBlocked(level, entry.pos());
+                continue;
+            }
+            if (entry.authority().isPresent() && !entry.authority().get().allows(level)) {
+                next.add(entry);
+                continue;
+            }
             int remaining = entry.ticksRemaining() - 1;
             if (remaining <= 0) {
                 complete(level, entry);
@@ -94,10 +102,6 @@ public final class DustTriggerTickHandler {
 
     private static void complete(ServerLevel level, PendingSwap entry) {
         BlockPos pos = entry.pos();
-        if (!level.getBlockState(pos).is(entry.originalState().getBlock())) {
-            DustTriggerSwapQueue.clearBlocked(level, pos);
-            return;
-        }
         BlockState resultState = entry.stateResult();
         ItemStack resultStack = entry.stackResult();
         if (resultState != null) {

@@ -15,6 +15,8 @@ import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,6 +81,8 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
     private final SlotArcaneResult resultSlot;
     private long lastAuraRefresh = Long.MIN_VALUE;
     private int lastVis = -1;
+    private boolean stageLocked;
+    private boolean hadStageRules;
     private boolean displayingArcane;
 
     public MenuArcaneWorkbench(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
@@ -169,6 +173,11 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
 
         ArcaneCraftingTransaction.Result arcane = ArcaneCraftingTransaction.preview(
                 context(sp), sp, craftingInventory.asArcaneCraftInput().withPlayer(sp));
+        boolean locked = arcane.failure() == ArcaneCraftingTransaction.Failure.STAGE_LOCKED;
+        if (locked && !stageLocked) {
+            TTActionBar.sendPurple(sp, "message.thaumaturge.stage.locked");
+        }
+        stageLocked = locked;
         if (arcane.successful()) {
             result = arcane.output();
             displayingArcane = true;
@@ -276,11 +285,17 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
     public void broadcastChanges() {
         if (tile != null && tile.getLevel() != null) {
             long gameTime = tile.getLevel().getGameTime();
+            boolean refreshStageResults = false;
             if (gameTime >= lastAuraRefresh + AURA_REFRESH_INTERVAL) {
                 lastAuraRefresh = gameTime;
                 tile.refreshAura();
+                if (tile.getLevel() instanceof ServerLevel level) {
+                    boolean staged = StageRules.of(level).hasRules(StageTarget.ARCANE_WORKBENCH);
+                    refreshStageResults = staged || hadStageRules;
+                    hadStageRules = staged;
+                }
             }
-            if (lastVis != tile.auraVis) {
+            if (lastVis != tile.auraVis || refreshStageResults) {
                 slotsChanged(craftingInventory);
                 containerData.set(AURA_DATA_INDEX, tile.auraVis);
                 lastVis = tile.auraVis;

@@ -21,6 +21,8 @@ import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +56,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
     private static final String MAX_RECIPES_KEY = "MaxRecipes";
     private static final String QUEUE_KEY = "Queue";
     private static final String CATALYST_KEY = "Catalyst";
+    private static final String CRAFTERS_KEY = "Crafters";
     private static final int CATALYST_SLOTS = 1;
     private static final int CATALYST_SLOT = 0;
     private static final int HEAT_DEPTH = 2;
@@ -68,6 +71,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
     private final CraftSelection selection = new CraftSelection();
     private final AdjacentEssentiaDraw draw = new AdjacentEssentiaDraw();
     private final Map<ResourceLocation, UUID> crafters = new HashMap<>();
+    private @Nullable CrucibleRecipe plannedRecipe;
     private final BrainBoxScanner brainBoxes = new BrainBoxScanner();
     private final ThaumatoriumScheduler scheduler = new ThaumatoriumScheduler();
     private boolean heated;
@@ -115,7 +119,9 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
             return;
         }
         CrucibleRecipe recipe = recipe(level, recipeId);
-        if (recipe == null || !recipe.doesPassGate(player) || queue.isFull()) {
+        if (recipe == null || !recipe.doesPassGate(player) || queue.isFull()
+                || !StageRules.check(level, StageTarget.recipe(StageTarget.CRUCIBLE, recipeId), player)
+                || !StageRules.check(level, StageTarget.recipe(StageTarget.THAUMATORIUM, recipeId), player)) {
             return;
         }
         queue.add(recipeId);
@@ -130,7 +136,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
         for (RecipeHolder<CrucibleRecipe> entry :
                 RecipeAccess.of(level.getRecipeManager()).getAllRecipesFor(TTRecipeTypes.CRUCIBLE.get())) {
             ResourceLocation recipeId = entry.id();
-            if (isOffered(entry.value(), recipeId, inSlot, player)) {
+            if (isOffered(level, entry.value(), recipeId, inSlot, player)) {
                 found.add(entry.value());
                 idsOut.add(recipeId);
             }
@@ -138,14 +144,15 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
         return found;
     }
 
-    private boolean isOffered(CrucibleRecipe recipe, ResourceLocation recipeId, ItemStack inSlot, Player player) {
+    private boolean isOffered(
+            ServerLevel level, CrucibleRecipe recipe, ResourceLocation recipeId, ItemStack inSlot, Player player) {
         if (queue.ids().contains(recipeId)) {
             return true;
         }
         if (inSlot.isEmpty()) {
             return false;
         }
-        return recipe.catalyst().test(inSlot) && recipe.doesPassGate(player);
+        return recipe.catalyst().test(inSlot) && recipe.doesPassGate(player) && stagesAllow(level, recipeId, player);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityThaumatorium machine) {
@@ -213,15 +220,21 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
             return null;
         }
         CrucibleRecipe recipe = recipe(level, current);
-        return recipe != null && recipe.catalyst().test(inSlot) ? recipe : null;
+        if (recipe == null || !recipe.catalyst().test(inSlot)
+                || !queuedStagesAllow(level, current)) {
+            return null;
+        }
+        planFor(recipe);
+        return recipe;
     }
 
     private @Nullable CrucibleRecipe adoptFirstFit(ServerLevel level, ItemStack inSlot) {
         for (ResourceLocation candidate : queue.ids()) {
             CrucibleRecipe recipe = recipe(level, candidate);
-            if (recipe != null && recipe.catalyst().test(inSlot)) {
+            if (recipe != null && recipe.catalyst().test(inSlot)
+                    && queuedStagesAllow(level, candidate)) {
                 selection.choose(candidate);
-                requirements.planFor(recipe);
+                planFor(recipe);
                 return recipe;
             }
         }
@@ -236,7 +249,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
         }
         ItemStack result = recipe.assemble(check, level.registryAccess());
         useCatalyst(inSlot);
-        requirements.clearReceived();
+        requirements.payForRecipe();
         credit(level, result);
         InvHelper.eject(level, pos, front(), result);
         float pitch = HISS_PITCH_LOW + level.getRandom().nextFloat() * HISS_PITCH_RANGE;
@@ -251,9 +264,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
 
     private void credit(ServerLevel level, ItemStack result) {
         ResourceLocation current = selection.recipe();
-        UUID crafterId = current == null ? null : crafters.get(current);
-        ServerPlayer crafter =
-                crafterId == null ? null : level.getServer().getPlayerList().getPlayer(crafterId);
+        ServerPlayer crafter = current == null ? null : crafter(level, current);
         if (crafter == null || result.isEmpty()) {
             return;
         }
@@ -284,6 +295,34 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
     private void resetSelection() {
         selection.reset();
         requirements.clearPlan();
+        plannedRecipe = null;
+    }
+
+    private void planFor(CrucibleRecipe recipe) {
+        if (plannedRecipe != recipe) {
+            requirements.planFor(recipe);
+            plannedRecipe = recipe;
+        }
+    }
+
+    private @Nullable ServerPlayer crafter(ServerLevel level, ResourceLocation recipeId) {
+        UUID id = crafters.get(recipeId);
+        return id == null ? null : level.getServer().getPlayerList().getPlayer(id);
+    }
+
+    private static boolean stagesAllow(ServerLevel level, ResourceLocation recipeId, @Nullable Player player) {
+        return StageRules.allows(level, StageTarget.recipe(StageTarget.CRUCIBLE, recipeId), player)
+                && StageRules.allows(level, StageTarget.recipe(StageTarget.THAUMATORIUM, recipeId), player);
+    }
+
+    private boolean queuedStagesAllow(ServerLevel level, ResourceLocation recipeId) {
+        StageRules stages = StageRules.of(level);
+        return !(stages.hasRules(StageTarget.CRUCIBLE) || stages.hasRules(StageTarget.THAUMATORIUM))
+                || stagesAllow(level, recipeId, crafter(level, recipeId));
+    }
+
+    private boolean acceptsEssentia() {
+        return level instanceof ServerLevel server && keptSelection(server, catalystStack()) != null;
     }
 
     private @Nullable CrucibleRecipe recipe(ServerLevel level, ResourceLocation id) {
@@ -317,7 +356,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
     @Override
     public EssentiaPull pull(@Nullable Direction face) {
         ResourceKey<IAspect> requested = selection.requested();
-        if (requested == null) {
+        if (requested == null || !acceptsEssentia()) {
             return EssentiaPull.NONE;
         }
         return EssentiaPull.of(Aspects.resolve(level, requested), AdjacentEssentiaDraw.DRAW_SUCTION);
@@ -325,7 +364,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
 
     @Override
     public int roomFor(Holder<IAspect> aspect, Direction face) {
-        if (selection.recipe() == null || !isSideAllowed(face)) {
+        if (!isSideAllowed(face) || !acceptsEssentia()) {
             return NOTHING;
         }
         return requirements.shortfall(aspect);
@@ -333,7 +372,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
 
     @Override
     public int insert(Holder<IAspect> aspect, int amount, Direction face, boolean simulate) {
-        if (selection.recipe() == null || !isSideAllowed(face)) {
+        if (!isSideAllowed(face) || !acceptsEssentia()) {
             return NOTHING;
         }
         if (simulate) {
@@ -349,6 +388,16 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
 
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+        writeClientData(output, registries);
+        if (!crafters.isEmpty()) {
+            CompoundTag owners = new CompoundTag();
+            crafters.forEach((id, owner) -> owners.putUUID(id.toString(), owner));
+            output.put(CRAFTERS_KEY, owners);
+        }
+    }
+
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         output.put(CATALYST_KEY, catalyst.serializeNBT());
         TTNbt.store(output, QUEUE_KEY, LegacyIds.IDENTIFIER_CODEC.listOf(), registries, queue.ids());
@@ -367,6 +416,12 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
                 .orElse(List.of());
         queue.restore(
                 input.contains(MAX_RECIPES_KEY) ? input.getInt(MAX_RECIPES_KEY) : RecipeQueue.BASE_CAPACITY, savedIds);
+        crafters.clear();
+        CompoundTag owners = input.getCompound(CRAFTERS_KEY);
+        for (ResourceLocation id : queue.ids()) {
+            if (owners.hasUUID(id.toString())) crafters.put(id, owners.getUUID(id.toString()));
+        }
+        resetSelection();
         requirements.restoreReceived(
                 TTNbt.read(input, ESSENTIA_KEY, AspectList.CODEC, registries).orElse(AspectList.EMPTY));
     }

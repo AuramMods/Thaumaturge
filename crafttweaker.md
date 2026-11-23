@@ -8,11 +8,11 @@ This table identifies the server code and data used by each processing path. The
 
 | Processing | Native input and execution | Scripting | Stage and verification work |
 | --- | --- | --- | --- |
-| Arcane Workbench | Shaped and shapeless serializers share `thaumaturge:arcane_workbench`. `ArcaneCraftingTransactions` supplies the menu and external crafting API. The menu also handles ordinary crafting. | `addShaped`, `addShapeless`, and native JSON. Ordinary recipes use CraftTweaker's crafting manager. | Check player preview, result pickup, shift crafting, and external transactions with equal recipe inputs and different permissions. |
-| Crucible | `thaumaturge:crucible` selects a catalyst and pays from dissolved aspects. The Crucible also converts items into their authored or derived aspects. | `addRecipe` and native JSON. Aspect mapping pending. | Verify exact catalyst, aspect payment, output, and denial behavior. |
-| Thaumatorium | Uses the same Crucible recipe IDs. `BlockEntityThaumatorium` queues recipes, tracks requesters, and pulls essentia before completion. | Uses the Crucible manager. Machine rules pending. | Verify queue selection, owner eligibility, stage changes, and saved payment across reload and restart. |
-| Infusion Matrix | `thaumaturge:infusion`, `thaumaturge:infusion_enchantment`, and `thaumaturge:runic_augment` use `InfusionRecipeMatcher` and the matrix job. Item infusion can output a new stack or modify the existing catalyst. | Each manager has `addRecipe` and native JSON. Item infusion also has `addCatalystPatch`. Infusion modifier map edits pending. | Verify each variant, pedestal counts, instability, per-level costs, continuation, and dynamic output state. |
-| Salis Mundus | `SalisMundusItem` selects `thaumaturge:dust_trigger`. The simple, tag, and multiblock serializers share this recipe type. A multiblock references the Blueprint registry. | `addBlock`, `addBlockTag`, `addMultiblock`, and native JSON. Blueprint edits pending. | Verify block, tag and rotated blueprint transformations and the delayed replacement queue. |
+| Arcane Workbench | Shaped and shapeless serializers share `thaumaturge:arcane_workbench`. `ArcaneCraftingTransactions` supplies the menu and external crafting API. The menu also handles ordinary crafting. | `addShaped`, `addShapeless`, and native JSON. Ordinary recipes use CraftTweaker's crafting manager. | Recipe stage checks run in the transaction. Verify result pickup, shift crafting, and external transactions with different permissions. |
+| Crucible | `thaumaturge:crucible` selects a catalyst and pays from dissolved aspects. The Crucible also converts items into their authored or derived aspects. | `addRecipe`, native JSON, and the base aspect data map. | Recipe stages are checked before the Crucible spends its inputs, including through the automation API. Verify denied and allowed direct crafts. |
+| Thaumatorium | Uses the same Crucible recipe IDs. `BlockEntityThaumatorium` queues recipes, tracks requesters, and pulls essentia before completion. | Uses the Crucible manager. Machine rules pending. | Stage GameTest covers authorization, capability transfers, and a queued recipe resumed from saved block data. Dedicated restart remains to be tested. |
+| Infusion Matrix | `thaumaturge:infusion`, `thaumaturge:infusion_enchantment`, and `thaumaturge:runic_augment` use `InfusionRecipeMatcher` and the matrix job. Item infusion can output a new stack or modify the existing catalyst. | Each manager has `addRecipe` and native JSON. Item infusion also has `addCatalystPatch`. Infusion modifier map edits pending. | Stage checks run at recipe selection and in-flight work. Verify each variant, costs, continuation, and dynamic output state. |
+| Salis Mundus | `SalisMundusItem` selects `thaumaturge:dust_trigger`. The simple, tag, and multiblock serializers share this recipe type. A multiblock references the Blueprint registry. | `addBlock`, `addBlockTag`, `addMultiblock`, and native JSON. Blueprint edits pending. | Stage GameTest covers block and tag transformations, stage revocation, and resumed placement. Verify scripted rotated blueprints. |
 | Special crafting | The crafting table uses Salis Mundus mixing, label filtering, and Primordial Pearl repair through Thaumaturge's special serializers. | Verify ordinary crafting manager operations and serializer-backed definitions. | Verify dynamic stack output and remainders with the pack's RecipeStages integration. |
 | Alchemical Furnaces | `BlockEntitySmelter` and `BlockEntityAdvancedAlchemicalFurnace` distill item aspects. They use fuel or external power and output essentia. | Aspect maps and machine rules pending. | Verify tag-driven input changes, capacity, output transfer, and the actor policy. |
 | Essentia Crystalizer | `BlockEntityEssentiaCrystalizer` converts a measured amount of one aspect into its crystal. | Aspect selection and conversion rule pending. | Verify the accepted aspect, exact cost, and full output behavior. |
@@ -87,6 +87,42 @@ ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:base_aspect
 ```
 
 Run data-map edits in the default loader. The server reads the values through the native codec and applies membership after tags bind. This example changes the base aspect value read by the processing machines. The isolated fixture verifies the edited value in the server's written aspect index after startup and datapack reload.
+
+## GameStages
+
+Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
+
+| Method | Selector |
+| --- | --- |
+| `Stages.requireFamily(family, requirement)` | Every operation in a family. |
+| `Stages.requireId(family, id, requirement)` | One operation ID, such as a full recipe ID. |
+| `Stages.requireEntry(family, registry, id, requirement)` | Operations using a specified entry in a registry supported by that family. |
+| `Stages.requireTag(family, tag, requirement)` | Operations using an entry in a supported registry tag. Pass the native CraftTweaker tag bracket. |
+
+| Family | Operation IDs and registry selectors |
+| --- | --- |
+| `thaumaturge:arcane_workbench` | Arcane recipe IDs. |
+| `thaumaturge:crucible` | Crucible recipe IDs at either station. |
+| `thaumaturge:thaumatorium` | Crucible recipe IDs at the Thaumatorium. These requirements apply alongside the Crucible family's rules. |
+| `thaumaturge:infusion` | Item infusion, infusion enchantment, and Runic Augment recipe IDs. |
+| `thaumaturge:dust_trigger` | Salis Mundus recipe IDs, clicked blocks in `minecraft:block`, and multiblock blueprints in `thaumaturge:blueprint`. |
+
+```zenscript
+import mods.thaumaturge.StageRequirement;
+import mods.thaumaturge.Stages;
+
+Stages.requireFamily(<resource:thaumaturge:thaumatorium>, StageRequirement.allOf(["automate_alchemy"]));
+Stages.requireEntry(<resource:thaumaturge:dust_trigger>, <resource:minecraft:block>, <resource:minecraft:iron_block>,
+    StageRequirement.anyOf(["transform_iron", "craft_initiate"]));
+Stages.requireTag(<resource:thaumaturge:dust_trigger>, <tag:blocks:minecraft:gold_ores>,
+    StageRequirement.allOf(["transform_gold"]));
+```
+
+The [stage fixture](porting/testing/crafttweaker/stages.zs) adds a recipe-specific rule and a custom blueprint tag rule. Edit the rules and run `/reload` to apply the new scripts. Configured restrictions require GameStages and an eligible online actor. A server without any stage rules follows normal recipe behavior.
+
+The Thaumatorium checks the player who queued each recipe before drawing essentia, accepting an essentia transfer, or completing the recipe. If that player logs off or loses a required stage, the recipe and buffered essentia are retained. Queue ownership and buffered essentia survive saving and loading. For an older queue saved without its player, remove and requeue its restricted recipe with an eligible player. Infusion jobs and deferred Salis Mundus changes check their saved initiator before continuing. Grant the stage again to let a suspended job resume its existing progress.
+
+`./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 
 ## Crucible and Thaumatorium recipes
 

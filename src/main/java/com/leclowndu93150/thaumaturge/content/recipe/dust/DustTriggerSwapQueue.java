@@ -66,19 +66,19 @@ public final class DustTriggerSwapQueue {
 
     public static void enqueueDrop(
             ServerLevel level, BlockPos pos, BlockState originalState, ItemStack result, int delayTicks) {
-        enqueueInternal(level, PendingSwap.dropItem(pos, originalState, result, delayTicks));
+        enqueue(level, PendingSwap.dropItem(pos, originalState, result, delayTicks));
     }
 
     public static void enqueuePlace(
             ServerLevel level, BlockPos pos, BlockState originalState, BlockState placed, int delayTicks) {
-        enqueueInternal(level, PendingSwap.placeBlock(pos, originalState, placed, delayTicks));
+        enqueue(level, PendingSwap.placeBlock(pos, originalState, placed, delayTicks));
     }
 
     public static void enqueueClear(ServerLevel level, BlockPos pos, BlockState originalState, int delayTicks) {
-        enqueueInternal(level, PendingSwap.clearOnly(pos, originalState, delayTicks));
+        enqueue(level, PendingSwap.clearOnly(pos, originalState, delayTicks));
     }
 
-    private static void enqueueInternal(ServerLevel level, PendingSwap entry) {
+    public static void enqueue(ServerLevel level, PendingSwap entry) {
         ChunkPos cp = new ChunkPos(entry.pos());
         LevelChunk chunk = level.getChunk(cp.x, cp.z);
         DustTriggerSwapQueue queue = AttachmentData.get(chunk, TTAttachments.DUST_TRIGGER_QUEUE);

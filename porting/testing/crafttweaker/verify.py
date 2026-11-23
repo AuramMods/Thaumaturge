@@ -19,7 +19,13 @@ def prepare(profile, auram, jar, standalone):
         "lithostitched-forge-1.20.1-1.4.11.jar",
     ]
     if not standalone:
-        dependencies.append("CraftTweaker-forge-1.20.1-14.0.59.jar")
+        dependencies.extend([
+            "CraftTweaker-forge-1.20.1-14.0.59.jar",
+            "Bookshelf-Forge-1.20.1-20.2.15.jar",
+            "GameStages-Forge-1.20.1-15.0.2.jar",
+            "ItemStages-Forge-1.20.1-8.0.3.jar",
+            "RecipeStages-8.0.0.2.jar",
+        ])
         scripts = profile / "scripts"
         scripts.mkdir()
         for script in Path(__file__).resolve().parent.glob("*.zs"):
@@ -58,6 +64,8 @@ def wait_for(process, logfile, pattern, count=1):
 def verify_recipes(log):
     errors = [line for line in log.splitlines() if "[ERROR]" in line]
     assert not errors, errors
+    for family, rules in (("thaumatorium", 1), ("arcane_workbench", 1), ("crucible", 1), ("dust_trigger", 3)):
+        assert log.count(f"Adding a GameStages rule for thaumaturge:{family}") == 2 * rules, family
     for marker in ("CRUCIBLE_REMOVED", "SPECIAL_REMOVED", "SPECIAL_SALIS", "SPECIAL_LABEL", "SPECIAL_PEARL",
                    "TAG_ASPECT", "TAG_MATERIAL"):
         assert log.count(f"TT_{marker}=true") == 2, marker
@@ -85,7 +93,7 @@ def verify_recipes(log):
     assert snapshots("PROCESS_RUNIC")["research"]["negate"] is True
     assert snapshots("PROCESS_DUST_BLOCK")["target"] == "minecraft:iron_block"
     assert snapshots("PROCESS_DUST_TAG")["target_tag"] == "minecraft:gold_ores"
-    assert snapshots("PROCESS_DUST_BLUEPRINT")["blueprint"] == "thaumaturge:golem_press"
+    assert snapshots("PROCESS_DUST_BLUEPRINT")["blueprint"] == "thaumaturge:infusion_altar_ancient"
 
     assert snapshots("REPLACER_JSON_COPY") == shaped
     shaped["key"]["I"] = {"item": "minecraft:copper_ingot"}

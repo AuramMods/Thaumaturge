@@ -13,6 +13,8 @@ import com.leclowndu93150.thaumaturge.api.transaction.Transaction;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.server.level.ServerLevel;
@@ -85,6 +87,10 @@ public final class ArcaneCraftingTransactions implements ArcaneCraftingTransacti
             }
             Match match = match(context.level(), player, input);
             if (match.failure() != Failure.NONE) {
+                if (!preview && match.failure() == Failure.STAGE_LOCKED) {
+                    StageRules.check(context.level(),
+                            StageTarget.recipe(StageTarget.ARCANE_WORKBENCH, match.holder().id()), player);
+                }
                 return Result.failure(match.failure());
             }
             IArcaneRecipe recipe = match.holder().value();
@@ -132,19 +138,22 @@ public final class ArcaneCraftingTransactions implements ArcaneCraftingTransacti
     }
 
     private static Match match(ServerLevel level, ServerPlayer player, IArcaneCraftingInput input) {
-        RecipeHolder<? extends IArcaneRecipe> locked = null;
+        Match locked = new Match(null, Failure.NO_RECIPE);
         for (RecipeHolder<? extends IArcaneRecipe> holder :
                 RecipeAccess.of(level.getRecipeManager()).getAllRecipesFor(TTRecipeTypes.ARCANE.get())) {
-            if (holder.value().matches(input, level)) {
-                if (holder.value().doesPassGate(player)) {
-                    return new Match(holder, Failure.NONE);
-                }
-                if (locked == null) {
-                    locked = holder;
-                }
+            if (!holder.value().matches(input, level)) {
+                continue;
             }
+            if (!holder.value().doesPassGate(player)) {
+                if (locked.holder() == null) locked = new Match(holder, Failure.RESEARCH_LOCKED);
+                continue;
+            }
+            if (StageRules.allows(level, StageTarget.recipe(StageTarget.ARCANE_WORKBENCH, holder.id()), player)) {
+                return new Match(holder, Failure.NONE);
+            }
+            locked = new Match(holder, Failure.STAGE_LOCKED);
         }
-        return locked == null ? new Match(null, Failure.NO_RECIPE) : new Match(locked, Failure.RESEARCH_LOCKED);
+        return locked;
     }
 
     private static List<ItemStack> grid(IArcaneCraftingInput input) {

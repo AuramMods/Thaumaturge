@@ -181,6 +181,9 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/network/effect/ClientboundSpawnParticlePayload.java'
         java.include 'com/leclowndu93150/thaumaturge/server/command/admin/ShowcaseMarker.java'
         java.include 'com/leclowndu93150/thaumaturge/recipe/**'
+        java.include 'com/leclowndu93150/thaumaturge/stage/StageRules.java'
+        java.include 'com/leclowndu93150/thaumaturge/stage/StageTarget.java'
+        java.include 'com/leclowndu93150/thaumaturge/compat/gamestages/GameStagesBridge.java'
         java.include 'com/leclowndu93150/thaumaturge/api/recipe/DustTriggerInput.java'
         java.include 'com/leclowndu93150/thaumaturge/api/recipe/BlueprintSource.java'
         java.include 'com/leclowndu93150/thaumaturge/api/recipe/BlueprintTarget.java'
@@ -556,6 +559,8 @@ repositories {
             includeGroup 'mezz.jei'
             includeGroup 'net.mezzdev.config'
             includeGroup 'com.blamejared.crafttweaker'
+            includeGroup 'net.darkhax.gamestages'
+            includeGroup 'net.darkhax.bookshelf'
         }
     }
     maven { url = 'https://maven.architectury.dev/'; content { includeGroup 'dev.architectury' } }
@@ -578,6 +583,7 @@ dependencies {
     // The universal JAR already includes ZenCode. ForgeGradle also resolves the
     // original coordinate, so use an artifact-only declaration for both paths.
     compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${minecraft_version}:${crafttweaker_version}@jar")
+    compileOnly fg.deobf("net.darkhax.gamestages:GameStages-Forge-${minecraft_version}:${gamestages_version}@jar")
     compileOnly(fg.deobf("dev.ftb.mods:ftb-library-forge:${ftb_library_version}")) { transitive = false }
     compileOnly 'org.jspecify:jspecify:1.0.0'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
@@ -619,6 +625,11 @@ dependencies {
         runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
         runtimeOnly fg.deobf("maven.modrinth:jade:${jade_version}")
         runtimeOnly fg.deobf("maven.modrinth:vdjF5PL5:${dynamic_trees_version}")
+    }
+    if (providers.gradleProperty('portScriptIntegrations').isPresent()) {
+        runtimeOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${minecraft_version}:${crafttweaker_version}@jar")
+        runtimeOnly fg.deobf("net.darkhax.gamestages:GameStages-Forge-${minecraft_version}:${gamestages_version}@jar")
+        runtimeOnly fg.deobf("net.darkhax.bookshelf:Bookshelf-Forge-${minecraft_version}:20.2.15@jar")
     }
 }
 

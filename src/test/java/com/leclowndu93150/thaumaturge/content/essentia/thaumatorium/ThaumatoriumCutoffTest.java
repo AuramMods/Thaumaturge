@@ -267,28 +267,36 @@ class ThaumatoriumCutoffTest {
     }
 
     @Test
-    void nativeSaveRetainsContentsButDoesNotPersistEphemeralCrafterMap() {
+    void nativeSaveRetainsContentsAndOwnerWithoutSyncingOwner() {
         BlockEntityThaumatorium original = prepared();
         original.queue().clear();
         Player owner = mock(Player.class);
-        when(owner.getUUID()).thenReturn(new UUID(3L, 7L));
+        UUID id = new UUID(3L, 7L);
+        when(owner.getUUID()).thenReturn(id);
         original.toggleRecipe(level, owner, RECIPE);
         tick(original, 5);
         original.insert(order, 2, Direction.EAST, false);
-        CompoundTag saved = original.getUpdateTag(registries);
-        assertEquals(java.util.Set.of("Catalyst", "Queue", "MaxRecipes", "Essentia"), saved.getAllKeys());
+        CompoundTag clientTag = original.getUpdateTag(registries);
+        assertEquals(java.util.Set.of("Catalyst", "Queue", "MaxRecipes", "Essentia"), clientTag.getAllKeys());
+        CompoundTag saved = original.saveWithoutMetadata(registries);
+        assertEquals(id, saved.getCompound("Crafters").getUUID(RECIPE.toString()));
         BlockEntityThaumatorium loaded = new BlockEntityThaumatorium(
                 BlockPos.ZERO, TTBlocks.THAUMATORIUM.get().defaultBlockState());
         loaded.setLevel(level);
         loaded.loadAdditional(saved, registries);
-        assertEquals(saved, loaded.getUpdateTag(registries));
-        clearInvocations(level);
+        assertEquals(clientTag, loaded.getUpdateTag(registries));
+        MinecraftServer server = mock(MinecraftServer.class);
+        PlayerList players = mock(PlayerList.class);
+        ServerPlayer crafter = mock(ServerPlayer.class);
+        when(level.getServer()).thenReturn(server);
+        when(server.getPlayerList()).thenReturn(players);
+        when(players.getPlayer(id)).thenReturn(crafter);
         try (var output = mockStatic(InvHelper.class);
                 var research = mockStatic(ResearchProgressionEvents.class)) {
             tick(loaded, 1);
-            research.verifyNoInteractions();
+            research.verify(() -> ResearchProgressionEvents.recordCrafted(
+                    eq(crafter), argThat(stack -> stack.is(Items.GLOWSTONE) && stack.getCount() == 2)));
         }
-        verify(level, never()).getServer();
         assertEquals(2, loaded.catalystStack().getCount());
         assertTrue(loaded.essentia().isEmpty());
     }

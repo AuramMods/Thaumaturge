@@ -8,12 +8,15 @@ import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerPlacement;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerFx;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
+import com.leclowndu93150.thaumaturge.content.recipe.dust.PendingSwap;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
 import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -69,6 +72,9 @@ public final class SalisMundusItem extends Item {
             return InteractionResult.SUCCESS;
         }
         ServerLevel serverLevel = (ServerLevel) level;
+        if (DustTriggerSwapQueue.isBlocked(level, pos)) {
+            return InteractionResult.PASS;
+        }
         BlockState clicked = level.getBlockState(pos);
         DustTriggerInput input = new DustTriggerInput(stack, level, pos, clicked);
         Optional<RecipeHolder<DustTrigger>> match =
@@ -86,26 +92,29 @@ public final class SalisMundusItem extends Item {
             TTActionBar.sendPurple(player, "message.thaumaturge.salis_mundus.no_research");
             return InteractionResult.PASS;
         }
+        var target = trigger.stageTarget(input);
+        if (!StageRules.check(serverLevel, target, player)) {
+            return InteractionResult.PASS;
+        }
         ItemStack result = trigger.assemble(input, level.registryAccess());
         if (result.isEmpty()) {
+            return InteractionResult.PASS;
+        }
+        DustTriggerPlacement placement = trigger.isMultiblock() ? trigger.findPlacement(input) : null;
+        if (trigger.isMultiblock() && (placement == null
+                || !trigger.tryExecute(input, player, placement, context.getClickedFace()))) {
             return InteractionResult.PASS;
         }
         ItemStack consumed = stack.copyWithCount(1);
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        DustTriggerPlacement placement = null;
-        if (trigger.isMultiblock()) {
-            placement = trigger.findPlacement(input);
-            if (placement == null) {
-                return InteractionResult.PASS;
-            }
-            trigger.execute(input, player, placement, context.getClickedFace());
-        } else if (result.getItem() instanceof BlockItem blockItem) {
-            DustTriggerSwapQueue.enqueuePlace(
-                    serverLevel, pos, clicked, blockItem.getBlock().defaultBlockState(), SWAP_DELAY_TICKS);
-        } else {
-            DustTriggerSwapQueue.enqueueDrop(serverLevel, pos, clicked, result, SWAP_DELAY_TICKS);
+        var authority = new StageAuthorization(target, player.getUUID());
+        if (!trigger.isMultiblock()) {
+            PendingSwap swap = result.getItem() instanceof BlockItem blockItem
+                    ? PendingSwap.placeBlock(pos, clicked, blockItem.getBlock().defaultBlockState(), SWAP_DELAY_TICKS)
+                    : PendingSwap.dropItem(pos, clicked, result, SWAP_DELAY_TICKS);
+            DustTriggerSwapQueue.enqueue(serverLevel, swap.withAuthority(authority));
         }
         if (player instanceof ServerPlayer serverPlayer) {
             Vec3 hitWorld = context.getClickLocation();

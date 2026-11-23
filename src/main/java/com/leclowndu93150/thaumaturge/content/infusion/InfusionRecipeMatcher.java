@@ -2,6 +2,9 @@ package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageRules.Requirement;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.List;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +25,7 @@ public final class InfusionRecipeMatcher {
             if (match != null && !match.locked()) {
                 return match;
             }
-            if (locked == null) {
+            if (match != null && (locked == null || locked.stageDenial() == null && match.stageDenial() != null)) {
                 locked = match;
             }
         }
@@ -36,17 +39,29 @@ public final class InfusionRecipeMatcher {
             if (!holder.value().matches(input, level)) {
                 continue;
             }
-            if (holder.value().doesPassGate(player)) {
-                return new Match(holder, false);
+            if (!holder.value().doesPassGate(player)) {
+                if (locked == null) locked = new Match(holder, true, null);
+                continue;
             }
-            if (locked == null) {
-                locked = new Match(holder, true);
+            var denial = StageRules.denial(level, StageTarget.recipe(StageTarget.INFUSION, holder.id()), player);
+            if (denial == null) {
+                return new Match(holder, false, null);
             }
+            if (locked == null || locked.stageDenial() == null) locked = new Match(holder, false, denial);
         }
         return locked;
     }
 
-    public record Match(RecipeHolder<? extends InfusionJobRecipe> holder, boolean locked) {
+    public record Match(RecipeHolder<? extends InfusionJobRecipe> holder, boolean researchLocked,
+                        @Nullable Requirement stageDenial) {
+
+        public Match(RecipeHolder<? extends InfusionJobRecipe> holder, boolean locked) {
+            this(holder, locked, null);
+        }
+
+        public boolean locked() {
+            return researchLocked || stageDenial != null;
+        }
 
         public InfusionJobRecipe recipe() {
             return holder.value();
