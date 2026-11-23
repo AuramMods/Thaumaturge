@@ -19,7 +19,8 @@ This table identifies the server code and data used by each processing path. The
 | Deconstruction Table | `BlockEntityDeconstructionTable` consumes an item and produces a research aspect. | Edit the `thaumaturge:deconstruction` item data map for fixed aspects, points, or probability. | The placer must be eligible for restricted processing. A collector also needs the result's current stages. |
 | Infernal Furnace | `BlockEntityInfernalFurnace` uses native smelting recipes with the `InfernalBonus` data map for extra output. | Vanilla smelting manager and `thaumaturge:infernal_bonus` item data map. | Stage rules apply to intake and queued work via the builder or placer. |
 | Pattern Crafter | `BlockEntityPatternCrafter` uses the ordinary crafting recipe manager and neighboring storage. | Vanilla crafting manager and `thaumaturge:pattern_crafter` block data map. | Stage rules apply before charging vis or extracting crafting inputs. |
-| Golem Press | `BlockEntityGolemBuilder` assembles a configured golem from material and part definitions, then pays Machina. | Golem part and trait selectors, costs, and press rules pending. | Verify item costs, essentia costs, saved work, stage checks, and exact final golem state. |
+| Golem Press | `BlockEntityGolemBuilder` assembles a configured golem from material and part definitions, then pays Machina. | Edit the `thaumaturge:golem_assembly` data map for materials, parts, and traits. | The script tests exercise tagged material costs, saved Machina, stage revocation, and deployment of the completed build. |
+| Golem seals | `SealHandler` places and ticks seals. `SealAccess` checks editors and golem task eligibility together with native ownership and traits. | Stage rules select seal types and the attached blocks. | The fixture uses a block selector to verify placement, editing, and work eligibility before and after a stage grant. |
 | Focal Manipulator | `BlockEntityFocalManipulator` validates a spell tree and charges vis against focus tiers, spell parts, and affinities. | Focus data and inscription rules pending. | Verify setup through the menu packet, an exact charge, saved completion, and casting restrictions. |
 | Spa | `BlockEntitySpa` either mixes the tank fluid with an additive or places a fluid from its tank. | The `thaumaturge:spa_mixing` and `thaumaturge:spa_placement` fluid data maps select costs and outputs by fluid or fluid tag. Mixing takes a native item ingredient. | Stage checks run before placement. The script fixture tests blocked outlets, saved contents and owner, and exact costs for both modes. |
 | Potion Sprayer | `BlockEntityPotionSprayer` uses `PotionAspects` to derive costs from potion brewing inputs and prepares doses for spraying. | Brewing manager and potion cost rules pending. | Verify altered inputs and the cost of a delivered dose. |
@@ -242,6 +243,23 @@ ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:deconstruct
 
 The [distillation fixture](porting/testing/crafttweaker/distillation.zs) also sets the Void Smelter's efficiency to 1.0 and adds an advanced conversion.
 
+### Golem assembly
+
+The `thaumaturge:golem_assembly` data map is available on the `thaumaturge:golem_material`, `thaumaturge:golem_head`, `thaumaturge:golem_arm`, `thaumaturge:golem_leg`, `thaumaturge:golem_addon`, and `thaumaturge:golem_trait` registries. Select entries by ID or by tag. A `components` list replaces only that entry's share of the bill. An empty list removes that share. The press merges identical stacks and computes the default Machina charge as the total item count plus two per resolved trait. Each selected entry's `machina_delta` adjusts that charge, with a minimum final charge of zero.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:thaumaturge:golem_material>, <resource:thaumaturge:golem_assembly>, {
+    values: {"#crafttweaker:probe_materials": {
+        components: [{id: "minecraft:copper_ingot", count: 3}],
+        machina_delta: 2
+    }}
+});
+```
+
+The [golem fixture](porting/testing/crafttweaker/golems.zs) replaces the tagged iron material's base and mechanism with three copper ingots. Selected arms, legs, head and add-on keep their respective costs. The press uses the current bill when the player starts a new job. An in-progress job retains its selected parts, paid items, and Machina balance.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -268,6 +286,8 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:infernal_furnace` | Ordinary smelting recipe IDs and the actual input in `minecraft:item`. |
 | `thaumaturge:alchemical_furnace` and `thaumaturge:advanced_alchemical_furnace` | The input item ID. Supports `minecraft:item` input and `thaumaturge:aspect` output entries and tags. |
 | `thaumaturge:deconstruction_table` | The input item ID. Supports `minecraft:item` input and `thaumaturge:aspect` result entries and tags. |
+| `thaumaturge:golem_assembly` and `thaumaturge:golem_deployment` | The design's material ID. Supports the selected material, head, arms, legs, add-on, and effective traits as registry entries and tags. |
+| `thaumaturge:golem_seal` | The seal type ID. Supports `thaumaturge:seal` and the attached block in `minecraft:block`. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -293,6 +313,8 @@ The Spa records the player who placed it and checks that owner's current stages 
 The Pattern Crafter records its placer. The Infernal Furnace records its Salis Mundus builder or its placer when placed directly. Restricted work uses that player's current stages. The Infernal Furnace keeps its queued inputs and pauses its timer when no queued input is eligible. Re-place or reassemble empty legacy devices to record their owner.
 
 The Alchemical Furnaces and Deconstruction Table record their placer or Salis Mundus builder. Revoking a stage pauses restricted work and retains its inputs and paid reserves. The smelters can transfer essentia from completed jobs. A Deconstruction Table retains a completed result until a player with its stages collects it, even if that player and the placer are different people.
+
+The Golem Press checks the requester before collecting items. The requester's stages govern Machina intake, progress, and delivery. A seal checks the actor placing or editing it and uses the current seal owner's stages for golem work. A suspended seal remains placed and resumes accepting eligible tasks when its owner returns with the required stages. Native trait and ownership checks still apply.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 

@@ -10,6 +10,8 @@ import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
@@ -97,6 +99,13 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
             return InteractionResult.FAIL;
         }
         ServerLevel serverLevel = (ServerLevel) level;
+        ItemStack held = context.getItemInHand();
+        GolemProperties props = ItemData.get(held, TTDataComponents.GOLEM_PROPERTIES.get());
+        if (StageRules.of(serverLevel).hasRules(StageTarget.GOLEM_DEPLOYMENT)
+                && !StageRules.check(serverLevel, GolemStages.design(StageTarget.GOLEM_DEPLOYMENT,
+                        props == null ? GolemProperties.createDefault() : props), player)) {
+            return InteractionResult.FAIL;
+        }
         EntityThaumaturgeGolem golem = TTEntities.THAUMATURGE_GOLEM.get().create(serverLevel);
         if (golem == null) {
             return InteractionResult.FAIL;
@@ -105,8 +114,6 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
         golem.moveTo(spawn.x, spawn.y, spawn.z, 0.0F, 0.0F);
         golem.setValidSpawn();
         golem.setOwner(player);
-        ItemStack held = context.getItemInHand();
-        GolemProperties props = ItemData.get(held, TTDataComponents.GOLEM_PROPERTIES.get());
         if (props != null) {
             golem.applyBuild(props);
         }

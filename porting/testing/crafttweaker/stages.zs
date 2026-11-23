@@ -38,3 +38,9 @@ Stages.requireId(<resource:thaumaturge:advanced_alchemical_furnace>, <resource:m
     StageRequirement.allOf(["distill_advanced"]));
 Stages.requireId(<resource:thaumaturge:deconstruction_table>, <resource:minecraft:echo_shard>,
     StageRequirement.allOf(["deconstruct_echo"]));
+Stages.requireTag(<resource:thaumaturge:golem_assembly>, <tag:thaumaturge/golem_material:crafttweaker:probe_materials>,
+    StageRequirement.allOf(["assemble_iron_golem"]));
+Stages.requireTag(<resource:thaumaturge:golem_deployment>, <tag:thaumaturge/golem_material:crafttweaker:probe_materials>,
+    StageRequirement.allOf(["deploy_iron_golem"]));
+Stages.requireEntry(<resource:thaumaturge:golem_seal>, <resource:minecraft:block>, <resource:minecraft:amethyst_block>,
+    StageRequirement.allOf(["guard_advanced_seal"]));

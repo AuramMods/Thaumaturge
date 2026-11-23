@@ -116,7 +116,7 @@ public final class SealEntity implements ISealEntity {
     }
 
     public void tick(ServerLevel level) {
-        if (isStoppedByRedstone(level)) {
+        if (isStoppedByRedstone(level) || !SealAccess.allowsWork(level, this)) {
             if (!halted) {
                 TaskBoard.of(level).endAllFrom(pos);
             }

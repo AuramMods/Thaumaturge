@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.Thaumaturge;
@@ -65,11 +67,16 @@ public final class SealHandler {
     }
 
     public static boolean place(ServerLevel level, SealPos pos, ResourceLocation typeId, SealType type, Player player) {
-        return !index(level).seals().containsKey(pos)
-                && addSealEntity(level, SealEntity.place(pos, typeId, type, player.getUUID()));
+        if (index(level).seals().containsKey(pos)) return false;
+        var seal = SealEntity.place(pos, typeId, type, player.getUUID());
+        return StageRules.check(level, SealAccess.target(level, seal), player) && registerSeal(level, seal);
     }
 
     public static boolean addSealEntity(ServerLevel level, SealEntity seal) {
+        return StageRules.allows(level, SealAccess.target(level, seal), null) && registerSeal(level, seal);
+    }
+
+    private static boolean registerSeal(ServerLevel level, SealEntity seal) {
         SealWorldIndex index = index(level);
         if (index.seals().containsKey(seal.pos())) {
             return false;
@@ -114,7 +121,7 @@ public final class SealHandler {
             SealPos target = new SealPos(
                     moves.get(seal.pos().pos()), rotation.rotate(seal.pos().face()));
             removeSealEntity(from, seal.pos(), true);
-            addSealEntity(to, seal.relocated(target, rotation));
+            registerSeal(to, seal.relocated(target, rotation));
         }
     }
 

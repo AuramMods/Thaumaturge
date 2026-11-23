@@ -8,11 +8,11 @@ import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemProperties;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemAddon;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemArm;
-import com.leclowndu93150.thaumaturge.api.golems.parts.GolemComponent;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemHead;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemLeg;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemMaterial;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPart;
+import com.leclowndu93150.thaumaturge.content.golem.GolemAssemblyCosts.Rule;
 import com.leclowndu93150.thaumaturge.registry.TTGolemParts;
 import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import com.mojang.serialization.Codec;
@@ -152,15 +152,34 @@ public final class GolemProperties implements IGolemProperties {
 
     @Override
     public List<ItemStack> components() {
+        return assemblyBill().components();
+    }
+
+    public AssemblyBill assemblyBill() {
         List<ItemStack> bill = new ArrayList<>();
-        merge(bill, material.base(), BASE_SHARE);
-        merge(bill, material.mechanism(), 1);
-        for (GolemPart part : List.of(arms, legs, head, addon)) {
-            for (GolemComponent component : part.components()) {
-                merge(bill, component.resolve(material), 1);
-            }
+        var base = material.base();
+        int adjustment = append(bill, GolemAssemblyCosts.rule(TTGolemParts.materials(), material, GolemAssemblyCosts.MATERIAL),
+                List.of(base.copyWithCount(base.getCount() * BASE_SHARE), material.mechanism()));
+        adjustment += appendPart(bill, arms, GolemAssemblyCosts.rule(TTGolemParts.arms(), arms, GolemAssemblyCosts.ARM));
+        adjustment += appendPart(bill, legs, GolemAssemblyCosts.rule(TTGolemParts.legs(), legs, GolemAssemblyCosts.LEG));
+        adjustment += appendPart(bill, head, GolemAssemblyCosts.rule(TTGolemParts.heads(), head, GolemAssemblyCosts.HEAD));
+        adjustment += appendPart(bill, addon, GolemAssemblyCosts.rule(TTGolemParts.addons(), addon, GolemAssemblyCosts.ADDON));
+        for (GolemTrait trait : traits()) {
+            adjustment += append(bill, GolemAssemblyCosts.rule(TTGolemTraits.registry(), trait, GolemAssemblyCosts.TRAIT),
+                    List.of());
         }
-        return bill;
+        int machina = Math.max(0, adjustment + 2 * traits().size() + bill.stream().mapToInt(ItemStack::getCount).sum());
+        return new AssemblyBill(bill, machina);
+    }
+
+    private int appendPart(List<ItemStack> bill, GolemPart part, @Nullable Rule rule) {
+        return append(bill, rule, part.components().stream().map(component -> component.resolve(material)).toList());
+    }
+
+    private static int append(List<ItemStack> bill, @Nullable Rule rule, List<ItemStack> original) {
+        var components = rule == null ? original : rule.components().orElse(original);
+        for (ItemStack component : components) merge(bill, component, 1);
+        return rule == null ? 0 : rule.machinaDelta();
     }
 
     private static void merge(List<ItemStack> bill, ItemStack item, int times) {
@@ -172,6 +191,8 @@ public final class GolemProperties implements IGolemProperties {
         }
         bill.add(item.copyWithCount(item.getCount() * times));
     }
+
+    public record AssemblyBill(List<ItemStack> components, int machina) {}
 
     @Override
     public GolemMaterial material() {

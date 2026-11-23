@@ -1,5 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.golem.press;
 
+import com.leclowndu93150.thaumaturge.content.golem.GolemStages;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
+import net.minecraft.server.level.ServerLevel;
+
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -55,7 +61,6 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
     private static final int UNIT = 1;
     private static final int NOTHING = 0;
     private static final boolean PASSIVE_OUTPUT = false;
-    private static final int COST_PER_TRAIT = 2;
     private static final int RANK_ZERO = 0;
     private static final float START_VOLUME = 0.25F;
     private static final float DELIVER_VOLUME = 1.0F;
@@ -92,6 +97,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
 
     private final OutputSlot outputHandler = new OutputSlot();
     private @Nullable GolemProperties pending;
+    private @Nullable StageAuthorization authority;
     private int cost;
     private int totalCost;
     private int ticks;
@@ -134,7 +140,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
     }
 
     private void runCycle(Level level) {
-        if (pending == null) {
+        if (pending == null || !jobAllowed()) {
             return;
         }
         if (cost > 0 && payUnit(level)) {
@@ -250,6 +256,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
         cost = 0;
         totalCost = 0;
         pending = null;
+        authority = null;
         buffered = false;
     }
 
@@ -279,30 +286,30 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
     }
 
     public boolean beginAssembly(GolemProperties props, Player player) {
-        if (level == null || level.isClientSide() || cost != 0 || pending != null) {
+        if (!(level instanceof ServerLevel server) || player.level() != server || cost != 0 || pending != null) {
             return false;
         }
         if (!props.isKnownBy(PlayerResearchAccess.of(player))) {
             return false;
         }
         GolemProperties design = props.withRank(RANK_ZERO);
+        var target = GolemStages.design(StageTarget.GOLEM_ASSEMBLY, design);
+        if (!StageRules.check(server, target, player)) return false;
         if (!outputAccepts(placerFor(design))) {
             return abandonJob();
         }
-        ItemStack[] components = props.components().toArray(ItemStack[]::new);
+        var bill = props.assemblyBill();
+        ItemStack[] components = bill.components().toArray(ItemStack[]::new);
         if (!InvHelper.takeFromNeighboursOrPlayer(level, worldPosition, player, true, components)) {
             return abandonJob();
         }
         if (!InvHelper.takeFromNeighboursOrPlayer(level, worldPosition, player, false, components)) {
             return abandonJob();
         }
-        int total = COST_PER_TRAIT * props.traits().size();
-        for (ItemStack component : components) {
-            total += component.getCount();
-        }
-        totalCost = total;
-        cost = total;
+        totalCost = bill.machina();
+        cost = totalCost;
         pending = design;
+        authority = StageAuthorization.capture(server, target, player);
         setChangedAndSync();
         level.playSound(null, worldPosition, TTSounds.WAND.get(), SoundSource.BLOCKS, START_VOLUME, SOUND_PITCH);
         return true;
@@ -337,6 +344,12 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
 
     @Override
     protected void saveAdditional(CompoundTag out, HolderLookup.Provider registries) {
+        writeClientData(out, registries);
+        if (authority != null) TTNbt.store(out, "Authority", StageAuthorization.CODEC, registries, authority);
+    }
+
+    @Override
+    protected void writeClientData(CompoundTag out, HolderLookup.Provider registries) {
         super.saveAdditional(out, registries);
         out.putInt(KEY_MAX_COST, totalCost);
         out.putInt(KEY_COST, cost);
@@ -351,6 +364,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
         totalCost = in.getInt(KEY_MAX_COST);
         cost = in.getInt(KEY_COST);
         pending = TTNbt.read(in, KEY_GOLEM, GolemProperties.CODEC, registries).orElse(null);
+        authority = TTNbt.read(in, "Authority", StageAuthorization.CODEC, registries).orElse(null);
         buffered = isWorking() && in.getBoolean(KEY_BUFFERED);
         outputHandler.deserializeNBT(in.getCompound("inventory"));
     }
@@ -367,7 +381,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
 
     @Override
     public int insert(Holder<IAspect> aspect, int amount, Direction face, boolean simulate) {
-        boolean acceptable = isWorking() && !buffered && amount > 0 && aspect.is(TTAspects.MACHINA);
+        boolean acceptable = amount > 0 && roomFor(aspect, face) == UNIT;
         if (!simulate && acceptable) {
             buffered = true;
             setChanged();
@@ -377,14 +391,21 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
 
     @Override
     public int roomFor(Holder<IAspect> aspect, Direction face) {
-        return isWorking() && !buffered && aspect.is(TTAspects.MACHINA) ? UNIT : NOTHING;
+        return isWorking() && !buffered && aspect.is(TTAspects.MACHINA) && jobAllowed() ? UNIT : NOTHING;
     }
 
     @Override
     public EssentiaPull pull(@Nullable Direction face) {
-        return isWorking()
+        return isWorking() && jobAllowed()
                 ? EssentiaPull.of(EssentiaTransportHelper.resolve(level, TTAspects.MACHINA), WORKING_SUCTION)
                 : EssentiaPull.NONE;
+    }
+
+    private boolean jobAllowed() {
+        if (!(level instanceof ServerLevel server) || pending == null
+                || !StageRules.of(server).hasRules(StageTarget.GOLEM_ASSEMBLY)) return true;
+        return authority != null ? authority.allows(server)
+                : StageRules.allows(server, GolemStages.design(StageTarget.GOLEM_ASSEMBLY, pending), null);
     }
 
     @Override
