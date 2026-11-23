@@ -28,7 +28,8 @@ This table identifies the server code and data used by each processing path. The
 | Wand and scepter assembly | `WandAssemblyPackResources` generates Arcane Workbench recipes from the wand cap and rod registries. | Use the Arcane Workbench manager for the generated recipe IDs. Caps and rods have typed tags. | Verify edits to generated recipes and the normal post-craft assembly hook. |
 | Research and scanning | `ResearchManager`, `ResearchNotes`, and the Research Table process research costs and notes. `ScanningManager` processes scanned targets and datapack scan definitions. | World-startup datapack definitions and typed registry tags. | Stage checks run before advancing research, paying note costs, or applying scan effects. |
 | Node jarring | `NodeJarRitual` checks research and the glass-and-slab structure, spends six primal vis balances, and converts the node. | `thaumaturge:node_jarring` block data map configures wand payment and modifier degradation. | Stages gate the start, deferred shell removal, and conversion. The fixture checks all six costs and resumes an already-paid job for its original initiator. |
-| Other conversions and progression | Audit the Centrifuge, Everfull Urn, Void Siphon, Stabilizer, Pech exchanges, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
+| Pech exchanges | `MenuPech` spends a single prized offer. `PechBarter` rolls for a result using `PechTradeTable`. | `thaumaturge:pech_offer` edits prized item values. `thaumaturge:pech_trades` edits results by trade table ID or tag. | Stage checks precede the offer debit, payout, and mood roll. The fixture checks the exact offer and resulting stacks. |
+| Other conversions and progression | Audit the Centrifuge, Everfull Urn, Void Siphon, Stabilizer, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
 
 ## Recipe manager methods
 
@@ -88,7 +89,7 @@ aspects.addId(<resource:thaumaturge:aqua>, <resource:thaumaturge:terra>);
 aspects.removeId(<resource:thaumaturge:terra>);
 ```
 
-In the default loader, the same bracket returns `KnownTag<Aspect>`. Use `.contains(id)` to check membership or `.idElements` to list the member IDs. The [tag fixture](porting/testing/crafttweaker/tag-lookup.zs) shows typed lookups for aspects and golem materials. The custom registry folders include `aspect`, `blueprint`, `golem_material`, `golem_head`, `golem_arm`, `golem_leg`, `golem_addon`, `golem_trait`, `seal`, `spell_part`, `spell_affinity`, `research_entry`, `research_category`, `scan`, `wand_cap`, `wand_rod`, `labyrinth`, `labyrinth_room`, and `obelisk_site`. Prefix these folders with `thaumaturge/` in tag brackets.
+In the default loader, the same bracket returns `KnownTag<Aspect>`. Use `.contains(id)` to check membership or `.idElements` to list the member IDs. The [tag fixture](porting/testing/crafttweaker/tag-lookup.zs) shows typed lookups for aspects and golem materials. The custom registry folders include `aspect`, `blueprint`, `golem_material`, `golem_head`, `golem_arm`, `golem_leg`, `golem_addon`, `golem_trait`, `seal`, `spell_part`, `spell_affinity`, `research_entry`, `research_category`, `scan`, `wand_cap`, `wand_rod`, `labyrinth`, `labyrinth_room`, `obelisk_site`, and `pech_trade`. Prefix these folders with `thaumaturge/` in tag brackets.
 
 ### Paying the Crucible or Thaumatorium with tags
 
@@ -332,6 +333,25 @@ ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:node_jarri
 
 Use `enabled: false` to prevent new rituals. A paid ritual retains its saved modifier rule, timer, and initiating player.
 
+### Pech exchanges
+
+Use `thaumaturge:pech_offer` on `minecraft:item` to set an item's barter value from zero to 32. Zero excludes it from prized offers. With no override, an Ender Pearl is worth 15 and other offers use half their Desiderium aspect count. The same value also governs the Pech's native taming interest.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:pech_offer>, {
+    values: {"minecraft:amethyst_shard": {value: 3}}
+});
+ProcessingData.edit(<resource:thaumaturge:pech_trade>, <resource:thaumaturge:pech_trades>, {
+    values: {"#crafttweaker:probe_pech_tables": {
+        trades: [{tier: 1, result: {id: "minecraft:prismarine_shard", count: 2}}]
+    }}
+});
+```
+
+The [Pech tag script](porting/testing/crafttweaker/pech-tags.zs) puts `thaumaturge:forager` in the example tag. Select `thaumaturge:forager`, `thaumaturge:mage`, or `thaumaturge:stalker` to target one variant. Each `trades` list replaces that table's tier pools. Tiers run from one to five. Entries within a tier are equally likely, and repeated entries increase that result's weight. Native haggling, hoard payouts, and risky tiers still apply. To author a table in a datapack, put the same `trades` object in `data/thaumaturge/thaumaturge/pech_trade/<variant>.json` and reopen the world.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -364,6 +384,7 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:potion_sprayer` | The base potion ID. Supports selectors for the potion in `minecraft:potion` and the received bottle in `minecraft:item`. |
 | `thaumaturge:condenser`, `thaumaturge:vis_generator`, and `thaumaturge:flux_scrubber` | The device block ID and its entry or tag in `minecraft:block`. The Condenser also supports Vitium as an aspect selector. The Flux Scrubber supports Aer and Praecantatio. |
 | `thaumaturge:node_jarring` | The original node block ID. Supports selectors for the source node and jar blocks in `minecraft:block`, and the six primal aspects in `thaumaturge:aspect`. |
+| `thaumaturge:pech_trade` | The Pech variant's table ID. Supports the table in `thaumaturge:pech_trade`, the offered item in `minecraft:item`, and the Pech entity type in `minecraft:entity_type`. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -399,6 +420,8 @@ The Potion Sprayer records its placer and checks that owner's stages before draw
 The [aura machine fixture](porting/testing/crafttweaker/aura-machines.zs) stages the Condenser, Vis Generator, and Flux Scrubber. These machines retain their recorded owners and buffers when saved. Suspending new work leaves completed essentia available for transfer and lets the Vis Generator send energy it already produced.
 
 The [node jarring fixture](porting/testing/crafttweaker/node-jarring.zs) gates the ritual on the resulting jar block. The paid ritual and its remaining shell swaps pause while the initiating player is offline or loses the required stage. They resume after that player becomes eligible and finish without a second payment. A legacy ritual already in progress keeps the original authorization.
+
+The [Pech fixture](porting/testing/crafttweaker/pech.zs) requires a stage to haggle using the tagged variants. The player can retrieve an offer after a denial. Payouts from an eligible trade remain available if the stage is later revoked.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 

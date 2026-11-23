@@ -25,6 +25,7 @@ import com.leclowndu93150.thaumaturge.api.wands.WandRod;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.LabyrinthDefinition;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.RoomType;
 import com.leclowndu93150.thaumaturge.content.eldritch.site.ObeliskSite;
+import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable;
 import java.util.List;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -50,7 +51,8 @@ public final class ThaumaturgeTags implements ICraftTweakerPlugin {
             new TagType<>(WandRod.REGISTRY_KEY, WandRod.class, "WandRod", WandRodElements.class),
             new TagType<>(LabyrinthDefinition.REGISTRY_KEY, LabyrinthDefinition.class, "Labyrinth", LabyrinthElements.class),
             new TagType<>(RoomType.REGISTRY_KEY, RoomType.class, "LabyrinthRoom", LabyrinthRoomElements.class),
-            new TagType<>(ObeliskSite.REGISTRY_KEY, ObeliskSite.class, "ObeliskSite", ObeliskSiteElements.class));
+            new TagType<>(ObeliskSite.REGISTRY_KEY, ObeliskSite.class, "ObeliskSite", ObeliskSiteElements.class),
+            new TagType<>(PechTradeTable.REGISTRY_KEY, PechTradeTable.class, "PechTradeTable", PechTradeElements.class));
 
     @Override
     public void registerTaggableElements(ITaggableElementRegistrationHandler handler) {
@@ -85,6 +87,7 @@ public final class ThaumaturgeTags implements ICraftTweakerPlugin {
     public static final class LabyrinthElements {}
     public static final class LabyrinthRoomElements {}
     public static final class ObeliskSiteElements {}
+    public static final class PechTradeElements {}
 
     private record TagType<T>(ResourceKey<Registry<T>> key, Class<T> element, String name, Class<?> expansion) {
         void registerTag(ITaggableElementRegistrationHandler handler) {

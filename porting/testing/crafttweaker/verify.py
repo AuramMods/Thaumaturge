@@ -1,6 +1,7 @@
 """Exercise the recipe manager fixtures on a fresh Forge server using Auram's JARs."""
 
 import argparse
+from contextlib import contextmanager
 import json
 from pathlib import Path
 import re
@@ -51,8 +52,8 @@ def read(file):
     return file.read_text(errors="replace") if file.exists() else ""
 
 
-def wait_for(process, logfile, pattern, count=1):
-    deadline = time.monotonic() + 150
+def wait_for(process, logfile, pattern, count=1, timeout=180):
+    deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         log = read(logfile)
         if log.count(pattern) >= count:
@@ -73,7 +74,7 @@ def verify_recipes(log):
                           ("deconstruction_table", 1), ("golem_assembly", 1),
                           ("golem_deployment", 1), ("golem_seal", 1), ("focus_inscription", 1),
                           ("spell_cast", 1), ("potion_sprayer", 1), ("condenser", 1),
-                          ("vis_generator", 1), ("flux_scrubber", 1), ("node_jarring", 1)):
+                          ("vis_generator", 1), ("flux_scrubber", 1), ("node_jarring", 1), ("pech_trade", 1)):
         assert log.count(f"Adding a GameStages rule for thaumaturge:{family}") == 2 * rules, family
     assert log.count("Editing Thaumaturge data map thaumaturge:aspect/thaumaturge:crystallization") == 2
     for mode in ("mixing", "placement"):
@@ -85,10 +86,11 @@ def verify_recipes(log):
                               ("minecraft:item", "spell_focus"), ("minecraft:item", "focus_inscription"),
                               ("minecraft:potion", "potion_sprayer"), ("minecraft:block", "condenser"),
                               ("minecraft:block", "vis_generator"), ("minecraft:block", "flux_scrubber"),
-                              ("minecraft:block", "node_jarring")):
+                              ("minecraft:block", "node_jarring"), ("minecraft:item", "pech_offer"),
+                              ("thaumaturge:pech_trade", "pech_trades")):
         assert log.count(f"Editing Thaumaturge data map {registry}/thaumaturge:{machine}") == 2
     for marker in ("CRUCIBLE_REMOVED", "SPECIAL_REMOVED", "SPECIAL_SALIS", "SPECIAL_LABEL", "SPECIAL_PEARL",
-                   "TAG_ASPECT", "TAG_MATERIAL"):
+                   "TAG_ASPECT", "TAG_MATERIAL", "TAG_PECH"):
         assert log.count(f"TT_{marker}=true") == 2, marker
 
     def snapshots(marker):
@@ -141,6 +143,45 @@ def verify_distillation_input(profile):
     assert index["aspects"]["minecraft:dirt"] == [{"aspect": "thaumaturge:terra", "amount": 71}]
 
 
+def send(server, *commands):
+    server.stdin.write("\n".join(commands) + "\n")
+    server.stdin.flush()
+
+
+@contextmanager
+def running_server(profile, command, log):
+    with log.open("w") as console:
+        server = subprocess.Popen(command, cwd=profile, stdin=subprocess.PIPE,
+                                  stdout=console, stderr=subprocess.STDOUT, text=True)
+        try:
+            wait_for(server, log, 'For help, type "help"', timeout=360)
+            yield server
+        finally:
+            if server.poll() is None:
+                send(server, "stop")
+                try:
+                    server.wait(timeout=45)
+                except subprocess.TimeoutExpired:
+                    server.kill()
+                    server.wait(timeout=10)
+    assert server.returncode == 0 and "All dimensions are saved" in read(log), server.returncode
+
+
+def plant_restart_fixture(server, log):
+    send(server, "forceload add 8 8", 'setblock 8 -58 8 thaumaturge:essentia_crystalizer'
+         '{HasAspect:1b,Aspect:"thaumaturge:aqua",Essentia:3,Progress:211,Owner:[I;11,22,33,44],'
+         'Batch:{essentia:3,progress:4000,result:{id:"minecraft:amethyst_shard",count:2}}}',
+         "data get block 8 -58 8 Progress", "save-all flush")
+    wait_for(server, log, "has the following block data: 211")
+    wait_for(server, log, "Saved the game")
+
+
+def verify_restart_fixture(server, log):
+    send(server, 'execute if data block 8 -58 8 {Progress:211,Essentia:3,Owner:[I;11,22,33,44],'
+         'Batch:{result:{id:"minecraft:amethyst_shard",count:2}}} run say TT_CRYSTALIZER_RESTORED')
+    wait_for(server, log, "TT_CRYSTALIZER_RESTORED")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("profile", type=Path, help="New directory for an isolated server")
@@ -148,34 +189,29 @@ def main():
     parser.add_argument("--jar", required=True, type=Path, help="Reobfuscated Thaumaturge JAR")
     parser.add_argument("--java", required=True, type=Path, help="Java 17 executable")
     parser.add_argument("--standalone", action="store_true", help="Start without CraftTweaker or GameStages")
+    parser.add_argument("--restart", action="store_true", help="Verify a paid batch and its owner survive a restart")
     args = parser.parse_args()
+    if args.standalone and args.restart:
+        parser.error("--restart needs the scripted Crystalizer stage rules")
     prepare(args.profile, args.auram.resolve(), args.jar, args.standalone)
     server_log = args.profile / "console.log"
     ct_log = args.profile / "logs/crafttweaker.log"
     command = [str(args.java.resolve()), "-Xmx4G", "-XX:ActiveProcessorCount=4", "-Djava.awt.headless=true",
                "@libraries/net/minecraftforge/forge/1.20.1-47.4.10/unix_args.txt", "nogui"]
-    with server_log.open("w") as console:
-        server = subprocess.Popen(command, cwd=args.profile, stdin=subprocess.PIPE,
-                                  stdout=console, stderr=subprocess.STDOUT, text=True)
-        try:
-            wait_for(server, server_log, 'For help, type "help"')
-            if not args.standalone:
-                server.stdin.write("reload\n")
-                server.stdin.flush()
-                wait_for(server, ct_log, "Execution for loader 'crafttweaker' completed successfully", 2)
-                verify_recipes(read(ct_log))
-        finally:
-            if server.poll() is None:
-                server.stdin.write("stop\n")
-                server.stdin.flush()
-                try:
-                    server.wait(timeout=45)
-                except subprocess.TimeoutExpired:
-                    server.kill()
-                    server.wait(timeout=10)
-    assert server.returncode == 0 and "All dimensions are saved" in read(server_log), server.returncode
+    with running_server(args.profile, command, server_log) as server:
+        if not args.standalone:
+            send(server, "reload")
+            wait_for(server, ct_log, "Execution for loader 'crafttweaker' completed successfully", 2)
+            verify_recipes(read(ct_log))
+            if args.restart:
+                plant_restart_fixture(server, server_log)
     if not args.standalone:
         verify_distillation_input(args.profile)
+    if args.restart:
+        restart_log = args.profile / "restart.log"
+        with running_server(args.profile, command, restart_log) as server:
+            verify_restart_fixture(server, restart_log)
+        print("The paid Crystalizer batch and its offline owner survived a dedicated restart.")
     print("Headless Forge startup and world save passed." if args.standalone else
           "CraftTweaker recipe fixtures passed at startup and after reload.")
 

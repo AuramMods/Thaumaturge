@@ -1,11 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.entity.loot.MobSpawnEquipment;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
-import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.entity.ai.HoldsStill;
 import com.leclowndu93150.thaumaturge.content.entity.ai.ItemCollector;
 import com.leclowndu93150.thaumaturge.content.pech.MenuPech;
+import com.leclowndu93150.thaumaturge.content.pech.PechOffer;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -363,22 +362,11 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
     }
 
     public boolean isPrizedItem(ItemStack stack) {
-        return stack.is(Items.ENDER_PEARL)
-                || AspectIndexAccess.of(stack)
-                                .amountOf(TTAspects.DESIDERIUM, this.level().registryAccess())
-                        > 1;
+        return getValue(stack) > 0;
     }
 
     public int getValue(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return 0;
-        }
-        if (stack.is(Items.ENDER_PEARL)) {
-            return 15;
-        }
-        int desiderium = AspectIndexAccess.of(stack)
-                .amountOf(TTAspects.DESIDERIUM, this.level().registryAccess());
-        return Math.min(32, desiderium / 2);
+        return PechOffer.valueOf(stack, level().registryAccess());
     }
 
     @Override

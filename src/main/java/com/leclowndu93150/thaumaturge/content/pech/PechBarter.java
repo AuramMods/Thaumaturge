@@ -1,11 +1,17 @@
 package com.leclowndu93150.thaumaturge.content.pech;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityPech;
+import com.leclowndu93150.thaumaturge.content.world.PlayerReach;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public final class PechBarter {
@@ -21,10 +27,36 @@ public final class PechBarter {
     private static final int RISKY_TIER = 4;
     private static final float RISKY_MISS_CHANCE = 0.5F;
     private static final int HOARD_TAKE = 1;
+    static final double REACH_BUFFER = 4.0;
 
     private PechBarter() {}
 
     public static List<ItemStack> haggle(
+            EntityPech pech, ItemStack offered, RandomSource random, HolderLookup.Provider registries) {
+        if (pech.level() instanceof ServerLevel level && !StageRules.allows(level, target(pech, offered), null)) {
+            return List.of();
+        }
+        return rollPayout(pech, offered, random, registries);
+    }
+
+    public static Optional<List<ItemStack>> tryHaggle(EntityPech pech, Player actor, ItemStack offered) {
+        if (!(pech.level() instanceof ServerLevel level) || actor.level() != level
+                || !pech.isAlive() || !pech.isDomesticated() || !pech.isPrizedItem(offered)
+                || !PlayerReach.canInteractWithEntity(actor, pech, REACH_BUFFER)
+                || !StageRules.check(level, target(pech, offered), actor)) {
+            return Optional.empty();
+        }
+        return Optional.of(rollPayout(pech, offered, pech.getRandom(), level.registryAccess()));
+    }
+
+    private static StageTarget target(EntityPech pech, ItemStack offered) {
+        var table = PechTrades.tableKey(pech.variant());
+        var target = StageTarget.recipe(StageTarget.PECH_TRADE, table.location())
+                .withSubject(table).withSubject(pech.getType().builtInRegistryHolder().key());
+        return offered.getItemHolder().unwrapKey().map(target::withSubject).orElse(target);
+    }
+
+    private static List<ItemStack> rollPayout(
             EntityPech pech, ItemStack offered, RandomSource random, HolderLookup.Provider registries) {
         int budget = pech.getValue(offered);
         maybeTurnSour(pech, budget, random);

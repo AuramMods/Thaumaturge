@@ -36,6 +36,7 @@ public record StageTarget(ResourceLocation family, Optional<ResourceLocation> id
     public static final ResourceLocation VIS_GENERATOR = TTIds.rl("vis_generator");
     public static final ResourceLocation FLUX_SCRUBBER = TTIds.rl("flux_scrubber");
     public static final ResourceLocation NODE_JARRING = TTIds.rl("node_jarring");
+    public static final ResourceLocation PECH_TRADE = TTIds.rl("pech_trade");
 
     public static final Codec<StageTarget> CODEC = RecordCodecBuilder.create(i -> i.group(
                     ResourceLocation.CODEC.fieldOf("family").forGetter(StageTarget::family),

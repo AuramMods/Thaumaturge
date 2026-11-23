@@ -17,7 +17,6 @@ import org.jspecify.annotations.Nullable;
 public final class MenuPech extends AbstractContainerMenu {
     public static final int TRADE_BUTTON_ID = 0;
 
-    private static final double REACH_BUFFER = 4.0;
     private static final int OFFER_SLOT = 0;
     private static final int OFFER_X = 36;
     private static final int OFFER_Y = 29;
@@ -92,16 +91,15 @@ public final class MenuPech extends AbstractContainerMenu {
             return super.clickMenuButton(player, id);
         }
         if (!player.level().isClientSide() && pech != null && canTrade()) {
-            for (ItemStack payout : PechBarter.haggle(
-                    pech,
-                    table.getItem(OFFER_SLOT),
-                    player.level().getRandom(),
-                    player.level().registryAccess())) {
-                if (!shelve(payout)) {
-                    player.getInventory().placeItemBackInInventory(payout);
+            var trade = PechBarter.tryHaggle(pech, player, table.getItem(OFFER_SLOT));
+            if (trade.isPresent()) {
+                for (ItemStack payout : trade.get()) {
+                    if (!shelve(payout)) {
+                        player.getInventory().placeItemBackInInventory(payout);
+                    }
                 }
+                table.removeItem(OFFER_SLOT, 1);
             }
-            table.removeItem(OFFER_SLOT, 1);
         }
         return true;
     }
@@ -127,7 +125,7 @@ public final class MenuPech extends AbstractContainerMenu {
         return pech != null
                 && pech.isAlive()
                 && pech.isDomesticated()
-                && PlayerReach.canInteractWithEntity(player, pech, REACH_BUFFER);
+                && PlayerReach.canInteractWithEntity(player, pech, PechBarter.REACH_BUFFER);
     }
 
     @Override
