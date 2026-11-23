@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.IntUnaryOperator;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -38,19 +39,30 @@ public final class AspectRequirements {
                     ? Either.right(Tagged.STREAM_CODEC.decode(buffer))
                     : Either.left(AspectInstance.STREAM_CODEC.decode(buffer)));
 
-    public static final Codec<AspectRequirements> CODEC = ENTRY_CODEC.listOf().comapFlatMap(entries -> {
-        try {
-            return DataResult.success(new AspectRequirements(entries));
-        } catch (IllegalArgumentException ex) {
-            return DataResult.error(ex::getMessage);
-        }
-    }, requirements -> requirements.entries);
+    public static final Codec<AspectRequirements> CODEC = costCodec(ENTRY_CODEC.listOf());
     public static final Codec<AspectRequirements> NON_EMPTY_CODEC = Codecs.validate(CODEC, requirements ->
             requirements.totalAmount == 0
                     ? DataResult.error(() -> "Aspect requirements must not be empty")
                     : DataResult.success(requirements));
     public static final StreamCodec<RegistryFriendlyByteBuf, AspectRequirements> STREAM_CODEC =
             ENTRY_STREAM.apply(ByteBufCodecs.list()).map(AspectRequirements::new, requirements -> requirements.entries);
+
+    public static Codec<AspectRequirements> boundedCodec(int maxEntries, int maxAmount) {
+        var entries = Codecs.validate(ENTRY_CODEC, entry -> entry.map(AspectInstance::amount, Tagged::amount) > maxAmount
+                ? DataResult.error(() -> "The aspect requirement exceeds " + maxAmount)
+                : DataResult.success(entry));
+        return costCodec(Codecs.list(entries, 0, maxEntries));
+    }
+
+    private static Codec<AspectRequirements> costCodec(Codec<List<Either<AspectInstance, Tagged>>> codec) {
+        return codec.comapFlatMap(entries -> {
+            try {
+                return DataResult.success(new AspectRequirements(entries));
+            } catch (IllegalArgumentException ex) {
+                return DataResult.error(ex::getMessage);
+            }
+        }, requirements -> requirements.entries);
+    }
 
     private final List<Either<AspectInstance, Tagged>> entries;
     private final AspectList fixed;
@@ -185,6 +197,12 @@ public final class AspectRequirements {
 
         public boolean hasEmptyDemand() {
             return demands.stream().anyMatch(demand -> demand.choices().isEmpty());
+        }
+
+        public Resolved filterTagChoices(Predicate<Holder<IAspect>> predicate) {
+            return new Resolved(demands.stream().map(demand -> demand.tag().isEmpty() ? demand
+                    : new Demand(demand.choices().stream().filter(predicate).toList(), demand.amount(), demand.tag()))
+                    .toList());
         }
 
         public Allocation allocate(AspectList available) {

@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
@@ -42,16 +43,33 @@ public abstract class ArcaneCraftingRecipe extends AbstractRecipe<IArcaneCraftin
                     },
                     list -> DataResult.success(list.entries()));
 
+    public static final Codec<AspectRequirements> CRYSTAL_REQUIREMENTS = Codecs.validate(
+            AspectRequirements.boundedCodec(6, 64), requirements -> {
+                for (AspectInstance exact : requirements.fixed().entries()) {
+                    if (!exact.aspect().value().isPrimal()) {
+                        return DataResult.error(() -> "'" + exact.aspect().unwrapKey().orElseThrow().location()
+                                + "' is not a primal aspect.");
+                    }
+                }
+                return DataResult.success(requirements);
+            });
+
     protected final String group;
     protected final int vis;
     protected final Optional<ResearchGate> gate;
     protected final AspectList aspects;
+    protected final AspectRequirements requirements;
 
     protected ArcaneCraftingRecipe(String group, int vis, Optional<ResearchGate> gate, AspectList aspects) {
+        this(group, vis, gate, AspectRequirements.fixed(aspects));
+    }
+
+    protected ArcaneCraftingRecipe(String group, int vis, Optional<ResearchGate> gate, AspectRequirements requirements) {
         this.group = group;
         this.vis = vis;
         this.gate = gate;
-        this.aspects = aspects;
+        this.aspects = requirements.fixed();
+        this.requirements = requirements;
     }
 
     protected static ItemStack assembleResult(ItemStack result, IArcaneCraftingInput input) {
@@ -119,5 +137,10 @@ public abstract class ArcaneCraftingRecipe extends AbstractRecipe<IArcaneCraftin
     @Override
     public AspectList crystalCost() {
         return aspects;
+    }
+
+    @Override
+    public AspectRequirements crystalRequirements() {
+        return requirements;
     }
 }

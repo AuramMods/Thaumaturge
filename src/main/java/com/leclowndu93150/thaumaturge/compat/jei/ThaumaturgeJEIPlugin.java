@@ -356,6 +356,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
                 MenuArcaneWorkbench menu, ArcaneCraftingRecipe recipe, IRecipeSlotsView recipeSlots) {
             List<IRecipeSlotView> inputSlots = recipeSlots.getSlotViews(RecipeIngredientRole.INPUT);
             List<IRecipeSlotView> transferSlots = new ArrayList<>(inputSlots.subList(0, 9));
+            if (recipe.crystalRequirements().hasTags()) return helper.createRecipeSlotsView(transferSlots);
             AspectList crystalCost = recipe.crystalCost();
             int recipeSlotIndex = 9;
 
@@ -400,6 +401,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         public List<Slot> getRecipeSlots(MenuArcaneWorkbench menu, ArcaneCraftingRecipe recipe) {
             List<Slot> slots = new ArrayList<>(15);
             slots.addAll(menu.slots.subList(1, 10));
+            if (recipe.crystalRequirements().hasTags()) return slots;
             AspectList crystalCost = recipe.crystalCost();
             for (int i = 0; i < MenuArcaneWorkbench.PRIMAL_ORDER.size(); i++) {
                 ResourceKey<IAspect> aspect = MenuArcaneWorkbench.PRIMAL_ORDER.get(i);

@@ -8,6 +8,7 @@ aspects.removeId(<resource:thaumaturge:terra>);
 
 val flexible = <tag:thaumaturge/aspect:crafttweaker:flexible_cost>;
 flexible.addId(<resource:thaumaturge:aqua>, <resource:thaumaturge:terra>);
+<tag:thaumaturge/aspect:crafttweaker:arcane_primal>.addId(<resource:thaumaturge:aqua>, <resource:thaumaturge:motus>);
 
 val materials = <tag:thaumaturge/golem_material:crafttweaker:probe_materials>;
 materials.addId(<resource:thaumaturge:wood>, <resource:thaumaturge:iron>);

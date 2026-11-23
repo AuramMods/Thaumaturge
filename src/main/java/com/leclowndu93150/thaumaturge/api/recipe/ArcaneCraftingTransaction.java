@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.api.recipe;
 
 import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
 import java.util.List;
 import java.util.Objects;
@@ -249,14 +250,20 @@ public final class ArcaneCraftingTransaction {
     }
 
     /**
-     * The fixed requirements of an arcane recipe, before any wand, source or gear discount.
+     * The requirements of an arcane recipe, before any wand, source or gear discount.
      *
      * @param baseVis     the recipe's base aura vis cost
      * @param crystals    the primal crystal cost, which a wand or vis sources can pay instead
      * @param ingredients the recipe's ingredients, as given by {@link Recipe#getIngredients()}
+     * @param crystalRequirements the complete crystal cost, including tag alternatives
      * @since 1.0.0
      */
-    public record Requirements(int baseVis, AspectList crystals, List<Ingredient> ingredients) {
+    public record Requirements(
+            int baseVis, AspectList crystals, List<Ingredient> ingredients, AspectRequirements crystalRequirements) {
+        public Requirements(int baseVis, AspectList crystals, List<Ingredient> ingredients) {
+            this(baseVis, crystals, ingredients, AspectRequirements.fixed(crystals));
+        }
+
         /**
          * Copies the ingredient list.
          *
@@ -264,6 +271,7 @@ public final class ArcaneCraftingTransaction {
          */
         public Requirements {
             Objects.requireNonNull(crystals, "crystals");
+            Objects.requireNonNull(crystalRequirements, "crystalRequirements");
             ingredients = List.copyOf(ingredients);
         }
     }

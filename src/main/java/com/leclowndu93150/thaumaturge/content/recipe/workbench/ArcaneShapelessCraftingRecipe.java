@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
@@ -36,9 +37,9 @@ public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
                     Codecs.optionalFieldOf(Codec.STRING, "group", "").forGetter((o) -> o.group),
                     ExtraCodecs.POSITIVE_INT.fieldOf("vis").forGetter(o -> o.vis),
                     Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(o -> o.gate),
-                    ArcaneCraftingRecipe.PRIMAL_ASPECTS_CODEC
+                    ArcaneCraftingRecipe.CRYSTAL_REQUIREMENTS
                             .fieldOf("crystals")
-                            .forGetter(o -> o.aspects),
+                            .forGetter(o -> o.requirements),
                     ItemStackCodecs.CODEC.fieldOf("result").forGetter((o) -> o.result),
                     Codecs.lazyInitialized(() -> Codecs.list(IngredientCodecs.CODEC,
                                     1, ArcaneShapedRecipePattern.maxHeight * ArcaneShapedRecipePattern.maxWidth))
@@ -54,8 +55,8 @@ public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
                     (o) -> o.vis,
                     ByteBufCodecs.optional(ResearchGate.STREAM_CODEC),
                     o -> o.gate,
-                    AspectList.STREAM_CODEC,
-                    o -> o.aspects,
+                    AspectRequirements.STREAM_CODEC,
+                    o -> o.requirements,
                     VanillaStreamCodecs.ITEM_STACK,
                     (o) -> o.result,
                     VanillaStreamCodecs.INGREDIENT.apply(ByteBufCodecs.list()),
@@ -75,7 +76,17 @@ public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
             AspectList aspects,
             ItemStack result,
             List<Ingredient> ingredients) {
-        super(group, vis, researchGate, aspects);
+        this(group, vis, researchGate, AspectRequirements.fixed(aspects), result, ingredients);
+    }
+
+    public ArcaneShapelessCraftingRecipe(
+            String group,
+            int vis,
+            Optional<ResearchGate> researchGate,
+            AspectRequirements requirements,
+            ItemStack result,
+            List<Ingredient> ingredients) {
+        super(group, vis, researchGate, requirements);
         this.result = result;
         this.ingredients = ingredients;
         this.isSimple = ingredients.stream().allMatch(Ingredient::isSimple);

@@ -62,6 +62,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
@@ -293,6 +294,17 @@ public final class RecipeDisplayWidget {
         Layout layout = collect(holder, registries());
         if (layout.kind != Kind.ARCANE_SHAPED && layout.kind != Kind.ARCANE_SHAPELESS) {
             return null;
+        }
+        if (recipeValue instanceof IArcaneRecipe arcane && arcane.crystalRequirements().hasTags()) {
+            var demands = arcane.resolveCrystals(registries()).demands();
+            int start = cx + CRYSTAL_BASE_OFFSET_X - demands.size() * CRYSTAL_HALF_STRIDE;
+            for (int index = 0; index < demands.size(); index++) {
+                var demand = demands.get(index);
+                if (demand.tag().isPresent()
+                        && hitItem(start + index * CRYSTAL_STRIDE, cy + CRYSTAL_OFFSET_Y, mouseX, mouseY)) {
+                    return List.of(Component.literal("#" + demand.tag().get().location() + " ×" + demand.amount()));
+                }
+            }
         }
         Font font = Minecraft.getInstance().font;
         int costWidth = font.width(Integer.toString(layout.visCost));
@@ -607,7 +619,13 @@ public final class RecipeDisplayWidget {
         return stack.is(TTItems.ESSENTIA_CRYSTAL.get()) && ItemData.get(stack, TTDataComponents.CRYSTAL_ASPECT.get()) == null;
     }
 
-    private static List<ItemStack> crystals(IArcaneRecipe arcane) {
+    private static List<ItemStack> crystals(IArcaneRecipe arcane, @Nullable RegistryAccess registries) {
+        if (arcane.crystalRequirements().hasTags()) {
+            return arcane.resolveCrystals(registries).demands().stream().map(demand -> {
+                var choice = AspectTagRenderer.displayedChoice(demand);
+                return choice == null ? Items.BARRIER.getDefaultInstance() : EssentiaCrystalFactory.of(choice, demand.amount());
+            }).toList();
+        }
         List<ItemStack> list = new ArrayList<>();
         for (AspectInstance entry : arcane.crystalCost().entries()) {
             ItemStack stack = EssentiaCrystalFactory.of(entry.aspect(), entry.amount());
@@ -635,12 +653,12 @@ public final class RecipeDisplayWidget {
         int rw = arcane.getWidth();
         int rh = arcane.getHeight();
         List<Slot> slots = gridSlots(rw, rh, arcane.getIngredients());
-        return new Layout(Kind.ARCANE_SHAPED, slots, resultOf(arcane, reg), arcane.visCost(), crystals(arcane));
+        return new Layout(Kind.ARCANE_SHAPED, slots, resultOf(arcane, reg), arcane.visCost(), crystals(arcane, reg));
     }
 
     private static Layout collectArcaneShapeless(ArcaneShapelessCraftingRecipe arcane, @Nullable RegistryAccess reg) {
         List<Slot> slots = linearSlots(arcane.ingredients());
-        return new Layout(Kind.ARCANE_SHAPELESS, slots, resultOf(arcane, reg), arcane.visCost(), crystals(arcane));
+        return new Layout(Kind.ARCANE_SHAPELESS, slots, resultOf(arcane, reg), arcane.visCost(), crystals(arcane, reg));
     }
 
     private static List<Slot> gridSlots(int rw, int rh, List<Ingredient> ingredients) {

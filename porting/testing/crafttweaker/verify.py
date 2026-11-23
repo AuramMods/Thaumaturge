@@ -66,7 +66,7 @@ def wait_for(process, logfile, pattern, count=1):
 def verify_recipes(log):
     errors = [line for line in log.splitlines() if "[ERROR]" in line]
     assert not errors, errors
-    for family, rules in (("thaumatorium", 1), ("arcane_workbench", 1), ("crucible", 1), ("dust_trigger", 3),
+    for family, rules in (("thaumatorium", 1), ("arcane_workbench", 2), ("crucible", 1), ("dust_trigger", 3),
                           ("research", 1), ("scan", 2), ("essentia_crystalizer", 1), ("spa", 2),
                           ("pattern_crafter", 1), ("infernal_furnace", 1), ("infusion", 1)):
         assert log.count(f"Adding a GameStages rule for thaumaturge:{family}") == 2 * rules, family
@@ -113,6 +113,11 @@ def verify_recipes(log):
         {"aspect": "thaumaturge:terra", "amount": 2},
         {"tag": "crafttweaker:flexible_cost", "amount": 4},
         {"tag": "crafttweaker:probe_aspects", "amount": 2},
+    ]
+    assert snapshots("TAGGED_ARCANE")["crystals"] == [
+        {"aspect": "thaumaturge:terra"},
+        {"tag": "crafttweaker:flexible_cost", "amount": 2},
+        {"tag": "crafttweaker:arcane_primal", "amount": 3},
     ]
 
     assert snapshots("REPLACER_JSON_COPY") == shaped

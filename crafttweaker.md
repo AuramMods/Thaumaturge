@@ -8,7 +8,7 @@ This table identifies the server code and data used by each processing path. The
 
 | Processing | Native input and execution | Scripting | Stage and verification work |
 | --- | --- | --- | --- |
-| Arcane Workbench | Shaped and shapeless serializers share `thaumaturge:arcane_workbench`. `ArcaneCraftingTransactions` supplies the menu and external crafting API. The menu also handles ordinary crafting. | `addShaped`, `addShapeless`, and native JSON. Ordinary recipes use CraftTweaker's crafting manager. | Recipe stage checks run in the transaction. Verify result pickup, shift crafting, and external transactions with different permissions. |
+| Arcane Workbench | Shaped and shapeless serializers share `thaumaturge:arcane_workbench`. `ArcaneCraftingTransactions` supplies the menu and external crafting API. The menu also handles ordinary crafting. | `addShaped`, `addShapeless`, native JSON, and primal aspect tag costs. Ordinary recipes use CraftTweaker's crafting manager. | Recipe stage checks run in the transaction, including taking a result already displayed in the menu. |
 | Crucible | `thaumaturge:crucible` selects a catalyst and pays from dissolved aspects. The Crucible also converts items into their authored or derived aspects. | `addRecipe`, native JSON, aspect tag costs, and the base aspect data map. | Recipe stages are checked before the Crucible spends its inputs, including through the automation API. The script tests check exact payment and overlapping aspect tags. |
 | Thaumatorium | Uses the same Crucible recipe IDs. `BlockEntityThaumatorium` queues recipes, tracks requesters, and pulls essentia before completion. | Uses the Crucible manager and its aspect tag costs. Other machine rules pending. | Script GameTests cover stages, tagged capability transfers, and a queued recipe resumed from saved block data. Dedicated restart remains to be tested. |
 | Infusion Matrix | `thaumaturge:infusion`, `thaumaturge:infusion_enchantment`, and `thaumaturge:runic_augment` use `InfusionRecipeMatcher` and the matrix job. Item infusion can output a new stack or modify the existing catalyst. | All three managers accept aspect tag costs. Item infusion also has `addCatalystPatch`. Block data maps configure altar modifiers. | Stage checks run at recipe selection and in-flight work. A tagged job records its concrete payment before starting. |
@@ -43,6 +43,23 @@ All typed methods accept a final optional `ResearchRequirement`. Use `ResearchRe
 | `<recipetype:thaumaturge:dust_trigger>` | `addBlock(name, output, block, research?)` · `addBlockTag(name, output, tag, research?)` · `addMultiblock(name, output, blueprintId, research?)` |
 
 The [processing fixture](porting/testing/crafttweaker/processing.zs) shows each typed method. In the shaped recipe key, cast item stacks to `IIngredient` so ZenCode resolves the map's type. For a recipe with an input-dependent result, use its ID when removing it.
+
+### Arcane Workbench crystal costs
+
+Pass `AspectAmount.tag(tag, amount)` to either Arcane recipe method to offer alternatives. A recipe accepts up to six crystal requirements with up to 64 crystals each. The workbench uses members corresponding to its six primal crystal slots. Removing the last usable member makes a positive tag cost unpayable. Exact costs and overlapping tags share the same inventory during allocation.
+
+```zenscript
+import mods.thaumaturge.AspectAmount;
+
+val arcane = <recipetype:thaumaturge:arcane_workbench>;
+arcane.addShapeless("tagged_arcane", <item:minecraft:emerald>, 1, [
+    AspectAmount.tag(<tag:thaumaturge/aspect:crafttweaker:flexible_cost>, 2),
+    AspectAmount.tag(<tag:thaumaturge/aspect:crafttweaker:arcane_primal>, 3),
+    new AspectAmount(<resource:thaumaturge:terra>, 1)
+], [<item:minecraft:amethyst_shard>]);
+```
+
+The [Arcane fixture](porting/testing/crafttweaker/arcane-tags.zs) uses two tags from the [tag loader](porting/testing/crafttweaker/tags.zs). The complete payment is three Aqua and three Terra. The workbench can use the wand, crystal stocks, or registered workbench vis sources for the full amount allocated to each individual aspect. The Thaumonomicon and JEI cycle the choices in each requirement. For a tagged recipe, JEI transfer fills the crafting grid and you select the crystal stacks.
 
 ### Recipe dumps and selective edits
 

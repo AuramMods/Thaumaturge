@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.workbench;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
@@ -31,6 +32,8 @@ import net.minecraftforge.common.MinecraftForge;
 import org.jspecify.annotations.Nullable;
 
 public final class WorkbenchPayment {
+    private static final int CENTIVIS_PER_CRYSTAL =
+            WandEconomy.CRYSTAL_SUBSTITUTE_VIS * WandEconomy.CENTIVIS_PER_VIS;
 
     private WorkbenchPayment() {}
 
@@ -73,10 +76,16 @@ public final class WorkbenchPayment {
         ItemStack wand = inventory.wandStack();
         boolean hasWand = wand.getItem() instanceof ItemWand;
 
+        boolean tagged = recipe.crystalRequirements().hasTags();
+        AspectList costs = tagged ? selectCrystals(recipe.resolveCrystals(player.level().registryAccess()),
+                inventory, player, context, wand, hasWand, transaction) : recipe.crystalCost();
+        if (costs == null) {
+            return new Plan(false, Map.of(), Map.of(), AspectList.EMPTY, crudeCost(recipe), false);
+        }
         Map<ResourceKey<IAspect>, Integer> wandCentivis = new LinkedHashMap<>();
         Map<ResourceKey<IAspect>, Integer> sourceCentivis = new LinkedHashMap<>();
         AspectList crystalNeeds = calculateCrystalNeeds(
-                recipe, inventory, player, context, hasWand, wand, wandCentivis, sourceCentivis, transaction);
+                costs, inventory, player, context, hasWand, wand, wandCentivis, sourceCentivis, transaction, tagged);
 
         boolean fullWand = hasWand && crystalNeeds.isEmpty() && sourceCentivis.isEmpty();
         float modifier;
@@ -94,8 +103,34 @@ public final class WorkbenchPayment {
         return applyCostEvent(recipe, inventory, player, plan);
     }
 
+    private static @Nullable AspectList selectCrystals(
+            AspectRequirements.Resolved requirements, IArcaneWorkbench inventory, Player player,
+            @Nullable ArcaneWorkbenchContext context, ItemStack wand, boolean hasWand, TransactionContext transaction) {
+        if (requirements.hasEmptyDemand()) return null;
+        AspectList stock = inventory.availableCrystals();
+        AspectList available = AspectList.EMPTY;
+        int needed = requirements.amount();
+        for (Holder<IAspect> choice : requirements.choices()) {
+            var key = choice.unwrapKey().orElseThrow();
+            int wandAmount = hasWand ? WandVisHelper.getVis(wand, key) / CENTIVIS_PER_CRYSTAL : 0;
+            int capacity = Math.min(needed, Math.max(stock.amountOf(choice), wandAmount));
+            if (capacity > 0) available = available.add(choice, capacity);
+        }
+        AspectList payment = requirements.payment(available);
+        if (payment.totalAmount() == needed) return payment;
+
+        for (Holder<IAspect> choice : requirements.choices()) {
+            int capacity = supplyFromSources(context, player, inventory, choice, needed * CENTIVIS_PER_CRYSTAL,
+                    transaction) / CENTIVIS_PER_CRYSTAL;
+            int extra = capacity - available.amountOf(choice);
+            if (extra > 0) available = available.add(choice, extra);
+        }
+        payment = requirements.payment(available);
+        return payment.totalAmount() == needed ? payment : null;
+    }
+
     private static AspectList calculateCrystalNeeds(
-            IArcaneRecipe recipe,
+            AspectList costs,
             IArcaneWorkbench inventory,
             Player player,
             @Nullable ArcaneWorkbenchContext context,
@@ -103,20 +138,23 @@ public final class WorkbenchPayment {
             ItemStack wand,
             Map<ResourceKey<IAspect>, Integer> wandCentivis,
             Map<ResourceKey<IAspect>, Integer> sourceCentivis,
-            TransactionContext transaction) {
+            TransactionContext transaction,
+            boolean preferCrystals) {
         AspectList crystalNeeds = AspectList.EMPTY;
-        for (AspectInstance entry : recipe.crystalCost().entries()) {
+        for (AspectInstance entry : costs.entries()) {
             ResourceKey<IAspect> primal = entry.aspect().unwrapKey().orElseThrow();
-            int centivis = entry.amount() * WandEconomy.CRYSTAL_SUBSTITUTE_VIS * WandEconomy.CENTIVIS_PER_VIS;
+            int centivis = entry.amount() * CENTIVIS_PER_CRYSTAL;
             Map<ResourceKey<IAspect>, Integer> single = new LinkedHashMap<>();
             single.put(primal, centivis);
             if (hasWand && WandVisHelper.payExact(wand, single, true)) {
                 wandCentivis.put(primal, centivis);
+            } else if (preferCrystals && inventory.availableCrystals().amountOf(entry.aspect()) >= entry.amount()) {
+                crystalNeeds = crystalNeeds.add(entry);
             } else if (supplyFromSources(context, player, inventory, entry.aspect(), centivis, transaction)
                     >= centivis) {
                 sourceCentivis.put(primal, centivis);
             } else {
-                crystalNeeds = crystalNeeds.add(entry.aspect(), entry.amount());
+                crystalNeeds = crystalNeeds.add(entry);
             }
         }
         return crystalNeeds;

@@ -30,3 +30,5 @@ Stages.requireId(<resource:thaumaturge:infernal_furnace>, <resource:crafttweaker
     StageRequirement.allOf(["infernal_work"]));
 Stages.requireId(<resource:thaumaturge:infusion>, <resource:crafttweaker:tagged_matrix>,
     StageRequirement.allOf(["tagged_infusion"]));
+Stages.requireId(<resource:thaumaturge:arcane_workbench>, <resource:crafttweaker:tagged_arcane>,
+    StageRequirement.allOf(["tagged_workbench"]));

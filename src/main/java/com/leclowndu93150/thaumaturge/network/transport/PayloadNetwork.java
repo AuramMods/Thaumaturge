@@ -29,7 +29,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 
 /** Forge play transport for the mod's typed messages. */
 public final class PayloadNetwork {
-    private static final String PROTOCOL = "forge-1.20.1-4";
+    private static final String PROTOCOL = "forge-1.20.1-5";
     private static final PayloadCatalog CATALOG = new PayloadCatalog();
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation("thaumaturge", "main"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals);

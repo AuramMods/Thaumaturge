@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
@@ -32,9 +33,9 @@ public class ArcaneShapedCraftingRecipe extends ArcaneCraftingRecipe {
                     Codecs.optionalFieldOf(Codec.STRING, "group", "").forGetter((o) -> o.group),
                     ExtraCodecs.POSITIVE_INT.fieldOf("vis").forGetter(o -> o.vis),
                     Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(o -> o.gate),
-                    ArcaneCraftingRecipe.PRIMAL_ASPECTS_CODEC
+                    ArcaneCraftingRecipe.CRYSTAL_REQUIREMENTS
                             .fieldOf("crystals")
-                            .forGetter(o -> o.aspects),
+                            .forGetter(o -> o.requirements),
                     ArcaneShapedRecipePattern.MAP_CODEC.forGetter((o) -> o.pattern),
                     ItemStackCodecs.CODEC.fieldOf("result").forGetter((o) -> o.result))
             .apply(i, ArcaneShapedCraftingRecipe::new));
@@ -47,8 +48,8 @@ public class ArcaneShapedCraftingRecipe extends ArcaneCraftingRecipe {
                     (o) -> o.vis,
                     ByteBufCodecs.optional(ResearchGate.STREAM_CODEC),
                     o -> o.gate,
-                    AspectList.STREAM_CODEC,
-                    o -> o.aspects,
+                    AspectRequirements.STREAM_CODEC,
+                    o -> o.requirements,
                     ArcaneShapedRecipePattern.STREAM_CODEC,
                     (o) -> o.pattern,
                     VanillaStreamCodecs.ITEM_STACK,
@@ -67,7 +68,17 @@ public class ArcaneShapedCraftingRecipe extends ArcaneCraftingRecipe {
             AspectList aspects,
             ArcaneShapedRecipePattern pattern,
             ItemStack result) {
-        super(group, vis, researchGate, aspects);
+        this(group, vis, researchGate, AspectRequirements.fixed(aspects), pattern, result);
+    }
+
+    public ArcaneShapedCraftingRecipe(
+            String group,
+            int vis,
+            Optional<ResearchGate> researchGate,
+            AspectRequirements requirements,
+            ArcaneShapedRecipePattern pattern,
+            ItemStack result) {
+        super(group, vis, researchGate, requirements);
         this.pattern = pattern;
         this.result = result;
     }

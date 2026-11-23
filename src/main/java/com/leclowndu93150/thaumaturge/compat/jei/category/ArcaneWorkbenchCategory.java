@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
+import com.leclowndu93150.thaumaturge.compat.jei.ThaumaturgeJEIPlugin;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
 import com.leclowndu93150.thaumaturge.compat.jei.utils.ResearchUtils;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingRecipe;
@@ -125,7 +126,20 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<ArcaneCraf
             layoutShapeless(builder, shapeless);
         }
 
-        layoutCrystals(builder, recipe.crystalCost());
+        if (recipe.crystalRequirements().hasTags()) {
+            var demands = recipe.resolveCrystals(ThaumaturgeJEIPlugin.clientRegistryAccess()).demands();
+            for (int index = 0; index < demands.size(); index++) {
+                var demand = demands.get(index);
+                var choices = demand.choices().stream()
+                        .map(aspect -> EssentiaCrystalFactory.of(aspect, demand.amount())).toList();
+                var slot = builder.addInputSlot(CRYSTAL_X, CRYSTAL_Y + index * CRYSTAL_SPACING);
+                slot.addItemStacks(choices.isEmpty() ? List.of(Items.BARRIER.getDefaultInstance()) : choices);
+                demand.tag().ifPresent(tag -> slot.addRichTooltipCallback((view, tooltip) ->
+                        tooltip.add(Component.literal("#" + tag.location() + " ×" + demand.amount()))));
+            }
+        } else {
+            layoutCrystals(builder, recipe.crystalCost());
+        }
         builder.addOutputSlot(OUTPUT_X, OUTPUT_Y).addItemStack(output);
     }
 
