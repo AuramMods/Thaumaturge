@@ -26,6 +26,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +101,8 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     private int drainColor = 0xFFFFFF;
     private int drainTicks;
     private int jarringTicks;
+    private float jarringDegradeChance = NodeJarringRules.DEFAULT_DEGRADE_CHANCE;
+    private @Nullable StageAuthorization jarringAuthority;
     private float taintReserve;
     int taintPurifyTicks;
     public int clientDrainRed = 255;
@@ -367,8 +370,10 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         return jarringTicks > 0;
     }
 
-    public void beginJarring(int ticks) {
+    void beginJarring(int ticks, float degradeChance, StageAuthorization authority) {
         jarringTicks = ticks;
+        jarringDegradeChance = degradeChance;
+        jarringAuthority = authority;
         setChanged();
     }
 
@@ -409,6 +414,18 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         if (!(tickLevel instanceof ServerLevel serverLevel)) {
             return;
         }
+        if (jarringTicks > 0) {
+            if (jarringAuthority != null && !jarringAuthority.allows(serverLevel)) {
+                return;
+            }
+            if (jarringTicks > 1) {
+                jarringTicks--;
+                setChanged();
+            } else if (NodeJarRitual.shellCleared(serverLevel, pos)) {
+                NodeJarRitual.completeJar(serverLevel, pos, this, jarringDegradeChance);
+            }
+            return;
+        }
         if (energized) {
             boolean changed = false;
             if (NodeEnergy.refillDue(serverLevel) && NodeEnergy.refill(this, serverLevel, pos)) {
@@ -422,14 +439,6 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
             if (changed) {
                 setChanged();
                 serverLevel.sendBlockUpdated(pos, getBlockState(), getBlockState(), 3);
-            }
-            return;
-        }
-        if (jarringTicks > 0) {
-            jarringTicks--;
-            setChanged();
-            if (jarringTicks <= 0) {
-                NodeJarRitual.completeJar(serverLevel, pos, this);
             }
             return;
         }
@@ -920,6 +929,10 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         }
         if (jarringTicks > 0) {
             output.putInt("Jarring", jarringTicks);
+            output.putFloat("JarringDegradeChance", jarringDegradeChance);
+            if (jarringAuthority != null) {
+                TTNbt.store(output, "JarringAuthority", StageAuthorization.CODEC, registries, jarringAuthority);
+            }
         }
         if (taintReserve > 0.0F) {
             output.putFloat("TaintReserve", taintReserve);
@@ -927,6 +940,12 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         if (taintPurifyTicks > 0) {
             output.putInt("TaintPurify", taintPurifyTicks);
         }
+    }
+
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
+        super.writeClientData(output, registries);
+        output.remove("JarringAuthority");
     }
 
     @Override
@@ -945,6 +964,10 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
                 TTNbt.read(input, "DrainPlayer", UUIDUtil.CODEC, registries).orElse(null);
         drainColor = input.contains("DrainColor") ? input.getInt("DrainColor") : 0xFFFFFF;
         jarringTicks = input.getInt("Jarring");
+        jarringDegradeChance = input.contains("JarringDegradeChance")
+                ? Mth.clamp(input.getFloat("JarringDegradeChance"), 0.0F, 1.0F)
+                : NodeJarringRules.DEFAULT_DEGRADE_CHANCE;
+        jarringAuthority = TTNbt.read(input, "JarringAuthority", StageAuthorization.CODEC, registries).orElse(null);
         taintReserve = Math.max(0.0F, input.getFloat("TaintReserve"));
         taintPurifyTicks = input.getInt("TaintPurify");
         regeneration = -1;

@@ -27,7 +27,8 @@ This table identifies the server code and data used by each processing path. The
 | Condenser, Vis Generator, and Flux Scrubber | These block entities convert aura flux and essentia into Vitium, aura vis into Forge Energy, or physical flux and Aer into Praecantatio. | The `thaumaturge:condenser`, `thaumaturge:vis_generator`, and `thaumaturge:flux_scrubber` block data maps configure the conversions. | Stage checks use the verified placer before new inputs or costs. The fixture verifies exact conversion costs and retained outputs. |
 | Wand and scepter assembly | `WandAssemblyPackResources` generates Arcane Workbench recipes from the wand cap and rod registries. | Use the Arcane Workbench manager for the generated recipe IDs. Caps and rods have typed tags. | Verify edits to generated recipes and the normal post-craft assembly hook. |
 | Research and scanning | `ResearchManager`, `ResearchNotes`, and the Research Table process research costs and notes. `ScanningManager` processes scanned targets and datapack scan definitions. | World-startup datapack definitions and typed registry tags. | Stage checks run before advancing research, paying note costs, or applying scan effects. |
-| Other conversions and progression | Audit the Void Siphon, node jarring, Pech exchanges, crafting from research data, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
+| Node jarring | `NodeJarRitual` checks research and the glass-and-slab structure, spends six primal vis balances, and converts the node. | `thaumaturge:node_jarring` block data map configures wand payment and modifier degradation. | Stages gate the start, deferred shell removal, and conversion. The fixture checks all six costs and resumes an already-paid job for its original initiator. |
+| Other conversions and progression | Audit the Centrifuge, Everfull Urn, Void Siphon, Stabilizer, Pech exchanges, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
 
 ## Recipe manager methods
 
@@ -317,6 +318,20 @@ ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:flux_scrub
 
 The Condenser uses two buffered essentia and three local aura flux per conversion to yield two Vitium. `interval` is measured in ticks. The generator draws up to two local aura vis for 600 Forge Energy, with proportional output if less vis is available. It sends up to 12 FE per tick from its buffer. The scrubber spends three Aer per successful action and removes up to two units of physical flux. Each removed unit adds a charge. Here every two charges recover two Praecantatio, up to the storage capacity. Omit `charges_per_roll`, `chance`, or `essentia` to use the corresponding Forge configuration.
 
+### Node jarring
+
+The `thaumaturge:node_jarring` data map selects the original node block by ID or block tag. `vis_per_primal` is the base wand cost for each of the six primal aspects. Equipment and wand discounts apply afterward. `degrade_chance` controls whether the node's modifier degrades and accepts a value from zero to one. The usual research, shell, and wand requirements still apply.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:node_jarring>, {
+    values: {"thaumaturge:node": {vis_per_primal: 2, degrade_chance: 0.0}}
+});
+```
+
+Use `enabled: false` to prevent new rituals. A paid ritual retains its saved modifier rule, timer, and initiating player.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -348,6 +363,7 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:focus_inscription` and `thaumaturge:spell_cast` | The focus item ID, when present. Supports the focus in `minecraft:item`, and the spell tree's entries in `thaumaturge:spell_part`, `thaumaturge:aspect`, and `thaumaturge:spell_affinity`. |
 | `thaumaturge:potion_sprayer` | The base potion ID. Supports selectors for the potion in `minecraft:potion` and the received bottle in `minecraft:item`. |
 | `thaumaturge:condenser`, `thaumaturge:vis_generator`, and `thaumaturge:flux_scrubber` | The device block ID and its entry or tag in `minecraft:block`. The Condenser also supports Vitium as an aspect selector. The Flux Scrubber supports Aer and Praecantatio. |
+| `thaumaturge:node_jarring` | The original node block ID. Supports selectors for the source node and jar blocks in `minecraft:block`, and the six primal aspects in `thaumaturge:aspect`. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -381,6 +397,8 @@ The Focal Manipulator saves the original requester and the paid job's aura balan
 The Potion Sprayer records its placer and checks that owner's stages before drawing essentia or spraying. Changing the owner's stages preserves partial payment and prepared doses. Once the owner is eligible again, a new rising redstone edge can release an existing dose.
 
 The [aura machine fixture](porting/testing/crafttweaker/aura-machines.zs) stages the Condenser, Vis Generator, and Flux Scrubber. These machines retain their recorded owners and buffers when saved. Suspending new work leaves completed essentia available for transfer and lets the Vis Generator send energy it already produced.
+
+The [node jarring fixture](porting/testing/crafttweaker/node-jarring.zs) gates the ritual on the resulting jar block. The paid ritual and its remaining shell swaps pause while the initiating player is offline or loses the required stage. They resume after that player becomes eligible and finish without a second payment. A legacy ritual already in progress keeps the original authorization.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 

@@ -1206,6 +1206,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("nodemod.thaumaturge.pale", "Pale");
         add("nodemod.thaumaturge.fading", "Fading");
         add("message.thaumaturge.wand.no_aura", "The aura here is too weak to draw upon");
+        add("message.thaumaturge.node_jar.disabled", "The node jarring ritual is disabled here");
         add(
                 "message.thaumaturge.node_jar.no_research",
                 "You sense potential in this arrangement, but lack the knowledge to exploit it");

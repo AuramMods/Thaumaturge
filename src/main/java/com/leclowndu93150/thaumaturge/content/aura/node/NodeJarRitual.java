@@ -9,12 +9,17 @@ import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerFx;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
+import com.leclowndu93150.thaumaturge.content.recipe.dust.PendingSwap;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,8 +43,6 @@ import net.minecraft.world.phys.Vec3;
 public final class NodeJarRitual {
     public static final ResourceLocation RESEARCH_NODE_JAR = TTIds.rl("node_jar");
 
-    private static final int JAR_VIS_COST_PER_PRIMAL = 70;
-    private static final float MODIFIER_DEGRADE_CHANCE = 0.75F;
     private static final int SHELL_BREAK_MARGIN_TICKS = 20;
     private static final int JAR_SETTLE_DELAY_TICKS = 15;
 
@@ -56,20 +59,35 @@ public final class NodeJarRitual {
             TTActionBar.sendPurple(player, "message.thaumaturge.node_jar.no_research");
             return true;
         }
-        if (!fitsStructure(level, nodePos)) {
+        List<BlockPos> structure = structurePositions(nodePos);
+        if (!fitsStructure(level, nodePos) || structure.stream().anyMatch(pos -> DustTriggerSwapQueue.isBlocked(level, pos))) {
             TTActionBar.sendPurple(player, "message.thaumaturge.node_jar.structure");
+            return true;
+        }
+        Block source = node.getBlockState().getBlock();
+        var block = source.builtInRegistryHolder().key();
+        StageTarget target = StageTarget.recipe(StageTarget.NODE_JARRING, block.location())
+                .withSubject(block).withSubject(TTBlocks.JAR_NODE.get().builtInRegistryHolder().key());
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
+            target = target.withSubject(primal);
+        }
+        if (!StageRules.check(level, target, player)) {
+            return true;
+        }
+        NodeJarringRules rules = NodeJarringRules.of(source);
+        if (!rules.enabled()) {
+            TTActionBar.sendPurple(player, "message.thaumaturge.node_jar.disabled");
             return true;
         }
         Map<ResourceKey<IAspect>, Integer> cost = new LinkedHashMap<>();
         for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
-            cost.put(primal, JAR_VIS_COST_PER_PRIMAL * WandEconomy.CENTIVIS_PER_VIS);
+            cost.put(primal, rules.visPerPrimal() * WandEconomy.CENTIVIS_PER_VIS);
         }
         if (!WandVisHelper.consumeSpecificFromHotbar(player, cost, true)) {
-            TTActionBar.sendPurple(player, "message.thaumaturge.node_jar.vis", JAR_VIS_COST_PER_PRIMAL);
+            TTActionBar.sendPurple(player, "message.thaumaturge.node_jar.vis", rules.visPerPrimal());
             return true;
         }
         level.playSound(null, nodePos, TTSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
-        List<BlockPos> structure = structurePositions(nodePos);
         Vec3 hand = player instanceof ServerPlayer serverPlayer
                 ? DustTriggerFx.posToHand(serverPlayer, InteractionHand.MAIN_HAND)
                 : Vec3.atCenterOf(nodePos);
@@ -78,21 +96,29 @@ public final class NodeJarRitual {
                 DustTriggerFx.emitBlockSparkles(level, structurePos, hand);
             }
         }
+        StageAuthorization authority = StageAuthorization.capture(level, target, player);
         int lastBreak = 0;
         for (BlockPos structurePos : structure) {
             double dist = Math.sqrt(LevelSpaces.distanceSqr(level, hand, Vec3.atCenterOf(structurePos)));
             int delay = (int) (dist * DustTriggerFx.SPARKLE_TICKS_PER_BLOCK) + SHELL_BREAK_MARGIN_TICKS;
-            DustTriggerSwapQueue.enqueueClear(level, structurePos, level.getBlockState(structurePos), delay);
+            DustTriggerSwapQueue.enqueue(level,
+                    PendingSwap.clearOnly(structurePos, level.getBlockState(structurePos), delay)
+                            .withAuthority(authority));
             lastBreak = Math.max(lastBreak, delay);
         }
-        node.beginJarring(lastBreak + JAR_SETTLE_DELAY_TICKS);
+        node.beginJarring(lastBreak + JAR_SETTLE_DELAY_TICKS, rules.degradeChance(), authority);
         return true;
     }
 
-    public static void completeJar(ServerLevel level, BlockPos nodePos, BlockEntityNode node) {
+    static boolean shellCleared(ServerLevel level, BlockPos nodePos) {
+        return structurePositions(nodePos).stream().allMatch(pos -> LoadedChunks.contains(level, pos)
+                && !DustTriggerSwapQueue.isBlocked(level, pos));
+    }
+
+    static void completeJar(ServerLevel level, BlockPos nodePos, BlockEntityNode node, float degradeChance) {
         RandomSource random = level.getRandom();
         NodeModifier modifier = node.getNodeModifier();
-        if (random.nextFloat() < MODIFIER_DEGRADE_CHANCE) {
+        if (random.nextFloat() < degradeChance) {
             if (modifier == null) {
                 modifier = NodeModifier.PALE;
             } else if (modifier == NodeModifier.BRIGHT) {
@@ -103,7 +129,9 @@ public final class NodeJarRitual {
         }
         NodeData data = new NodeData(
                 node.getNodeType(), Optional.ofNullable(modifier), node.getAspects(), node.getAspectsBase());
-        level.setBlock(nodePos, TTBlocks.JAR_NODE.get().defaultBlockState(), Block.UPDATE_ALL);
+        if (!level.setBlock(nodePos, TTBlocks.JAR_NODE.get().defaultBlockState(), Block.UPDATE_ALL)) {
+            return;
+        }
         if (level.getBlockEntity(nodePos) instanceof BlockEntityJarNode jar) {
             jar.applyNodeData(data);
             jar.setChanged();
