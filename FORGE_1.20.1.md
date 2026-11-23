@@ -29,10 +29,10 @@ From a checkout of the `1.20.1` branch, use a Java 17 JDK and the Gradle wrapper
 ./gradlew jarJar
 ```
 
-The distributable is `build/libs/thaumaturge-1.1.3-mc1.20.1-forge.jar`. On macOS, calculate its SHA-256 with the following command. On Linux, use `sha256sum` with the same path.
+The distributable is `build/libs/thaumaturge-1.1.4-mc1.20.1-forge.jar`. On macOS, calculate its SHA-256 with the following command. On Linux, use `sha256sum` with the same path.
 
 ```sh
-shasum -a 256 build/libs/thaumaturge-1.1.3-mc1.20.1-forge.jar
+shasum -a 256 build/libs/thaumaturge-1.1.4-mc1.20.1-forge.jar
 ```
 
 Rebuilds can differ in ZIP timestamps even when every payload is identical. [Auram compatibility results](PORTING_1.20.1.md#cycle-439-auram-dependency-compatibility), [Distant Horizons client verification](PORTING_1.20.1.md#cycle-440-distant-horizons-client-compatibility)
