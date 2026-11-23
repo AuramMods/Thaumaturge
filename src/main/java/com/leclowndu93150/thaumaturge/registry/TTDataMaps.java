@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.spell.FocusTier;
 import com.leclowndu93150.thaumaturge.api.warp.ItemWarp;
 import com.leclowndu93150.thaumaturge.content.taint.entity.TaintedProfile;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.Crystallization;
+import com.leclowndu93150.thaumaturge.content.spa.SpaRules;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -45,6 +46,8 @@ public final class TTDataMaps {
     @SubscribeEvent
     public static void onRegister(RegisterDataMapTypesEvent event) {
         event.register(Crystallization.DATA_MAP);
+        event.register(SpaRules.MIXING);
+        event.register(SpaRules.PLACEMENT);
         event.register(BIOME_AURA_MODIFIER);
         event.register(BIOME_ASPECTS);
         event.register(ITEM_WARP);

@@ -20,3 +20,7 @@ Stages.requireId(<resource:thaumaturge:scan>, <resource:crafttweaker:scanned_hon
     StageRequirement.anyOf(["observe", "study"]));
 Stages.requireTag(<resource:thaumaturge:essentia_crystalizer>, <tag:thaumaturge/aspect:crafttweaker:probe_aspects>,
     StageRequirement.allOf(["crystallize"]));
+Stages.requireTag(<resource:thaumaturge:spa>, <tag:items:forge:ingots/copper>,
+    StageRequirement.allOf(["spa_mix"]));
+Stages.requireId(<resource:thaumaturge:spa>, <resource:thaumaturge:spa_placement>,
+    StageRequirement.allOf(["spa_placement"]));

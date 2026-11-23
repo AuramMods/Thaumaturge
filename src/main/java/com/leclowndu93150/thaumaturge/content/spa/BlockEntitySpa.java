@@ -1,14 +1,20 @@
 package com.leclowndu93150.thaumaturge.content.spa;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -16,11 +22,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -31,8 +34,10 @@ import org.jspecify.annotations.Nullable;
 public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuProvider {
     public static final int TANK_CAPACITY = 5000;
     private static final int WORK_INTERVAL_TICKS = 40;
-    private static final int FLUID_COST = 1000;
     private static final int SPREAD_RADIUS = 2;
+    private static final ResourceLocation MIXING_ID = TTIds.rl("spa_mixing");
+    private static final ResourceLocation PLACEMENT_ID = TTIds.rl("spa_placement");
+    private static final String OWNER_KEY = "Owner";
 
     private final FluidTank tank = new FluidTank(TANK_CAPACITY) {
         @Override
@@ -45,7 +50,8 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
     private final ItemStackHandler items = new ItemStackHandler(1) {
         @Override
         public boolean isItemValid(int index, ItemStack resource) {
-            return resource.is(TTItems.BATH_SALTS.get());
+            var rule = SpaRules.mixing(tank.getFluid().getFluid());
+            return resource.is(TTItems.BATH_SALTS.get()) || rule != null && rule.enabled() && rule.accepts(resource);
         }
 
         @Override
@@ -56,6 +62,7 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
 
     private boolean mix = true;
     private int counter;
+    private @Nullable UUID owner;
 
     public BlockEntitySpa(BlockPos pos, BlockState state) {
         super(TTBlockEntities.SPA.get(), pos, state);
@@ -75,6 +82,11 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
         return mix;
     }
 
+    void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
+    }
+
     public void toggleMix() {
         mix = !mix;
         setChanged();
@@ -82,63 +94,74 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntitySpa spa) {
-        if (spa.counter++ % WORK_INTERVAL_TICKS != 0 || level.hasNeighborSignal(pos) || !spa.hasIngredients()) {
+        if (!(level instanceof ServerLevel server) || spa.counter++ % WORK_INTERVAL_TICKS != 0
+                || server.hasNeighborSignal(pos)) {
             return;
         }
-        Block target = spa.targetBlock();
-        if (target == null) {
+        Operation operation = spa.operation();
+        if (operation == null || !StageRules.allowsOwner(server, spa.stageTarget(operation), spa.owner)) {
             return;
         }
+        Block target = operation.output().getBlock();
         BlockPos above = pos.above();
         BlockState aboveState = level.getBlockState(above);
         if (aboveState.getBlock() == target && aboveState.getFluidState().isSource()) {
             for (int xx = -SPREAD_RADIUS; xx <= SPREAD_RADIUS; xx++) {
                 for (int zz = -SPREAD_RADIUS; zz <= SPREAD_RADIUS; zz++) {
                     BlockPos p = pos.offset(xx, 1, zz);
-                    if (spa.isValidLocation(p, true, target)) {
-                        spa.consumeIngredients();
-                        level.setBlockAndUpdate(p, target.defaultBlockState());
+                    if (spa.place(p, true, operation)) {
                         return;
                     }
                 }
             }
-        } else if (spa.isValidLocation(above, false, target)) {
-            spa.consumeIngredients();
-            level.setBlockAndUpdate(above, target.defaultBlockState());
+        } else {
+            spa.place(above, false, operation);
         }
     }
 
-    private @Nullable Block targetBlock() {
+    private @Nullable Operation operation() {
+        Fluid input = tank.getFluid().getFluid();
         if (mix) {
-            return TTBlocks.PURIFYING_FLUID.get();
+            var rule = SpaRules.mixing(input);
+            ItemStack additive = items.getStackInSlot(0);
+            if (rule == null || !rule.enabled() || tank.getFluidAmount() < rule.amount()
+                    || additive.getCount() < rule.items() || !rule.accepts(additive)) {
+                return null;
+            }
+            BlockState output = rule.result().isPresent() ? SpaRules.source(rule.result().get())
+                    : TTBlocks.PURIFYING_FLUID.get().defaultBlockState();
+            return output == null ? null : new Operation(output, rule.amount(), rule.items());
         }
-        Fluid fluid = tank.getFluid().getFluid();
-        if (!(fluid instanceof FlowingFluid)) {
+        var rule = SpaRules.placement(input);
+        if (!rule.enabled() || tank.getFluidAmount() < rule.amount()) {
             return null;
         }
-        Block block = fluid.defaultFluidState().createLegacyBlock().getBlock();
-        return block == Blocks.AIR ? null : block;
+        BlockState output = SpaRules.source(rule.result().orElse(input));
+        return output == null ? null : new Operation(output, rule.amount(), 0);
     }
 
-    private boolean hasIngredients() {
-        if (mix) {
-            return tank.getFluid().getFluid() == Fluids.WATER
-                    && tank.getFluidAmount() >= FLUID_COST
-                    && items.getStackInSlot(0).is(TTItems.BATH_SALTS.get());
+    private StageTarget stageTarget(Operation operation) {
+        StageTarget target = StageTarget.recipe(StageTarget.SPA, mix ? MIXING_ID : PLACEMENT_ID)
+                .withSubject(tank.getFluid().getFluid().builtInRegistryHolder().key());
+        if (operation.items() > 0) {
+            target = target.withSubject(items.getStackInSlot(0).getItem().builtInRegistryHolder().key());
         }
-        return tank.getFluidAmount() >= FLUID_COST && targetBlock() != null;
+        return target;
     }
 
-    private void consumeIngredients() {
-        if (mix) {
-            items.extractItem(0, 1, false);
+    private boolean place(BlockPos pos, boolean mustBeAdjacent, Operation operation) {
+        if (!isValidLocation(pos, mustBeAdjacent, operation) || !level.setBlockAndUpdate(pos, operation.output())) {
+            return false;
         }
-        tank.drain(FLUID_COST, IFluidHandler.FluidAction.EXECUTE);
+        if (operation.items() > 0) items.extractItem(0, operation.items(), false);
+        tank.drain(operation.amount(), IFluidHandler.FluidAction.EXECUTE);
+        return true;
     }
 
-    private boolean isValidLocation(BlockPos pos, boolean mustBeAdjacent, Block target) {
-        Fluid fluid = target.defaultBlockState().getFluidState().getType();
-        if (fluid.getFluidType().isVaporizedOnPlacement(level, pos, new FluidStack(fluid, FLUID_COST))) {
+    private boolean isValidLocation(BlockPos pos, boolean mustBeAdjacent, Operation operation) {
+        Block target = operation.output().getBlock();
+        Fluid fluid = operation.output().getFluidState().getType();
+        if (fluid.getFluidType().isVaporizedOnPlacement(level, pos, new FluidStack(fluid, operation.amount()))) {
             return false;
         }
         BlockState state = level.getBlockState(pos);
@@ -160,8 +183,16 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
         return false;
     }
 
+    private record Operation(BlockState output, int amount, int items) {}
+
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+        writeClientData(output, registries);
+        if (owner != null) output.putUUID(OWNER_KEY, owner);
+    }
+
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         output.putBoolean("Mix", mix);
         output.put("Tank", tank.writeToNBT(new CompoundTag()));
@@ -171,6 +202,7 @@ public class BlockEntitySpa extends AbstractSyncedBlockEntity implements MenuPro
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
+        owner = input.hasUUID(OWNER_KEY) ? input.getUUID(OWNER_KEY) : null;
         mix = (input.contains("Mix") ? input.getBoolean("Mix") : true);
         if (input.contains("Tank")) {
             tank.readFromNBT(input.getCompound("Tank"));

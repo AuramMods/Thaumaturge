@@ -67,9 +67,11 @@ def verify_recipes(log):
     errors = [line for line in log.splitlines() if "[ERROR]" in line]
     assert not errors, errors
     for family, rules in (("thaumatorium", 1), ("arcane_workbench", 1), ("crucible", 1), ("dust_trigger", 3),
-                          ("research", 1), ("scan", 2), ("essentia_crystalizer", 1)):
+                          ("research", 1), ("scan", 2), ("essentia_crystalizer", 1), ("spa", 2)):
         assert log.count(f"Adding a GameStages rule for thaumaturge:{family}") == 2 * rules, family
     assert log.count("Editing Thaumaturge data map thaumaturge:aspect/thaumaturge:crystallization") == 2
+    for mode in ("mixing", "placement"):
+        assert log.count(f"Editing Thaumaturge data map minecraft:fluid/thaumaturge:spa_{mode}") == 2
     for marker in ("CRUCIBLE_REMOVED", "SPECIAL_REMOVED", "SPECIAL_SALIS", "SPECIAL_LABEL", "SPECIAL_PEARL",
                    "TAG_ASPECT", "TAG_MATERIAL"):
         assert log.count(f"TT_{marker}=true") == 2, marker

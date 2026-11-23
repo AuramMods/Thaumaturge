@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.BlockEntityT
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInput;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
+import com.leclowndu93150.thaumaturge.content.spa.BlockEntitySpa;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
@@ -292,6 +293,49 @@ public final class StageGameTests {
         }).thenWaitUntil(() -> test.assertTrue(output.countItem(Items.AMETHYST_SHARD) == 2,
                 "The machine did not issue its scripted output")).thenExecute(() -> {
             test.assertTrue(machine.heldAmount(Direction.EAST) == 0, "The result left paid essentia in the machine");
+            remove(test, actor);
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "essentia_room", batch = "crafttweaker_spa", timeoutTicks = 340)
+    public static void spaChargesScriptedCostsOnlyForSuccessfulPlacement(GameTestHelper test) {
+        var actor = player(test);
+        var stages = GameStageHelper.getPlayerData(actor);
+        var block = TTBlocks.SPA.get();
+        var state = block.defaultBlockState();
+        test.setBlock(POS, state);
+        var machine = (BlockEntitySpa) test.getBlockEntity(POS);
+        block.setPlacedBy(test.getLevel(), test.absolutePos(POS), state, actor, new ItemStack(block));
+        machine.getTank().setFluid(new FluidStack(Fluids.WATER, 2300));
+        test.assertTrue(machine.getItems().insertItem(0, new ItemStack(Items.COPPER_INGOT, 4), false).isEmpty(),
+                "The spa rejected its scripted additive");
+        test.startSequence().thenIdle(45).thenExecute(() -> {
+            test.assertBlockPresent(Blocks.AIR, POS.above());
+            test.assertTrue(machine.getTank().getFluidAmount() == 2300
+                            && machine.getItems().getStackInSlot(0).getCount() == 4,
+                    "The stage-denied mixture consumed inputs");
+            test.setBlock(POS.above(), Blocks.STONE);
+            stages.addStage("spa_mix");
+        }).thenIdle(45).thenExecute(() -> {
+            test.assertTrue(machine.getTank().getFluidAmount() == 2300
+                            && machine.getItems().getStackInSlot(0).getCount() == 4,
+                    "The spa charged for a blocked outlet");
+            test.setBlock(POS.above(), Blocks.AIR);
+        }).thenWaitUntil(() -> test.assertBlockPresent(Blocks.LAVA, POS.above())).thenExecute(() -> {
+            test.assertTrue(machine.getTank().getFluidAmount() == 1600
+                            && machine.getItems().getStackInSlot(0).getCount() == 2,
+                    "Mixing spent an incorrect amount of water or copper");
+            test.setBlock(POS.above(), Blocks.AIR);
+            machine.toggleMix();
+            machine.load(machine.saveWithFullMetadata());
+        }).thenIdle(45).thenExecute(() -> {
+            test.assertBlockPresent(Blocks.AIR, POS.above());
+            test.assertTrue(machine.getTank().getFluidAmount() == 1600, "Placement took water while stage-locked");
+            stages.addStage("spa_placement");
+        }).thenWaitUntil(() -> test.assertBlockPresent(Blocks.WATER, POS.above())).thenExecute(() -> {
+            test.assertTrue(machine.getTank().getFluidAmount() == 1200
+                            && machine.getItems().getStackInSlot(0).getCount() == 2,
+                    "Placement spent an incorrect amount of water or additive");
             remove(test, actor);
         }).thenSucceed();
     }

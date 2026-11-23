@@ -21,7 +21,7 @@ This table identifies the server code and data used by each processing path. The
 | Pattern Crafter | `BlockEntityPatternCrafter` uses the ordinary crafting recipe manager and neighboring storage. | Vanilla crafting manager. Machine rules pending. | Verify changed recipes, container remainders, and denied automation. |
 | Golem Press | `BlockEntityGolemBuilder` assembles a configured golem from material and part definitions, then pays Machina. | Golem part and trait selectors, costs, and press rules pending. | Verify item costs, essentia costs, saved work, stage checks, and exact final golem state. |
 | Focal Manipulator | `BlockEntityFocalManipulator` validates a spell tree and charges vis against focus tiers, spell parts, and affinities. | Focus data and inscription rules pending. | Verify setup through the menu packet, an exact charge, saved completion, and casting restrictions. |
-| Spa | `BlockEntitySpa` places a fluid source and combines bath salts with water for purifying fluid. | Typed fluid and item rules pending. | Verify tank and item counts, source placement, and cancellation. |
+| Spa | `BlockEntitySpa` either mixes the tank fluid with an additive or places a fluid from its tank. | The `thaumaturge:spa_mixing` and `thaumaturge:spa_placement` fluid data maps select costs and outputs by fluid or fluid tag. Mixing takes a native item ingredient. | Stage checks run before placement. The script fixture tests blocked outlets, saved contents and owner, and exact costs for both modes. |
 | Potion Sprayer | `BlockEntityPotionSprayer` uses `PotionAspects` to derive costs from potion brewing inputs and prepares doses for spraying. | Brewing manager and potion cost rules pending. | Verify altered inputs and the cost of a delivered dose. |
 | Wand and scepter assembly | `WandAssemblyPackResources` generates Arcane Workbench recipes from the wand cap and rod registries. | Use the Arcane Workbench manager for the generated recipe IDs. Caps and rods have typed tags. | Verify edits to generated recipes and the normal post-craft assembly hook. |
 | Research and scanning | `ResearchManager`, `ResearchNotes`, and the Research Table process research costs and notes. `ScanningManager` processes scanned targets and datapack scan definitions. | World-startup datapack definitions and typed registry tags. | Stage checks run before advancing research, paying note costs, or applying scan effects. |
@@ -131,6 +131,32 @@ ProcessingData.edit(<resource:thaumaturge:aspect>, <resource:thaumaturge:crystal
 
 This [fixture](porting/testing/crafttweaker/crystallizer.zs) converts three Aqua to two amethyst shards using the earlier tag definition. Ignis is disabled. The device uses its normal adjacent inventory and item ejection behavior.
 
+### Spa
+
+Edit `thaumaturge:spa_mixing` or `thaumaturge:spa_placement` on the `minecraft:fluid` registry. The selector is the tank fluid ID or a fluid tag prefixed with `#`. Each mode accepts `enabled` (default `true`), `amount` in millibuckets (default `1000`, range `1–5000`), and `result`, a concrete fluid that can be placed as a source block. Placement uses the tank fluid as its result when omitted. Mixing defaults to purifying fluid.
+
+Mixing also accepts an `additive` item ingredient and a count in `items` (default `1`, range `1–64`). The stock additive is bath salts. Fill the tank before inserting a scripted additive so the slot can use the tank fluid's rule. A work cycle charges inputs once after placing a source. A blocked outlet preserves the tank and additive.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:minecraft:fluid>, <resource:thaumaturge:spa_mixing>, {
+    values: {
+        "#minecraft:water": {
+            amount: 700,
+            additive: {tag: "forge:ingots/copper"},
+            items: 2,
+            result: "minecraft:lava"
+        }
+    }
+});
+ProcessingData.edit(<resource:minecraft:fluid>, <resource:thaumaturge:spa_placement>, {
+    values: {"minecraft:water": {amount: 400}}
+});
+```
+
+The [Spa fixture](porting/testing/crafttweaker/spa.zs) uses 700 millibuckets of water and two copper ingots for a lava source in mixing mode. Placement mode uses 400 millibuckets of water for a water source.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -152,6 +178,7 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:research` | Progression IDs, including authored research entries and discovery flags. Supports `thaumaturge:research_entry` and `thaumaturge:research_category` selectors. |
 | `thaumaturge:scan` | Datapack scan IDs, or the research IDs awarded by code-driven scans. Supports `thaumaturge:scan` and `thaumaturge:research_entry` selectors, plus the directly scanned target in `minecraft:block`, `minecraft:item`, or `minecraft:entity_type`. |
 | `thaumaturge:essentia_crystalizer` | The concrete input aspect ID. Supports tags and entries in `thaumaturge:aspect`. |
+| `thaumaturge:spa` | `thaumaturge:spa_mixing` or `thaumaturge:spa_placement`. Supports the actual tank fluid in `minecraft:fluid` and the mixing additive in `minecraft:item`. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -171,6 +198,8 @@ The Thaumatorium checks the player who queued each recipe before drawing essenti
 Research stage rules apply to unlocking, advancing, completing, and working on an entry's notes. Existing knowledge remains available. Revoking a stage suspends new progress and preserves research and notes already earned. A scan rule can gate a whole target or an individual matching scan definition. The direct scan API uses its research key when no target or definition is available.
 
 The Crystalizer records the player who placed it. For restricted aspects the owner must be online and eligible for intake and progress. When the owner loses the stage, the device retains its input and work across saves. To use a restricted recipe in an older Crystalizer without a recorded owner, re-place an empty device as the intended owner.
+
+The Spa records the player who placed it and checks that owner's current stages before placing a restricted source. Players can fill the tank and load additives while placement is suspended. Re-place an empty legacy Spa to record its owner.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 
