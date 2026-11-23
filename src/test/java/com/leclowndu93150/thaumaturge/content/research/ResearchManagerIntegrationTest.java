@@ -26,6 +26,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import org.junit.jupiter.api.AfterEach;
@@ -165,6 +166,7 @@ final class ResearchManagerIntegrationTest {
         when(player.getUUID()).thenReturn(new UUID(1L, 2L));
         when(player.level()).thenReturn(level);
         when(level.registryAccess()).thenReturn(new RegistryAccess.ImmutableRegistryAccess(List.of(entries)));
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
         AttachmentFixture.attach(player, level::registryAccess).set(TTAttachments.KNOWLEDGE, knowledge);
         return player;
     }

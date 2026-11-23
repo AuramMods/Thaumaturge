@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeManager;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -38,6 +39,7 @@ public final class ResearchDiscoveryBackendTest {
         TestResearchLookup entries = mock(TestResearchLookup.class);
         when(player.level()).thenReturn(level);
         when(level.registryAccess()).thenReturn(registries);
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
         when(registries.lookupOrThrow(IResearchEntry.REGISTRY_KEY)).thenReturn(entries);
         when(entries.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, NON_ENTRY_SCAN)))
                 .thenReturn(Optional.empty());
@@ -63,6 +65,7 @@ public final class ResearchDiscoveryBackendTest {
         RegistryAccess registries = mock(RegistryAccess.class);
         when(player.level()).thenReturn(level);
         when(level.registryAccess()).thenReturn(registries);
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
         PlayerKnowledge backend = new PlayerKnowledge();
         ResourceLocation craftedKey = ResearchManager.craftedKey(BuiltInRegistries.ITEM.getKey(Items.DIAMOND));
 
