@@ -282,6 +282,24 @@ public final class RecipeDisplayWidget {
         int cy = y + CENTER_OFFSET;
         Recipe<?> recipeValue = holder.value();
         if (recipeValue instanceof CrucibleRecipe crucible) {
+            if (crucible.requirements().hasTags()) {
+                var demands = crucible.requirements().resolve(registries()).demands();
+                int rows = (demands.size() - 1) / 3;
+                for (int index = 0; index < demands.size(); index++) {
+                    int[] pos = aspectCell(cx + CRUCIBLE_ASPECT_X,
+                            cy + CRUCIBLE_ASPECT_Y - ASPECT_HALF_CELL * rows, index, demands.size(), 3, rows);
+                    if (!hitItem(pos[0], pos[1], mouseX, mouseY)) continue;
+
+                    var demand = demands.get(index);
+                    if (demand.tag().isPresent()) {
+                        return List.of(Component.literal("#" + demand.tag().get().location() + " ×" + demand.amount()));
+                    }
+                    var aspect = AspectTagRenderer.displayedChoice(demand);
+                    return aspect == null ? null : List.of(AspectComponents.name(aspect),
+                            AspectComponents.description(aspect));
+                }
+                return null;
+            }
             List<AspectInstance> sorted = sortedAspects(crucible.aspects());
             return hoverAspectGrid(cx + CRUCIBLE_ASPECT_X, cy + CRUCIBLE_ASPECT_Y, sorted, 3, mouseX, mouseY);
         }
@@ -707,7 +725,19 @@ public final class RecipeDisplayWidget {
         blitOverlay(graphics, -28, CRUCIBLE_BODY_Y, 0, 20, 56, 48);
         blitOverlay(graphics, CRUCIBLE_DRIP_X, CRUCIBLE_DRIP_Y, 100, 84, 11, 13);
         graphics.pose().popPose();
-        drawAspectGrid(graphics, font, cx + CRUCIBLE_ASPECT_X, cy + CRUCIBLE_ASPECT_Y, display.aspects(), 3);
+        if (display.requirements().hasTags()) {
+            var demands = display.requirements().resolve(registries()).demands();
+            int rows = (demands.size() - 1) / 3;
+            for (int index = 0; index < demands.size(); index++) {
+                int[] pos = aspectCell(cx + CRUCIBLE_ASPECT_X,
+                        cy + CRUCIBLE_ASPECT_Y - ASPECT_HALF_CELL * rows, index, demands.size(), 3, rows);
+                var demand = demands.get(index);
+                AspectTagRenderer.renderDemand(graphics, font, pos[0], pos[1],
+                        AspectTagRenderer.displayedChoice(demand), demand.amount());
+            }
+        } else {
+            drawAspectGrid(graphics, font, cx + CRUCIBLE_ASPECT_X, cy + CRUCIBLE_ASPECT_Y, display.aspects(), 3);
+        }
         ItemStack result = resultOf(display, registries());
         if (!result.isEmpty()) {
             drawStack(graphics, result, cx + CRUCIBLE_RESULT_X, cy + CRUCIBLE_RESULT_Y);

@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGated;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
@@ -28,7 +29,7 @@ public class CrucibleRecipe extends AbstractRecipe<CrucibleRecipeInput> implemen
 
     public static final MapCodec<CrucibleRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                     IngredientCodecs.CODEC.fieldOf("catalyst").forGetter(r -> r.catalyst),
-                    AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.aspects),
+                    AspectRequirements.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.requirements),
                     ItemStackCodecs.CODEC.fieldOf("result").forGetter(r -> r.result),
                     Codecs.optionalFieldOf(ResearchGate.CODEC, "research").forGetter(r -> r.research))
             .apply(i, CrucibleRecipe::new));
@@ -36,8 +37,8 @@ public class CrucibleRecipe extends AbstractRecipe<CrucibleRecipeInput> implemen
     public static final StreamCodec<RegistryFriendlyByteBuf, CrucibleRecipe> STREAM_CODEC = StreamCodec.composite(
             VanillaStreamCodecs.INGREDIENT,
             r -> r.catalyst,
-            AspectList.STREAM_CODEC,
-            r -> r.aspects,
+            AspectRequirements.STREAM_CODEC,
+            r -> r.requirements,
             VanillaStreamCodecs.ITEM_STACK,
             r -> r.result,
             ByteBufCodecs.optional(ResearchGate.STREAM_CODEC),
@@ -48,37 +49,46 @@ public class CrucibleRecipe extends AbstractRecipe<CrucibleRecipeInput> implemen
             new SimpleRecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
     private final Ingredient catalyst;
-    private final AspectList aspects;
+    private final AspectRequirements requirements;
     private final ItemStack result;
     private final Optional<ResearchGate> research;
 
     public CrucibleRecipe(Ingredient catalyst, AspectList aspects, ItemStack result, Optional<ResearchGate> research) {
+        this(catalyst, AspectRequirements.fixed(aspects), result, research);
+    }
+
+    public CrucibleRecipe(
+            Ingredient catalyst, AspectRequirements requirements, ItemStack result, Optional<ResearchGate> research) {
         this.catalyst = catalyst;
-        this.aspects = aspects;
+        this.requirements = requirements;
         this.result = result;
         this.research = research;
     }
 
     @Override
     public boolean matches(CrucibleRecipeInput input, Level level) {
-        if (!catalyst.test(input.catalyst())) return false;
-        if (input.availableAspects().isEmpty()) return false;
-        for (AspectInstance aspect : aspects.entries()) {
-            if (input.availableAspects().amountOf(aspect.aspect()) < aspect.amount()) {
-                return false;
+        return catalyst.test(input.catalyst()) && !input.availableAspects().isEmpty()
+                && payment(input.availableAspects(), level.registryAccess()).isPresent();
+    }
+
+    public Optional<AspectList> payment(AspectList available, HolderLookup.Provider registries) {
+        if (!requirements.hasTags()) {
+            for (AspectInstance aspect : requirements.fixed().entries()) {
+                if (available.amountOf(aspect.aspect()) < aspect.amount()) return Optional.empty();
             }
+            return Optional.of(requirements.fixed());
         }
-        return true;
+        var spent = requirements.resolve(registries).payment(available);
+        return spent.totalAmount() == requirements.totalAmount() ? Optional.of(spent) : Optional.empty();
     }
 
     public AspectList removeMatching(AspectList old) {
-        AspectList temp = AspectList.ofEntries(old.entries());
-
-        for (AspectInstance tag : this.aspects().entries()) {
-            temp = temp.remove(tag.aspect(), tag.amount());
+        if (!requirements.hasTags()) return old.subtract(requirements.fixed());
+        var registries = recipeRegistryLookup();
+        if (registries == null) {
+            throw new IllegalStateException("Tagged recipe requires the active world's registries");
         }
-
-        return temp;
+        return payment(old, registries).map(old::subtract).orElse(old);
     }
 
     @Override
@@ -117,7 +127,11 @@ public class CrucibleRecipe extends AbstractRecipe<CrucibleRecipeInput> implemen
     }
 
     public AspectList aspects() {
-        return aspects;
+        return requirements.fixed();
+    }
+
+    public AspectRequirements requirements() {
+        return requirements;
     }
 
     public Ingredient catalyst() {

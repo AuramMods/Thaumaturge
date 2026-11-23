@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.client.render.aspect;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledge;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements.Demand;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
@@ -13,6 +14,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
+import org.jspecify.annotations.Nullable;
 
 public final class AspectTagRenderer {
     public static final int TAG_SIZE = 16;
@@ -106,6 +108,23 @@ public final class AspectTagRenderer {
 
     public static void render(GuiGraphics graphics, Font font, int x, int y, Holder<IAspect> aspect, float amount) {
         render(graphics, font, (double) x, (double) y, aspect, amount, 0, 0.0, BlendMode.ALPHA, 1.0F, false);
+    }
+
+    public static @Nullable Holder<IAspect> displayedChoice(Demand demand) {
+        int count = demand.choices().size();
+        if (count == 0) return null;
+        int choice = Math.floorMod(System.currentTimeMillis() / 1200L, count);
+        return demand.choices().get(choice);
+    }
+
+    public static void renderDemand(GuiGraphics graphics, Font font, int x, int y,
+                                    @Nullable Holder<IAspect> aspect, int amount) {
+        if (aspect == null) {
+            renderMissingChip(graphics, x, y);
+            drawAmount(graphics, font, x, y, amount);
+        } else {
+            render(graphics, font, x, y, aspect, amount);
+        }
     }
 
     public static void render(

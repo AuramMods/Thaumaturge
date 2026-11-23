@@ -1,13 +1,20 @@
 package com.leclowndu93150.thaumaturge.testing;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.BlockEntityThaumatorium;
+import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
+import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInput;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.mojang.authlib.GameProfile;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 import net.darkhax.gamestages.GameStageHelper;
@@ -27,8 +34,10 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
@@ -37,6 +46,8 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 public final class StageGameTests {
     private static final BlockPos POS = new BlockPos(2, 3, 2);
     private static final ResourceLocation CRUCIBLE_PROBE = new ResourceLocation("crafttweaker", "crucible_probe");
+    private static final ResourceLocation TAGGED_COST = new ResourceLocation("crafttweaker", "tagged_cost");
+    private static final ResourceLocation EMPTY_TAG_COST = new ResourceLocation("crafttweaker", "empty_tag_cost");
 
     private StageGameTests() {}
 
@@ -108,6 +119,84 @@ public final class StageGameTests {
                 "The resumed recipe did not emit one gold ingot")).thenExecute(() -> {
             test.assertTrue(machine.catalystStack().getCount() == 1 && machine.essentia().isEmpty(),
                     "The resumed recipe did not spend one sand and seven Ignis");
+            remove(test, actor);
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "essentia_room", batch = "crafttweaker_tagged_crucible")
+    public static void cruciblePaysOverlappingAspectTagsExactlyOnce(GameTestHelper test) {
+        var level = test.getLevel();
+        var aqua = Objects.requireNonNull(Aspects.resolve(level, TTAspects.AQUA));
+        var terra = Objects.requireNonNull(Aspects.resolve(level, TTAspects.TERRA));
+        var ignis = Objects.requireNonNull(Aspects.resolve(level, TTAspects.IGNIS));
+        var catalyst = new ItemStack(Items.IRON_NUGGET, 2);
+        var recipe = (CrucibleRecipe) level.getRecipeManager().byKey(TAGGED_COST).orElseThrow();
+        var supply = AspectList.EMPTY.add(aqua, 3).add(terra, 3).add(ignis, 4);
+        var insufficient = AspectList.EMPTY.add(aqua, 2).add(terra, 5);
+        test.assertFalse(recipe.matches(new CrucibleRecipeInput(catalyst, insufficient), level),
+                "The narrow tag accepted Terra after its script removed Terra");
+
+        var empty = (CrucibleRecipe) level.getRecipeManager().byKey(EMPTY_TAG_COST).orElseThrow();
+        test.assertFalse(empty.matches(new CrucibleRecipeInput(new ItemStack(Items.GOLD_NUGGET), supply), level),
+                "An empty aspect tag matched a catalyst");
+        var buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), level.registryAccess());
+        try {
+            CrucibleRecipe.STREAM_CODEC.encode(buffer, recipe);
+            var decoded = CrucibleRecipe.STREAM_CODEC.decode(buffer);
+            test.assertTrue(decoded.payment(supply, level.registryAccess()).orElseThrow().totalAmount() == 6
+                            && buffer.readableBytes() == 0,
+                    "Tagged costs did not round trip in the recipe packet");
+        } finally {
+            buffer.release();
+        }
+
+        test.setBlock(POS, TTBlocks.CRUCIBLE.get());
+        var crucible = (BlockEntityCrucible) test.getBlockEntity(POS);
+        crucible.getTank().setFluid(new FluidStack(Fluids.WATER, 300));
+        for (var aspect : supply.entries()) crucible.addAspects(aspect.aspect(), aspect.amount());
+        var output = new ArrayList<ItemStack>();
+        var owner = player(test);
+        var remaining = crucible.attemptSmeltForAutomation(catalyst.copyWithCount(1), owner, output::add, true);
+        test.assertTrue(remaining == null && output.size() == 1 && output.get(0).is(Items.DIAMOND),
+                "Overlapping aspect tags failed to craft one diamond");
+        test.assertTrue(crucible.getAspects().equals(AspectList.EMPTY.add(ignis, 4))
+                        && crucible.getTank().getFluidAmount() == 250,
+                "Crucible spent more than three Aqua, three Terra, and fifty millibuckets");
+        remove(test, owner);
+        test.succeed();
+    }
+
+    @GameTest(template = "essentia_room", batch = "crafttweaker_tagged_machine", timeoutTicks = 220)
+    public static void thaumatoriumAcceptsAlternativesWithoutOverfilling(GameTestHelper test) {
+        var level = test.getLevel();
+        var actor = player(test);
+        GameStageHelper.getPlayerData(actor).addStage("automate_alchemy");
+        var aqua = Objects.requireNonNull(Aspects.resolve(level, TTAspects.AQUA));
+        var terra = Objects.requireNonNull(Aspects.resolve(level, TTAspects.TERRA));
+        test.setBlock(POS.below(2), Blocks.LAVA);
+        test.setBlock(POS.below(), Blocks.SMOOTH_STONE);
+        test.setBlock(POS, TTBlocks.THAUMATORIUM.get());
+        test.setBlock(POS.north(), Blocks.CHEST);
+        var machine = (BlockEntityThaumatorium) test.getBlockEntity(POS);
+        var chest = (ChestBlockEntity) test.getBlockEntity(POS.north());
+        machine.catalyst().setStackInSlot(0, new ItemStack(Items.IRON_NUGGET, 2));
+        machine.toggleRecipe(level, actor, TAGGED_COST);
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(machine.roomFor(aqua, Direction.EAST) == 5,
+                "Waiting for the tagged recipe to accept Aqua")).thenExecute(() -> {
+            test.assertTrue(machine.insert(terra, 9, Direction.EAST, false) == 3,
+                    "Terra was counted against two different requirements");
+            test.assertTrue(machine.insert(aqua, 2, Direction.EAST, false) == 2, "Aqua insertion was rejected");
+            test.assertTrue(machine.roomFor(terra, Direction.EAST) == 0
+                            && machine.roomFor(aqua, Direction.EAST) == 1,
+                    "The machine requested the wrong final unit");
+        }).thenIdle(10).thenExecute(() -> {
+            test.assertTrue(chest.isEmpty() && machine.catalystStack().getCount() == 2,
+                    "The tagged recipe used a catalyst with insufficient essentia");
+            test.assertTrue(machine.insert(aqua, 1, Direction.EAST, false) == 1, "Final Aqua insertion failed");
+        }).thenWaitUntil(() -> test.assertTrue(chest.countItem(Items.DIAMOND) == 1,
+                "The machine did not finish the tagged recipe")).thenExecute(() -> {
+            test.assertTrue(machine.catalystStack().getCount() == 1 && machine.essentia().isEmpty(),
+                    "Tagged recipe paid its inputs more than once");
             remove(test, actor);
         }).thenSucceed();
     }

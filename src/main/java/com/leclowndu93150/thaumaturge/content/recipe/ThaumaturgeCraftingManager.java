@@ -39,6 +39,7 @@ public final class ThaumaturgeCraftingManager {
             ServerLevel level, Player player, AspectList aspects, ItemStack lastDrop) {
         int highest = 0;
         CrucibleRecipe out = null;
+        AspectList paid = AspectList.EMPTY;
         StageRules.Requirement denial = null;
 
         CrucibleRecipeInput input = new CrucibleRecipeInput(lastDrop, aspects);
@@ -47,6 +48,8 @@ public final class ThaumaturgeCraftingManager {
             CrucibleRecipe recipe = holder.value();
 
             if (player != null && recipe.matches(input, level)) {
+                var payment = recipe.payment(aspects, level.registryAccess());
+                if (payment.isEmpty()) continue;
                 var restriction = StageRules.denial(level, StageTarget.recipe(StageTarget.CRUCIBLE, holder.id()), player);
                 if (restriction != null) {
                     denial = restriction;
@@ -55,16 +58,18 @@ public final class ThaumaturgeCraftingManager {
                 if (!recipe.doesPassGate(player)) {
                     continue;
                 }
-                int result = recipe.aspects().totalAmount();
+                int result = recipe.requirements().totalAmount();
                 if (result > highest) {
                     highest = result;
                     out = recipe;
+                    paid = payment.get();
                 }
             }
         }
 
-        return new CrucibleMatch(out, out == null ? denial : null);
+        return new CrucibleMatch(out, paid, out == null ? denial : null);
     }
 
-    public record CrucibleMatch(@Nullable CrucibleRecipe recipe, @Nullable StageRules.Requirement denial) {}
+    public record CrucibleMatch(@Nullable CrucibleRecipe recipe, AspectList payment,
+                                @Nullable StageRules.Requirement denial) {}
 }

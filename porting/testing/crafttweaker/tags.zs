@@ -6,6 +6,9 @@ blueprints.addId(<resource:thaumaturge:infusion_altar_ancient>);
 aspects.addId(<resource:thaumaturge:aqua>, <resource:thaumaturge:terra>);
 aspects.removeId(<resource:thaumaturge:terra>);
 
+val flexible = <tag:thaumaturge/aspect:crafttweaker:flexible_cost>;
+flexible.addId(<resource:thaumaturge:aqua>, <resource:thaumaturge:terra>);
+
 val materials = <tag:thaumaturge/golem_material:crafttweaker:probe_materials>;
 materials.addId(<resource:thaumaturge:wood>, <resource:thaumaturge:iron>);
 materials.removeId(<resource:thaumaturge:wood>);

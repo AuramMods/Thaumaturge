@@ -99,7 +99,7 @@ public final class MenuThaumatorium extends AbstractTTMenu implements BlockMenu<
                     id,
                     recipe.assemble(input, level.registryAccess()),
                     blockEntity.queue().contains(id),
-                    recipe.aspects()));
+                    recipe.requirements()));
         }
         return entries;
     }

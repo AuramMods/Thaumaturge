@@ -198,6 +198,15 @@ public final class AspectList {
         return result;
     }
 
+    /** Subtracts the listed amounts from the matching aspects. */
+    public AspectList subtract(AspectList other) {
+        AspectList result = this;
+        for (AspectInstance entry : other.entries) {
+            result = result.remove(entry.aspect(), entry.amount());
+        }
+        return result;
+    }
+
     /**
      * Returns an aspect list with the given amount of {@code aspect} removed. The aspect is
      * dropped when its remaining amount would be zero or negative.

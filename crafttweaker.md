@@ -9,8 +9,8 @@ This table identifies the server code and data used by each processing path. The
 | Processing | Native input and execution | Scripting | Stage and verification work |
 | --- | --- | --- | --- |
 | Arcane Workbench | Shaped and shapeless serializers share `thaumaturge:arcane_workbench`. `ArcaneCraftingTransactions` supplies the menu and external crafting API. The menu also handles ordinary crafting. | `addShaped`, `addShapeless`, and native JSON. Ordinary recipes use CraftTweaker's crafting manager. | Recipe stage checks run in the transaction. Verify result pickup, shift crafting, and external transactions with different permissions. |
-| Crucible | `thaumaturge:crucible` selects a catalyst and pays from dissolved aspects. The Crucible also converts items into their authored or derived aspects. | `addRecipe`, native JSON, and the base aspect data map. | Recipe stages are checked before the Crucible spends its inputs, including through the automation API. Verify denied and allowed direct crafts. |
-| Thaumatorium | Uses the same Crucible recipe IDs. `BlockEntityThaumatorium` queues recipes, tracks requesters, and pulls essentia before completion. | Uses the Crucible manager. Machine rules pending. | Stage GameTest covers authorization, capability transfers, and a queued recipe resumed from saved block data. Dedicated restart remains to be tested. |
+| Crucible | `thaumaturge:crucible` selects a catalyst and pays from dissolved aspects. The Crucible also converts items into their authored or derived aspects. | `addRecipe`, native JSON, aspect tag costs, and the base aspect data map. | Recipe stages are checked before the Crucible spends its inputs, including through the automation API. The script tests check exact payment and overlapping aspect tags. |
+| Thaumatorium | Uses the same Crucible recipe IDs. `BlockEntityThaumatorium` queues recipes, tracks requesters, and pulls essentia before completion. | Uses the Crucible manager and its aspect tag costs. Other machine rules pending. | Script GameTests cover stages, tagged capability transfers, and a queued recipe resumed from saved block data. Dedicated restart remains to be tested. |
 | Infusion Matrix | `thaumaturge:infusion`, `thaumaturge:infusion_enchantment`, and `thaumaturge:runic_augment` use `InfusionRecipeMatcher` and the matrix job. Item infusion can output a new stack or modify the existing catalyst. | Each manager has `addRecipe` and native JSON. Item infusion also has `addCatalystPatch`. Infusion modifier map edits pending. | Stage checks run at recipe selection and in-flight work. Verify each variant, costs, continuation, and dynamic output state. |
 | Salis Mundus | `SalisMundusItem` selects `thaumaturge:dust_trigger`. The simple, tag, and multiblock serializers share this recipe type. A multiblock references the Blueprint registry. | `addBlock`, `addBlockTag`, `addMultiblock`, and native JSON. Blueprint edits pending. | Stage GameTest covers block and tag transformations, stage revocation, and resumed placement. Verify scripted rotated blueprints. |
 | Special crafting | The crafting table uses Salis Mundus mixing, label filtering, and Primordial Pearl repair through Thaumaturge's special serializers. | Verify ordinary crafting manager operations and serializer-backed definitions. | Verify dynamic stack output and remainders with the pack's RecipeStages integration. |
@@ -68,6 +68,25 @@ aspects.removeId(<resource:thaumaturge:terra>);
 ```
 
 In the default loader, the same bracket returns `KnownTag<Aspect>`. Use `.contains(id)` to check membership or `.idElements` to list the member IDs. The [tag fixture](porting/testing/crafttweaker/tag-lookup.zs) shows typed lookups for aspects and golem materials. The custom registry folders include `aspect`, `blueprint`, `golem_material`, `golem_head`, `golem_arm`, `golem_leg`, `golem_addon`, `golem_trait`, `seal`, `spell_part`, `spell_affinity`, `research_entry`, `research_category`, `scan`, `wand_cap`, `wand_rod`, `labyrinth`, `labyrinth_room`, and `obelisk_site`. Prefix these folders with `thaumaturge/` in tag brackets.
+
+### Paying the Crucible or Thaumatorium with tags
+
+In the default loader, use `AspectAmount.tag(tag as KnownTag<Aspect>, amount as int)` in a Crucible recipe. Any combination of current tag members can cover the requested amount. The server allocates all requirements together, so overlapping tags and exact costs can share an aspect supply while each unit is spent only once. An empty tag with a positive cost prevents crafting. The Thaumatorium keeps its buffered essentia and stops accepting new payment for that recipe until the tag has members.
+
+```zenscript
+import mods.thaumaturge.AspectAmount;
+
+val crucible = <recipetype:thaumaturge:crucible>;
+crucible.addRecipe("tagged_cost", <item:minecraft:diamond>, <item:minecraft:iron_nugget>, [
+    AspectAmount.tag(<tag:thaumaturge/aspect:crafttweaker:flexible_cost>, 2),
+    AspectAmount.tag(<tag:thaumaturge/aspect:crafttweaker:probe_aspects>, 3),
+    new AspectAmount(<resource:thaumaturge:terra>, 1)
+]);
+```
+
+Use the tag loader to define the two tags. In the [tag fixture](porting/testing/crafttweaker/tags.zs), `flexible_cost` contains Aqua and Terra, and the script removes Terra from `probe_aspects`. The recipe can then use three Aqua and three Terra. Five Terra and two Aqua cannot satisfy it. Run `/reload` after changing membership. The Crucible still processes uncraftable catalysts through its normal dissolution behavior. A flexible cost contributes no fixed aspect to derived item aspects. Use the base aspect data map to specify those item aspects explicitly.
+
+For JSON, each cost entry takes either `{"aspect": "thaumaturge:terra", "amount": 1}` or `{"tag": "crafttweaker:flexible_cost", "amount": 2}`. Aspects stored in jars, items, and other concrete outputs use a specific aspect ID. The new cost encoding requires the same Thaumaturge build on the client and the server.
 
 ## Processing data maps
 

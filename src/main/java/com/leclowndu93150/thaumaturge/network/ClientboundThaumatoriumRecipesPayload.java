@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.serialization.stream.VanillaStreamCodecs;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import java.util.List;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
 import com.leclowndu93150.thaumaturge.serialization.stream.ByteBufCodecs;
@@ -17,7 +18,7 @@ public record ClientboundThaumatoriumRecipesPayload(int containerId, List<Entry>
     public static final ModPayload.Type<ClientboundThaumatoriumRecipesPayload> TYPE =
             new ModPayload.Type<>(TTIds.rl("thaumatorium_recipes"));
 
-    public record Entry(ResourceLocation id, ItemStack output, boolean queued, AspectList aspects) {
+    public record Entry(ResourceLocation id, ItemStack output, boolean queued, AspectRequirements requirements) {
         public static final StreamCodec<RegistryFriendlyByteBuf, Entry> STREAM_CODEC = StreamCodec.composite(
                 VanillaStreamCodecs.RESOURCE_LOCATION,
                 Entry::id,
@@ -25,9 +26,17 @@ public record ClientboundThaumatoriumRecipesPayload(int containerId, List<Entry>
                 Entry::output,
                 ByteBufCodecs.BOOL,
                 Entry::queued,
-                AspectList.STREAM_CODEC,
-                Entry::aspects,
+                AspectRequirements.STREAM_CODEC,
+                Entry::requirements,
                 Entry::new);
+
+        public Entry(ResourceLocation id, ItemStack output, boolean queued, AspectList aspects) {
+            this(id, output, queued, AspectRequirements.fixed(aspects));
+        }
+
+        public AspectList aspects() {
+            return requirements.fixed();
+        }
     }
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundThaumatoriumRecipesPayload> STREAM_CODEC =

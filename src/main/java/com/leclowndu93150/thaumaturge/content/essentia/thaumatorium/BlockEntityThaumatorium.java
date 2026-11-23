@@ -199,14 +199,17 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
         if (recipe == null) {
             return;
         }
-        Holder<IAspect> missing = requirements.firstUnmet();
-        if (missing == null) {
+        List<Holder<IAspect>> missing = requirements.pullChoices();
+        if (missing.isEmpty()) {
             selection.request(null);
             complete(level, pos, recipe, inSlot);
             return;
         }
-        selection.request(missing.unwrapKey().orElse(null));
-        pullUnit(level, pos, missing);
+        int start = Math.floorMod(level.getGameTime() / ThaumatoriumScheduler.WORK_TICKS, missing.size());
+        selection.request(missing.get(start).unwrapKey().orElse(null));
+        for (int offset = 0; offset < missing.size(); offset++) {
+            if (pullUnit(level, pos, missing.get((start + offset) % missing.size()))) break;
+        }
     }
 
     private @Nullable CrucibleRecipe selectRecipe(ServerLevel level, ItemStack inSlot) {
@@ -224,7 +227,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
                 || !queuedStagesAllow(level, current)) {
             return null;
         }
-        planFor(recipe);
+        planFor(level, recipe);
         return recipe;
     }
 
@@ -234,7 +237,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
             if (recipe != null && recipe.catalyst().test(inSlot)
                     && queuedStagesAllow(level, candidate)) {
                 selection.choose(candidate);
-                planFor(recipe);
+                planFor(level, recipe);
                 return recipe;
             }
         }
@@ -247,9 +250,13 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
         if (!recipe.matches(check, level)) {
             return;
         }
+        var payment = recipe.payment(requirements.received(), level.registryAccess());
+        if (payment.isEmpty()) {
+            return;
+        }
         ItemStack result = recipe.assemble(check, level.registryAccess());
         useCatalyst(inSlot);
-        requirements.payForRecipe();
+        requirements.pay(payment.get());
         credit(level, result);
         InvHelper.eject(level, pos, front(), result);
         float pitch = HISS_PITCH_LOW + level.getRandom().nextFloat() * HISS_PITCH_RANGE;
@@ -282,14 +289,15 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
                 || level.hasNeighborSignal(pos.below());
     }
 
-    private void pullUnit(ServerLevel level, BlockPos pos, Holder<IAspect> aspect) {
+    private boolean pullUnit(ServerLevel level, BlockPos pos, Holder<IAspect> aspect) {
         int drawn = draw.drawOne(level, pos, front(), aspect);
         if (drawn <= NOTHING) {
-            return;
+            return false;
         }
         if (requirements.accept(aspect, drawn) > NOTHING) {
             setChangedAndSync();
         }
+        return true;
     }
 
     private void resetSelection() {
@@ -298,9 +306,9 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
         plannedRecipe = null;
     }
 
-    private void planFor(CrucibleRecipe recipe) {
+    private void planFor(ServerLevel level, CrucibleRecipe recipe) {
         if (plannedRecipe != recipe) {
-            requirements.planFor(recipe);
+            requirements.planFor(recipe, level.registryAccess());
             plannedRecipe = recipe;
         }
     }

@@ -94,6 +94,11 @@ def verify_recipes(log):
     assert snapshots("PROCESS_DUST_BLOCK")["target"] == "minecraft:iron_block"
     assert snapshots("PROCESS_DUST_TAG")["target_tag"] == "minecraft:gold_ores"
     assert snapshots("PROCESS_DUST_BLUEPRINT")["blueprint"] == "thaumaturge:infusion_altar_ancient"
+    assert snapshots("TAGGED_COST")["aspects"] == [
+        {"aspect": "thaumaturge:terra"},
+        {"tag": "crafttweaker:flexible_cost", "amount": 2},
+        {"tag": "crafttweaker:probe_aspects", "amount": 3},
+    ]
 
     assert snapshots("REPLACER_JSON_COPY") == shaped
     shaped["key"]["I"] = {"item": "minecraft:copper_ingot"}

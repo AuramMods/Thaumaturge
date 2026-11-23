@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
+import com.leclowndu93150.thaumaturge.compat.jei.ThaumaturgeJEIPlugin;
+
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
@@ -90,6 +92,22 @@ public final class CrucibleCategory implements IRecipeCategory<CrucibleRecipe> {
         builder.addOutputSlot(55, 8).addItemStack(recipe.rawResult());
         builder.addInputSlot(2, 2).addIngredients(recipe.catalyst());
 
+        if (recipe.requirements().hasTags()) {
+            var demands = recipe.requirements().resolve(ThaumaturgeJEIPlugin.clientRegistryAccess()).demands();
+            int center = (demands.size() * SPACE) / 2;
+            for (int index = 0; index < demands.size(); index++) {
+                var demand = demands.get(index);
+                var choices = demand.choices().stream().map(aspect -> new AspectInstance(aspect, demand.amount()))
+                        .toList();
+                var slot = builder.addInputSlot(ASPECT_X - center + index * SPACE, ASPECT_Y)
+                        .setCustomRenderer(AspectIngredientType.INSTANCE, AspectIngredientRenderer.INSTANCE)
+                        .addIngredients(AspectIngredientType.INSTANCE, choices);
+                demand.tag().ifPresent(tag -> slot.addRichTooltipCallback((view, tooltip) ->
+                        tooltip.add(Component.literal("#" + tag.location() + " ×" + demand.amount()))));
+                for (AspectInstance choice : choices) addUsages(builder, choice);
+            }
+            return;
+        }
         int center = (recipe.aspects().size() * SPACE) / 2;
         int x = 0;
 
@@ -98,12 +116,16 @@ public final class CrucibleCategory implements IRecipeCategory<CrucibleRecipe> {
                     .setCustomRenderer(AspectIngredientType.INSTANCE, AspectIngredientRenderer.INSTANCE)
                     .addIngredient(AspectIngredientType.INSTANCE, instance);
 
-            builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-                    .addItemStack(PhialItem.makeFilled(instance.aspect()));
-            builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-                    .addItemStack(EssentiaCrystalFactory.of(instance.aspect()));
+            addUsages(builder, instance);
             x += 1;
         }
+    }
+
+    private static void addUsages(IRecipeLayoutBuilder builder, AspectInstance instance) {
+        builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
+                .addItemStack(PhialItem.makeFilled(instance.aspect()));
+        builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
+                .addItemStack(EssentiaCrystalFactory.of(instance.aspect()));
     }
 
     @Override

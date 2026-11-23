@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.MenuThaumato
 import com.leclowndu93150.thaumaturge.network.ClientboundThaumatoriumRecipesPayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundThaumatoriumTogglePayload;
 import java.util.List;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -132,6 +133,20 @@ public final class ThaumatoriumScreen extends AbstractTTContainerScreen<MenuThau
         if (shown == null) {
             return;
         }
+        if (shown.requirements().hasTags() && Minecraft.getInstance().level != null) {
+            var resolved = shown.requirements().resolve(Minecraft.getInstance().level.registryAccess());
+            var paid = resolved.allocate(machine.essentia()).paidPerDemand();
+            for (int index = 0; index < Math.min(resolved.demands().size(), MAX_ASPECTS); index++) {
+                var demand = resolved.demands().get(index);
+                var aspect = AspectTagRenderer.displayedChoice(demand);
+                int px = BAR_SPACING_X * (index % ASPECTS_PER_ROW);
+                int py = BAR_SPACING_Y * (index / ASPECTS_PER_ROW);
+                int color = aspect == null ? 0xFFFFFFFF : ARGB32.opaque(aspect.value().color());
+                drawBar(graphics, k + BAR_X + px, l + BAR_Y + py, paid.get(index), demand.amount(), color);
+                AspectTagRenderer.renderDemand(graphics, font, k + TAG_X + px, l + TAG_Y + py, aspect, demand.amount());
+            }
+            return;
+        }
         int count = 0;
         for (AspectInstance entry : shown.aspects().sortedByTag()) {
             if (count >= MAX_ASPECTS) {
@@ -141,23 +156,8 @@ public final class ThaumatoriumScreen extends AbstractTTContainerScreen<MenuThau
             int py = count / ASPECTS_PER_ROW;
             int x = k + BAR_X + BAR_SPACING_X * px;
             int y = l + BAR_Y + BAR_SPACING_Y * py;
-            graphics.blit(TEXTURE, x, y, BAR_U, BAR_BACK_V, BAR_WIDTH, BAR_HEIGHT, 256, 256);
-            int fill = (int) (machine.essentia().amountOf(entry.aspect()) / (float) entry.amount() * BAR_WIDTH);
-            if (fill > 0) {
-                int color = ARGB32.opaque(entry.aspect().value().color());
-                GuiBlend.blitTinted(
-                        graphics,
-                        TEXTURE,
-                        x,
-                        y,
-                        BAR_U,
-                        BAR_FILL_V,
-                        Math.min(fill, BAR_WIDTH),
-                        BAR_HEIGHT,
-                        256,
-                        256,
-                        color);
-            }
+            drawBar(graphics, x, y, machine.essentia().amountOf(entry.aspect()), entry.amount(),
+                    ARGB32.opaque(entry.aspect().value().color()));
             count++;
         }
         count = 0;
@@ -175,6 +175,15 @@ public final class ThaumatoriumScreen extends AbstractTTContainerScreen<MenuThau
                     entry.aspect(),
                     entry.amount());
             count++;
+        }
+    }
+
+    private static void drawBar(GuiGraphics graphics, int x, int y, int paid, int cost, int color) {
+        graphics.blit(TEXTURE, x, y, BAR_U, BAR_BACK_V, BAR_WIDTH, BAR_HEIGHT, 256, 256);
+        int fill = (int) (paid / (float) cost * BAR_WIDTH);
+        if (fill > 0) {
+            GuiBlend.blitTinted(graphics, TEXTURE, x, y, BAR_U, BAR_FILL_V, Math.min(fill, BAR_WIDTH),
+                    BAR_HEIGHT, 256, 256, color);
         }
     }
 

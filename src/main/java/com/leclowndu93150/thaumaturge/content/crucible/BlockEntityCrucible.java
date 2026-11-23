@@ -379,7 +379,7 @@ public class BlockEntityCrucible extends AbstractSyncedBlockEntity implements Re
             CrucibleRecipe recipe = match.recipe();
             if (recipe != null) {
                 ItemStack out = recipe.assemble(new CrucibleRecipeInput(stack, this.aspects), level.registryAccess());
-                this.aspects = recipe.removeMatching(aspects);
+                this.aspects = aspects.subtract(match.payment());
                 {
                     tank.drain(50, IFluidHandler.FluidAction.EXECUTE);
                 }
@@ -389,7 +389,7 @@ public class BlockEntityCrucible extends AbstractSyncedBlockEntity implements Re
                     outputSink.accept(out.copy());
                 }
                 MinecraftForge.EVENT_BUS.post(new CrucibleEvent.Crafted(
-                        owner, getBlockPos(), getBlockState(), this, out.copy(), recipe.aspects()));
+                        owner, getBlockPos(), getBlockState(), this, out.copy(), match.payment()));
                 craftDone = true;
                 count--;
                 this.leakCounter = CRAFT_LEAK_RESET;
