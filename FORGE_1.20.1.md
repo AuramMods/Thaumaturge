@@ -22,20 +22,25 @@ On Apple Silicon, the combined optional renderer profile produced an intermitten
 
 ## Build
 
-From a checkout of the `1.20.1` branch, use a Java 17 JDK and the Gradle wrapper. A Java 21 Gradle JVM also works with an installed Java 17 toolchain. Run resource generation and packaging in separate invocations.
+From a checkout of the `1.20.1` branch, use a Java 17 JDK. A Java 21 Gradle JVM also works with an installed Java 17 toolchain. Build on your machine with the Gradle wrapper and its existing caches.
 
 ```sh
-./gradlew runData
-./gradlew jarJar
+./scripts/release-forge.sh
 ```
 
-The distributable is `build/libs/thaumaturge-1.1.4-mc1.20.1-forge.jar`. On macOS, calculate its SHA-256 with the following command. On Linux, use `sha256sum` with the same path.
-
-```sh
-shasum -a 256 build/libs/thaumaturge-1.1.4-mc1.20.1-forge.jar
-```
+The script runs `./gradlew runData` and `./gradlew jarJar` in separate invocations. It prints the SHA-256 of the reobfuscated distributable at `build/libs/thaumaturge-<version>-mc1.20.1-forge.jar`.
 
 Rebuilds can differ in ZIP timestamps even when every payload is identical. [Auram compatibility results](PORTING_1.20.1.md#cycle-439-auram-dependency-compatibility), [Distant Horizons client verification](PORTING_1.20.1.md#cycle-440-distant-horizons-client-compatibility)
+
+## Publish a release
+
+Set `mod_version` in `gradle.properties`, commit the release source, and authenticate the GitHub CLI with write access to `AuramMods/Thaumaturge`. From that commit in a clean checkout, run the local build and publish command.
+
+```sh
+./scripts/release-forge.sh --publish
+```
+
+After building locally, the script pushes the `v<version>` tag for the build commit and uploads the JAR to GitHub Releases. GitHub Actions is disabled for the repository.
 
 ## Verify
 
@@ -45,7 +50,11 @@ After `runData`, run the original Forge suite, focused client and server suites,
 ./gradlew -PportHiddenWindow -PportIntegrations build
 ```
 
-Gradle writes the reports under `build/test-results/`. On CI hosts without a display, use the software OpenGL and Xvfb command in the [build workflow](.github/workflows/build.yml).
+Gradle writes the reports under `build/test-results/`. On a headless Linux machine with Xvfb and software OpenGL installed, run the suite as follows.
+
+```sh
+LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a -s '-screen 0 1280x720x24' ./gradlew -PportHiddenWindow -PportIntegrations build
+```
 
 For an unattended development client, use `./gradlew -PportHiddenWindow runForgeBackgroundClient`. It starts in its own profile with sound muted, narration off and the window hidden. For interactive testing, use `./gradlew runClient` and click the window when you are ready for it to receive input. See the [background testing guide](porting/testing/README.md).
 

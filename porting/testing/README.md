@@ -79,8 +79,8 @@ a failed test run. The launcher and its dependencies live in test source sets.
 To run the build and its verification tasks after datagen, use
 `./gradlew -PportHiddenWindow -PportIntegrations build`. Gradle's `check` task
 uses the original Forge client suite, the headless GameTests and both focused
-Forge suites. On a machine without a display, run the build under Xvfb with
-software OpenGL as the CI workflow does.
+Forge suites. On a headless Linux machine, see the [Forge guide](../../FORGE_1.20.1.md#verify)
+for the Xvfb command.
 
 ## In-world Forge GameTests
 
