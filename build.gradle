@@ -550,7 +550,14 @@ sourceSets {
 
 repositories {
     mavenCentral()
-    maven { url = 'https://maven.blamejared.com/'; content { includeGroup 'mezz.jei'; includeGroup 'net.mezzdev.config' } }
+    maven {
+        url = 'https://maven.blamejared.com/'
+        content {
+            includeGroup 'mezz.jei'
+            includeGroup 'net.mezzdev.config'
+            includeGroup 'com.blamejared.crafttweaker'
+        }
+    }
     maven { url = 'https://maven.architectury.dev/'; content { includeGroup 'dev.architectury' } }
     maven { url = 'https://maven.theillusivec4.top/'; content { includeGroup 'top.theillusivec4.curios' } }
     maven { url = 'https://maven.ftb.dev/releases'; content { includeGroup 'dev.ftb.mods' } }
@@ -568,6 +575,9 @@ dependencies {
     compileOnly fg.deobf("maven.modrinth:distanthorizons:${distant_horizons_version}")
     compileOnly fg.deobf("maven.modrinth:vdjF5PL5:${dynamic_trees_version}")
     compileOnly fg.deobf("maven.modrinth:oculus:${oculus_version}")
+    // The universal JAR already includes ZenCode. ForgeGradle also resolves the
+    // original coordinate, so use an artifact-only declaration for both paths.
+    compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${minecraft_version}:${crafttweaker_version}@jar")
     compileOnly(fg.deobf("dev.ftb.mods:ftb-library-forge:${ftb_library_version}")) { transitive = false }
     compileOnly 'org.jspecify:jspecify:1.0.0'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
