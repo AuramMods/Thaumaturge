@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.content.device.BlockEntityVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.MenuVoidSiphon;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -25,7 +24,7 @@ public final class VoidSiphonScreen extends AbstractTTContainerScreen<MenuVoidSi
 
     @Override
     protected void renderBackgroundOverlay(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        float ratio = Math.min(1.0F, menu.progress() / (float) BlockEntityVoidSiphon.PROGRESS_REQUIRED);
+        float ratio = Math.min(1.0F, menu.progress() / (float) menu.progressRequired());
         int barHeight = (int) (PORTAL_SIZE * ratio);
         if (barHeight > 0) {
             graphics.fill(

@@ -23,6 +23,7 @@ public final class MenuVoidSiphon extends AbstractTTMenu {
 
     private final @Nullable BlockEntityVoidSiphon blockEntity;
     private final DataSlot progress = DataSlot.standalone();
+    private final DataSlot progressRequired = DataSlot.standalone();
 
     public MenuVoidSiphon(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, (BlockEntityVoidSiphon) null);
@@ -44,18 +45,25 @@ public final class MenuVoidSiphon extends AbstractTTMenu {
         addInventoryExtendedSlots(playerInventory, 8, PLAYER_GRID_Y);
         addInventoryHotbarSlots(playerInventory, 8, HOTBAR_Y);
         addDataSlot(progress);
+        progressRequired.set(BlockEntityVoidSiphon.PROGRESS_REQUIRED);
+        addDataSlot(progressRequired);
     }
 
     @Override
     public void broadcastChanges() {
         if (blockEntity != null) {
             progress.set(blockEntity.progress());
+            progressRequired.set(blockEntity.progressRequired());
         }
         super.broadcastChanges();
     }
 
     public int progress() {
         return progress.get();
+    }
+
+    public int progressRequired() {
+        return progressRequired.get();
     }
 
     @Override

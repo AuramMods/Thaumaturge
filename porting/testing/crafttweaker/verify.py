@@ -75,7 +75,7 @@ def verify_recipes(log):
                           ("golem_deployment", 1), ("golem_seal", 1), ("focus_inscription", 1),
                           ("spell_cast", 1), ("potion_sprayer", 1), ("condenser", 1),
                           ("vis_generator", 1), ("flux_scrubber", 1), ("node_jarring", 1), ("pech_trade", 1),
-                          ("centrifuge", 1), ("everfull_urn", 1)):
+                          ("centrifuge", 1), ("everfull_urn", 1), ("void_siphon", 1)):
         assert log.count(f"Adding a GameStages rule for thaumaturge:{family}") == 2 * rules, family
     assert log.count("Editing Thaumaturge data map thaumaturge:aspect/thaumaturge:crystallization") == 2
     for mode in ("mixing", "placement"):
@@ -89,7 +89,8 @@ def verify_recipes(log):
                               ("minecraft:block", "vis_generator"), ("minecraft:block", "flux_scrubber"),
                               ("minecraft:block", "node_jarring"), ("minecraft:item", "pech_offer"),
                               ("thaumaturge:pech_trade", "pech_trades"),
-                              ("thaumaturge:aspect", "centrifugation"), ("minecraft:block", "everfull_urn")):
+                              ("thaumaturge:aspect", "centrifugation"), ("minecraft:block", "everfull_urn"),
+                              ("minecraft:block", "void_siphon"), ("minecraft:block", "stabilizer")):
         assert log.count(f"Editing Thaumaturge data map {registry}/thaumaturge:{machine}") == 2
     for marker in ("CRUCIBLE_REMOVED", "SPECIAL_REMOVED", "SPECIAL_SALIS", "SPECIAL_LABEL", "SPECIAL_PEARL",
                    "TAG_ASPECT", "TAG_MATERIAL", "TAG_PECH"):

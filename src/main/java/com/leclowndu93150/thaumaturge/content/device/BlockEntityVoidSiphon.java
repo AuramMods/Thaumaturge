@@ -5,9 +5,13 @@ import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -23,20 +27,19 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
+public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity implements OwnedProcessing {
     public static final int PROGRESS_REQUIRED = 2000;
-    private static final int WORK_INTERVAL = 20;
     private static final int STREAK_INTERVAL = 40;
     private static final int STREAK_VARIANTS = 8;
     private static final float STREAK_SCALE = 0.12F;
     private static final double RIFT_RANGE = 8.0;
-    private static final int SHRINK_CHANCE = 33;
 
     private final ItemStackHandler output = new ItemStackHandler(1) {
         @Override
         public boolean isItemValid(int index, ItemStack resource) {
-            return resource.is(TTItems.VOID_SEED.get());
+            return ItemStack.isSameItemSameTags(resource, rules().output());
         }
 
         @Override
@@ -48,6 +51,8 @@ public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
 
     private int counter;
     private int progress;
+    private @Nullable UUID owner;
+    private @Nullable VoidSiphonRules paidBatch;
 
     public BlockEntityVoidSiphon(BlockPos pos, BlockState state) {
         super(TTBlockEntities.VOID_SIPHON.get(), pos, state);
@@ -62,51 +67,74 @@ public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
         return progress;
     }
 
+    public int progressRequired() {
+        return rules().progress();
+    }
+
+    @Override
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
+    }
+
+    private VoidSiphonRules rules() {
+        return paidBatch == null ? AuraMachineRules.of(getBlockState().getBlock(), VoidSiphonRules.DATA_MAP,
+                VoidSiphonRules.DEFAULT) : paidBatch;
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityVoidSiphon siphon) {
-        siphon.counter++;
-        if (siphon.counter % WORK_INTERVAL != 0) {
+        if (!(level instanceof ServerLevel server)) {
+            return;
+        }
+        var rules = siphon.rules();
+        if (++siphon.counter % rules.interval() != 0 || !rules.enabled()) {
+            return;
+        }
+        ItemStack result = rules.output();
+        if (!AuraMachineRules.allows(server, StageTarget.VOID_SIPHON, state.getBlock(), siphon.owner,
+                TTEntities.FLUX_RIFT.get().builtInRegistryHolder().key(), result.getItemHolder().unwrapKey().orElseThrow())) {
             return;
         }
         if (state.getValue(BlockStateProperties.ENABLED)
-                && siphon.progress < PROGRESS_REQUIRED
-                && siphon.hasOutputRoom()) {
-            List<EntityFluxRift> drained = siphon.getValidRifts(level, pos);
+                && siphon.progress < rules.progress()
+                && siphon.hasOutputRoom(result)) {
+            List<EntityFluxRift> drained = siphon.getValidRifts(server, pos);
             for (EntityFluxRift rift : drained) {
                 double d = Math.sqrt(rift.currentSize());
                 siphon.progress += (int) d;
-                rift.adjustStability((float) (-d / 15.0));
-                if (level.getRandom().nextInt(SHRINK_CHANCE) == 0) {
+                rift.adjustStability((float) (-d * rules.stabilityScale() / 15.0));
+                if (rules.shrinkChance() > 0 && level.getRandom().nextInt(rules.shrinkChance()) == 0) {
                     rift.resize(rift.currentSize() - 1);
                 }
             }
-            if (level instanceof ServerLevel server && siphon.counter % STREAK_INTERVAL == 0) {
+            if (!drained.isEmpty()) {
+                siphon.paidBatch = rules;
+                siphon.setChanged();
+            }
+            if (siphon.counter % STREAK_INTERVAL == 0) {
                 Vec3 top = LevelSpaces.toWorld(server, new Vec3(pos.getX() + 0.5, pos.getY() + 1.01, pos.getZ() + 0.5));
                 drained.forEach(rift -> showStreak(server, rift, top));
             }
         }
-        siphon.produce();
+        siphon.produce(rules.progress(), result);
     }
 
-    private void produce() {
-        boolean changed = false;
-        while (progress >= PROGRESS_REQUIRED && hasOutputRoom()) {
-            progress -= PROGRESS_REQUIRED;
-            ItemStack current = output.getStackInSlot(0).copy();
-            if (current.isEmpty()) {
-                output.setStackInSlot(0, new ItemStack(TTItems.VOID_SEED.get()).copyWithCount(1));
-            } else {
-                output.setStackInSlot(0, current.copyWithCount(current.getCount() + 1));
-            }
-            changed = true;
+    private void produce(int required, ItemStack result) {
+        while (progress >= required && hasOutputRoom(result)) {
+            progress -= required;
+            int count = output.getStackInSlot(0).getCount() + result.getCount();
+            output.setStackInSlot(0, result.copyWithCount(count));
         }
-        if (changed) {
+        if (progress == 0 && paidBatch != null) {
+            paidBatch = null;
             setChanged();
         }
     }
 
-    private boolean hasOutputRoom() {
-        ItemStack stack = output.getStackInSlot(0).copy();
-        return stack.isEmpty() || stack.is(TTItems.VOID_SEED.get()) && stack.getCount() < stack.getMaxStackSize();
+    private boolean hasOutputRoom(ItemStack result) {
+        ItemStack stack = output.getStackInSlot(0);
+        return stack.isEmpty() || ItemStack.isSameItemSameTags(stack, result)
+                && stack.getCount() + result.getCount() <= stack.getMaxStackSize();
     }
 
     private static void showStreak(ServerLevel level, EntityFluxRift rift, Vec3 target) {
@@ -144,7 +172,10 @@ public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        progress = input.getInt("progress");
+        progress = Math.max(0, input.getInt("progress"));
+        owner = input.hasUUID("Owner") ? input.getUUID("Owner") : null;
+        paidBatch = progress == 0 ? null : TTNbt.read(input, "PaidBatch", VoidSiphonRules.CODEC, registries)
+                .orElse(VoidSiphonRules.DEFAULT);
         if (input.contains("Output")) {
             output.deserializeNBT(input.getCompound("Output"));
         }
@@ -155,5 +186,13 @@ public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
         super.saveAdditional(output_, registries);
         output_.putInt("progress", progress);
         output_.put("Output", output.serializeNBT());
+        if (owner != null) output_.putUUID("Owner", owner);
+        if (paidBatch != null) TTNbt.store(output_, "PaidBatch", VoidSiphonRules.CODEC, registries, paidBatch);
+    }
+
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
+        super.writeClientData(output, registries);
+        output.remove("Owner");
     }
 }

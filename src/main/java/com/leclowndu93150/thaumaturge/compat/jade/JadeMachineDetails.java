@@ -136,7 +136,7 @@ final class JadeMachineDetails {
     }
 
     static void siphon(BlockEntityVoidSiphon machine, JadeDetailBuilder data) {
-        progress(data, machine.progress(), BlockEntityVoidSiphon.PROGRESS_REQUIRED);
+        progress(data, machine.progress(), machine.progressRequired());
         data.summary(
                 "jade.thaumaturge.machine.output",
                 machine.output().getStackInSlot(0).getCount());

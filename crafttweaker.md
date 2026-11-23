@@ -31,7 +31,8 @@ This table identifies the server code and data used by each processing path. The
 | Pech exchanges | `MenuPech` spends a single prized offer. `PechBarter` rolls for a result using `PechTradeTable`. | `thaumaturge:pech_offer` edits prized item values. `thaumaturge:pech_trades` edits results by trade table ID or tag. | Stage checks precede the offer debit, payout, and mood roll. The fixture checks the exact offer and resulting stacks. |
 | Essentia Centrifuge | `BlockEntityCentrifuge` turns one aspect into one randomly selected component. | `thaumaturge:centrifugation` applies fixed outputs and processing times by aspect or aspect tag. | The device checks its placer on intake and progress. Paid work retains its result rule and remaining ticks. |
 | Everfull Urn | `BlockEntityEverfullUrn` draws aura vis, fills its water buffer, and supplies nearby cauldrons and fluid handlers. | `thaumaturge:everfull_urn` configures the vis and water rates and the cauldron fill cost. | The device checks its placer before drawing aura or distributing water. It retains stored water when suspended. |
-| Other conversions and progression | Audit the Void Siphon, Stabilizer, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
+| Void Siphon and Stabilizer | The Siphon trades rift stability and size for progress toward an item. The Stabilizer collects charge, adds flux, and spends charge on rifts or infusion wards. | `thaumaturge:void_siphon` configures costs and output. `thaumaturge:stabilizer` configures charge timing, flux, pulse cost, and range. | Stages use the placer. The Siphon saves paid progress and its output rule. The Stabilizer keeps accumulated charge when suspended. |
+| Eldritch rituals and entry | Audit the altar, portal, and their world datapack definitions. | Pending. | Record where players pay, where access is checked, and which state persists. |
 
 ## Recipe manager methods
 
@@ -373,6 +374,28 @@ ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:everfull_u
 
 In this example the urn can draw up to half a vis each tick and produce up to 200 millibuckets of water. `water_per_vis`, `push_amount`, and `cauldron_cost` use millibuckets. The urn gives up to `push_amount` to a neighboring tank per transfer and uses `cauldron_cost` for each water level. The water tank holds 1000 millibuckets. Use `enabled: false` to suspend the urn's automatic generation and distribution.
 
+### Rift machines
+
+The Siphon and Stabilizer rule maps select the machine block by ID or tag. Both support `enabled: false` to suspend work.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:void_siphon>, {
+    values: {"thaumaturge:void_siphon": {
+        progress: 8, interval: 1, stability_scale: 3.75, shrink_chance: 0,
+        result: {id: "minecraft:echo_shard", count: 2}
+    }}
+});
+ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:stabilizer>, {
+    values: {"thaumaturge:stabilizer": {reach: 5}}
+});
+```
+
+The Siphon's `progress` sets the points required per output. It earns points from each nearby rift with a clear line of sight. `interval` is in ticks. `stability_scale` multiplies the stability drain. A positive `shrink_chance` sets a one-in-N chance to lose one unit of size per draw. Zero disables shrinking. The `result` uses a concrete item stack and defaults to one Void Seed. A paid batch keeps its rule if a script changes while it is active.
+
+The Stabilizer accepts `charge_interval` and `pulse_interval` in ticks, `flux_per_charge` in aura units, `pulse_cost` in charge units per rift, and `reach` in blocks. The charge buffer holds up to 15 and still supplies nearby infusion wards at their existing cost.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -408,6 +431,8 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:pech_trade` | The Pech variant's table ID. Supports the table in `thaumaturge:pech_trade`, the offered item in `minecraft:item`, and the Pech entity type in `minecraft:entity_type`. |
 | `thaumaturge:centrifuge` | The device block ID. Supports the machine in `minecraft:block` and the concrete input in `thaumaturge:aspect`. |
 | `thaumaturge:everfull_urn` | The machine block ID. Supports the machine in `minecraft:block` and water in `minecraft:fluid`. |
+| `thaumaturge:void_siphon` | The machine block ID. Supports the machine in `minecraft:block`, the rift in `minecraft:entity_type`, and the actual result in `minecraft:item`. |
+| `thaumaturge:stabilizer` | The machine block ID. Supports `minecraft:block` for every action and the rift in `minecraft:entity_type` for pulses. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -447,6 +472,8 @@ The [node jarring fixture](porting/testing/crafttweaker/node-jarring.zs) gates t
 The [Pech fixture](porting/testing/crafttweaker/pech.zs) requires a stage to haggle using the tagged variants. The player can retrieve an offer after a denial. Payouts from an eligible trade remain available if the stage is later revoked.
 
 The [separation and water fixture](porting/testing/crafttweaker/separation-and-water.zs) stages one Centrifuge input and the Everfull Urn's water generation. Both devices save their placer. A suspended Centrifuge saves its paid input and remaining time. Completed essentia and water are still available through their output capabilities.
+
+The [rift machine fixture](porting/testing/crafttweaker/rift-machines.zs) stages the Siphon's scripted Echo Shard output. Its current owner's stages govern rift drain and delivery to the output slot. Players can take items already in that slot. The Stabilizer checks its placer before generating charge, pulsing, or paying the cost of a ward.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 
