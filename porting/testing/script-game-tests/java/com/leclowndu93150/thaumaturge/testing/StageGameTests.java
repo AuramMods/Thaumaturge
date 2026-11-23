@@ -421,7 +421,7 @@ public final class StageGameTests {
                 });
     }
 
-    static ServerPlayer player(GameTestHelper test) {
+    public static ServerPlayer player(GameTestHelper test) {
         var level = test.getLevel();
         UUID id = UUID.randomUUID();
         var player = new ServerPlayer(level.getServer(), level,
@@ -437,7 +437,7 @@ public final class StageGameTests {
         return player;
     }
 
-    static void remove(GameTestHelper test, ServerPlayer player) {
+    public static void remove(GameTestHelper test, ServerPlayer player) {
         test.getLevel().getServer().getPlayerList().remove(player);
         ((EmbeddedChannel) player.connection.connection.channel()).finishAndReleaseAll();
     }

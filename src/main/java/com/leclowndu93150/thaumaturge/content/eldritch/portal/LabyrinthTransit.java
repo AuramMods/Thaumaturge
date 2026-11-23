@@ -4,11 +4,14 @@ import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthLandmarks;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.config.labyrinth.LabyrinthConfig;
+import com.leclowndu93150.thaumaturge.content.eldritch.EldritchStages;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthService;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeRecord;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTTicketTypes;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +50,10 @@ public final class LabyrinthTransit {
             if (state.noticeDue(now, NOTICE_INTERVAL)) {
                 TTActionBar.sendPurple(player, CLOSED);
             }
+            return;
+        }
+        if (link.get().kind() == PortalLink.Kind.TO_LABYRINTH && target.get().maze().isPresent()
+                && !allowsEntry(level, player, state, target.get().maze().get())) {
             return;
         }
         Optional<TransitState.Pending> pending = state.pending();
@@ -95,6 +102,14 @@ public final class LabyrinthTransit {
             return;
         }
         ServerLevel level = player.serverLevel();
+        if (StageRules.of(level).hasRules(StageTarget.LABYRINTH_ENTRY)) {
+            var entry = state.pending().map(TransitState.Pending::link)
+                    .filter(link -> link.kind() == PortalLink.Kind.TO_LABYRINTH)
+                    .flatMap(link -> LabyrinthService.byId(level.getServer(), link.maze()));
+            if (entry.isPresent() && !allowsEntry(level, player, state, entry.get())) {
+                return;
+            }
+        }
         boolean canUsePortal = player.isAlive() && player.canChangeDimensions() && !player.isSpectator();
         if (!state.tickPortal(level, canUsePortal, transitionTime(level, player, state.pending()))) {
             return;
@@ -108,6 +123,19 @@ public final class LabyrinthTransit {
                         player.level().getGameTime() + ThaumaturgeServerConfig.LABYRINTH.cooldownTicks.get());
             }
         });
+    }
+
+    private static boolean allowsEntry(ServerLevel level, ServerPlayer player, TransitState state, MazeRecord maze) {
+        var denial = EldritchStages.entryDenial(level, player, maze);
+        if (denial == null) {
+            return true;
+        }
+        if (state.noticeDue(level.getGameTime(), NOTICE_INTERVAL)) {
+            denial.tell(player);
+        }
+        release(level.getServer(), player.getUUID(), state);
+        state.resetContact();
+        return false;
     }
 
     private static int transitionTime(ServerLevel level, ServerPlayer player, Optional<TransitState.Pending> pending) {

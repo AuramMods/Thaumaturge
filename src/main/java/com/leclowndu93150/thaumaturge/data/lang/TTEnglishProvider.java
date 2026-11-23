@@ -950,7 +950,8 @@ public final class TTEnglishProvider extends LanguageProvider {
         add(
                 LabyrinthEncounterBootstrap.announceKey(LabyrinthEncounterBootstrap.HIEROPHANT),
                 "The Hierophant descends to judge you");
-        add("gui.thaumaturge.altar.need_eyes", "The keystone needs four Eldritch Eyes before it will answer.");
+        add("gui.thaumaturge.altar.need_eyes", "The keystone needs %s Eldritch Eyes before it will answer.");
+        add("gui.thaumaturge.altar.ritual_disabled", "The keystone cannot open a labyrinth here.");
         add("gui.thaumaturge.altar.no_node", "There is no aura node above the keystone to tear open.");
         add("gui.thaumaturge.altar.already_open", "The way beyond already stands open.");
         add("gui.thaumaturge.altar.ritual_begin", "The keystone drinks from the aura...");

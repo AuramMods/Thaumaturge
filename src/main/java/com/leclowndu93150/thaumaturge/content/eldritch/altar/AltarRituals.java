@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.config.labyrinth.LabyrinthConfig;
 import com.leclowndu93150.thaumaturge.content.eldritch.EldritchPlacement;
+import com.leclowndu93150.thaumaturge.content.eldritch.EldritchStages;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchStructure;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthService;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeRecord;
@@ -16,6 +17,9 @@ import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -35,6 +39,7 @@ final class AltarRituals {
     private static final double PARTICLE_SPEED = 0.05;
     private static final double PARTICLE_RISE = 1.5;
     private static final int CHANT_INTERVAL = 40;
+    private static final int COMPLETION_RETRY_INTERVAL = 20;
     private static final float MIN_DRAIN_FRACTION = 0.5F;
 
     private AltarRituals() {}
@@ -44,8 +49,13 @@ final class AltarRituals {
             return;
         }
         BlockPos pos = altar.getBlockPos();
-        if (altar.getEyes() < BlockEntityEldritchAltar.MAX_EYES) {
-            TTActionBar.sendPurple(player, "gui.thaumaturge.altar.need_eyes");
+        var rules = AltarRitualRules.of(level.registryAccess(), altar.site());
+        if (!rules.enabled()) {
+            TTActionBar.sendPurple(player, "gui.thaumaturge.altar.ritual_disabled");
+            return;
+        }
+        if (altar.getEyes() < rules.eyes()) {
+            TTActionBar.sendPurple(player, "gui.thaumaturge.altar.need_eyes", rules.eyes());
             return;
         }
         if (!PlayerResearchAccess.of(player).hasCompleted(TTIds.RESEARCH_OCULUS)) {
@@ -64,32 +74,90 @@ final class AltarRituals {
             TTActionBar.sendPurple(player, "gui.thaumaturge.altar.no_node");
             return;
         }
-        altar.setRitual(Optional.of(new AltarRitual(player.getUUID(), level.getGameTime(), 0.0F)));
+        var definition = chooseDefinition(level, altar);
+        if (definition.isEmpty()) {
+            TTActionBar.sendPurple(player, "gui.thaumaturge.altar.ritual_disabled");
+            return;
+        }
+        var terms = terms(level, altar, player, rules, definition.get());
+        if (!StageRules.check(level, terms.authority().target(), player) || terms.authority().player().isEmpty()) {
+            return;
+        }
+        altar.setRitual(Optional.of(new AltarRitual(player.getUUID(), level.getGameTime(), 0.0F, 0,
+                Optional.of(terms), Optional.empty())));
         level.playSound(null, pos, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         TTActionBar.sendPurple(player, "gui.thaumaturge.altar.ritual_begin");
+    }
+
+    private static Optional<ResourceKey<LabyrinthDefinition>> chooseDefinition(
+            ServerLevel level, BlockEntityEldritchAltar altar) {
+        var selection = AltarSite.definition(level, altar)
+                .flatMap(site -> site.labyrinths().getRandomValue(level.getRandom())).map(ResourceKey::location);
+        return LabyrinthService.definition(level.getServer(), selection).map(holder -> holder.key());
+    }
+
+    private static AltarRitual.Terms terms(ServerLevel level, BlockEntityEldritchAltar altar, ServerPlayer caster,
+            AltarRitualRules rules, ResourceKey<LabyrinthDefinition> definition) {
+        LabyrinthConfig config = ThaumaturgeServerConfig.LABYRINTH;
+        StageTarget target = EldritchStages.altar(StageTarget.ELDRITCH_RITUAL, altar).withSubject(definition);
+        return new AltarRitual.Terms(definition, StageAuthorization.capture(level, target, caster), rules.eyes(),
+                rules.channelTicks().orElseGet(config.ritualChannelTicks::get),
+                rules.vis().orElseGet(() -> config.ritualVisCost.get().floatValue()), rules.vis().isPresent());
     }
 
     static void tick(ServerLevel level, BlockEntityEldritchAltar altar, AltarRitual ritual) {
         LabyrinthConfig config = ThaumaturgeServerConfig.LABYRINTH;
         BlockPos pos = altar.getBlockPos();
         ServerPlayer caster = level.getServer().getPlayerList().getPlayer(ritual.caster());
+        if (caster == null) {
+            return;
+        }
+        if (ritual.terms().isEmpty()) {
+            var definition = chooseDefinition(level, altar);
+            if (definition.isEmpty()) {
+                return;
+            }
+            var terms = terms(level, altar, caster, AltarRitualRules.DEFAULT, definition.get());
+            float costPerStep = terms.vis() / terms.duration();
+            int paid = costPerStep > 0 ? (int) (ritual.drained() / costPerStep)
+                    : (int) Math.min(terms.duration(), Math.max(0, level.getGameTime() - ritual.start()));
+            ritual = ritual.withTerms(terms, Math.min(terms.duration(), paid));
+            altar.replaceRitual(ritual);
+        }
+        var terms = ritual.terms().orElseThrow();
+        if (!terms.authority().allows(level)) {
+            return;
+        }
         double reach = config.ritualMaxDistance.get();
-        if (caster == null
-                || !caster.isAlive()
+        if (!caster.isAlive()
                 || caster.level() != level
                 || caster.distanceToSqr(Vec3.atCenterOf(pos)) > reach * reach) {
             fizzle(level, altar, caster, "gui.thaumaturge.altar.ritual_broken");
             return;
         }
-        int channel = config.ritualChannelTicks.get();
-        float perTick = (float) (config.ritualVisCost.get() / channel);
-        float drained = perTick > 0.0F ? AuraHelper.drainVis(level, pos, perTick, false) : 0.0F;
-        if (perTick > 0.0F && drained < perTick * MIN_DRAIN_FRACTION) {
+        if (ritual.steps() >= terms.duration()) {
+            if (level.getGameTime() % COMPLETION_RETRY_INTERVAL == 0) {
+                complete(level, altar, caster, ritual, terms);
+            }
+            return;
+        }
+        float perTick = terms.vis() / terms.duration();
+        float due = terms.exactPayment() ? Math.max(0.0F,
+                terms.vis() * ((ritual.steps() + 1) / (float) terms.duration()) - ritual.drained()) : perTick;
+        if (terms.exactPayment() && due > 0.0F && AuraHelper.drainVis(level, pos, due, true) < due) {
+            if (level.getGameTime() % CHANT_INTERVAL == 0) {
+                TTActionBar.sendPurple(caster, "gui.thaumaturge.altar.not_enough_vis");
+            }
+            return;
+        }
+        float drained = due > 0.0F ? AuraHelper.drainVis(level, pos, due, false) : 0.0F;
+        if (!terms.exactPayment() && perTick > 0.0F && drained < perTick * MIN_DRAIN_FRACTION) {
             fizzle(level, altar, caster, "gui.thaumaturge.altar.not_enough_vis");
             return;
         }
-        altar.replaceRitual(ritual.drain(drained));
-        long elapsed = level.getGameTime() - ritual.start();
+        ritual = ritual.drain(drained);
+        altar.replaceRitual(ritual);
+        int elapsed = ritual.steps();
         if (elapsed % PARTICLE_INTERVAL == 0) {
             level.sendParticles(
                     ParticleTypes.REVERSE_PORTAL,
@@ -105,32 +173,39 @@ final class AltarRituals {
         if (elapsed % CHANT_INTERVAL == 0) {
             level.playSound(null, pos, TTSounds.CHANT.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
-        if (elapsed >= channel) {
-            complete(level, altar, caster);
+        if (elapsed >= terms.duration()) {
+            complete(level, altar, caster, ritual, terms);
         }
     }
 
-    private static void complete(ServerLevel level, BlockEntityEldritchAltar altar, ServerPlayer caster) {
+    private static void complete(ServerLevel level, BlockEntityEldritchAltar altar, ServerPlayer caster,
+            AltarRitual ritual, AltarRitual.Terms terms) {
         BlockPos pos = altar.getBlockPos();
-        Optional<ResourceKey<LabyrinthDefinition>> definition = AltarSite.definition(level, altar)
-                .flatMap(site -> site.labyrinths().getRandomValue(level.getRandom()));
-        Optional<MazeRecord> record = LabyrinthService.open(
-                level.getServer(), GlobalPos.of(level.dimension(), pos), definition.map(ResourceKey::location));
+        Optional<MazeRecord> record = ritual.opened().flatMap(id -> LabyrinthService.byId(level.getServer(), id));
         if (record.isEmpty()) {
-            fizzle(level, altar, caster, "gui.thaumaturge.altar.labyrinth_full");
+            record = LabyrinthService.open(level.getServer(), GlobalPos.of(level.dimension(), pos),
+                    Optional.of(terms.definition().location()));
+            if (record.isPresent()) {
+                altar.replaceRitual(ritual.withOpened(record.get().plan().id()));
+            }
+        }
+        if (record.isEmpty()) {
+            if (level.getGameTime() % CHANT_INTERVAL == 0) {
+                TTActionBar.sendPurple(caster, "gui.thaumaturge.altar.labyrinth_full");
+            }
             return;
         }
+        var id = record.get().plan().id();
+        var portal = EldritchPlacement.place(level, pos.above(), TTBlocks.ELDRITCH_PORTAL.get().defaultBlockState(),
+                TTBlockEntities.ELDRITCH_PORTAL.get());
+        if (portal.isEmpty()) {
+            return;
+        }
+        portal.get().setLink(PortalLink.intoLabyrinth(id));
         altar.setRitual(Optional.empty());
-        altar.setEyes(0);
+        altar.setEyes(altar.getEyes() - terms.eyes());
         altar.link().ifPresent(previous -> LabyrinthService.unlink(level.getServer(), previous));
-        altar.setLink(Optional.of(record.get().plan().id()));
-        EldritchPlacement.place(
-                        level,
-                        pos.above(),
-                        TTBlocks.ELDRITCH_PORTAL.get().defaultBlockState(),
-                        TTBlockEntities.ELDRITCH_PORTAL.get())
-                .ifPresent(portal -> portal.setLink(
-                        PortalLink.intoLabyrinth(record.get().plan().id())));
+        altar.setLink(Optional.of(id));
         if (ThaumaturgeServerConfig.LABYRINTH.sealSiteWhileLinked.get()) {
             SiteSealing.apply(level, pos, true);
         }

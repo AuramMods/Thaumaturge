@@ -41,6 +41,9 @@ public record StageTarget(ResourceLocation family, Optional<ResourceLocation> id
     public static final ResourceLocation EVERFULL_URN = TTIds.rl("everfull_urn");
     public static final ResourceLocation VOID_SIPHON = TTIds.rl("void_siphon");
     public static final ResourceLocation STABILIZER = TTIds.rl("stabilizer");
+    public static final ResourceLocation ELDRITCH_EYES = TTIds.rl("eldritch_eyes");
+    public static final ResourceLocation ELDRITCH_RITUAL = TTIds.rl("eldritch_ritual");
+    public static final ResourceLocation LABYRINTH_ENTRY = TTIds.rl("labyrinth_entry");
 
     public static final Codec<StageTarget> CODEC = RecordCodecBuilder.create(i -> i.group(
                     ResourceLocation.CODEC.fieldOf("family").forGetter(StageTarget::family),

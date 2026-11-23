@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.api.golems.parts.GolemHead;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemLeg;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemMaterial;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
+import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthEncounter;
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
@@ -51,6 +52,8 @@ public final class ThaumaturgeTags implements ICraftTweakerPlugin {
             new TagType<>(WandRod.REGISTRY_KEY, WandRod.class, "WandRod", WandRodElements.class),
             new TagType<>(LabyrinthDefinition.REGISTRY_KEY, LabyrinthDefinition.class, "Labyrinth", LabyrinthElements.class),
             new TagType<>(RoomType.REGISTRY_KEY, RoomType.class, "LabyrinthRoom", LabyrinthRoomElements.class),
+            new TagType<>(LabyrinthEncounter.REGISTRY_KEY, LabyrinthEncounter.class, "LabyrinthEncounter",
+                    LabyrinthEncounterElements.class),
             new TagType<>(ObeliskSite.REGISTRY_KEY, ObeliskSite.class, "ObeliskSite", ObeliskSiteElements.class),
             new TagType<>(PechTradeTable.REGISTRY_KEY, PechTradeTable.class, "PechTradeTable", PechTradeElements.class));
 
@@ -86,6 +89,7 @@ public final class ThaumaturgeTags implements ICraftTweakerPlugin {
     public static final class WandRodElements {}
     public static final class LabyrinthElements {}
     public static final class LabyrinthRoomElements {}
+    public static final class LabyrinthEncounterElements {}
     public static final class ObeliskSiteElements {}
     public static final class PechTradeElements {}
 

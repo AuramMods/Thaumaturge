@@ -32,7 +32,7 @@ This table identifies the server code and data used by each processing path. The
 | Essentia Centrifuge | `BlockEntityCentrifuge` turns one aspect into one randomly selected component. | `thaumaturge:centrifugation` applies fixed outputs and processing times by aspect or aspect tag. | The device checks its placer on intake and progress. Paid work retains its result rule and remaining ticks. |
 | Everfull Urn | `BlockEntityEverfullUrn` draws aura vis, fills its water buffer, and supplies nearby cauldrons and fluid handlers. | `thaumaturge:everfull_urn` configures the vis and water rates and the cauldron fill cost. | The device checks its placer before drawing aura or distributing water. It retains stored water when suspended. |
 | Void Siphon and Stabilizer | The Siphon trades rift stability and size for progress toward an item. The Stabilizer collects charge, adds flux, and spends charge on rifts or infusion wards. | `thaumaturge:void_siphon` configures costs and output. `thaumaturge:stabilizer` configures charge timing, flux, pulse cost, and range. | Stages use the placer. The Siphon saves paid progress and its output rule. The Stabilizer keeps accumulated charge when suspended. |
-| Eldritch rituals and entry | Audit the altar, portal, and their world datapack definitions. | Pending. | Record where players pay, where access is checked, and which state persists. |
+| Eldritch rituals and entry | `BlockEldritchAltar` holds Eyes. `AltarRituals` channels vis and opens a labyrinth. `LabyrinthTransit` loads the destination and moves the player. | `thaumaturge:eldritch_ritual` configures Eye costs and channeling by site ID or tag. World datapacks define sites, labyrinths, rooms, and encounters. | Stage rules run before Eye deposits, channel payment, portal preload, and entry. The ritual keeps its paid balance and selected destination while suspended. |
 
 ## Recipe manager methods
 
@@ -92,7 +92,7 @@ aspects.addId(<resource:thaumaturge:aqua>, <resource:thaumaturge:terra>);
 aspects.removeId(<resource:thaumaturge:terra>);
 ```
 
-In the default loader, the same bracket returns `KnownTag<Aspect>`. Use `.contains(id)` to check membership or `.idElements` to list the member IDs. The [tag fixture](porting/testing/crafttweaker/tag-lookup.zs) shows typed lookups for aspects and golem materials. The custom registry folders include `aspect`, `blueprint`, `golem_material`, `golem_head`, `golem_arm`, `golem_leg`, `golem_addon`, `golem_trait`, `seal`, `spell_part`, `spell_affinity`, `research_entry`, `research_category`, `scan`, `wand_cap`, `wand_rod`, `labyrinth`, `labyrinth_room`, `obelisk_site`, and `pech_trade`. Prefix these folders with `thaumaturge/` in tag brackets.
+In the default loader, the same bracket returns `KnownTag<Aspect>`. Use `.contains(id)` to check membership or `.idElements` to list the member IDs. The [tag fixture](porting/testing/crafttweaker/tag-lookup.zs) shows typed lookups for aspects and golem materials. The custom registry folders include `aspect`, `blueprint`, `golem_material`, `golem_head`, `golem_arm`, `golem_leg`, `golem_addon`, `golem_trait`, `seal`, `spell_part`, `spell_affinity`, `research_entry`, `research_category`, `scan`, `wand_cap`, `wand_rod`, `labyrinth`, `labyrinth_room`, `labyrinth_encounter`, `obelisk_site`, and `pech_trade`. Prefix these folders with `thaumaturge/` in tag brackets.
 
 ### Paying the Crucible or Thaumatorium with tags
 
@@ -396,6 +396,20 @@ The Siphon's `progress` sets the points required per output. It earns points fro
 
 The Stabilizer accepts `charge_interval` and `pulse_interval` in ticks, `flux_per_charge` in aura units, `pulse_cost` in charge units per rift, and `reach` in blocks. The charge buffer holds up to 15 and still supplies nearby infusion wards at their existing cost.
 
+### Eldritch rituals and entry
+
+Edit `thaumaturge:eldritch_ritual` on `thaumaturge:obelisk_site` to set the number of Eyes, vis paid from the local aura, and channel duration. Select a site by ID or site tag. The usual research, altar structure, and distance checks still apply.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:thaumaturge:obelisk_site>, <resource:thaumaturge:eldritch_ritual>, {
+    values: {"thaumaturge:dormant": {eyes: 2, vis: 6.0, channel_ticks: 3}}
+});
+```
+
+The example spends two Eyes and six vis over three ticks. The altar can store up to four Eyes and keeps any excess after opening. Omitting `vis` or `channel_ticks` uses the server configuration for that field. A scripted vis cost pauses between payments if there is too little vis to pay the next step. Use `enabled: false` to prevent new rituals for selected sites. Put changes to a site's choice of labyrinth in a world datapack under `data/<namespace>/thaumaturge/obelisk_site/`. Reopen the world when editing site, labyrinth, room, or encounter definitions.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -433,6 +447,9 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:everfull_urn` | The machine block ID. Supports the machine in `minecraft:block` and water in `minecraft:fluid`. |
 | `thaumaturge:void_siphon` | The machine block ID. Supports the machine in `minecraft:block`, the rift in `minecraft:entity_type`, and the actual result in `minecraft:item`. |
 | `thaumaturge:stabilizer` | The machine block ID. Supports `minecraft:block` for every action and the rift in `minecraft:entity_type` for pulses. |
+| `thaumaturge:eldritch_eyes` | The obelisk site ID. Supports `thaumaturge:obelisk_site`, the altar in `minecraft:block`, and the Eye in `minecraft:item`. |
+| `thaumaturge:eldritch_ritual` | The obelisk site ID. In addition to the offering selectors, supports the chosen `thaumaturge:labyrinth` definition. |
+| `thaumaturge:labyrinth_entry` | The labyrinth definition ID. Supports `thaumaturge:labyrinth`, the planned `thaumaturge:labyrinth_room` and `thaumaturge:labyrinth_encounter`, and the portal in `minecraft:block`. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -474,6 +491,8 @@ The [Pech fixture](porting/testing/crafttweaker/pech.zs) requires a stage to hag
 The [separation and water fixture](porting/testing/crafttweaker/separation-and-water.zs) stages one Centrifuge input and the Everfull Urn's water generation. Both devices save their placer. A suspended Centrifuge saves its paid input and remaining time. Completed essentia and water are still available through their output capabilities.
 
 The [rift machine fixture](porting/testing/crafttweaker/rift-machines.zs) stages the Siphon's scripted Echo Shard output. Its current owner's stages govern rift drain and delivery to the output slot. Players can take items already in that slot. The Stabilizer checks its placer before generating charge, pulsing, or paying the cost of a ward.
+
+The [Eldritch fixture](porting/testing/crafttweaker/eldritch.zs) requires separate stages to seat Eyes, open an altar, and enter the tagged labyrinth. The altar saves the initiating player, channel payments, and intended labyrinth. Losing the required stage or leaving the server pauses the channel. Active casters still have to remain within ritual range. Revoking an entry stage cancels an outstanding portal preload and warmup. The return portal continues to provide a way out.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 

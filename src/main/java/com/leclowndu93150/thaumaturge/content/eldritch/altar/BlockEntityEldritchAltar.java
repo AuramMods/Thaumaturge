@@ -144,4 +144,12 @@ public final class BlockEntityEldritchAltar extends AbstractSyncedBlockEntity {
         link.ifPresent(value -> TTNbt.store(output, LINK, MazeId.CODEC, registries, value));
         output.putLong(AWAKENED_AT, awakenedAt);
     }
+
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
+        super.writeClientData(output, registries);
+        var ritualData = output.getCompound(RITUAL);
+        ritualData.remove("terms");
+        ritualData.remove("opened");
+    }
 }

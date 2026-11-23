@@ -42,6 +42,11 @@ public final class TransitState {
         contactedLevel = level;
     }
 
+    void resetContact() {
+        contactedLevel = null;
+        portalTime = 0;
+    }
+
     boolean tickPortal(ServerLevel level, boolean canUsePortal, int warmupTicks) {
         boolean contacted = contactedLevel == level;
         contactedLevel = null;

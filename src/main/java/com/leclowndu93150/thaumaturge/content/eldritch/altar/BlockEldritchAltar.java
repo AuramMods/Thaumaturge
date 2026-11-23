@@ -7,10 +7,13 @@ import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
 import com.leclowndu93150.thaumaturge.blockinteraction.ItemInteractionResult;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
+import com.leclowndu93150.thaumaturge.content.eldritch.EldritchStages;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchStructure;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -107,7 +110,10 @@ public final class BlockEldritchAltar extends BlockEldritchStructure implements 
                 || altar.ritual().isPresent()) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        if (!level.isClientSide()) {
+        if (level instanceof ServerLevel server) {
+            if (!StageRules.check(server, EldritchStages.altar(StageTarget.ELDRITCH_EYES, altar), player)) {
+                return ItemInteractionResult.CONSUME;
+            }
             altar.setEyes(altar.getEyes() + 1);
             InvHelper.consume(stack, 1, player);
             level.playSound(null, pos, TTSounds.CRYSTAL.get(), SoundSource.BLOCKS, EYE_VOLUME, 1.0F);

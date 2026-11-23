@@ -21,6 +21,7 @@ import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable;
 import com.leclowndu93150.thaumaturge.content.device.UrnWaterRules;
 import com.leclowndu93150.thaumaturge.content.device.StabilizerRules;
 import com.leclowndu93150.thaumaturge.content.device.VoidSiphonRules;
+import com.leclowndu93150.thaumaturge.content.eldritch.altar.AltarRitualRules;
 import com.leclowndu93150.thaumaturge.content.essentia.Centrifugation;
 import com.leclowndu93150.thaumaturge.content.research.decon.DeconstructionRules;
 import com.leclowndu93150.thaumaturge.content.spa.SpaRules;
@@ -92,5 +93,6 @@ public final class TTDataMaps {
         event.register(UrnWaterRules.DATA_MAP);
         event.register(VoidSiphonRules.DATA_MAP);
         event.register(StabilizerRules.DATA_MAP);
+        event.register(AltarRitualRules.DATA_MAP);
     }
 }
