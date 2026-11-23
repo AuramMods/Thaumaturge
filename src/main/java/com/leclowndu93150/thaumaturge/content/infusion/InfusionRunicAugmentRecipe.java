@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.serialization.IngredientCodecs;
 import com.leclowndu93150.thaumaturge.serialization.Codecs;
 import com.leclowndu93150.thaumaturge.recipe.AbstractRecipe;
@@ -110,27 +111,7 @@ public final class InfusionRunicAugmentRecipe extends AbstractRecipe<InfusionInp
     }
 
     public List<ItemStack> matchScaled(ItemStack catalyst, List<ItemStack> available) {
-        List<Ingredient> needed = scaledComponents(catalyst);
-        if (available.size() != needed.size()) {
-            return null;
-        }
-        List<ItemStack> remaining = new ArrayList<>(available);
-        List<ItemStack> consumed = new ArrayList<>(needed.size());
-        for (Ingredient component : needed) {
-            ItemStack found = null;
-            for (ItemStack candidate : remaining) {
-                if (component.test(candidate)) {
-                    found = candidate;
-                    break;
-                }
-            }
-            if (found == null) {
-                return null;
-            }
-            remaining.remove(found);
-            consumed.add(found.copyWithCount(1));
-        }
-        return consumed;
+        return IInfusionRecipe.matchComponents(available, scaledComponents(catalyst));
     }
 
     public AspectList scaledAspects(ItemStack catalyst) {

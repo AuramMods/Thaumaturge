@@ -22,6 +22,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
 import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,7 +126,8 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
             return;
         }
         queue.add(recipeId);
-        crafters.put(recipeId, player.getUUID());
+        StageAuthorization.capture(level, StageTarget.recipe(StageTarget.THAUMATORIUM, recipeId), player)
+                .player().ifPresent(owner -> crafters.put(recipeId, owner));
         resetSelection();
         setChangedAndSync();
     }

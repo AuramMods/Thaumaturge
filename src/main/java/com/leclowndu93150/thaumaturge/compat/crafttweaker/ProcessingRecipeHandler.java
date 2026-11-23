@@ -103,6 +103,12 @@ public final class ProcessingRecipeHandler implements IRecipeHandler<Recipe<?>> 
 
     private record InputSlot(JsonElement value, Consumer<JsonElement> replace) {}
 
+    static boolean replaceInput(JsonObject definition, JsonElement from, JsonElement to) {
+        List<InputSlot> found = inputs(definition).stream().filter(slot -> slot.value().equals(from)).toList();
+        found.forEach(slot -> slot.replace().accept(to));
+        return !found.isEmpty();
+    }
+
     private static List<InputSlot> inputs(JsonObject json) {
         List<InputSlot> slots = new ArrayList<>();
         for (String field : List.of("catalyst", "display_catalyst", "per_level")) {

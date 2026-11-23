@@ -3,6 +3,7 @@ import mods.thaumaturge.AspectAmount;
 import mods.thaumaturge.ResearchRequirement;
 
 val earth = new AspectAmount(<resource:thaumaturge:terra>, 4);
+val water = AspectAmount.tag(<tag:thaumaturge/aspect:crafttweaker:probe_aspects>, 4);
 val sights = ResearchRequirement.stage(<resource:thaumaturge:first_steps>, 0);
 val arcane = <recipetype:thaumaturge:arcane_workbench>;
 arcane.addShaped("test_shaped", <item:minecraft:stone> * 2, 25, [earth], [" I", "S "],
@@ -17,17 +18,21 @@ infusion.addRecipe("test_infusion", <item:minecraft:gold_ingot>, <item:minecraft
     [<item:minecraft:gold_nugget>, <item:minecraft:gold_nugget>], [earth], 12);
 infusion.addCatalystPatch("test_patch", {"thaumaturge:fortress_mask": 2}, <item:thaumaturge:fortress_helm>,
     [<item:minecraft:gold_ingot>], [earth], 8);
+infusion.addJson("overlapping_items", "{\"catalyst\":{\"item\":\"minecraft:clay_ball\"},"
+    + "\"components\":[[{\"item\":\"minecraft:iron_ingot\"},{\"item\":\"minecraft:copper_ingot\"}],"
+    + "{\"item\":\"minecraft:iron_ingot\"}],\"aspects\":[{\"aspect\":\"thaumaturge:terra\",\"amount\":4}],"
+    + "\"result\":{\"id\":\"minecraft:redstone\"},\"instability\":0}");
 println("TT_PROCESS_INFUSION=" + infusion.definition(<resource:crafttweaker:test_infusion>));
 println("TT_PROCESS_PATCH=" + infusion.definition(<resource:crafttweaker:test_patch>));
 
 val enchants = <recipetype:thaumaturge:infusion_enchantment>;
 enchants.addRecipe("test_enchantment", "collector", <item:minecraft:diamond_pickaxe>,
-    [<item:minecraft:apple>], [earth]);
+    [<item:minecraft:apple>], [water]);
 println("TT_PROCESS_ENCHANT=" + enchants.definition(<resource:crafttweaker:test_enchantment>));
 
 val runic = <recipetype:thaumaturge:runic_augment>;
 runic.addRecipe("test_runic", <item:minecraft:diamond_chestplate>,
-    [<item:minecraft:leather>], <item:minecraft:iron_ingot>, [earth], sights.negated());
+    [<item:minecraft:leather>], <item:minecraft:iron_ingot>, [water], sights.negated());
 println("TT_PROCESS_RUNIC=" + runic.definition(<resource:crafttweaker:test_runic>));
 
 val dust = <recipetype:thaumaturge:dust_trigger>;

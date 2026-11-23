@@ -2,20 +2,31 @@ package com.leclowndu93150.thaumaturge.testing;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction.Failure;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionMatrixContext;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
+import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantmentHelper;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityPedestal;
+import com.leclowndu93150.thaumaturge.content.infusion.InfusionRunicAugmentRecipe;
+import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -99,6 +110,75 @@ public final class InfusionStageGameTests {
         }
         test.setBlock(CENTER.offset(-1, -1, -1), Blocks.BLUE_WOOL);
         return (BlockEntityInfusionMatrix) test.getBlockEntity(MATRIX);
+    }
+
+    @GameTest(template = "infusion_room", batch = "crafttweaker_infusion_variants", timeoutTicks = 240)
+    public static void overlappingComponentsUseACompleteAssignment(GameTestHelper test) {
+        runVariant(test, "overlapping_items", new ItemStack(Items.CLAY_BALL),
+                List.of(new ItemStack(Items.IRON_INGOT), new ItemStack(Items.COPPER_INGOT)), TTAspects.TERRA, 4,
+                stack -> stack.is(Items.REDSTONE));
+    }
+
+    @GameTest(template = "infusion_room", batch = "crafttweaker_infusion_variants", timeoutTicks = 240)
+    public static void catalystPatchRetainsTheOriginalStack(GameTestHelper test) {
+        ItemStack catalyst = new ItemStack(TTItems.FORTRESS_HELM.get());
+        catalyst.setHoverName(Component.literal("Named infusion catalyst"));
+        runVariant(test, "test_patch", catalyst, List.of(new ItemStack(Items.GOLD_INGOT)), TTAspects.TERRA, 4,
+                stack -> stack.is(catalyst.getItem()) && stack.getHoverName().equals(catalyst.getHoverName())
+                        && ItemData.getOrDefault(stack, TTDataComponents.FORTRESS_MASK.get(), 0) == 2);
+    }
+
+    @GameTest(template = "infusion_room", batch = "crafttweaker_infusion_variants", timeoutTicks = 240)
+    public static void infusionEnchantmentPaysWithTagEssentia(GameTestHelper test) {
+        ItemStack catalyst = new ItemStack(Items.DIAMOND_PICKAXE);
+        catalyst.setDamageValue(11);
+        runVariant(test, "test_enchantment", catalyst, List.of(new ItemStack(Items.APPLE)), TTAspects.AQUA, 4,
+                stack -> stack.is(Items.DIAMOND_PICKAXE) && stack.getDamageValue() == 11
+                        && InfusionEnchantmentHelper.level(stack, InfusionEnchantment.COLLECTOR) == 1);
+    }
+
+    @GameTest(template = "infusion_room", batch = "crafttweaker_infusion_variants", timeoutTicks = 240)
+    public static void runicAugmentScalesTaggedPaymentAndComponents(GameTestHelper test) {
+        ItemStack catalyst = new ItemStack(Items.DIAMOND_CHESTPLATE);
+        ItemData.set(catalyst, TTDataComponents.RUNIC_CHARGE.get(), 1);
+        runVariant(test, "test_runic", catalyst,
+                List.of(new ItemStack(Items.LEATHER), new ItemStack(Items.IRON_INGOT)), TTAspects.AQUA, 6,
+                stack -> stack.is(Items.DIAMOND_CHESTPLATE) && InfusionRunicAugmentRecipe.charge(stack) == 2);
+    }
+
+    private static void runVariant(GameTestHelper test, String id, ItemStack catalyst, List<ItemStack> components,
+            ResourceKey<IAspect> aspect, int payment, Predicate<ItemStack> complete) {
+        var level = test.getLevel();
+        var actor = StageGameTests.player(test);
+        var context = new InfusionMatrixContext(level, test.absolutePos(MATRIX), actor.getUUID());
+        var matrix = placeAltar(test);
+        test.setBlock(CENTER.offset(-1, -1, -1), Blocks.AIR);
+        var center = pedestal(test, CENTER, catalyst);
+        var supports = new ArrayList<BlockEntityPedestal>();
+        for (int slot = 0; slot < components.size(); slot++) {
+            supports.add(pedestal(test, CENTER.north(2).east(slot * 2), components.get(slot)));
+        }
+        var source = jar(test, CENTER.west(3));
+        var holder = Objects.requireNonNull(Aspects.resolve(level, aspect));
+        source.setStorageContents(aspect, payment + 1);
+        matrix.onRightClick(level, actor);
+        var saved = matrix.saveWithoutMetadata();
+        saved.putFloat("Stability", BlockEntityInfusionMatrix.STABILITY_CAP);
+        matrix.load(saved);
+        var inspected = InfusionCraftingTransaction.inspect(context, actor, catalyst, components);
+        test.assertTrue(inspected.successful() && inspected.recipeId() != null
+                        && inspected.recipeId().location().equals(new ResourceLocation("crafttweaker", id))
+                        && inspected.essentia().amountOf(holder) == payment,
+                "Did not match the scripted infusion and its " + payment + " essentia: " + inspected);
+        test.assertTrue(InfusionCraftingTransaction.start(context, actor, inspected.recipeId()) == Failure.NONE,
+                "Could not start the scripted infusion " + id);
+        test.startSequence().thenWaitUntil(() -> test.assertTrue(complete.test(center.getItem()),
+                "Waiting for the native infusion result of " + id)).thenExecute(() -> {
+            test.assertTrue(center.getItem().getCount() == 1 && supports.stream().allMatch(p -> p.getItem().isEmpty())
+                            && source.getAspects().amountOf(holder) == 1,
+                    "The infusion did not spend each component and the exact essentia once");
+            StageGameTests.remove(test, actor);
+        }).thenSucceed();
     }
 
     private static BlockEntityPedestal pedestal(GameTestHelper test, BlockPos pos, ItemStack stack) {

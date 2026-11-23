@@ -9,6 +9,12 @@ val arcane = <recipetype:thaumaturge:arcane_workbench>;
 arcane.addJson("test_json_copy", arcane.definition(<resource:crafttweaker:test_shaped>));
 println("TT_REPLACER_JSON_COPY=" + arcane.definition(<resource:crafttweaker:test_json_copy>));
 
+val id = <resource:crafttweaker:test_id_bound>;
+arcane.addJson("test_id_bound", arcane.definition(<resource:crafttweaker:test_shaped>));
+println("TT_ID_EDIT=" + arcane.replaceIngredient(id, <item:minecraft:iron_ingot>, <item:minecraft:gold_ingot>));
+arcane.replaceResult(id, <item:minecraft:andesite> * 2);
+println("TT_ID_BOUND=" + arcane.definition(id));
+
 Replacer.create()
     .filter(ManagerFilteringRule.of(arcane))
     .filter(NameFilteringRule.regex("^crafttweaker:test_shaped$"))

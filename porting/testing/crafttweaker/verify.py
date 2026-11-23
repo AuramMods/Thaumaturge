@@ -95,7 +95,7 @@ def verify_recipes(log):
                               ("thaumaturge:obelisk_site", "eldritch_ritual")):
         assert log.count(f"Editing Thaumaturge data map {registry}/thaumaturge:{machine}") == 2
     for marker in ("CRUCIBLE_REMOVED", "SPECIAL_REMOVED", "SPECIAL_SALIS", "SPECIAL_LABEL", "SPECIAL_PEARL",
-                   "TAG_ASPECT", "TAG_MATERIAL", "TAG_PECH", "TAG_ENCOUNTER"):
+                   "TAG_ASPECT", "TAG_MATERIAL", "TAG_PECH", "TAG_ENCOUNTER", "ID_EDIT"):
         assert log.count(f"TT_{marker}=true") == 2, marker
 
     def snapshots(marker):
@@ -139,8 +139,14 @@ def verify_recipes(log):
     ]
 
     assert snapshots("REPLACER_JSON_COPY") == shaped
+    edited = json.loads(json.dumps(shaped))
+    edited["key"]["I"] = {"item": "minecraft:gold_ingot"}
+    edited["result"] = {"id": "minecraft:andesite", "count": 2}
+    assert snapshots("ID_BOUND") == edited
     shaped["key"]["I"] = {"item": "minecraft:copper_ingot"}
     assert snapshots("REPLACER_SHAPED") == shaped
+    assert snapshots("DOC_CLAY")["result"] == {"id": "minecraft:clay_ball", "count": 2}
+    assert [entry["amount"] for entry in snapshots("DOC_NITOR")["aspects"]] == [8, 8, 8]
 
 
 def verify_distillation_input(profile):

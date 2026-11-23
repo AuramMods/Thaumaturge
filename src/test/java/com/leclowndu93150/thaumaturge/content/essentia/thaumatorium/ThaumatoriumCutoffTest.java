@@ -40,7 +40,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -244,18 +243,11 @@ class ThaumatoriumCutoffTest {
     void completedCraftCreditsOnlineRecipeOwnerAndResearch() {
         BlockEntityThaumatorium machine = prepared();
         machine.queue().clear();
-        Player owner = mock(Player.class);
         UUID id = new UUID(4L, 8L);
-        when(owner.getUUID()).thenReturn(id);
-        machine.toggleRecipe(level, owner, RECIPE);
+        ServerPlayer crafter = onlineCrafter(id);
+        machine.toggleRecipe(level, crafter, RECIPE);
         tick(machine, 5);
         machine.insert(order, 2, Direction.EAST, false);
-        MinecraftServer server = mock(MinecraftServer.class);
-        PlayerList players = mock(PlayerList.class);
-        ServerPlayer crafter = mock(ServerPlayer.class);
-        when(level.getServer()).thenReturn(server);
-        when(server.getPlayerList()).thenReturn(players);
-        when(players.getPlayer(id)).thenReturn(crafter);
         try (var output = mockStatic(InvHelper.class);
                 var research = mockStatic(ResearchProgressionEvents.class)) {
             tick(machine, 5);
@@ -270,10 +262,9 @@ class ThaumatoriumCutoffTest {
     void nativeSaveRetainsContentsAndOwnerWithoutSyncingOwner() {
         BlockEntityThaumatorium original = prepared();
         original.queue().clear();
-        Player owner = mock(Player.class);
         UUID id = new UUID(3L, 7L);
-        when(owner.getUUID()).thenReturn(id);
-        original.toggleRecipe(level, owner, RECIPE);
+        ServerPlayer crafter = onlineCrafter(id);
+        original.toggleRecipe(level, crafter, RECIPE);
         tick(original, 5);
         original.insert(order, 2, Direction.EAST, false);
         CompoundTag clientTag = original.getUpdateTag(registries);
@@ -285,12 +276,6 @@ class ThaumatoriumCutoffTest {
         loaded.setLevel(level);
         loaded.loadAdditional(saved, registries);
         assertEquals(clientTag, loaded.getUpdateTag(registries));
-        MinecraftServer server = mock(MinecraftServer.class);
-        PlayerList players = mock(PlayerList.class);
-        ServerPlayer crafter = mock(ServerPlayer.class);
-        when(level.getServer()).thenReturn(server);
-        when(server.getPlayerList()).thenReturn(players);
-        when(players.getPlayer(id)).thenReturn(crafter);
         try (var output = mockStatic(InvHelper.class);
                 var research = mockStatic(ResearchProgressionEvents.class)) {
             tick(loaded, 1);
@@ -299,6 +284,17 @@ class ThaumatoriumCutoffTest {
         }
         assertEquals(2, loaded.catalystStack().getCount());
         assertTrue(loaded.essentia().isEmpty());
+    }
+
+    private ServerPlayer onlineCrafter(UUID id) {
+        MinecraftServer server = mock(MinecraftServer.class);
+        PlayerList players = mock(PlayerList.class);
+        ServerPlayer crafter = mock(ServerPlayer.class);
+        when(level.getServer()).thenReturn(server);
+        when(server.getPlayerList()).thenReturn(players);
+        when(players.getPlayer(id)).thenReturn(crafter);
+        when(crafter.getUUID()).thenReturn(id);
+        return crafter;
     }
 
     @Test

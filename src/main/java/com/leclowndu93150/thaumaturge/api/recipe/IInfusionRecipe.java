@@ -3,9 +3,11 @@ package com.leclowndu93150.thaumaturge.api.recipe;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectRequirements;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.common.util.RecipeMatcher;
 
 /**
  * An infusion altar recipe. The central pedestal holds the catalyst; the
@@ -54,24 +56,17 @@ public interface IInfusionRecipe extends ResearchGated {
      *         when the stacks do not satisfy the components exactly
      */
     default List<ItemStack> matchComponents(List<ItemStack> available) {
-        if (available.size() != components().size()) {
+        return matchComponents(available, components());
+    }
+
+    static List<ItemStack> matchComponents(List<ItemStack> available, List<Ingredient> needed) {
+        int[] matches = RecipeMatcher.findMatches(available, needed);
+        if (matches == null) {
             return null;
         }
-        List<ItemStack> remaining = new ArrayList<>(available);
-        List<ItemStack> consumed = new ArrayList<>(components().size());
-        for (Ingredient component : components()) {
-            ItemStack found = null;
-            for (ItemStack candidate : remaining) {
-                if (component.test(candidate)) {
-                    found = candidate;
-                    break;
-                }
-            }
-            if (found == null) {
-                return null;
-            }
-            remaining.remove(found);
-            consumed.add(found.copyWithCount(1));
+        List<ItemStack> consumed = new ArrayList<>(Collections.nCopies(matches.length, ItemStack.EMPTY));
+        for (int slot = 0; slot < matches.length; slot++) {
+            consumed.set(matches[slot], available.get(slot).copyWithCount(1));
         }
         return consumed;
     }
