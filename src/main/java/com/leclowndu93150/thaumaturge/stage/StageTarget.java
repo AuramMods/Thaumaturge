@@ -23,6 +23,9 @@ public record StageTarget(ResourceLocation family, Optional<ResourceLocation> id
     public static final ResourceLocation SPA = TTIds.rl("spa");
     public static final ResourceLocation PATTERN_CRAFTER = TTIds.rl("pattern_crafter");
     public static final ResourceLocation INFERNAL_FURNACE = TTIds.rl("infernal_furnace");
+    public static final ResourceLocation ALCHEMICAL_FURNACE = TTIds.rl("alchemical_furnace");
+    public static final ResourceLocation ADVANCED_ALCHEMICAL_FURNACE = TTIds.rl("advanced_alchemical_furnace");
+    public static final ResourceLocation DECONSTRUCTION_TABLE = TTIds.rl("deconstruction_table");
 
     public static final Codec<StageTarget> CODEC = RecordCodecBuilder.create(i -> i.group(
                     ResourceLocation.CODEC.fieldOf("family").forGetter(StageTarget::family),

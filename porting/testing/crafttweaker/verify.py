@@ -68,13 +68,17 @@ def verify_recipes(log):
     assert not errors, errors
     for family, rules in (("thaumatorium", 1), ("arcane_workbench", 2), ("crucible", 1), ("dust_trigger", 3),
                           ("research", 1), ("scan", 2), ("essentia_crystalizer", 1), ("spa", 2),
-                          ("pattern_crafter", 1), ("infernal_furnace", 1), ("infusion", 1)):
+                          ("pattern_crafter", 1), ("infernal_furnace", 1), ("infusion", 1),
+                          ("alchemical_furnace", 1), ("advanced_alchemical_furnace", 1),
+                          ("deconstruction_table", 1)):
         assert log.count(f"Adding a GameStages rule for thaumaturge:{family}") == 2 * rules, family
     assert log.count("Editing Thaumaturge data map thaumaturge:aspect/thaumaturge:crystallization") == 2
     for mode in ("mixing", "placement"):
         assert log.count(f"Editing Thaumaturge data map minecraft:fluid/thaumaturge:spa_{mode}") == 2
     for registry, machine in (("minecraft:block", "pattern_crafter"), ("minecraft:item", "infernal_bonus"),
-                              ("minecraft:block", "infusion_matrix_upgrade")):
+                              ("minecraft:block", "infusion_matrix_upgrade"), ("minecraft:block", "smelter_stats"),
+                              ("minecraft:item", "distillation"), ("minecraft:item", "advanced_distillation"),
+                              ("minecraft:item", "deconstruction")):
         assert log.count(f"Editing Thaumaturge data map {registry}/thaumaturge:{machine}") == 2
     for marker in ("CRUCIBLE_REMOVED", "SPECIAL_REMOVED", "SPECIAL_SALIS", "SPECIAL_LABEL", "SPECIAL_PEARL",
                    "TAG_ASPECT", "TAG_MATERIAL"):

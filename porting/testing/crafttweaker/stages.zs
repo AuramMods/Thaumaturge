@@ -32,3 +32,9 @@ Stages.requireId(<resource:thaumaturge:infusion>, <resource:crafttweaker:tagged_
     StageRequirement.allOf(["tagged_infusion"]));
 Stages.requireId(<resource:thaumaturge:arcane_workbench>, <resource:crafttweaker:tagged_arcane>,
     StageRequirement.allOf(["tagged_workbench"]));
+Stages.requireEntry(<resource:thaumaturge:alchemical_furnace>, <resource:thaumaturge:aspect>,
+    <resource:thaumaturge:ignis>, StageRequirement.allOf(["distill_ignis"]));
+Stages.requireId(<resource:thaumaturge:advanced_alchemical_furnace>, <resource:minecraft:dead_bush>,
+    StageRequirement.allOf(["distill_advanced"]));
+Stages.requireId(<resource:thaumaturge:deconstruction_table>, <resource:minecraft:echo_shard>,
+    StageRequirement.allOf(["deconstruct_echo"]));

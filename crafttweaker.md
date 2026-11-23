@@ -14,9 +14,9 @@ This table identifies the server code and data used by each processing path. The
 | Infusion Matrix | `thaumaturge:infusion`, `thaumaturge:infusion_enchantment`, and `thaumaturge:runic_augment` use `InfusionRecipeMatcher` and the matrix job. Item infusion can output a new stack or modify the existing catalyst. | All three managers accept aspect tag costs. Item infusion also has `addCatalystPatch`. Block data maps configure altar modifiers. | Stage checks run at recipe selection and in-flight work. A tagged job records its concrete payment before starting. |
 | Salis Mundus | `SalisMundusItem` selects `thaumaturge:dust_trigger`. The simple, tag, and multiblock serializers share this recipe type. A multiblock references the Blueprint registry. | `addBlock`, `addBlockTag`, `addMultiblock`, and native JSON. Blueprint edits pending. | Stage GameTest covers block and tag transformations, stage revocation, and resumed placement. Verify scripted rotated blueprints. |
 | Special crafting | The crafting table uses Salis Mundus mixing, label filtering, and Primordial Pearl repair through Thaumaturge's special serializers. | Verify ordinary crafting manager operations and serializer-backed definitions. | Verify dynamic stack output and remainders with the pack's RecipeStages integration. |
-| Alchemical Furnaces | `BlockEntitySmelter` and `BlockEntityAdvancedAlchemicalFurnace` distill item aspects. They use fuel or external power and output essentia. | Aspect maps and machine rules pending. | Verify tag-driven input changes, capacity, output transfer, and the actor policy. |
+| Alchemical Furnaces | `BlockEntitySmelter` and `BlockEntityAdvancedAlchemicalFurnace` distill item aspects. They use fuel or external power and output essentia. | Edit the base aspect map, item distillation maps, and standard smelter block stats. | Stage checks apply to the input and the proposed aspects before fuel, power, or distillation is spent. |
 | Essentia Crystalizer | `BlockEntityEssentiaCrystalizer` buffers one concrete aspect and converts it into a matching crystal or a scripted item output. | The `thaumaturge:crystallization` aspect data map selects costs and results by aspect ID or tag. | Stage checks run at essentia intake and before work or output. The fixture covers exact intake, stage revocation, and resuming a saved batch. |
-| Deconstruction Table | `BlockEntityDeconstructionTable` consumes an item and produces a research aspect. | Aspect mappings and any conversion override pending. | Verify consumption, the claimed result, and the research update. |
+| Deconstruction Table | `BlockEntityDeconstructionTable` consumes an item and produces a research aspect. | Edit the `thaumaturge:deconstruction` item data map for fixed aspects, points, or probability. | The placer must be eligible for restricted processing. A collector also needs the result's current stages. |
 | Infernal Furnace | `BlockEntityInfernalFurnace` uses native smelting recipes with the `InfernalBonus` data map for extra output. | Vanilla smelting manager and `thaumaturge:infernal_bonus` item data map. | Stage rules apply to intake and queued work via the builder or placer. |
 | Pattern Crafter | `BlockEntityPatternCrafter` uses the ordinary crafting recipe manager and neighboring storage. | Vanilla crafting manager and `thaumaturge:pattern_crafter` block data map. | Stage rules apply before charging vis or extracting crafting inputs. |
 | Golem Press | `BlockEntityGolemBuilder` assembles a configured golem from material and part definitions, then pays Machina. | Golem part and trait selectors, costs, and press rules pending. | Verify item costs, essentia costs, saved work, stage checks, and exact final golem state. |
@@ -223,6 +223,25 @@ ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:infusion_m
 
 The [infusion fixture](porting/testing/crafttweaker/infusion-tags.zs) uses the aspect tags from the [tag loader fixture](porting/testing/crafttweaker/tags.zs).
 
+### Alchemical Furnaces and Deconstruction Table
+
+Edit `thaumaturge:distillation` or `thaumaturge:advanced_distillation` on the `minecraft:item` registry to select an input by item or item tag. `output` takes a list of concrete aspects and amounts. Omit it to use the normal aspect index. Use `enabled: false` to exclude an input. Each work cycle distills one item. Standard smelters apply their normal efficiency and flux rules to the authored list. Edit the `thaumaturge:smelter_stats` block data map to control efficiency and transfer interval for the three standard smelter tiers. Advanced furnaces spend two heat, one Perditio and one Aqua reserve unit per output point.
+
+Edit `thaumaturge:deconstruction` on the item registry to set `enabled`, a concrete `result` aspect, `points` (default 1), or `chance` (range 0 to 1). A fixed result defaults to guaranteed per item. Without one, the table chooses a primal from the item's normal aspect contents and uses its normal chance unless a chance is specified. An already-completed result keeps its aspect and points across reload, and the normal research discovery bonus and caps apply on collection.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:distillation>, {
+    values: {"minecraft:echo_shard": {output: [{aspect: "thaumaturge:ignis", amount: 4}]}}
+});
+ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:deconstruction>, {
+    values: {"minecraft:echo_shard": {result: "thaumaturge:terra", points: 3}}
+});
+```
+
+The [distillation fixture](porting/testing/crafttweaker/distillation.zs) also sets the Void Smelter's efficiency to 1.0 and adds an advanced conversion.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -247,6 +266,8 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:spa` | `thaumaturge:spa_mixing` or `thaumaturge:spa_placement`. Supports the actual tank fluid in `minecraft:fluid` and the mixing additive in `minecraft:item`. |
 | `thaumaturge:pattern_crafter` | Ordinary crafting recipe IDs and the actual input in `minecraft:item`. |
 | `thaumaturge:infernal_furnace` | Ordinary smelting recipe IDs and the actual input in `minecraft:item`. |
+| `thaumaturge:alchemical_furnace` and `thaumaturge:advanced_alchemical_furnace` | The input item ID. Supports `minecraft:item` input and `thaumaturge:aspect` output entries and tags. |
+| `thaumaturge:deconstruction_table` | The input item ID. Supports `minecraft:item` input and `thaumaturge:aspect` result entries and tags. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -270,6 +291,8 @@ The Crystalizer records the player who placed it. For restricted aspects the own
 The Spa records the player who placed it and checks that owner's current stages before placing a restricted source. Players can fill the tank and load additives while placement is suspended. Re-place an empty legacy Spa to record its owner.
 
 The Pattern Crafter records its placer. The Infernal Furnace records its Salis Mundus builder or its placer when placed directly. Restricted work uses that player's current stages. The Infernal Furnace keeps its queued inputs and pauses its timer when no queued input is eligible. Re-place or reassemble empty legacy devices to record their owner.
+
+The Alchemical Furnaces and Deconstruction Table record their placer or Salis Mundus builder. Revoking a stage pauses restricted work and retains its inputs and paid reserves. The smelters can transfer essentia from completed jobs. A Deconstruction Table retains a completed result until a player with its stages collects it, even if that player and the placer are different people.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 

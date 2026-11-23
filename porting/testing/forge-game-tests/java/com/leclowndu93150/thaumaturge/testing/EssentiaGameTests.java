@@ -139,20 +139,7 @@ public final class EssentiaGameTests {
         var tubePos = corePos.north(2);
         var jarPos = tubePos.below();
         var nodePos = new BlockPos(0, 2, 4);
-        test.setBlock(corePos, TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get());
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                if (x == 0 && z == 0) continue;
-                boolean corner = x != 0 && z != 0;
-                var lower = corePos.offset(x, 0, z);
-                test.setBlock(lower, corner
-                        ? TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get()
-                        : TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get());
-                test.setBlock(lower.above(), corner
-                        ? TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get()
-                        : TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get());
-            }
-        }
+        formAdvancedFurnace(test, corePos);
         test.setBlock(jarPos, TTBlocks.JAR_NORMAL.get());
         test.setBlock(tubePos, TTBlocks.TUBE.get());
         var jar = blockEntity(test, jarPos, BlockEntityJar.class);
@@ -194,6 +181,23 @@ public final class EssentiaGameTests {
             test.assertTrue(core.aspects().isEmpty() && tube.essentiaAmountRaw() == 0,
                     "Essentia remained in the furnace or tube after transfer");
         }).thenSucceed();
+    }
+
+    static void formAdvancedFurnace(GameTestHelper test, BlockPos corePos) {
+        test.setBlock(corePos, TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get());
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                if (x == 0 && z == 0) continue;
+                boolean corner = x != 0 && z != 0;
+                var lower = corePos.offset(x, 0, z);
+                test.setBlock(lower, corner
+                        ? TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get()
+                        : TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get());
+                test.setBlock(lower.above(), corner
+                        ? TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get()
+                        : TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get());
+            }
+        }
     }
 
     private static <T extends BlockEntity> T blockEntity(GameTestHelper test, BlockPos pos, Class<T> type) {

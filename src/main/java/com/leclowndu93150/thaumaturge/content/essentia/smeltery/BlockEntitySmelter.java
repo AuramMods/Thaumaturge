@@ -2,7 +2,10 @@ package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
 import com.leclowndu93150.thaumaturge.datamap.DataMaps;
 
-import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
+import java.util.UUID;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -42,7 +45,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 import org.jspecify.annotations.Nullable;
 
-public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements MenuProvider {
+public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements MenuProvider, OwnedProcessing {
     public int fuelCapacity;
     public int fuelRemaining;
     public int cookElapsed;
@@ -87,6 +90,7 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
     private boolean speedBoost;
     private int tickCounter;
     private int bellows = UNKNOWN_BELLOWS;
+    private @Nullable UUID owner;
 
     public BlockEntitySmelter(BlockPos pos, BlockState state) {
         this(TTBlockEntities.SMELTER.get(), pos, state);
@@ -112,7 +116,13 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
     }
 
     static boolean isInputValid(ItemStack stack) {
-        return !stack.isEmpty() && !AspectIndexAccess.of(stack).isEmpty();
+        return !DistillationRules.contents(DistillationRules.SMELTER, stack).isEmpty();
+    }
+
+    @Override
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
     }
 
     static boolean isFuelValid(Level level, ItemStack stack) {
@@ -134,14 +144,24 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
         if (bellows < 0) {
             refreshBellows();
         }
+        ItemStack input = stackIn(INPUT_SLOT);
+        AspectList content = DistillationRules.contents(DistillationRules.SMELTER, input);
+        if (!input.isEmpty() && StageRules.of(server).hasRules(StageTarget.ALCHEMICAL_FURNACE)
+                && !StageRules.allowsOwner(server,
+                        DistillationRules.target(StageTarget.ALCHEMICAL_FURNACE, input, content), owner)) {
+            if (handOverEssentia(server, pos)) {
+                setChangedAndSync();
+            }
+            return;
+        }
         boolean wasLit = state.getValue(BlockSmelter.LIT);
         boolean dirty = false;
         if (fuelRemaining > 0) {
             fuelRemaining--;
             dirty = true;
         }
-        int smeltPoints = smeltablePoints();
-        boolean canSmelt = smeltPoints > 0;
+        int smeltPoints = content.totalAmount();
+        boolean canSmelt = smeltPoints > 0 && smeltPoints <= MAX_ESSENTIA - vis;
         if (fuelRemaining == 0 && canSmelt && igniteFuel(server)) {
             dirty = true;
         }
@@ -151,7 +171,7 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
             dirty = true;
             if (cookElapsed >= cookTarget) {
                 cookElapsed = 0;
-                smeltOne(server, pos, state);
+                smeltOne(server, pos, state, input, content);
                 dirty = true;
             }
         } else {
@@ -170,27 +190,13 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
         syncToClient();
     }
 
-    private int smeltablePoints() {
-        ItemStack input = stackIn(INPUT_SLOT);
-        if (input.isEmpty()) {
-            return 0;
-        }
-        int points = AspectIndexAccess.of(input).totalAmount();
-        return points <= MAX_ESSENTIA - vis ? points : 0;
-    }
-
     private int cookTimeFor(int points) {
         int counted = Math.max(bellows, 0);
         double speedUp = 1.0 - counted * BELLOWS_COOK_REDUCTION;
         return (int) (points * BASE_COOK_PER_ESSENTIA * speedUp);
     }
 
-    private void smeltOne(ServerLevel server, BlockPos pos, BlockState state) {
-        ItemStack input = stackIn(INPUT_SLOT);
-        AspectList content = AspectIndexAccess.of(input);
-        if (content.isEmpty()) {
-            return;
-        }
+    private void smeltOne(ServerLevel server, BlockPos pos, BlockState state, ItemStack input, AspectList content) {
         Direction[] vents = sidesWith(state.getValue(BlockSmelter.FACING), false);
         RandomSource random = server.getRandom();
         float efficiency = essentiaYield();
@@ -363,6 +369,12 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
 
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+        writeClientData(output, registries);
+        if (owner != null) output.putUUID("Owner", owner);
+    }
+
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         TTNbt.store(output, ASPECTS_KEY, AspectList.CODEC, registries, essentiaStock);
         output.putInt(BURN_TIME_KEY, fuelRemaining);
@@ -376,6 +388,7 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
+        owner = input.hasUUID("Owner") ? input.getUUID("Owner") : null;
         items.deserializeNBT(input.getCompound("inventory"));
         loadFurnaceState(input);
         essentiaStock =

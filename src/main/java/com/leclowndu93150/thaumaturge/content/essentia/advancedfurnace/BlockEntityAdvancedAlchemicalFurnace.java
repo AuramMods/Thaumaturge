@@ -5,7 +5,11 @@ import com.leclowndu93150.thaumaturge.itemdata.ItemStackCodecs;
 import com.leclowndu93150.thaumaturge.compat.Java17;
 import com.leclowndu93150.thaumaturge.content.blockentity.RegistryBlockEntity;
 
-import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
+import com.leclowndu93150.thaumaturge.content.essentia.smeltery.DistillationRules;
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
+import java.util.UUID;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -37,7 +41,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEntity {
+public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEntity implements OwnedProcessing {
     private static final float BOUNDS_MARGIN_LOW = 1.0F;
     private static final float BOUNDS_MARGIN_HIGH = 2.0F;
     private static final float BOUNDS_HEIGHT = 2.0F;
@@ -69,7 +73,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
     private final BlockPos.MutableBlockPos formedCursor = new BlockPos.MutableBlockPos();
     private AspectList aspects = AspectList.EMPTY;
     private ItemStack input = ItemStack.EMPTY;
-    private @Nullable AspectList inputAspects;
+    private @Nullable UUID owner;
     private int heat;
     private int perditio;
     private int aqua;
@@ -173,6 +177,11 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
     }
 
     private void runCycle(ServerLevel server, BlockPos pos) {
+        AspectList content = inputContent();
+        if (StageRules.of(server).hasRules(StageTarget.ADVANCED_ALCHEMICAL_FURNACE)
+                && (input.isEmpty() || !stageAllows(server, input, content))) {
+            return;
+        }
         boolean dirty = false;
         if (cooldown > 0) {
             cooldown--;
@@ -181,7 +190,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
         if (server.getGameTime() % POWER_INTERVAL == 0) {
             dirty |= rechargeReserves(server, pos);
         }
-        if (cooldown == 0 && tryProcessInput(server, pos)) {
+        if (cooldown == 0 && tryProcessInput(server, pos, content)) {
             changed();
             return;
         }
@@ -221,11 +230,10 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
         return heat >= points * HEAT_PER_ASPECT && perditio >= points && aqua >= points;
     }
 
-    private boolean tryProcessInput(ServerLevel server, BlockPos pos) {
+    private boolean tryProcessInput(ServerLevel server, BlockPos pos, AspectList content) {
         if (input.isEmpty()) {
             return false;
         }
-        AspectList content = inputContent();
         int points = content.totalAmount();
         if (points <= 0 || aspects.totalAmount() + points > MAX_ESSENTIA || !canAfford(points)) {
             return false;
@@ -235,7 +243,6 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
         aqua -= points;
         aspects = aspects.add(content);
         input = ItemStack.EMPTY;
-        inputAspects = null;
         cooldown = MIN_COOLDOWN + COOLDOWN_RANGE * (MAX_POWER - heat) / MAX_POWER;
         cycleDuration = cooldown;
         float pitch = BUBBLE_PITCH_LOW + server.getRandom().nextFloat() * BUBBLE_PITCH_RANGE;
@@ -244,12 +251,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
     }
 
     private AspectList inputContent() {
-        AspectList cached = inputAspects;
-        if (cached == null) {
-            cached = input.isEmpty() ? AspectList.EMPTY : AspectIndexAccess.of(input);
-            inputAspects = cached;
-        }
-        return cached;
+        return DistillationRules.contents(DistillationRules.ADVANCED, input);
     }
 
     private void changed() {
@@ -270,17 +272,28 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
     }
 
     public boolean insertInput(ItemStack stack) {
-        if (!canReceiveInput(stack)) {
+        if (!(level instanceof ServerLevel server) || !canReceiveInput(stack)) {
             return false;
         }
-        AspectList content = AspectIndexAccess.of(stack);
-        if (!fitsFurnace(content.totalAmount())) {
+        AspectList content = DistillationRules.contents(DistillationRules.ADVANCED, stack);
+        if (!fitsFurnace(content.totalAmount()) || !stageAllows(server, stack, content)) {
             return false;
         }
         input = stack.copyWithCount(1);
-        inputAspects = content;
         changed();
         return true;
+    }
+
+    private boolean stageAllows(ServerLevel server, ItemStack stack, AspectList content) {
+        return !StageRules.of(server).hasRules(StageTarget.ADVANCED_ALCHEMICAL_FURNACE)
+                || StageRules.allowsOwner(server,
+                        DistillationRules.target(StageTarget.ADVANCED_ALCHEMICAL_FURNACE, stack, content), owner);
+    }
+
+    @Override
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
     }
 
     public int takeEssentia(Holder<IAspect> aspect, int amount) {
@@ -355,7 +368,6 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
                 AuraHelper.polluteAura(server, pos, stored, true);
             }
             input = ItemStack.EMPTY;
-            inputAspects = null;
             aspects = AspectList.EMPTY;
         }
     }
@@ -373,13 +385,14 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
         output.putInt(COOLDOWN_KEY, cooldown);
         output.putInt(CYCLE_KEY, cycleDuration);
         output.putBoolean(ASSEMBLED_KEY, assembled);
+        if (owner != null) output.putUUID("Owner", owner);
     }
 
     @Override
     protected void loadAdditional(CompoundTag stored, HolderLookup.Provider registries) {
         super.loadAdditional(stored, registries);
         assembled = stored.getBoolean(ASSEMBLED_KEY);
-        inputAspects = null;
+        owner = stored.hasUUID("Owner") ? stored.getUUID("Owner") : null;
         input = TTNbt.read(stored, INPUT_KEY, ItemStackCodecs.CODEC, registries).orElse(ItemStack.EMPTY);
         aspects = TTNbt.read(stored, ASPECTS_KEY, AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         heat = readReserve(stored, HEAT_KEY);
@@ -395,7 +408,9 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
+        CompoundTag data = saveWithoutMetadata(registries);
+        data.remove("Owner");
+        return data;
     }
 
     @Override
