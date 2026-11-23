@@ -15,6 +15,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -82,6 +83,7 @@ class BlockEntityInfernalFurnaceTest {
     }
 
     private CountingFurnace createFurnace() {
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
         CountingFurnace furnace = new CountingFurnace();
         furnace.setLevel(level);
         furnace.speedyTime = 20;
