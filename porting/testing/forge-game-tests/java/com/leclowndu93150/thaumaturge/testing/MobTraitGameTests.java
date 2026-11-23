@@ -5,12 +5,15 @@ import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitEngine;
 import com.leclowndu93150.thaumaturge.content.taint.entity.TaintInfection;
 import com.leclowndu93150.thaumaturge.mixin.world.entity.MobAccessor;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
+import com.leclowndu93150.thaumaturge.state.AttachmentData;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
@@ -19,6 +22,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
@@ -26,6 +30,32 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class MobTraitGameTests {
     private MobTraitGameTests() {}
+
+    @GameTest(template = "golem_room", batch = "mob_traits")
+    public static void experienceDropWorksAfterEntityRemoval(GameTestHelper test) {
+        var cow = test.spawnWithNoFreeWill(EntityType.COW, new BlockPos(4, 2, 4));
+        cow.remove(Entity.RemovalReason.KILLED);
+        test.assertTrue(ForgeEventFactory.getExperienceDrop(cow, null, 7) == 7,
+                "An XP event after removal should preserve the original XP");
+        test.succeed();
+    }
+
+    @GameTest(template = "golem_room", batch = "mob_traits")
+    public static void experienceDropKeepsTaintBroodRewards(GameTestHelper test) {
+        var legacy = test.spawnWithNoFreeWill(EntityType.CAVE_SPIDER, new BlockPos(3, 2, 4));
+        var brood = test.spawnWithNoFreeWill(EntityType.CAVE_SPIDER, new BlockPos(5, 2, 4));
+        test.assertTrue(ForgeEventFactory.getExperienceDrop(legacy, null, 7) == 7,
+                "An ordinary cave spider should keep its original XP");
+        AttachmentData.set(legacy, TTAttachments.LEGACY_TAINT_SPIDERLING, true);
+        MobTraits.add(brood, TTMobTraits.holder(TTMobTraits.TAINT_BROOD));
+        test.assertTrue(ForgeEventFactory.getExperienceDrop(legacy, null, 7) == 2,
+                "A migrated taint spiderling should drop two XP");
+        test.assertTrue(ForgeEventFactory.getExperienceDrop(brood, null, 7) == 2,
+                "A taint brood mob should drop two XP");
+        legacy.discard();
+        brood.discard();
+        test.succeed();
+    }
 
     @GameTest(template = "golem_room", batch = "mob_traits", timeoutTicks = 120)
     public static void pechTamesThroughItsNativeFetchGoal(GameTestHelper test) {

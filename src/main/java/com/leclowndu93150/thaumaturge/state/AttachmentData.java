@@ -18,6 +18,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -47,11 +48,16 @@ public final class AttachmentData {
 
     static AttachmentRegistry registry() { return Objects.requireNonNull(schemas, "State schemas are not registered"); }
 
+    /** Looks up state for callbacks that can outlive the owner's capabilities. */
+    public static LazyOptional<AttachmentStorage> findStorage(ICapabilityProvider owner) {
+        return owner.getCapability(CAPABILITY);
+    }
+
     public static AttachmentStorage storage(Object owner) {
         if (!(owner instanceof ICapabilityProvider provider)) {
             throw new IllegalArgumentException("Not a Forge capability owner: " + owner);
         }
-        return provider.getCapability(CAPABILITY).orElseThrow(
+        return findStorage(provider).orElseThrow(
                 () -> new IllegalStateException("Thaumaturge state capability is missing on " + owner));
     }
 

@@ -121,11 +121,14 @@ public final class TaintCreatureEvents {
 
     @SubscribeEvent
     public static void onExperienceDrop(LivingExperienceDropEvent event) {
-        if (AttachmentData.get(event.getEntity(), TTAttachments.LEGACY_TAINT_SPIDERLING)) {
-            event.setDroppedExperience(BROOD_EXPERIENCE);
+        LivingEntity entity = event.getEntity();
+        // Forge invalidates capabilities on removal, and some mobs drop XP afterward.
+        var state = AttachmentData.findStorage(entity).orElse(null);
+        if (state == null) {
             return;
         }
-        if (MobTraits.has(event.getEntity(), TTMobTraits.key(TTMobTraits.TAINT_BROOD))) {
+        if (Boolean.TRUE.equals(state.getExisting(TTAttachments.LEGACY_TAINT_SPIDERLING))
+                || MobTraits.has(entity, TTMobTraits.key(TTMobTraits.TAINT_BROOD))) {
             event.setDroppedExperience(BROOD_EXPERIENCE);
         }
     }
