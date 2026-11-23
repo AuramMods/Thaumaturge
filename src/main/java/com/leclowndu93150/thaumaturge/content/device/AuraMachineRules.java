@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFluxScrubber;
 import com.leclowndu93150.thaumaturge.datamap.DataMapType;
 import com.leclowndu93150.thaumaturge.datamap.DataMaps;
@@ -35,16 +34,15 @@ public final class AuraMachineRules {
         return configured == null ? fallback : configured;
     }
 
-    @SafeVarargs
     public static boolean allows(ServerLevel level, ResourceLocation family, Block block, @Nullable UUID owner,
-            ResourceKey<IAspect>... aspects) {
+            ResourceKey<?>... subjects) {
         if (!StageRules.of(level).hasRules(family)) {
             return true;
         }
         var key = block.builtInRegistryHolder().key();
         var target = StageTarget.recipe(family, key.location()).withSubject(key);
-        for (var aspect : aspects) {
-            target = target.withSubject(aspect);
+        for (var subject : subjects) {
+            target = target.withSubject(subject);
         }
         return StageRules.allowsOwner(level, target, owner);
     }

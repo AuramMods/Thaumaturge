@@ -6,14 +6,20 @@ import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEnt
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -21,18 +27,18 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
+public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity implements OwnedProcessing {
     public static final int CAPACITY = 1000;
-    private static final int WORK_INTERVAL = 5;
-    private static final int PUSH_AMOUNT = 25;
-    private static final int CAULDRON_COST = 333;
-    private static final float MAX_REFILL_VIS = 0.1F;
+    private static final ResourceKey<Fluid> WATER =
+            ResourceKey.create(Registries.FLUID, new ResourceLocation("water"));
     private static final int PROBE_REACH = 2;
     private static final int PROBE_SIDE = PROBE_REACH * 2 + 1;
     private static final int PROBE_LAYERS = 3;
@@ -58,6 +64,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
     private final List<Integer> targets = new ArrayList<>();
     private int ticks;
     private int probeCursor = FIRST_CELL;
+    private @Nullable UUID owner;
 
     public BlockEntityEverfullUrn(BlockPos pos, BlockState state) {
         super(TTBlockEntities.EVERFULL_URN.get(), pos, state);
@@ -72,6 +79,12 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
         return tank.getFluidAmount();
     }
 
+    @Override
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
+    }
+
     public void drainWater(int amount) {
         tank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
     }
@@ -81,12 +94,17 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityEverfullUrn urn) {
-        if (++urn.ticks % WORK_INTERVAL != 0 || !(level instanceof ServerLevel server)) {
+        if (!(level instanceof ServerLevel server)) {
+            return;
+        }
+        var rules = AuraMachineRules.of(state.getBlock(), UrnWaterRules.DATA_MAP, UrnWaterRules.DEFAULT);
+        if (++urn.ticks % rules.interval() != 0 || !rules.enabled() || !AuraMachineRules.allows(
+                server, StageTarget.EVERFULL_URN, state.getBlock(), urn.owner, WATER)) {
             return;
         }
         urn.probe(server);
-        urn.distribute(server);
-        urn.refill(server, pos);
+        urn.distribute(server, rules);
+        urn.refill(server, pos, rules);
     }
 
     private void probe(ServerLevel level) {
@@ -119,21 +137,24 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
                 || BlockCapabilityAccess.find(level, pos, ForgeCapabilities.FLUID_HANDLER, Direction.UP) != null;
     }
 
-    private void distribute(ServerLevel level) {
+    private void distribute(ServerLevel level, UrnWaterRules rules) {
         Iterator<Integer> walk = targets.iterator();
-        while (walk.hasNext() && waterAmount() >= PUSH_AMOUNT) {
+        while (walk.hasNext() && waterAmount() >= Math.min(rules.pushAmount(), rules.cauldronCost())) {
             BlockPos target = positionOf(walk.next());
             if (!LoadedChunks.contains(level, target)) {
                 continue;
             }
             BlockState state = level.getBlockState(target);
             if (isCauldron(state)) {
-                if (waterAmount() < CAULDRON_COST) {
+                if (waterAmount() < rules.cauldronCost()) {
                     walk.remove();
                     setChanged();
                 } else {
-                    fillCauldron(level, target, state);
+                    fillCauldron(level, target, state, rules.cauldronCost());
                 }
+                continue;
+            }
+            if (waterAmount() < rules.pushAmount()) {
                 continue;
             }
             IFluidHandler receiver = BlockCapabilityAccess.find(level, target, ForgeCapabilities.FLUID_HANDLER, Direction.UP);
@@ -142,7 +163,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
                 setChanged();
                 continue;
             }
-            int accepted = receiver.fill(new FluidStack(Fluids.WATER, PUSH_AMOUNT), IFluidHandler.FluidAction.EXECUTE);
+            int accepted = receiver.fill(new FluidStack(Fluids.WATER, rules.pushAmount()), IFluidHandler.FluidAction.EXECUTE);
             if (accepted > 0) {
                 drainWater(accepted);
                 pourInto(level, target);
@@ -151,7 +172,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
         }
     }
 
-    private void fillCauldron(ServerLevel level, BlockPos target, BlockState state) {
+    private void fillCauldron(ServerLevel level, BlockPos target, BlockState state, int cost) {
         if (state.is(Blocks.CAULDRON)) {
             level.setBlock(
                     target,
@@ -167,18 +188,18 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
             level.setBlock(target, state.setValue(LayeredCauldronBlock.LEVEL, fill + 1), Block.UPDATE_CLIENTS);
             level.updateNeighbourForOutputSignal(target, state.getBlock());
         }
-        drainWater(CAULDRON_COST);
+        drainWater(cost);
         pourInto(level, target);
     }
 
-    private void refill(ServerLevel level, BlockPos pos) {
+    private void refill(ServerLevel level, BlockPos pos, UrnWaterRules rules) {
         int stored = waterAmount();
         if (stored >= CAPACITY) {
             return;
         }
-        float request = Math.min(MAX_REFILL_VIS, (CAPACITY - stored) / (float) CAPACITY);
+        float request = Math.min(rules.maxVis(), (CAPACITY - stored) / (float) rules.waterPerVis());
         float received = AuraHelper.drainVis(level, pos, request, false);
-        int gained = Math.min(CAPACITY - stored, Math.round(received * CAPACITY));
+        int gained = Math.min(CAPACITY - stored, Math.round(received * rules.waterPerVis()));
         if (gained > 0) {
             fillWater(gained);
         }
@@ -214,6 +235,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
+        if (owner != null) output.putUUID("Owner", owner);
         output.put(TANK_KEY, tank.writeToNBT(new CompoundTag()));
         int[] cells = new int[targets.size()];
         for (int i = 0; i < cells.length; i++) {
@@ -223,8 +245,15 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
     }
 
     @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
+        super.writeClientData(output, registries);
+        output.remove("Owner");
+    }
+
+    @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
+        owner = input.hasUUID("Owner") ? input.getUUID("Owner") : null;
         if (input.contains(TANK_KEY)) {
             tank.readFromNBT(input.getCompound(TANK_KEY));
         }

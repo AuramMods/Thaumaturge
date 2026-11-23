@@ -29,7 +29,9 @@ This table identifies the server code and data used by each processing path. The
 | Research and scanning | `ResearchManager`, `ResearchNotes`, and the Research Table process research costs and notes. `ScanningManager` processes scanned targets and datapack scan definitions. | World-startup datapack definitions and typed registry tags. | Stage checks run before advancing research, paying note costs, or applying scan effects. |
 | Node jarring | `NodeJarRitual` checks research and the glass-and-slab structure, spends six primal vis balances, and converts the node. | `thaumaturge:node_jarring` block data map configures wand payment and modifier degradation. | Stages gate the start, deferred shell removal, and conversion. The fixture checks all six costs and resumes an already-paid job for its original initiator. |
 | Pech exchanges | `MenuPech` spends a single prized offer. `PechBarter` rolls for a result using `PechTradeTable`. | `thaumaturge:pech_offer` edits prized item values. `thaumaturge:pech_trades` edits results by trade table ID or tag. | Stage checks precede the offer debit, payout, and mood roll. The fixture checks the exact offer and resulting stacks. |
-| Other conversions and progression | Audit the Centrifuge, Everfull Urn, Void Siphon, Stabilizer, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
+| Essentia Centrifuge | `BlockEntityCentrifuge` turns one aspect into one randomly selected component. | `thaumaturge:centrifugation` applies fixed outputs and processing times by aspect or aspect tag. | The device checks its placer on intake and progress. Paid work retains its result rule and remaining ticks. |
+| Everfull Urn | `BlockEntityEverfullUrn` draws aura vis, fills its water buffer, and supplies nearby cauldrons and fluid handlers. | `thaumaturge:everfull_urn` configures the vis and water rates and the cauldron fill cost. | The device checks its placer before drawing aura or distributing water. It retains stored water when suspended. |
+| Other conversions and progression | Audit the Void Siphon, Stabilizer, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
 
 ## Recipe manager methods
 
@@ -352,6 +354,25 @@ ProcessingData.edit(<resource:thaumaturge:pech_trade>, <resource:thaumaturge:pec
 
 The [Pech tag script](porting/testing/crafttweaker/pech-tags.zs) puts `thaumaturge:forager` in the example tag. Select `thaumaturge:forager`, `thaumaturge:mage`, or `thaumaturge:stalker` to target one variant. Each `trades` list replaces that table's tier pools. Tiers run from one to five. Entries within a tier are equally likely, and repeated entries increase that result's weight. Native haggling, hoard payouts, and risky tiers still apply. To author a table in a datapack, put the same `trades` object in `data/thaumaturge/thaumaturge/pech_trade/<variant>.json` and reopen the world.
 
+### Essentia separation and water generation
+
+The `thaumaturge:centrifugation` aspect map controls the input by ID or aspect tag. A `result` must name one concrete aspect. The machine can process even a primal input when you provide an explicit result. Omit `result` to use a compound's authored components, or use `enabled: false` to disable intake for a specific aspect. The machine converts one unit per job.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:thaumaturge:aspect>, <resource:thaumaturge:centrifugation>, {
+    values: {"thaumaturge:terra": {result: "thaumaturge:ignis", ticks: 3}}
+});
+ProcessingData.edit(<resource:minecraft:block>, <resource:thaumaturge:everfull_urn>, {
+    values: {"thaumaturge:everfull_urn": {
+        max_vis: 0.5, water_per_vis: 400, interval: 1, push_amount: 20, cauldron_cost: 80
+    }}
+});
+```
+
+In this example the urn can draw up to half a vis each tick and produce up to 200 millibuckets of water. `water_per_vis`, `push_amount`, and `cauldron_cost` use millibuckets. The urn gives up to `push_amount` to a neighboring tank per transfer and uses `cauldron_cost` for each water level. The water tank holds 1000 millibuckets. Use `enabled: false` to suspend the urn's automatic generation and distribution.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -385,6 +406,8 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:condenser`, `thaumaturge:vis_generator`, and `thaumaturge:flux_scrubber` | The device block ID and its entry or tag in `minecraft:block`. The Condenser also supports Vitium as an aspect selector. The Flux Scrubber supports Aer and Praecantatio. |
 | `thaumaturge:node_jarring` | The original node block ID. Supports selectors for the source node and jar blocks in `minecraft:block`, and the six primal aspects in `thaumaturge:aspect`. |
 | `thaumaturge:pech_trade` | The Pech variant's table ID. Supports the table in `thaumaturge:pech_trade`, the offered item in `minecraft:item`, and the Pech entity type in `minecraft:entity_type`. |
+| `thaumaturge:centrifuge` | The device block ID. Supports the machine in `minecraft:block` and the concrete input in `thaumaturge:aspect`. |
+| `thaumaturge:everfull_urn` | The machine block ID. Supports the machine in `minecraft:block` and water in `minecraft:fluid`. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -422,6 +445,8 @@ The [aura machine fixture](porting/testing/crafttweaker/aura-machines.zs) stages
 The [node jarring fixture](porting/testing/crafttweaker/node-jarring.zs) gates the ritual on the resulting jar block. The paid ritual and its remaining shell swaps pause while the initiating player is offline or loses the required stage. They resume after that player becomes eligible and finish without a second payment. A legacy ritual already in progress keeps the original authorization.
 
 The [Pech fixture](porting/testing/crafttweaker/pech.zs) requires a stage to haggle using the tagged variants. The player can retrieve an offer after a denial. Payouts from an eligible trade remain available if the stage is later revoked.
+
+The [separation and water fixture](porting/testing/crafttweaker/separation-and-water.zs) stages one Centrifuge input and the Everfull Urn's water generation. Both devices save their placer. A suspended Centrifuge saves its paid input and remaining time. Completed essentia and water are still available through their output capabilities.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 

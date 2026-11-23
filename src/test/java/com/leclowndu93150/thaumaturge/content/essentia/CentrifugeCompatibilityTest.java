@@ -27,6 +27,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,6 +56,7 @@ class CentrifugeCompatibilityTest {
         registries = new RegistryAccess.ImmutableRegistryAccess(List.of(registry)).freeze();
         level = mock(ServerLevel.class);
         when(level.registryAccess()).thenReturn(registries);
+        when(level.getRecipeManager()).thenReturn(new RecipeManager());
         random = mock(RandomSource.class);
         when(level.getRandom()).thenReturn(random);
         when(level.getGameTime()).thenAnswer(invocation -> gameTime);

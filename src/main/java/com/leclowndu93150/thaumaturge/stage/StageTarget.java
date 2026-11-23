@@ -37,6 +37,8 @@ public record StageTarget(ResourceLocation family, Optional<ResourceLocation> id
     public static final ResourceLocation FLUX_SCRUBBER = TTIds.rl("flux_scrubber");
     public static final ResourceLocation NODE_JARRING = TTIds.rl("node_jarring");
     public static final ResourceLocation PECH_TRADE = TTIds.rl("pech_trade");
+    public static final ResourceLocation CENTRIFUGE = TTIds.rl("centrifuge");
+    public static final ResourceLocation EVERFULL_URN = TTIds.rl("everfull_urn");
 
     public static final Codec<StageTarget> CODEC = RecordCodecBuilder.create(i -> i.group(
                     ResourceLocation.CODEC.fieldOf("family").forGetter(StageTarget::family),

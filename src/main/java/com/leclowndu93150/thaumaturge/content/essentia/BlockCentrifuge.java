@@ -3,8 +3,11 @@ package com.leclowndu93150.thaumaturge.content.essentia;
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -48,6 +51,12 @@ public final class BlockCentrifuge extends BaseEntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BlockEntityCentrifuge(pos, state);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        OwnedProcessing.onPlaced(level, pos, placer);
     }
 
     @Override

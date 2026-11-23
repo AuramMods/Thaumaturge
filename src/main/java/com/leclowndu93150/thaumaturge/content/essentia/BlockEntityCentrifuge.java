@@ -6,12 +6,16 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.device.AuraMachineRules;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
+import com.leclowndu93150.thaumaturge.stage.OwnedProcessing;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import java.util.List;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -25,13 +29,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity implements IEssentiaConduit {
+public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity implements IEssentiaConduit, OwnedProcessing {
     private static final String INPUT_KEY = "AspectIn";
     private static final String OUTPUT_KEY = "AspectOut";
     private static final Direction INTAKE = Direction.DOWN;
     private static final Direction OUTLET = Direction.UP;
     private static final int PULL_INTERVAL = 5;
-    private static final int PROCESS_TICKS = 39;
     private static final int EMPTY_SUCTION = 128;
     private static final int BUSY_SUCTION = 64;
     private static final int NO_SUCTION = 0;
@@ -52,6 +55,8 @@ public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity imple
 
     private @Nullable ResourceKey<IAspect> intake;
     private @Nullable ResourceKey<IAspect> product;
+    private @Nullable ResourceKey<IAspect> plannedProduct;
+    private @Nullable UUID owner;
     private int processLeft;
 
     public BlockEntityCentrifuge(BlockPos pos, BlockState state) {
@@ -73,22 +78,28 @@ public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity imple
         return intake != null && !isPowered();
     }
 
+    @Override
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+        setChanged();
+    }
+
     private boolean isPowered() {
         return level != null && level.hasNeighborSignal(worldPosition);
     }
 
     private void runServer(ServerLevel server, BlockPos pos) {
         boolean powered = server.hasNeighborSignal(pos);
-        boolean driven = intake != null && !powered;
+        boolean driven = intake != null && !powered && allows(server, intake);
         if (turnRotor(driven)) {
             playPump(server, pos);
         }
         if (powered) {
             return;
         }
-        if (intake != null) {
+        if (driven) {
             advanceProcess(server);
-        } else if (product == null && server.getGameTime() % PULL_INTERVAL == 0) {
+        } else if (holdsNothing() && server.getGameTime() % PULL_INTERVAL == 0) {
             drawFromBelow(server, pos);
         }
     }
@@ -116,28 +127,29 @@ public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity imple
     }
 
     private void advanceProcess(ServerLevel server) {
-        if (processLeft > 0) {
+        if (processLeft > 1) {
             processLeft--;
+            setChanged();
             return;
         }
         if (product != null || intake == null) {
             return;
         }
         Holder<IAspect> held = Aspects.resolve(server, intake);
-        if (held == null) {
-            intake = null;
-            setChangedAndSync();
-            return;
+        if (plannedProduct != null) {
+            if (Aspects.resolve(server, plannedProduct) == null) {
+                return;
+            }
+            product = plannedProduct;
+        } else if (held != null) {
+            List<Holder<IAspect>> parts = held.value().components();
+            if (!parts.isEmpty()) {
+                product = parts.get(server.getRandom().nextInt(parts.size())).unwrapKey().orElse(null);
+            }
         }
-        List<Holder<IAspect>> parts = held.value().components();
-        if (parts.isEmpty()) {
-            intake = null;
-            setChangedAndSync();
-            return;
-        }
-        Holder<IAspect> chosen = parts.get(server.getRandom().nextInt(parts.size()));
-        product = chosen.unwrapKey().orElse(null);
         intake = null;
+        plannedProduct = null;
+        processLeft = NONE;
         setChangedAndSync();
     }
 
@@ -148,7 +160,7 @@ public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity imple
             return;
         }
         Holder<IAspect> offered = source.heldAspect(touching);
-        if (!isCompound(offered) || source.heldAmount(touching) < ONE_POINT) {
+        if (offered == null || roomFor(offered, INTAKE) == NONE || source.heldAmount(touching) < ONE_POINT) {
             return;
         }
         int ownPull = pullStrength(INTAKE);
@@ -160,15 +172,15 @@ public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity imple
         }
     }
 
-    private static boolean isCompound(@Nullable Holder<IAspect> aspect) {
-        return aspect != null
-                && !aspect.value().isPrimal()
-                && aspect.unwrapKey().isPresent();
+    private boolean allows(ServerLevel server, ResourceKey<IAspect> aspect) {
+        return AuraMachineRules.allows(server, StageTarget.CENTRIFUGE, getBlockState().getBlock(), owner, aspect);
     }
 
     private void begin(Holder<IAspect> aspect) {
         intake = aspect.unwrapKey().orElse(null);
-        processLeft = PROCESS_TICKS;
+        var rule = Centrifugation.of(aspect);
+        plannedProduct = rule.result().orElse(null);
+        processLeft = rule.ticks();
         setChangedAndSync();
     }
 
@@ -189,7 +201,7 @@ public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity imple
 
     @Override
     public int insert(Holder<IAspect> type, int count, Direction side, boolean simulate) {
-        if (count < ONE_POINT || side != INTAKE || intake != null || !isCompound(type)) {
+        if (count < ONE_POINT || roomFor(type, side) == NONE) {
             return NONE;
         }
         if (!simulate) {
@@ -200,7 +212,15 @@ public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity imple
 
     @Override
     public int roomFor(Holder<IAspect> type, Direction side) {
-        return side == INTAKE && intake == null && isCompound(type) ? ONE_POINT : NONE;
+        if (side != INTAKE || intake != null || type == null || type.unwrapKey().isEmpty()) {
+            return NONE;
+        }
+        var rule = Centrifugation.of(type);
+        if (!rule.enabled() || (rule.result().isEmpty() && type.value().isPrimal())
+                || (rule.result().isPresent() && Aspects.resolve(level, rule.result().get()) == null)) {
+            return NONE;
+        }
+        return !(level instanceof ServerLevel server) || allows(server, type.unwrapKey().get()) ? ONE_POINT : NONE;
     }
 
     @Override
@@ -263,6 +283,17 @@ public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity imple
         super.saveAdditional(output, registries);
         if (intake != null) TTNbt.store(output, INPUT_KEY, LegacyIds.ASPECT_KEY_CODEC, registries, intake);
         if (product != null) TTNbt.store(output, OUTPUT_KEY, LegacyIds.ASPECT_KEY_CODEC, registries, product);
+        if (intake != null) output.putInt("ProcessLeft", processLeft);
+        if (plannedProduct != null) {
+            TTNbt.store(output, "PlannedProduct", LegacyIds.ASPECT_KEY_CODEC, registries, plannedProduct);
+        }
+        if (owner != null) output.putUUID("Owner", owner);
+    }
+
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
+        super.writeClientData(output, registries);
+        output.remove("Owner");
     }
 
     @Override
@@ -272,6 +303,9 @@ public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity imple
                 .orElse(null);
         product = TTNbt.read(input, OUTPUT_KEY, LegacyIds.ASPECT_KEY_CODEC, registries)
                 .orElse(null);
-        processLeft = intake == null ? NONE : PROCESS_TICKS;
+        plannedProduct = TTNbt.read(input, "PlannedProduct", LegacyIds.ASPECT_KEY_CODEC, registries).orElse(null);
+        owner = input.hasUUID("Owner") ? input.getUUID("Owner") : null;
+        processLeft = intake == null ? NONE : input.contains("ProcessLeft")
+                ? Math.max(1, input.getInt("ProcessLeft")) : Centrifugation.DEFAULT_TICKS;
     }
 }
