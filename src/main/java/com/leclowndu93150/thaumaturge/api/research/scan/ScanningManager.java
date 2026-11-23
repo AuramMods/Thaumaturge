@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -60,8 +61,13 @@ public final class ScanningManager {
         if (player.level().isClientSide()) {
             return;
         }
+        Component denial = BINDING.get().scanDenial(player, target, null, null);
+        if (denial != null) {
+            report(player, denial, false, false);
+            return;
+        }
         List<ItemStack> contents = ScanInventories.contents(player, target);
-        List<ScanEntry> entries = entries(player);
+        List<Holder.Reference<ScanEntry>> entries = entries(player);
         ScanResult result = scanTarget(player, target, entries);
         if (contents.isEmpty()) {
             report(player, result.refusal(), result.found(), result.silent());
@@ -89,7 +95,8 @@ public final class ScanningManager {
         return scanUntilSettled(player, List.copyOf(targets), entries(player)).found();
     }
 
-    private static ScanResult scanUntilSettled(Player player, List<ScanTarget> targets, List<ScanEntry> entries) {
+    private static ScanResult scanUntilSettled(
+            Player player, List<ScanTarget> targets, List<Holder.Reference<ScanEntry>> entries) {
         ScanResult result = ScanResult.NONE;
         List<ScanTarget> pending = targets;
         boolean progressed;
@@ -122,7 +129,12 @@ public final class ScanningManager {
         }
     }
 
-    private static ScanResult scanTarget(Player player, ScanTarget target, List<ScanEntry> entries) {
+    private static ScanResult scanTarget(
+            Player player, ScanTarget target, List<Holder.Reference<ScanEntry>> entries) {
+        Component denial = BINDING.get().scanDenial(player, target, null, null);
+        if (denial != null) {
+            return new ScanResult(false, false, denial, false);
+        }
         boolean found = false;
         boolean silent = false;
         boolean progressed = false;
@@ -137,6 +149,11 @@ public final class ScanningManager {
                 continue;
             }
             ResourceLocation research = subject.research(player, target);
+            Component stage = BINDING.get().scanDenial(player, target, null, research);
+            if (stage != null) {
+                refusal = refusal == null ? stage : refusal;
+                continue;
+            }
             if (research != null) {
                 boolean advanced = advance(player, research);
                 if (!advanced
@@ -149,8 +166,13 @@ public final class ScanningManager {
             found = true;
             subject.onScanned(player, target);
         }
-        for (ScanEntry entry : entries) {
-            if (entry.matches(player, target) && advance(player, entry.key())) {
+        for (Holder.Reference<ScanEntry> holder : entries) {
+            ScanEntry entry = holder.value();
+            if (!entry.matches(player, target)) continue;
+            Component stage = BINDING.get().scanDenial(player, target, holder.key(), entry.key());
+            if (stage != null) {
+                refusal = refusal == null ? stage : refusal;
+            } else if (advance(player, entry.key())) {
                 found = true;
                 progressed = true;
             }
@@ -196,7 +218,8 @@ public final class ScanningManager {
                 return true;
             }
         }
-        for (ScanEntry entry : entries(player)) {
+        for (Holder.Reference<ScanEntry> holder : entries(player)) {
+            ScanEntry entry = holder.value();
             if (entry.matches(player, target) && !knowledge.knows(entry.key())) {
                 return true;
             }
@@ -204,12 +227,12 @@ public final class ScanningManager {
         return false;
     }
 
-    private static List<ScanEntry> entries(Player player) {
+    private static List<Holder.Reference<ScanEntry>> entries(Player player) {
         return player.level()
                 .registryAccess()
                 .lookup(ScanEntry.REGISTRY_KEY)
                 .map(registry ->
-                        registry.listElements().map(Holder.Reference::value).toList())
+                        registry.listElements().toList())
                 .orElse(List.of());
     }
 
@@ -290,6 +313,11 @@ public final class ScanningManager {
      * @return whether the research advanced
      */
     public static boolean progressResearch(Player player, ResourceLocation research) {
+        Component denial = BINDING.get().scanDenial(player, null, null, research);
+        if (denial != null) {
+            report(player, denial, false, false);
+            return false;
+        }
         return BINDING.get().progressResearch(player, research);
     }
 
@@ -322,6 +350,13 @@ public final class ScanningManager {
      * @since 1.0.0
      */
     public interface Bindings {
+        /** Returns a server-side denial before a scan applies any of its effects. */
+        default @Nullable Component scanDenial(Player player, @Nullable ScanTarget target,
+                                               @Nullable ResourceKey<ScanEntry> entry,
+                                               @Nullable ResourceLocation research) {
+            return null;
+        }
+
         /**
          * @param player   the player
          * @param research the research key

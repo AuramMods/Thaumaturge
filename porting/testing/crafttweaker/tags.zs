@@ -12,3 +12,6 @@ flexible.addId(<resource:thaumaturge:aqua>, <resource:thaumaturge:terra>);
 val materials = <tag:thaumaturge/golem_material:crafttweaker:probe_materials>;
 materials.addId(<resource:thaumaturge:wood>, <resource:thaumaturge:iron>);
 materials.removeId(<resource:thaumaturge:wood>);
+
+<tag:thaumaturge/research_entry:crafttweaker:paid_research>.addId(<resource:crafttweaker:paid_stage>);
+<tag:thaumaturge/scan:crafttweaker:staged_scans>.addId(<resource:crafttweaker:honeycomb>);

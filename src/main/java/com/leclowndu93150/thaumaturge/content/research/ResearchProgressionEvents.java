@@ -84,7 +84,7 @@ public final class ResearchProgressionEvents {
         if (itemId == null) return;
         PlayerKnowledge knowledge = (PlayerKnowledge) PlayerResearchAccess.of(player);
         ResourceLocation craftedKey = ResearchManager.craftedKey(itemId);
-        if (knowledge.knows(craftedKey)) return;
+        if (knowledge.knows(craftedKey) || !ResearchManager.allowsStage(player, craftedKey)) return;
         if (!isCraftReference(player, crafted)) return;
         knowledge.learn(craftedKey);
         knowledge.queueSync(player);
@@ -104,7 +104,8 @@ public final class ResearchProgressionEvents {
         if (stack.is(TTItems.ESSENTIA_CRYSTAL.get())) {
             grantCrystalDiscovery(player, knowledge);
         }
-        if (stack.is(TTItems.THAUMONOMICON.get()) && !knowledge.knows(GOT_THAUMONOMICON)) {
+        if (stack.is(TTItems.THAUMONOMICON.get()) && !knowledge.knows(GOT_THAUMONOMICON)
+                && ResearchManager.allowsStage(player, GOT_THAUMONOMICON)) {
             knowledge.learn(GOT_THAUMONOMICON);
             knowledge.markComplete(GOT_THAUMONOMICON);
             knowledge.queueSync(player);
@@ -123,7 +124,7 @@ public final class ResearchProgressionEvents {
     }
 
     private static void grantCrystalDiscovery(ServerPlayer player, PlayerKnowledge knowledge) {
-        if (knowledge.knows(GOT_CRYSTALS)) return;
+        if (knowledge.knows(GOT_CRYSTALS) || !ResearchManager.allowsStage(player, GOT_CRYSTALS)) return;
         knowledge.learn(GOT_CRYSTALS);
         knowledge.markComplete(GOT_CRYSTALS);
         knowledge.queueSync(player);
@@ -144,6 +145,7 @@ public final class ResearchProgressionEvents {
     }
 
     private static void giveDreamJournal(ServerPlayer player, PlayerKnowledge knowledge) {
+        if (!ResearchManager.allowsStage(player, GOT_DREAM)) return;
         knowledge.learn(GOT_DREAM);
         knowledge.markComplete(GOT_DREAM);
         knowledge.queueSync(player);
@@ -171,7 +173,7 @@ public final class ResearchProgressionEvents {
         if (!event.getSource().is(DamageTypeTags.IS_FIRE)) return;
         PlayerResearch knowledge = PlayerResearchAccess.of(player);
         if (!knowledge.hasReachedStage(BASE_AUROMANCY, 1) && !knowledge.hasCompleted(BASE_AUROMANCY)) return;
-        if (knowledge.knows(F_ONFIRE)) return;
+        if (knowledge.knows(F_ONFIRE) || !ResearchManager.allowsStage(player, F_ONFIRE)) return;
         PlayerKnowledge pk = (PlayerKnowledge) knowledge;
         pk.learn(F_ONFIRE);
         pk.markComplete(F_ONFIRE);
@@ -186,7 +188,7 @@ public final class ResearchProgressionEvents {
         if (research == null) return;
         PlayerResearch knowledge = PlayerResearchAccess.of(player);
         if (!knowledge.hasReachedStage(FOCUS_PROJECTILE, 1) && !knowledge.hasCompleted(FOCUS_PROJECTILE)) return;
-        if (knowledge.knows(research)) return;
+        if (knowledge.knows(research) || !ResearchManager.allowsStage(player, research)) return;
         PlayerKnowledge pk = (PlayerKnowledge) knowledge;
         pk.learn(research);
         pk.markComplete(research);
@@ -268,7 +270,7 @@ public final class ResearchProgressionEvents {
 
     private static void milestone(
             ServerPlayer player, PlayerKnowledge knowledge, ResourceLocation id, String messageKey, boolean condition) {
-        if (!condition || knowledge.knows(id)) return;
+        if (!condition || knowledge.knows(id) || !ResearchManager.allowsStage(player, id)) return;
         knowledge.learn(id);
         knowledge.markComplete(id);
         knowledge.queueSync(player);

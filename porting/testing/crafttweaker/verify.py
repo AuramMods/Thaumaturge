@@ -28,8 +28,10 @@ def prepare(profile, auram, jar, standalone):
         ])
         scripts = profile / "scripts"
         scripts.mkdir()
-        for script in Path(__file__).resolve().parent.glob("*.zs"):
+        fixtures = Path(__file__).resolve().parent
+        for script in fixtures.glob("*.zs"):
             shutil.copy2(script, scripts)
+        shutil.copytree(fixtures / "datapack", profile / "world/datapacks/thaumaturge-script-fixtures")
     for filename in dependencies:
         (mods / filename).symlink_to(auram / "minecraft/mods" / filename)
     shutil.copy2(jar, mods)
@@ -64,7 +66,8 @@ def wait_for(process, logfile, pattern, count=1):
 def verify_recipes(log):
     errors = [line for line in log.splitlines() if "[ERROR]" in line]
     assert not errors, errors
-    for family, rules in (("thaumatorium", 1), ("arcane_workbench", 1), ("crucible", 1), ("dust_trigger", 3)):
+    for family, rules in (("thaumatorium", 1), ("arcane_workbench", 1), ("crucible", 1), ("dust_trigger", 3),
+                          ("research", 1), ("scan", 2)):
         assert log.count(f"Adding a GameStages rule for thaumaturge:{family}") == 2 * rules, family
     for marker in ("CRUCIBLE_REMOVED", "SPECIAL_REMOVED", "SPECIAL_SALIS", "SPECIAL_LABEL", "SPECIAL_PEARL",
                    "TAG_ASPECT", "TAG_MATERIAL"):

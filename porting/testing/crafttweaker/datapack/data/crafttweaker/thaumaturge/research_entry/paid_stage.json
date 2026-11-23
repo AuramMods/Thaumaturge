@@ -1,0 +1,16 @@
+{
+  "category": "thaumaturge:basics",
+  "name": "Pack research",
+  "column": 15,
+  "row": 15,
+  "icons": ["minecraft:gold_nugget"],
+  "stages": [
+    {
+      "text": "Bring a gold nugget.",
+      "obtain": [
+        {"items": ["minecraft:gold_nugget"], "amount": 1}
+      ]
+    },
+    {"text": "The research is complete."}
+  ]
+}

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.note;
 
+import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
+
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -130,6 +132,9 @@ public final class ResearchNotes {
         }
         ResourceLocation learnKey = ResearchNoteData.learnKey(entryId, ordinal);
         if (knowledge.knows(learnKey) || hasNoteFor(player, learnKey)) {
+            return false;
+        }
+        if (!ResearchManager.checkStage(player, entryId)) {
             return false;
         }
         if ((!consumeInk(player, true) || !hasItem(player, Items.PAPER)) && !player.getAbilities().instabuild) {

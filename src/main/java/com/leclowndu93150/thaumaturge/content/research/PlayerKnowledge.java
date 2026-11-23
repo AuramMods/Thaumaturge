@@ -288,7 +288,8 @@ public final class PlayerKnowledge implements PlayerResearch {
                         return;
                     }
                     holder.unwrapKey().map(ResourceKey::location).ifPresent(id -> {
-                        if (!research.contains(id) && ResearchUnlockConditions.passes(player, this, id)) {
+                        if (!research.contains(id) && ResearchManager.allowsStage(player, id)
+                                && ResearchUnlockConditions.passes(player, this, id)) {
                             learn(id);
                         }
                     });

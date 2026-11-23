@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -116,9 +119,13 @@ public final class StageRules {
 
         public void tell(Player player) {
             if (player instanceof ServerPlayer serverPlayer && serverPlayer.connection != null) {
-                TTActionBar.sendPurple(player, all ? "message.thaumaturge.stage.all" : "message.thaumaturge.stage.any",
-                        String.join(", ", names));
+                TTActionBar.send(player, message().withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
             }
+        }
+
+        public MutableComponent message() {
+            return Component.translatable(all ? "message.thaumaturge.stage.all" : "message.thaumaturge.stage.any",
+                    String.join(", ", names));
         }
     }
 }

@@ -35,6 +35,10 @@ def prepareForgeGameTests = tasks.register('prepareForgeGameTests') {
                 include '*.zs'
                 into new File(directory, 'scripts')
             }
+            copy {
+                from 'porting/testing/crafttweaker/datapack'
+                into new File(directory, 'world/datapacks/thaumaturge-script-fixtures')
+            }
         }
         def reportFile = report.get().asFile
         reportFile.parentFile.mkdirs()

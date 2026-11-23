@@ -3,6 +3,8 @@ package com.leclowndu93150.thaumaturge.content.research;
 import com.leclowndu93150.thaumaturge.state.AttachmentData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
@@ -37,6 +39,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -100,6 +103,7 @@ public final class ResearchManager {
         boolean parentsOk = entry == null || parentsSatisfied(knowledge, entry);
         return parentsOk
                 && ResearchUnlockConditions.passes(player, (PlayerResearch) knowledge, id)
+                && checkStage(player, id)
                 && !vetoed(new ResearchEvent.Unlocked(player, id));
     }
 
@@ -114,7 +118,7 @@ public final class ResearchManager {
         IResearchEntry entry = entryOf(player, id);
         PlayerKnowledge knowledge = record(player);
         OptionalInt reachable = reachableStage(knowledge, entry, id);
-        if (reachable.isEmpty()) {
+        if (reachable.isEmpty() || !checkStage(player, id)) {
             return false;
         }
         int current = reachable.getAsInt();
@@ -158,7 +162,7 @@ public final class ResearchManager {
         }
         int next = finishNow ? total : current + 1;
         if (next >= total) {
-            complete(player, id);
+            completeAllowed(player, id);
         } else {
             knowledge.setStage(id, next);
         }
@@ -170,7 +174,8 @@ public final class ResearchManager {
             return false;
         }
         int current = knowledge.stageOf(id);
-        if (current == stage || vetoed(new ResearchEvent.StageAdvanced(player, id, current, stage))) {
+        if (current == stage || !checkStage(player, id)
+                || vetoed(new ResearchEvent.StageAdvanced(player, id, current, stage))) {
             return false;
         }
         knowledge.setStage(id, stage);
@@ -179,9 +184,10 @@ public final class ResearchManager {
     }
 
     public static boolean complete(ServerPlayer player, ResourceLocation id) {
-        if (id == null) {
-            return false;
-        }
+        return id != null && checkStage(player, id) && completeAllowed(player, id);
+    }
+
+    private static boolean completeAllowed(ServerPlayer player, ResourceLocation id) {
         PlayerKnowledge knowledge = record(player);
         boolean added = false;
         if (!knowledge.knows(id)) {
@@ -206,6 +212,31 @@ public final class ResearchManager {
         }
         knowledge.queueSync(player);
         return true;
+    }
+
+    public static boolean checkStage(ServerPlayer player, ResourceLocation id) {
+        var denial = stageDenial(player, id);
+        if (denial == null) return true;
+        denial.tell(player);
+        return false;
+    }
+
+    public static boolean allowsStage(ServerPlayer player, ResourceLocation id) {
+        return stageDenial(player, id) == null;
+    }
+
+    private static StageRules.@Nullable Requirement stageDenial(ServerPlayer player, ResourceLocation id) {
+        if (!(player.level() instanceof ServerLevel level)
+                || !StageRules.of(level).hasRules(StageTarget.RESEARCH)) {
+            return null;
+        }
+        var target = StageTarget.recipe(StageTarget.RESEARCH, id)
+                .withSubject(ResourceKey.create(IResearchEntry.REGISTRY_KEY, id));
+        IResearchEntry entry = entryOf(player, id);
+        if (entry != null && entry.category().unwrapKey().isPresent()) {
+            target = target.withSubject(entry.category().unwrapKey().orElseThrow());
+        }
+        return StageRules.denial(level, target, player);
     }
 
     public static boolean gainKnowledge(
@@ -444,7 +475,6 @@ public final class ResearchManager {
             if (!ResearchUnlockConditions.passes(player, (PlayerResearch) knowledge, sibling)) {
                 continue;
             }
-            knowledge.learn(sibling);
             complete(player, sibling);
         }
     }

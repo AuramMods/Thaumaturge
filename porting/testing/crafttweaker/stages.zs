@@ -12,3 +12,9 @@ Stages.requireTag(<resource:thaumaturge:dust_trigger>, <tag:blocks:minecraft:gol
     StageRequirement.allOf(["transform_gold"]));
 Stages.requireTag(<resource:thaumaturge:dust_trigger>, <tag:thaumaturge/blueprint:crafttweaker:staged_blueprints>,
     StageRequirement.allOf(["construct_ancient_altar"]));
+Stages.requireTag(<resource:thaumaturge:research>, <tag:thaumaturge/research_entry:crafttweaker:paid_research>,
+    StageRequirement.allOf(["study"]));
+Stages.requireTag(<resource:thaumaturge:scan>, <tag:thaumaturge/scan:crafttweaker:staged_scans>,
+    StageRequirement.anyOf(["observe", "study"]));
+Stages.requireId(<resource:thaumaturge:scan>, <resource:crafttweaker:scanned_honeycomb>,
+    StageRequirement.anyOf(["observe", "study"]));

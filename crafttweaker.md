@@ -24,6 +24,7 @@ This table identifies the server code and data used by each processing path. The
 | Spa | `BlockEntitySpa` places a fluid source and combines bath salts with water for purifying fluid. | Typed fluid and item rules pending. | Verify tank and item counts, source placement, and cancellation. |
 | Potion Sprayer | `BlockEntityPotionSprayer` uses `PotionAspects` to derive costs from potion brewing inputs and prepares doses for spraying. | Brewing manager and potion cost rules pending. | Verify altered inputs and the cost of a delivered dose. |
 | Wand and scepter assembly | `WandAssemblyPackResources` generates Arcane Workbench recipes from the wand cap and rod registries. | Use the Arcane Workbench manager for the generated recipe IDs. Caps and rods have typed tags. | Verify edits to generated recipes and the normal post-craft assembly hook. |
+| Research and scanning | `ResearchManager`, `ResearchNotes`, and the Research Table process research costs and notes. `ScanningManager` processes scanned targets and datapack scan definitions. | World-startup datapack definitions and typed registry tags. | Stage checks run before advancing research, paying note costs, or applying scan effects. |
 | Other conversions and progression | Audit the Condenser, Flux Scrubber, Vis Generator, node jarring, Pech exchanges, crafting from research data, spell casting, and Eldritch ritual and portal entry for processing or progression hooks. | Pending. | Record what is processed, where server checks belong, and which state persists. |
 
 ## Recipe manager methods
@@ -125,6 +126,8 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:thaumatorium` | Crucible recipe IDs at the Thaumatorium. These requirements apply alongside the Crucible family's rules. |
 | `thaumaturge:infusion` | Item infusion, infusion enchantment, and Runic Augment recipe IDs. |
 | `thaumaturge:dust_trigger` | Salis Mundus recipe IDs, clicked blocks in `minecraft:block`, and multiblock blueprints in `thaumaturge:blueprint`. |
+| `thaumaturge:research` | Progression IDs, including authored research entries and discovery flags. Supports `thaumaturge:research_entry` and `thaumaturge:research_category` selectors. |
+| `thaumaturge:scan` | Datapack scan IDs, or the research IDs awarded by code-driven scans. Supports `thaumaturge:scan` and `thaumaturge:research_entry` selectors, plus the directly scanned target in `minecraft:block`, `minecraft:item`, or `minecraft:entity_type`. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -141,7 +144,15 @@ The [stage fixture](porting/testing/crafttweaker/stages.zs) adds a recipe-specif
 
 The Thaumatorium checks the player who queued each recipe before drawing essentia, accepting an essentia transfer, or completing the recipe. If that player logs off or loses a required stage, the recipe and buffered essentia are retained. Queue ownership and buffered essentia survive saving and loading. For an older queue saved without its player, remove and requeue its restricted recipe with an eligible player. Infusion jobs and deferred Salis Mundus changes check their saved initiator before continuing. Grant the stage again to let a suspended job resume its existing progress.
 
+Research stage rules apply to unlocking, advancing, completing, and working on an entry's notes. Existing knowledge remains available. Revoking a stage suspends new progress and preserves research and notes already earned. A scan rule can gate a whole target or an individual matching scan definition. The direct scan API uses its research key when no target or definition is available.
+
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
+
+### Editing research and scan definitions
+
+Put research entries in `data/<namespace>/thaumaturge/research_entry/<id>.json` and scan definitions in `data/<namespace>/thaumaturge/scan/<id>.json` in a world datapack. Forge 1.20.1 loads both registries when opening the world. Restart the dedicated server or close and reopen the singleplayer world after editing definitions. Tag membership and stage conditions can be changed with `/reload`.
+
+The [research fixture](porting/testing/crafttweaker/datapack/data/crafttweaker/thaumaturge/research_entry/paid_stage.json) creates an entry in Basics that costs one gold nugget. The [scan fixture](porting/testing/crafttweaker/datapack/data/crafttweaker/thaumaturge/scan/honeycomb.json) registers a Honeycomb scan that grants `crafttweaker:scanned_honeycomb`. A scan offers its own registry ID for selectors and a `key` for the knowledge it grants. The [tag loader](porting/testing/crafttweaker/tags.zs) puts both definitions into custom tags and the [default loader](porting/testing/crafttweaker/stages.zs) requires stages for those tags.
 
 ## Crucible and Thaumatorium recipes
 

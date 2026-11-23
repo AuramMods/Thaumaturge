@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.table;
 
+import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
+
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
 
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -167,7 +169,7 @@ public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity im
             return;
         }
         ResearchNoteData.Cell cell = data.cellAt(hex);
-        if (cell == null || getLevel() == null) {
+        if (cell == null || getLevel() == null || !ResearchManager.checkStage(player, data.entry())) {
             return;
         }
         Level level = getLevel();
@@ -299,7 +301,7 @@ public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity im
             return;
         }
         ResearchNoteData data = noteData();
-        if (data == null || !data.complete()) {
+        if (data == null || !data.complete() || !ResearchManager.checkStage(player, data.entry())) {
             return;
         }
         AspectList cost = duplicationCost(player, data);

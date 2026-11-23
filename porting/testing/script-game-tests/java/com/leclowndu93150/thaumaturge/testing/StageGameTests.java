@@ -4,10 +4,13 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.BlockEntityThaumatorium;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInput;
+import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.serialization.stream.RegistryFriendlyByteBuf;
@@ -48,6 +51,8 @@ public final class StageGameTests {
     private static final ResourceLocation CRUCIBLE_PROBE = new ResourceLocation("crafttweaker", "crucible_probe");
     private static final ResourceLocation TAGGED_COST = new ResourceLocation("crafttweaker", "tagged_cost");
     private static final ResourceLocation EMPTY_TAG_COST = new ResourceLocation("crafttweaker", "empty_tag_cost");
+    private static final ResourceLocation PAID_STAGE = new ResourceLocation("crafttweaker", "paid_stage");
+    private static final ResourceLocation HONEYCOMB_SCAN = new ResourceLocation("crafttweaker", "scanned_honeycomb");
 
     private StageGameTests() {}
 
@@ -199,6 +204,42 @@ public final class StageGameTests {
                     "Tagged recipe paid its inputs more than once");
             remove(test, actor);
         }).thenSucceed();
+    }
+
+    @GameTest(template = "essentia_room", batch = "crafttweaker_progression")
+    public static void taggedResearchAndScansUseLivePlayerStages(GameTestHelper test) {
+        var actor = player(test);
+        var stages = GameStageHelper.getPlayerData(actor);
+        var research = ResearchManager.of(actor);
+        test.assertFalse(ResearchManager.unlockRequested(actor, PAID_STAGE) || research.knows(PAID_STAGE),
+                "A player without Study could start tagged research");
+        stages.addStage("study");
+        test.assertTrue(ResearchManager.unlockRequested(actor, PAID_STAGE),
+                "The tagged research did not unlock after Study was granted");
+        stages.removeStage("study");
+        actor.getInventory().add(new ItemStack(Items.GOLD_NUGGET, 2));
+        test.assertFalse(ResearchManager.advanceStage(actor, PAID_STAGE)
+                        || ResearchManager.complete(actor, PAID_STAGE) || research.hasCompleted(PAID_STAGE),
+                "Paid research advanced after Study was revoked");
+        test.assertTrue(actor.getInventory().countItem(Items.GOLD_NUGGET) == 2,
+                "Denied research took a gold nugget");
+
+        var honeycomb = ScanTarget.stack(new ItemStack(Items.HONEYCOMB));
+        ScanningManager.scan(actor, honeycomb);
+        test.assertFalse(research.knows(HONEYCOMB_SCAN) || ScanningManager.progressResearch(actor, HONEYCOMB_SCAN),
+                "A restricted scan advanced through the normal or public research API");
+        stages.addStage("observe");
+        ScanningManager.scanSilently(actor, java.util.List.of(honeycomb));
+        test.assertTrue(research.hasCompleted(HONEYCOMB_SCAN), "The tagged scan did not complete with Observe");
+        test.assertFalse(ResearchManager.advanceStage(actor, PAID_STAGE), "Observe bypassed the research requirement");
+
+        stages.addStage("study");
+        test.assertTrue(ResearchManager.advanceStage(actor, PAID_STAGE) && research.hasCompleted(PAID_STAGE),
+                "The researched entry did not finish after its stage returned");
+        test.assertTrue(actor.getInventory().countItem(Items.GOLD_NUGGET) == 1,
+                "Advancing charged an incorrect amount of gold");
+        remove(test, actor);
+        test.succeed();
     }
 
     private static ServerPlayer player(GameTestHelper test) {

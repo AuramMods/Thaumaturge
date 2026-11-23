@@ -38,6 +38,9 @@ public final class ItemResearchNote extends Item {
             return InteractionResultHolder.pass(stack);
         }
         if (player instanceof ServerPlayer serverPlayer) {
+            if (!ResearchManager.checkStage(serverPlayer, data.entry())) {
+                return InteractionResultHolder.fail(stack);
+            }
             PlayerKnowledge knowledge = (PlayerKnowledge) PlayerResearchAccess.of(serverPlayer);
             knowledge.learn(learnKey);
             knowledge.queueSync(serverPlayer);
