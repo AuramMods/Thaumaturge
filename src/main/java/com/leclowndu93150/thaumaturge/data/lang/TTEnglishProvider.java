@@ -187,6 +187,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("message.thaumaturge.stage.locked", "Your GameStages progression locks this recipe.");
         add("message.thaumaturge.stage.all", "Requires all of these stages: %s");
         add("message.thaumaturge.stage.any", "Requires one of these stages: %s");
+        add("message.thaumaturge.focus.inscription_disabled", "Inscription is disabled for this focus.");
         add("gui.thaumaturge.research_table.select", "Drag an aspect here to combine it");
         add("gui.thaumaturge.research_table.page_prev", "Previous page");
         add("gui.thaumaturge.research_table.page_next", "Next page");

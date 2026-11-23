@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.spell.SpellText;
 import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.content.spell.manipulator.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.spell.manipulator.InscriptionCheck;
+import com.leclowndu93150.thaumaturge.content.spell.manipulator.InscriptionRules;
 import com.leclowndu93150.thaumaturge.content.spell.manipulator.MenuFocalManipulator;
 import com.leclowndu93150.thaumaturge.network.ServerboundSpellDraftPayload;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -395,16 +396,17 @@ public final class FocalManipulatorScreen extends AbstractContainerScreen<MenuFo
 
     @Override
     public SpellSummary summary() {
+        ItemStack focus = menu.getSlot(BlockEntityFocalManipulator.SLOT_FOCUS).getItem();
         if (summary == null) {
-            ItemStack focus =
-                    menu.getSlot(BlockEntityFocalManipulator.SLOT_FOCUS).getItem();
             Optional<FocusTier> tier = Spells.tierOf(focus);
             summary = Spells.analyze(draft, tier.orElse(null), registries(), player());
             if (focus.isEmpty()) {
                 summary = withProblem(summary, SpellText.inspectorLabel("needs_focus"));
             }
         }
-        return summary;
+        var rules = InscriptionRules.of(focus);
+        return rules.enabled() ? rules.adjusted(summary)
+                : withProblem(summary, Component.translatable("message.thaumaturge.focus.inscription_disabled"));
     }
 
     private static SpellSummary withProblem(SpellSummary base, Component message) {

@@ -16,3 +16,4 @@ materials.removeId(<resource:thaumaturge:wood>);
 
 <tag:thaumaturge/research_entry:crafttweaker:paid_research>.addId(<resource:crafttweaker:paid_stage>);
 <tag:thaumaturge/scan:crafttweaker:staged_scans>.addId(<resource:crafttweaker:honeycomb>);
+<tag:thaumaturge/spell_part:crafttweaker:staged_spell_parts>.addId(<resource:crafttweaker:tagged_projectile>);

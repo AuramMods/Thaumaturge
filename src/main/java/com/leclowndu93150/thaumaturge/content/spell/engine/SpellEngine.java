@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.engine;
 
+import com.leclowndu93150.thaumaturge.content.spell.SpellStages;
+
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
@@ -38,13 +40,17 @@ public final class SpellEngine {
     public static SpellCastEvent.Pre firePre(
             LivingEntity caster, ItemStack focus, Spell spell, float power, float vis) {
         var event = new SpellCastEvent.Pre(caster, focus, spell, power, vis);
-        MinecraftForge.EVENT_BUS.post(event);
+        if (SpellStages.checkCast(caster, focus, spell)) {
+            MinecraftForge.EVENT_BUS.post(event);
+        } else {
+            event.setCanceled(true);
+        }
         return event;
     }
 
     public static void execute(
             LivingEntity caster, ItemStack focus, Spell spell, List<SpellTarget> origin, float power) {
-        if (!(caster.level() instanceof ServerLevel level)) {
+        if (!(caster.level() instanceof ServerLevel level) || !SpellStages.checkCast(caster, focus, spell)) {
             return;
         }
         CastRun run = new CastRun(level, UUID.randomUUID(), Optional.of(caster.getUUID()), caster);

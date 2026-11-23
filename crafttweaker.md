@@ -21,7 +21,7 @@ This table identifies the server code and data used by each processing path. The
 | Pattern Crafter | `BlockEntityPatternCrafter` uses the ordinary crafting recipe manager and neighboring storage. | Vanilla crafting manager and `thaumaturge:pattern_crafter` block data map. | Stage rules apply before charging vis or extracting crafting inputs. |
 | Golem Press | `BlockEntityGolemBuilder` assembles a configured golem from material and part definitions, then pays Machina. | Edit the `thaumaturge:golem_assembly` data map for materials, parts, and traits. | The script tests exercise tagged material costs, saved Machina, stage revocation, and deployment of the completed build. |
 | Golem seals | `SealHandler` places and ticks seals. `SealAccess` checks editors and golem task eligibility together with native ownership and traits. | Stage rules select seal types and the attached blocks. | The fixture uses a block selector to verify placement, editing, and work eligibility before and after a stage grant. |
-| Focal Manipulator | `BlockEntityFocalManipulator` validates a spell tree and charges vis against focus tiers, spell parts, and affinities. | Focus data and inscription rules pending. | Verify setup through the menu packet, an exact charge, saved completion, and casting restrictions. |
+| Focal Manipulator and spells | `BlockEntityFocalManipulator` validates and inscribes a spell tree. `SpellCasting` and `SpellEngine` control player casts. | Item data maps edit focus tiers and inscription costs. World datapacks define spell parts and affinities. | Stage rules apply to inscription payment, queued work, and new casts through a wand or the spell API. |
 | Spa | `BlockEntitySpa` either mixes the tank fluid with an additive or places a fluid from its tank. | The `thaumaturge:spa_mixing` and `thaumaturge:spa_placement` fluid data maps select costs and outputs by fluid or fluid tag. Mixing takes a native item ingredient. | Stage checks run before placement. The script fixture tests blocked outlets, saved contents and owner, and exact costs for both modes. |
 | Potion Sprayer | `BlockEntityPotionSprayer` uses `PotionAspects` to derive costs from potion brewing inputs and prepares doses for spraying. | Brewing manager and potion cost rules pending. | Verify altered inputs and the cost of a delivered dose. |
 | Wand and scepter assembly | `WandAssemblyPackResources` generates Arcane Workbench recipes from the wand cap and rod registries. | Use the Arcane Workbench manager for the generated recipe IDs. Caps and rods have typed tags. | Verify edits to generated recipes and the normal post-craft assembly hook. |
@@ -260,6 +260,25 @@ ProcessingData.edit(<resource:thaumaturge:golem_material>, <resource:thaumaturge
 
 The [golem fixture](porting/testing/crafttweaker/golems.zs) replaces the tagged iron material's base and mechanism with three copper ingots. Selected arms, legs, head and add-on keep their respective costs. The press uses the current bill when the player starts a new job. An in-progress job retains its selected parts, paid items, and Machina balance.
 
+### Focus inscription and casting
+
+Edit `thaumaturge:spell_focus` on `minecraft:item` to set a focus tier's `complexity`, `depth`, `branches`, and `repeats`. Edit `thaumaturge:focus_inscription` on the same registry to set `enabled`, `levels_multiplier`, `crystals_multiplier`, `vis_multiplier`, `interval` in ticks, and aura vis `drain` per interval. The device rounds scaled levels and each aspect's crystal count to the nearest whole unit. The vis multiplier applies to inscription at the table. Spell parts and affinities still determine the cost of a cast.
+
+```zenscript
+import mods.thaumaturge.ProcessingData;
+
+ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:spell_focus>, {
+    values: {"thaumaturge:focus_3": {complexity: 40, depth: 10, branches: 2, repeats: 2}}
+});
+ProcessingData.edit(<resource:minecraft:item>, <resource:thaumaturge:focus_inscription>, {
+    values: {"thaumaturge:focus_3": {
+        levels_multiplier: 2.0, crystals_multiplier: 0.5, vis_multiplier: 0.5, interval: 2, drain: 7.0
+    }}
+});
+```
+
+The [focus fixture](porting/testing/crafttweaker/focus.zs) uses these values. To edit the spell parts and affinities themselves, put their native definitions under `data/<namespace>/thaumaturge/spell_part/` and `data/<namespace>/thaumaturge/spell_affinity/` in a world datapack. The [projectile definition](porting/testing/crafttweaker/datapack/data/crafttweaker/thaumaturge/spell_part/tagged_projectile.json) adds a part with a native carrier, research requirement, and setting. Close and reopen the world or restart the dedicated server to load changes to those registry entries.
+
 ## GameStages
 
 Register requirements in the default loader. GameStages reads each online player's current stages on the server. Rules apply together when more than one selector matches. Use `StageRequirement.allOf(string[])` to require every listed stage and `StageRequirement.anyOf(string[])` to accept any listed stage. Each array needs at least one nonempty GameStages name.
@@ -288,6 +307,7 @@ Register requirements in the default loader. GameStages reads each online player
 | `thaumaturge:deconstruction_table` | The input item ID. Supports `minecraft:item` input and `thaumaturge:aspect` result entries and tags. |
 | `thaumaturge:golem_assembly` and `thaumaturge:golem_deployment` | The design's material ID. Supports the selected material, head, arms, legs, add-on, and effective traits as registry entries and tags. |
 | `thaumaturge:golem_seal` | The seal type ID. Supports `thaumaturge:seal` and the attached block in `minecraft:block`. |
+| `thaumaturge:focus_inscription` and `thaumaturge:spell_cast` | The focus item ID, when present. Supports the focus in `minecraft:item`, and the spell tree's entries in `thaumaturge:spell_part`, `thaumaturge:aspect`, and `thaumaturge:spell_affinity`. |
 
 ```zenscript
 import mods.thaumaturge.StageRequirement;
@@ -315,6 +335,8 @@ The Pattern Crafter records its placer. The Infernal Furnace records its Salis M
 The Alchemical Furnaces and Deconstruction Table record their placer or Salis Mundus builder. Revoking a stage pauses restricted work and retains its inputs and paid reserves. The smelters can transfer essentia from completed jobs. A Deconstruction Table retains a completed result until a player with its stages collects it, even if that player and the placer are different people.
 
 The Golem Press checks the requester before collecting items. The requester's stages govern Machina intake, progress, and delivery. A seal checks the actor placing or editing it and uses the current seal owner's stages for golem work. A suspended seal remains placed and resumes accepting eligible tasks when its owner returns with the required stages. Native trait and ownership checks still apply.
+
+The Focal Manipulator saves the original requester and the paid job's aura balance and timing. It pauses a restricted inscription while the requester is offline or lacks a stage. The casting family applies to new player casts and to each channeled pulse. Existing projectiles and other effects from an authorized cast continue their native behavior.
 
 `./gradlew runGameTestServer -PportScriptIntegrations` exercises the recipe stages with the integration fixtures. `porting/testing/crafttweaker/verify.py` verifies the same scripts load with the packaged Forge build and Auram's CraftTweaker, GameStages, RecipeStages, and ItemStages JARs.
 

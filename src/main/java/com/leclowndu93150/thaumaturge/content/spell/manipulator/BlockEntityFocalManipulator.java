@@ -1,5 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.spell.manipulator;
 
+import com.leclowndu93150.thaumaturge.content.spell.SpellStages;
+import com.leclowndu93150.thaumaturge.stage.StageAuthorization;
+import com.leclowndu93150.thaumaturge.stage.StageRules;
+import com.leclowndu93150.thaumaturge.stage.StageTarget;
+
 import com.leclowndu93150.thaumaturge.itemdata.VanillaItemData;
 
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
@@ -56,8 +61,6 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
     private static final int RENDER_BOUNDS_HEIGHT = 2;
     public static final int SLOT_FOCUS = 0;
     public static final int MAX_NAME_LENGTH = 50;
-    private static final int DRAIN_INTERVAL = 20;
-    private static final float DRAIN_PER_CYCLE = 20.0F;
     private static final int VIS_PER_COMPLEXITY = 10;
     private static final int VIS_PER_BUDGET_DIVISOR = 5;
     private static final int CHARGER_REACH = 1;
@@ -71,6 +74,9 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
     private float visTotal;
     private AspectList crystals = AspectList.EMPTY;
     private int ticks;
+    private int interval = InscriptionRules.DEFAULT_INTERVAL;
+    private float drainPerCycle = InscriptionRules.DEFAULT_DRAIN;
+    private @Nullable StageAuthorization authority;
 
     public BlockEntityFocalManipulator(BlockPos pos, BlockState state) {
         super(TTBlockEntities.FOCAL_MANIPULATOR.get(), pos, state);
@@ -132,11 +138,18 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
     public boolean startInscribing(Player player) {
         ItemStack focus = focusStack();
         Optional<FocusTier> tier = Spells.tierOf(focus);
-        if (inscribing() || tier.isEmpty() || level == null) {
+        if (inscribing() || tier.isEmpty() || !(level instanceof ServerLevel server) || player.level() != server) {
             return false;
         }
-        SpellSummary summary = Spells.analyze(draft, tier.get(), level.registryAccess(), player);
-        AspectList cost = FocusItems.aspects(summary, level.registryAccess());
+        var rules = InscriptionRules.of(focus);
+        if (!rules.enabled()) {
+            player.displayClientMessage(Component.translatable("message.thaumaturge.focus.inscription_disabled"), true);
+            return false;
+        }
+        var target = SpellStages.target(server, StageTarget.FOCUS_INSCRIPTION, focus, draft);
+        if (!StageRules.check(server, target, player)) return false;
+        SpellSummary summary = rules.adjusted(Spells.analyze(draft, tier.get(), server.registryAccess(), player));
+        AspectList cost = FocusItems.aspects(summary, server.registryAccess());
         if (!InscriptionCheck.of(player, true, false, summary, cost).ready()) {
             return false;
         }
@@ -144,6 +157,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
         if (MinecraftForge.EVENT_BUS.post(new SpellInscribeEvent(player, worldPosition, focus, draft, summary))) {
             return false;
         }
+        if (!StageRules.check(server, target, player)) return false;
         if (!creative) {
             player.giveExperienceLevels(-summary.xp());
             for (AspectInstance instance : cost.entries()) {
@@ -152,9 +166,12 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
         }
         crystals = cost;
         ticks = 0;
-        visTotal =
-                summary.complexity() * VIS_PER_COMPLEXITY + (float) tier.get().complexity() / VIS_PER_BUDGET_DIVISOR;
+        interval = rules.interval();
+        drainPerCycle = rules.drain();
+        visTotal = rules.vis()
+                * (summary.complexity() * VIS_PER_COMPLEXITY + (float) tier.get().complexity() / VIS_PER_BUDGET_DIVISOR);
         vis = visTotal;
+        authority = StageAuthorization.capture(server, target, player);
         setChangedAndSync();
         level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         return true;
@@ -173,10 +190,11 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
     }
 
     private void tickServer(ServerLevel server) {
-        if (!inscribing()) {
+        if (!inscribing() || !mayContinue(server)) {
             return;
         }
-        ticks = advanceWorkPulse(ticks);
+        ticks = advanceWorkPulse(ticks, interval);
+        setChanged();
         if (ticks != 0) {
             return;
         }
@@ -184,7 +202,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
             abort(server);
             return;
         }
-        float drained = drain(server, Math.min(DRAIN_PER_CYCLE, vis));
+        float drained = drain(server, Math.min(drainPerCycle, vis));
         if (drained > 0.0F) {
             RandomSource random = server.getRandom();
             Vec3 from = new Vec3(
@@ -201,7 +219,18 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
     }
 
     static int advanceWorkPulse(int pulse) {
-        return pulse + 1 >= DRAIN_INTERVAL ? 0 : pulse + 1;
+        return advanceWorkPulse(pulse, InscriptionRules.DEFAULT_INTERVAL);
+    }
+
+    private static int advanceWorkPulse(int pulse, int interval) {
+        return pulse + 1 >= interval ? 0 : pulse + 1;
+    }
+
+    private boolean mayContinue(ServerLevel level) {
+        if (!StageRules.of(level).hasRules(StageTarget.FOCUS_INSCRIPTION)) return true;
+        return authority != null ? authority.allows(level)
+                : StageRules.allows(level, SpellStages.target(level, StageTarget.FOCUS_INSCRIPTION, focusStack(), draft),
+                        null);
     }
 
     private float drain(ServerLevel server, float amount) {
@@ -229,6 +258,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
         vis = 0.0F;
         visTotal = 0.0F;
         crystals = AspectList.EMPTY;
+        authority = null;
         if (FocusItems.isFocus(focus)) {
             Spells.setSpell(focus, draft);
             if (name.isBlank()) {
@@ -246,6 +276,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
         vis = 0.0F;
         visTotal = 0.0F;
         crystals = AspectList.EMPTY;
+        authority = null;
         server.playSound(null, worldPosition, TTSounds.WANDFAIL.get(), SoundSource.BLOCKS, 0.33F, 1.0F);
         setChangedAndSync();
     }
@@ -316,6 +347,15 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
 
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+        writeClientData(output, registries);
+        output.putInt("Ticks", ticks);
+        output.putInt("Interval", interval);
+        output.putFloat("Drain", drainPerCycle);
+        if (authority != null) TTNbt.store(output, "Authority", StageAuthorization.CODEC, registries, authority);
+    }
+
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         output.put("inventory", drawer.serializeNBT());
         TTNbt.store(output, "Draft", Spell.CODEC, registries, draft);
@@ -334,6 +374,10 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
         vis = (input.contains("Vis") ? input.getFloat("Vis") : 0.0F);
         visTotal = (input.contains("VisTotal") ? input.getFloat("VisTotal") : 0.0F);
         crystals = TTNbt.read(input, "Crystals", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
+        interval = input.contains("Interval") ? Math.max(1, input.getInt("Interval")) : InscriptionRules.DEFAULT_INTERVAL;
+        drainPerCycle = input.getFloat("Drain") > 0.0F ? input.getFloat("Drain") : InscriptionRules.DEFAULT_DRAIN;
+        ticks = Math.max(0, Math.min(interval - 1, input.getInt("Ticks")));
+        authority = TTNbt.read(input, "Authority", StageAuthorization.CODEC, registries).orElse(null);
     }
 
     private final class Drawer extends ItemStackHandler {
@@ -361,6 +405,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
                     vis = 0.0F;
                     visTotal = 0.0F;
                     crystals = AspectList.EMPTY;
+                    authority = null;
                 }
                 if (!inscribing()) {
                     loadFocusDesign();

@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.api.spell.event.SpellCastEvent;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.content.spell.SpellText;
+import com.leclowndu93150.thaumaturge.content.spell.SpellStages;
 import com.leclowndu93150.thaumaturge.content.spell.engine.SpellEngine;
 import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
@@ -47,6 +48,7 @@ public final class SpellCasting {
         if (spell == null || CasterManager.isOnCooldown(player)) {
             return InteractionResult.PASS;
         }
+        if (!SpellStages.checkCast(player, focus, spell)) return InteractionResult.FAIL;
         if (spell.style() != CastStyle.INSTANT) {
             player.startUsingItem(hand);
             return InteractionResult.CONSUME;
@@ -128,7 +130,7 @@ public final class SpellCasting {
             return false;
         }
         SpellCastEvent.Pre pre = SpellEngine.firePre(player, focus, spell, power, summary.vis() * visShare);
-        if (pre.isCanceled()) {
+        if (pre.isCanceled() || !SpellStages.checkCast(player, focus, spell)) {
             return false;
         }
         Map<ResourceKey<IAspect>, Integer> split = WandVisHelper.primalSplit(

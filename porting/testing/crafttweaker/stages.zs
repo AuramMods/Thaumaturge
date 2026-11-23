@@ -44,3 +44,7 @@ Stages.requireTag(<resource:thaumaturge:golem_deployment>, <tag:thaumaturge/gole
     StageRequirement.allOf(["deploy_iron_golem"]));
 Stages.requireEntry(<resource:thaumaturge:golem_seal>, <resource:minecraft:block>, <resource:minecraft:amethyst_block>,
     StageRequirement.allOf(["guard_advanced_seal"]));
+Stages.requireTag(<resource:thaumaturge:focus_inscription>, <tag:thaumaturge/spell_part:crafttweaker:staged_spell_parts>,
+    StageRequirement.allOf(["inscribe_test_spell"]));
+Stages.requireTag(<resource:thaumaturge:spell_cast>, <tag:thaumaturge/spell_part:crafttweaker:staged_spell_parts>,
+    StageRequirement.allOf(["cast_test_spell"]));
