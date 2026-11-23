@@ -18,7 +18,6 @@ import com.leclowndu93150.thaumaturge.compat.jei.category.InfernalFurnaceCategor
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientHelper;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientRenderer;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
-import com.leclowndu93150.thaumaturge.compat.jei.ingredient.StringSubtypeInterpreter;
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.InfernalBonus;
 import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
@@ -48,12 +47,11 @@ import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.recipe.transfer.IRecipeTransferContext;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
@@ -99,12 +97,12 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     @Override
     public void registerItemSubtypes(ISubtypeRegistration registration) {
-        ISubtypeInterpreter<ItemStack> aspectsInterpreter =
-                new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::aspectsSubtype);
-        ISubtypeInterpreter<ItemStack> filterInterpreter =
-                new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::aspectFilterSubtype);
-        ISubtypeInterpreter<ItemStack> crystalAspectInterpreter =
-                new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::crystalAspectSubtype);
+        IIngredientSubtypeInterpreter<ItemStack> aspectsInterpreter =
+                ThaumaturgeJEIPlugin::aspectsSubtype;
+        IIngredientSubtypeInterpreter<ItemStack> filterInterpreter =
+                ThaumaturgeJEIPlugin::aspectFilterSubtype;
+        IIngredientSubtypeInterpreter<ItemStack> crystalAspectInterpreter =
+                ThaumaturgeJEIPlugin::crystalAspectSubtype;
         registration.registerSubtypeInterpreter(TTItems.LABEL.get(), filterInterpreter);
         registration.registerSubtypeInterpreter(TTItems.TUBE_FILTER.get(), filterInterpreter);
         registration.registerSubtypeInterpreter(TTItems.SALIS_MUNDUS.get(), aspectsInterpreter);
@@ -112,15 +110,15 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.registerSubtypeInterpreter(TTItems.PHIAL.get(), aspectsInterpreter);
         registration.registerSubtypeInterpreter(
                 TTItems.CELESTIAL_NOTES.get(),
-                new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::celestialBodySubtype));
+                ThaumaturgeJEIPlugin::celestialBodySubtype);
         registration.registerSubtypeInterpreter(
-                TTItems.RESEARCH_NOTE.get(), new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::researchNoteSubtype));
+                TTItems.RESEARCH_NOTE.get(), ThaumaturgeJEIPlugin::researchNoteSubtype);
         registration.registerSubtypeInterpreter(
-                TTItems.WAND.get(), new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::wandPartsSubtype));
+                TTItems.WAND.get(), ThaumaturgeJEIPlugin::wandPartsSubtype);
         registration.registerSubtypeInterpreter(
-                TTItems.VERDANT_CHARM.get(), new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::verdantTypeSubtype));
+                TTItems.VERDANT_CHARM.get(), ThaumaturgeJEIPlugin::verdantTypeSubtype);
         registration.registerSubtypeInterpreter(
-                TTItems.GOLEM_PLACER.get(), new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::golemPropertiesSubtype));
+                TTItems.GOLEM_PLACER.get(), ThaumaturgeJEIPlugin::golemPropertiesSubtype);
     }
 
     @Override
@@ -343,26 +341,15 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         }
 
         @Override
-        @Deprecated(forRemoval = true)
         public IRecipeTransferError transferRecipe(
                 MenuArcaneWorkbench menu,
                 ArcaneCraftingRecipe recipe,
                 IRecipeSlotsView recipeSlots,
                 Player player,
-                boolean doTransfer,
-                boolean maxTransfer) {
-            return delegate.transferRecipe(
-                    menu, recipe, filteredRecipeSlots(menu, recipe, recipeSlots), player, doTransfer, maxTransfer);
-        }
-
-        @Override
-        public IRecipeTransferError transferRecipe(
-                IRecipeTransferContext<ArcaneCraftingRecipe, MenuArcaneWorkbench> context,
+                boolean maxTransfer,
                 boolean doTransfer) {
-            MenuArcaneWorkbench menu = context.getContainer();
-            ArcaneCraftingRecipe recipe = context.getRecipe();
-            IRecipeSlotsView filteredSlots = filteredRecipeSlots(menu, recipe, context.getRecipeSlots());
-            return helper.transferRecipeWithInputAlternatives(delegate, context, List.of(filteredSlots), doTransfer);
+            return delegate.transferRecipe(
+                    menu, recipe, filteredRecipeSlots(menu, recipe, recipeSlots), player, maxTransfer, doTransfer);
         }
 
         private IRecipeSlotsView filteredRecipeSlots(

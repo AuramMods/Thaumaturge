@@ -144,7 +144,8 @@ public final class AspectJeiSync {
             IIngredientManager manager, IIngredientType<T> type, Predicate<T> isAffected) {
         List<T> affected = manager.getAllIngredients(type).stream().filter(isAffected).toList();
         if (!affected.isEmpty()) {
-            manager.refreshIngredientsAtRuntime(type, affected);
+            manager.removeIngredientsAtRuntime(type, affected);
+            manager.addIngredientsAtRuntime(type, affected);
         }
     }
 }

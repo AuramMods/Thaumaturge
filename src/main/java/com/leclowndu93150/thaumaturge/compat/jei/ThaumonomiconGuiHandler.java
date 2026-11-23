@@ -3,19 +3,25 @@ package com.leclowndu93150.thaumaturge.compat.jei;
 import com.leclowndu93150.thaumaturge.client.screen.research.EntryDetailScreen;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
 import java.util.Optional;
-import mezz.jei.api.gui.builder.IClickableIngredientFactory;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
 import mezz.jei.api.gui.handlers.IGuiProperties;
 import mezz.jei.api.gui.handlers.IScreenHandler;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.runtime.IClickableIngredient;
-import mezz.jei.common.gui.GuiProperties;
+import mezz.jei.api.runtime.IIngredientManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.Rect2i;
 
 final class ThaumonomiconGuiHandler implements IScreenHandler<EntryDetailScreen>, IGlobalGuiHandler {
+    private final IIngredientManager ingredients;
+
+    private ThaumonomiconGuiHandler(IIngredientManager ingredients) {
+        this.ingredients = ingredients;
+    }
+
     static void register(IGuiHandlerRegistration registration) {
-        ThaumonomiconGuiHandler handler = new ThaumonomiconGuiHandler();
+        var handler = new ThaumonomiconGuiHandler(registration.getJeiHelpers().getIngredientManager());
         registration.addGuiScreenHandler(EntryDetailScreen.class, handler);
         registration.addGlobalGuiHandler(handler);
     }
@@ -24,36 +30,43 @@ final class ThaumonomiconGuiHandler implements IScreenHandler<EntryDetailScreen>
     public IGuiProperties apply(EntryDetailScreen screen) {
         // Forge posts ScreenEvent.Opening before initializing the screen's width and height.
         var window = Minecraft.getInstance().getWindow();
-        int width = window.getGuiScaledWidth();
-        int height = window.getGuiScaledHeight();
-        return new GuiProperties(screen.getClass(), 0, 0, width, height, width, height);
+        return new Properties(screen.getClass(), window.getGuiScaledWidth(), window.getGuiScaledHeight());
     }
 
     @Override
-    public Optional<? extends IClickableIngredient<?>> getClickableIngredientUnderMouse(
-            IClickableIngredientFactory factory, EntryDetailScreen screen, double mouseX, double mouseY) {
-        return clickableIngredientUnderMouse(factory, screen, mouseX, mouseY);
-    }
-
-    @Override
-    public Optional<? extends IClickableIngredient<?>> getClickableIngredientUnderMouse(
-            IClickableIngredientFactory factory, double mouseX, double mouseY) {
-        Screen screen = Minecraft.getInstance().screen;
-        return screen instanceof EntryDetailScreen entryScreen
-                ? clickableIngredientUnderMouse(factory, entryScreen, mouseX, mouseY)
-                : Optional.empty();
-    }
-
-    static Optional<? extends IClickableIngredient<?>> clickableIngredientUnderMouse(
-            IClickableIngredientFactory factory, EntryDetailScreen screen, double mouseX, double mouseY) {
+    public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(double mouseX, double mouseY) {
+        if (!(Minecraft.getInstance().screen instanceof EntryDetailScreen screen)) return Optional.empty();
         var item = screen.itemUnderMouse(mouseX, mouseY);
         if (item != null && !item.stack().isEmpty()) {
-            return factory.createBuilder(item.stack()).buildWithArea(item.x(), item.y(), 16, 16);
+            return ingredients.createClickableIngredient(item.stack(), new Rect2i(item.x(), item.y(), 16, 16), false)
+                    .map(clickable -> clickable);
         }
         var aspect = screen.aspectUnderMouse(mouseX, mouseY);
-        return aspect == null
-                ? Optional.empty()
-                : factory.createBuilder(AspectIngredientType.INSTANCE, aspect.aspect())
-                        .buildWithArea(aspect.x(), aspect.y(), 16, 16);
+        if (aspect == null) return Optional.empty();
+        return ingredients.createClickableIngredient(AspectIngredientType.INSTANCE, aspect.aspect(),
+                new Rect2i(aspect.x(), aspect.y(), 16, 16), false).map(clickable -> clickable);
+    }
+
+    private record Properties(Class<? extends Screen> getScreenClass, int getGuiXSize, int getGuiYSize)
+            implements IGuiProperties {
+        @Override
+        public int getGuiLeft() {
+            return 0;
+        }
+
+        @Override
+        public int getGuiTop() {
+            return 0;
+        }
+
+        @Override
+        public int getScreenWidth() {
+            return getGuiXSize;
+        }
+
+        @Override
+        public int getScreenHeight() {
+            return getGuiYSize;
+        }
     }
 }
