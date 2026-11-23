@@ -68,6 +68,36 @@ public final class ResearchGameTests {
     private ResearchGameTests() {}
 
     @GameTest(template = ROOM)
+    public static void arcaneWorkbenchOpensWithoutDreamResearch(GameTestHelper test) {
+        var player = survivalPlayer(test);
+        test.assertFalse(PlayerResearchAccess.of(player).hasCompleted(TTIds.rl("gotdream")),
+                "The player should start without the dream discovery");
+        test.setBlock(CENTER, TTBlocks.ARCANE_WORKBENCH.get());
+        var pos = test.absolutePos(CENTER);
+        var hit = new BlockHitResult(Vec3.atCenterOf(pos).add(0, 0.5, 0), Direction.UP, pos, false);
+
+        try {
+            var result = player.gameMode.useItemOn(player, test.getLevel(), player.getMainHandItem(),
+                    InteractionHand.MAIN_HAND, hit);
+            test.assertTrue(result.consumesAction() && player.containerMenu instanceof MenuArcaneWorkbench,
+                    "Right-clicking the Arcane Workbench should open its menu before the dream discovery");
+            var menu = (MenuArcaneWorkbench) player.containerMenu;
+            test.assertTrue(menu.stillValid(player), "The workbench menu should be bound to the clicked block");
+            menu.getSlot(1).set(new ItemStack(Items.OAK_LOG));
+            var planks = menu.getSlot(0).getItem();
+            test.assertTrue(planks.is(Items.OAK_PLANKS) && planks.getCount() == 4,
+                    "The workbench should preview an ordinary recipe for the new player");
+            menu.clicked(0, 0, ClickType.PICKUP, player);
+            test.assertTrue(ItemStack.matches(menu.getCarried(), new ItemStack(Items.OAK_PLANKS, 4))
+                            && menu.getSlot(1).getItem().isEmpty(),
+                    "Taking the result should craft four planks and consume the log");
+        } finally {
+            player.closeContainer();
+        }
+        test.succeed();
+    }
+
+    @GameTest(template = ROOM)
     public static void crystalPickupAndWakeAwardJournalOnce(GameTestHelper test) {
         var player = survivalPlayer(test);
         var research = PlayerResearchAccess.of(player);

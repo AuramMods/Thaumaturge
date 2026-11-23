@@ -2,9 +2,7 @@ package com.leclowndu93150.thaumaturge.content.workbench;
 
 import static com.leclowndu93150.thaumaturge.serialization.BlockCodecs.simpleCodec;
 
-import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.blockinteraction.BlockInteractions;
-import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -78,9 +76,6 @@ public class BlockArcaneWorkbench extends BaseEntityBlock implements BlockIntera
     @Override
     public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("gotdream"))) {
-            return InteractionResult.CONSUME;
-        }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
