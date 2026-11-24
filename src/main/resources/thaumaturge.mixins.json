@@ -114,6 +114,8 @@
     "world.item.AxeDataMapMixin"
   ],
   "client": [
+    "client.auram.AuramVaporMixin",
+    "client.auram.AuramVoxelLightsMixin",
     "client.ftblibrary.FTBLibraryClientMixin",
     "client.jade.JadeRayTracingMixin",
     "client.gui.GuiGraphicsAccessor",

@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.effect.instance;
 
 import com.leclowndu93150.thaumaturge.compat.Java17;
+import com.leclowndu93150.thaumaturge.compat.auram.AuramVisualSources;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
 import com.leclowndu93150.thaumaturge.content.effect.StreamPathfinder;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public final class EssentiaStreamInstance extends StreamInstance {
     private static final int REROUTE_INTERVAL = 40;
 
     private final int fixedTail;
+    private final int color;
     private List<Vec3> route;
     private int leg;
 
@@ -40,6 +42,7 @@ public final class EssentiaStreamInstance extends StreamInstance {
             int extend,
             double my) {
         super(start.x, start.y, start.z, color, count, scale);
+        this.color = color;
         this.route = List.copyOf(route);
         this.fixedTail = Math.min(fixedTail, route.size());
         this.length = Math.max(MIN_LENGTH, extend);
@@ -115,6 +118,9 @@ public final class EssentiaStreamInstance extends StreamInstance {
 
     @Override
     protected void afterStep(ClientLevel level) {
+        if (this.radiusBase > MIN_RADIUS && AuramVisualSources.available()) {
+            AuramVisualSources.essentia(level, position(), this.color, 1.0F);
+        }
         if (this.age % REROUTE_INTERVAL == 0) {
             reroute(level);
         }

@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.effect.manager;
 
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.level.LevelEvent;
+import com.leclowndu93150.thaumaturge.compat.auram.AuramVisualSources;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
@@ -39,6 +41,11 @@ public final class FXManagerRegistry {
         PoseStack poseStack = event.getPoseStack();
         float partialTick = event.getPartialTick();
         for (AbstractFXManager<?> m : MANAGERS) m.renderAll(poseStack, camera, partialTick);
+    }
+
+    @SubscribeEvent
+    public static void onUnload(LevelEvent.Unload event) {
+        if (event.getLevel() instanceof ClientLevel level) AuramVisualSources.clear(level);
     }
 
     public static void clearAll() {

@@ -19,6 +19,7 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import com.leclowndu93150.thaumaturge.compat.auram.AuramVisualSources;
 
 public final class EntityFluxRift extends Entity implements ISidedHurt {
     public static final int MAX_RIFT_SIZE = 100;
@@ -171,6 +172,18 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
         refreshOutlineIfStale();
         if (this.level() instanceof ServerLevel server) {
             tickServer(server);
+        } else if (AuramVisualSources.available()) {
+            emitVaporAlongOutline();
+        }
+    }
+
+    private void emitVaporAlongOutline() {
+        int segments = this.outline.size() - 1;
+        if (segments < 1) return;
+        for (int attempt = 0; attempt < 3; attempt++) {
+            int pick = this.random.nextInt(segments);
+            Vec3 point = this.outline.get(pick).lerp(this.outline.get(pick + 1), this.random.nextDouble());
+            if (AuramVisualSources.rift(level(), position().add(point))) return;
         }
     }
 

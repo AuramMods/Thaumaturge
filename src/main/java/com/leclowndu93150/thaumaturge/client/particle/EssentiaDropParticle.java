@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.particle;
 
+import com.leclowndu93150.thaumaturge.compat.auram.AuramVisualSources;
 import com.leclowndu93150.thaumaturge.content.particle.EssentiaDropParticleOptions;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -7,9 +8,11 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.phys.Vec3;
 
 public final class EssentiaDropParticle extends TTQuadParticle {
     private final ParticleSheet sheet;
+    private final int color;
     private final float baseAlpha;
     private final float baseScale;
 
@@ -24,6 +27,7 @@ public final class EssentiaDropParticle extends TTQuadParticle {
                 level.getRandom().nextGaussian() * 0.005,
                 level.getRandom().nextGaussian() * 0.005);
         this.sheet = sheet;
+        this.color = data.color();
         this.rCol = ARGB32.red(data.color()) / 255.0F;
         this.gCol = ARGB32.green(data.color()) / 255.0F;
         this.bCol = ARGB32.blue(data.color()) / 255.0F;
@@ -54,6 +58,9 @@ public final class EssentiaDropParticle extends TTQuadParticle {
         float fade = 1.0F - (float) this.age / this.lifetime;
         this.alpha = this.baseAlpha * fade;
         this.quadSize = this.baseScale * (0.5F + fade * 0.5F);
+        if (AuramVisualSources.available()) {
+            AuramVisualSources.essentia(this.level, new Vec3(this.x, this.y, this.z), this.color, this.alpha);
+        }
     }
 
     @Override

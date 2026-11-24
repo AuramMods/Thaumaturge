@@ -18,6 +18,8 @@ public class TTMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        if (mixinClassName.contains(".client.auram."))
+            return FMLLoader.getLoadingModList().getModFileById("auram") != null;
         if (mixinClassName.contains(".sable."))
             return FMLLoader.getLoadingModList().getModFileById(TTIds.SABLE) != null;
         if (mixinClassName.contains(".veil."))
