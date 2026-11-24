@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.particle;
 
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.mixin.client.renderer.RenderStateShardAccessor;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -25,6 +26,9 @@ import org.slf4j.Logger;
 public final class ParticleSheet {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int PNG_DIMENSION_OFFSET = 16;
+
+    // Set on the render thread only while the shader is applied and the sheet is drawn.
+    private static Mode shaderPackDrawMode;
 
     public enum Mode {
         ADDITIVE(true, true, true),
@@ -79,35 +83,36 @@ public final class ParticleSheet {
         return layers.computeIfAbsent(mode, this::build);
     }
 
+    public static boolean isShaderPackDraw() {
+        return shaderPackDrawMode != null;
+    }
+
+    public static boolean isAdditiveShaderPackDraw() {
+        return shaderPackDrawMode != null && shaderPackDrawMode.additive;
+    }
+
     private ParticleRenderType build(Mode mode) {
         return new ParticleRenderType() {
             @Override
             public void begin(BufferBuilder buffer, TextureManager textures) {
-                RenderSystem.setShader(GameRenderer::getParticleShader);
-                RenderSystem.setShaderTexture(0, texture);
-                RenderSystem.enableBlend();
-                if (mode.additive) {
-                    RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-                } else {
-                    RenderSystem.defaultBlendFunc();
-                }
-                if (mode.depthTest) {
-                    RenderSystem.enableDepthTest();
-                } else {
-                    RenderSystem.disableDepthTest();
-                }
-                RenderSystem.depthMask(mode.depthMask);
                 buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
             }
 
             @Override
             public void end(Tesselator tesselator) {
-                var rendered = tesselator.getBuilder().endOrDiscardIfEmpty();
+                BufferBuilder builder = tesselator.getBuilder();
+                // AsyncParticles calls end with a dummy builder to discover the sheet's format.
+                if (!builder.building()) {
+                    return;
+                }
+                var rendered = builder.endOrDiscardIfEmpty();
                 if (rendered == null) {
                     return;
                 }
+                boolean shaderPack = IrisCompat.overridesShaders() && !IrisCompat.isShadowPass();
                 // Fabulous composites its particle target with alpha, which dims the world behind Nitor.
-                var target = Minecraft.useShaderTransparency() && TTParticleLayers.usesNitorAdditiveBlend(this)
+                var target = !shaderPack && Minecraft.useShaderTransparency()
+                        && TTParticleLayers.usesNitorAdditiveBlend(this)
                         ? RenderStateShardAccessor.thaumaturge$particlesTarget() : null;
                 if (target != null) {
                     target.clearRenderState();
@@ -117,9 +122,35 @@ public final class ParticleSheet {
                 if (restoreCull) {
                     RenderSystem.disableCull();
                 }
+                Mode previousMode = shaderPackDrawMode;
+                shaderPackDrawMode = shaderPack ? mode : null;
                 try {
+                    RenderSystem.setShader(shaderPack
+                            ? IrisCompat::particleTranslucentShader : GameRenderer::getParticleShader);
+                    RenderSystem.setShaderTexture(0, texture);
+                    RenderSystem.enableBlend();
+                    if (!mode.additive) {
+                        RenderSystem.defaultBlendFunc();
+                    } else if (shaderPack) {
+                        // Accumulate coverage for the shader pack's composite while adding RGB light.
+                        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                                GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_DST_ALPHA,
+                                GlStateManager.DestFactor.ONE);
+                    } else {
+                        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+                    }
+                    if (mode.depthTest) {
+                        RenderSystem.enableDepthTest();
+                    } else {
+                        RenderSystem.disableDepthTest();
+                    }
+                    RenderSystem.depthMask(mode.depthMask);
                     BufferUploader.drawWithShader(rendered);
                 } finally {
+                    shaderPackDrawMode = previousMode;
+                    if (!mode.depthTest) {
+                        RenderSystem.enableDepthTest();
+                    }
                     if (restoreCull) {
                         RenderSystem.enableCull();
                     }

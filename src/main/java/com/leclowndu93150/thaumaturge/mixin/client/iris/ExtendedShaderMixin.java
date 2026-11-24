@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.mixin.client.iris;
 
+import com.leclowndu93150.thaumaturge.client.particle.ParticleSheet;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import java.util.List;
@@ -12,17 +13,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 /**
- * Iris's translucent-particle program uses a 0.1 alpha test. The node atlas deliberately uses alpha 0.1 for its
- * unrevealed aura and contains still softer texels in the revealed aspect layer, so the stock Iris cutoff erases those
- * parts. Shader packs may also replace the RenderType's blend mode after it has been configured.
- *
- * <p>This compatibility hook is texture-scoped to Thaumaturge's node atlas. It therefore leaves ordinary particles
- * and other shader-pack effects untouched.</p>
+ * Preserve the node atlas and custom sheets' soft alpha, and keep the blend mode for additive effects.
  */
 @Pseudo
 @Mixin(targets = "net.irisshaders.iris.pipeline.programs.ExtendedShader", remap = false)
 public abstract class ExtendedShaderMixin {
-    private static final float NODE_ALPHA_TEST = 0.0001F;
+    private static final float SOFT_ALPHA_TEST = 0.0001F;
 
     @ModifyArg(
             method = {"apply()V", "m_173363_()V"},
@@ -31,8 +27,9 @@ public abstract class ExtendedShaderMixin {
                             value = "INVOKE",
                             target = "Lnet/irisshaders/iris/uniforms/CapturedRenderingState;setCurrentAlphaTest(F)V"),
             index = 0)
-    private float thaumaturge$preserveNodeAlpha(float irisAlphaTest) {
-        return IrisCompat.isNodeParticleShaderPass(this) ? Math.min(irisAlphaTest, NODE_ALPHA_TEST) : irisAlphaTest;
+    private float thaumaturge$preserveParticleAlpha(float irisAlphaTest) {
+        return ParticleSheet.isShaderPackDraw() || IrisCompat.isNodeParticleShaderPass(this)
+                ? Math.min(irisAlphaTest, SOFT_ALPHA_TEST) : irisAlphaTest;
     }
 
     @WrapWithCondition(
@@ -40,7 +37,7 @@ public abstract class ExtendedShaderMixin {
             at = @At(value = "INVOKE", target = "Lnet/irisshaders/iris/gl/blending/BlendModeOverride;apply()V"),
             remap = false)
     private boolean thaumaturge$allowBlendOverride(BlendModeOverride override) {
-        return !IrisCompat.isNodeParticleShaderPass(this);
+        return !ParticleSheet.isAdditiveShaderPackDraw() && !IrisCompat.isNodeParticleShaderPass(this);
     }
 
     @WrapWithCondition(
@@ -49,6 +46,6 @@ public abstract class ExtendedShaderMixin {
             remap = false)
     private boolean thaumaturge$allowBufferBlendOverrides(
             List<BufferBlendOverride> overrides, Consumer<BufferBlendOverride> apply) {
-        return !IrisCompat.isNodeParticleShaderPass(this);
+        return !ParticleSheet.isAdditiveShaderPackDraw() && !IrisCompat.isNodeParticleShaderPass(this);
     }
 }
