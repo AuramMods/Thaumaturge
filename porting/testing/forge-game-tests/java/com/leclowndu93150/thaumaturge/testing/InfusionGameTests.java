@@ -355,6 +355,9 @@ public final class InfusionGameTests {
         wandClick(test, player);
         test.assertFalse(matrix(test).isCrafting(), "An untyped crystal matched the Ordo catalyst");
 
+        test.assertTrue(test.getBlockState(CENTER).use(test.getLevel(), player, InteractionHand.OFF_HAND,
+                        topOf(test.absolutePos(CENTER))).consumesAction() && pedestal(test, CENTER).getItem().isEmpty(),
+                "Picking up the untyped crystal should empty the catalyst pedestal");
         var ordo = Objects.requireNonNull(Aspects.resolve(test.getLevel(), TTAspects.ORDO));
         var crystal = new ItemStack(TTItems.ESSENTIA_CRYSTAL.get());
         ItemData.set(crystal, TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(ordo, 1));
