@@ -256,6 +256,29 @@ public final class InfusionGameTests {
     }
 
     @GameTest(template = "infusion_room")
+    public static void occupiedPedestalRequiresAnotherClickToPlaceHeldItem(GameTestHelper test) {
+        var level = test.getLevel();
+        var player = ResearchGameTests.survivalPlayer(test);
+        test.setBlock(CENTER, TTBlocks.PEDESTAL_ARCANE.get());
+        var pedestal = pedestal(test, CENTER);
+        pedestal.setItem(new ItemStack(Items.FEATHER));
+        var held = new ItemStack(Items.STICK, 2);
+        player.setItemInHand(InteractionHand.MAIN_HAND, held);
+        var hit = topOf(test.absolutePos(CENTER));
+
+        test.assertTrue(player.gameMode.useItemOn(player, level, held, InteractionHand.MAIN_HAND, hit).consumesAction(),
+                "Taking the feather should consume the first click");
+        test.assertTrue(pedestal.getItem().isEmpty() && player.getInventory().countItem(Items.FEATHER) == 1
+                        && held.getCount() == 2,
+                "The first click should take the feather and leave the held stack alone");
+        test.assertTrue(player.gameMode.useItemOn(player, level, held, InteractionHand.MAIN_HAND, hit).consumesAction(),
+                "Placing a stick should consume the second click");
+        test.assertTrue(pedestal.getItem().is(Items.STICK) && pedestal.getItem().getCount() == 1 && held.getCount() == 1,
+                "The second click should place exactly one stick");
+        test.succeed();
+    }
+
+    @GameTest(template = "infusion_room")
     public static void creativePedestalPickupClearsRemoteDisplay(GameTestHelper test) {
         var level = test.getLevel();
         var player = ResearchGameTests.survivalPlayer(test);

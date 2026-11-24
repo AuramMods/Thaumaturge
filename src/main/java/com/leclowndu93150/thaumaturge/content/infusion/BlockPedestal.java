@@ -87,7 +87,7 @@ public final class BlockPedestal extends BaseEntityBlock implements BlockInterac
     @Override
     public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        return swap(level, pos, player, InteractionHand.MAIN_HAND);
+        return takeOrPlace(level, pos, player, InteractionHand.MAIN_HAND);
     }
 
     @Override
@@ -99,14 +99,14 @@ public final class BlockPedestal extends BaseEntityBlock implements BlockInterac
             Player player,
             InteractionHand hand,
             BlockHitResult hit) {
-        InteractionResult result = swap(level, pos, player, hand);
+        InteractionResult result = takeOrPlace(level, pos, player, hand);
         if (result == InteractionResult.PASS) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         return result.consumesAction() ? ItemInteractionResult.SUCCESS : ItemInteractionResult.FAIL;
     }
 
-    private InteractionResult swap(Level level, BlockPos pos, Player player, InteractionHand hand) {
+    private InteractionResult takeOrPlace(Level level, BlockPos pos, Player player, InteractionHand hand) {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityPedestal pedestal)) {
             return InteractionResult.PASS;
         }
@@ -119,13 +119,12 @@ public final class BlockPedestal extends BaseEntityBlock implements BlockInterac
             return InteractionResult.PASS;
         }
         boolean wasEmpty = current.isEmpty();
-        if (!current.isEmpty()) {
+        if (!wasEmpty) {
             if (!player.getInventory().add(current)) {
                 player.drop(current, false);
             }
             pedestal.setItem(ItemStack.EMPTY);
-        }
-        if (!held.isEmpty()) {
+        } else {
             pedestal.setItem(held.copyWithCount(1));
             InvHelper.consume(held, 1, player);
         }

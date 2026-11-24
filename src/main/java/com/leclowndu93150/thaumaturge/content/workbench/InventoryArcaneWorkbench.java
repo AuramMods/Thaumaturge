@@ -7,13 +7,14 @@ import com.leclowndu93150.thaumaturge.api.transaction.SnapshotJournal;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.content.taint.item.ItemEssentiaCrystal;
-import com.leclowndu93150.thaumaturge.recipe.CraftingInput;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 
 public class InventoryArcaneWorkbench extends SimpleContainer implements IArcaneWorkbench, CraftingContainer {
@@ -105,12 +106,13 @@ public class InventoryArcaneWorkbench extends SimpleContainer implements IArcane
         return items;
     }
 
-    public CraftingInput asCraftInput() {
-        return CraftingInput.of(getWidth(), getHeight(), new ArrayList<>(items.subList(0, CRAFTING_SLOTS)));
-    }
-
-    public CraftingInput.Positioned asPositionedCraftInput() {
-        return CraftingInput.ofPositioned(getWidth(), getHeight(), items.subList(0, CRAFTING_SLOTS));
+    public CraftingContainer asVanillaCraftingInput(AbstractContainerMenu menu) {
+        // Forge recipes can address the full grid, including empty slots, by index.
+        var grid = NonNullList.withSize(CRAFTING_SLOTS, ItemStack.EMPTY);
+        for (int slot = 0; slot < CRAFTING_SLOTS; slot++) {
+            grid.set(slot, getItem(slot));
+        }
+        return new TransientCraftingContainer(menu, getWidth(), getHeight(), grid);
     }
 
     void applyCraft(List<ItemStack> items, TransactionContext transaction) {

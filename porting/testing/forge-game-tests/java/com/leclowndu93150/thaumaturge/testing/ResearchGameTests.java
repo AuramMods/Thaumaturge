@@ -17,26 +17,34 @@ import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.content.workbench.BlockEntityArcaneWorkbench;
 import com.leclowndu93150.thaumaturge.content.workbench.MenuArcaneWorkbench;
 import com.leclowndu93150.thaumaturge.itemdata.ItemData;
+import com.leclowndu93150.thaumaturge.recipe.RecipeAccess;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTWandParts;
+import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -44,7 +52,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.WrittenBookItem;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -66,6 +78,74 @@ public final class ResearchGameTests {
     private static final InteractionHand DUST_HAND = InteractionHand.OFF_HAND;
 
     private ResearchGameTests() {}
+
+    @GameTest(template = ROOM)
+    public static void arcaneWorkbenchUsesNativeGridForOrdinaryRecipes(GameTestHelper test) {
+        var level = test.getLevel();
+        var player = survivalPlayer(test);
+        var manager = level.getRecipeManager();
+        var recipes = List.copyOf(manager.getRecipes());
+        var access = RecipeAccess.of(manager);
+        var definitions = new HashMap<ResourceLocation, JsonElement>();
+        for (var recipe : recipes) {
+            access.sourceDefinition(recipe).ifPresent(definition -> definitions.put(recipe.getId(), definition));
+        }
+        test.setBlock(CENTER, TTBlocks.ARCANE_WORKBENCH.get());
+        var pos = test.absolutePos(CENTER);
+        var hit = new BlockHitResult(Vec3.atCenterOf(pos).add(0, 0.5, 0), Direction.UP, pos, false);
+
+        try {
+            manager.replaceRecipes(List.of(fixedSlotRecipe()));
+            var result = player.gameMode.useItemOn(player, level, ItemStack.EMPTY, InteractionHand.MAIN_HAND, hit);
+            test.assertTrue(result.consumesAction() && player.containerMenu instanceof MenuArcaneWorkbench,
+                    "The workbench should open even if a recipe reads fixed slots on an empty grid");
+            var menu = (MenuArcaneWorkbench) player.containerMenu;
+            menu.getSlot(1).set(new ItemStack(Items.PAPER));
+            menu.getSlot(5).set(new ItemStack(Items.FEATHER));
+            test.assertTrue(menu.getSlot(0).getItem().is(Items.BOOK), "The recipe should see the original grid positions");
+            menu.clicked(0, 0, ClickType.PICKUP, player);
+            test.assertTrue(menu.getCarried().is(Items.BOOK) && menu.getSlot(1).getItem().isEmpty()
+                            && menu.getSlot(5).getItem().is(Items.STICK),
+                    "Crafting should consume the ingredients and return the remainder to its original slot");
+        } finally {
+            player.closeContainer();
+            manager.replaceRecipes(recipes);
+            access.recipesApplied(definitions);
+        }
+        test.succeed();
+    }
+
+    private static CustomRecipe fixedSlotRecipe() {
+        return new CustomRecipe(TTIds.rl("test_fixed_slot"), CraftingBookCategory.MISC) {
+            @Override
+            public boolean matches(CraftingContainer grid, Level level) {
+                // Blood Magic reads from the grid list, and Quark reads by slot index.
+                return grid.getItems().get(0).is(Items.PAPER) && grid.getItem(4).is(Items.FEATHER);
+            }
+
+            @Override
+            public ItemStack assemble(CraftingContainer grid, RegistryAccess registries) {
+                return new ItemStack(Items.BOOK);
+            }
+
+            @Override
+            public NonNullList<ItemStack> getRemainingItems(CraftingContainer grid) {
+                var remainders = NonNullList.withSize(grid.getContainerSize(), ItemStack.EMPTY);
+                remainders.set(4, new ItemStack(Items.STICK));
+                return remainders;
+            }
+
+            @Override
+            public boolean canCraftInDimensions(int width, int height) {
+                return width == 3 && height == 3;
+            }
+
+            @Override
+            public RecipeSerializer<?> getSerializer() {
+                return RecipeSerializer.ARMOR_DYE;
+            }
+        };
+    }
 
     @GameTest(template = ROOM)
     public static void arcaneWorkbenchOpensWithoutDreamResearch(GameTestHelper test) {

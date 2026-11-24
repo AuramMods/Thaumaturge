@@ -30,11 +30,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import com.leclowndu93150.thaumaturge.recipe.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import com.leclowndu93150.thaumaturge.recipe.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -117,10 +117,10 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
         this.onChange = () -> slotsChanged(craftingInventory);
         this.resultSlot = new SlotArcaneResult(resultContainer, this, RESULT_X, RESULT_Y);
 
-        craftingInventory.addChangedListener(onChange);
         addSlots(playerInventory);
         addDataSlots(containerData);
         slotsChanged(craftingInventory);
+        craftingInventory.addChangedListener(onChange);
     }
 
     private void addSlots(Inventory playerInventory) {
@@ -183,8 +183,8 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
             displayingArcane = true;
         }
 
-        CraftingInput vanillaInput = craftingInventory.asCraftInput();
         if (result.isEmpty()) {
+            CraftingContainer vanillaInput = craftingInventory.asVanillaCraftingInput(this);
             Optional<RecipeHolder<CraftingRecipe>> vanilla = findVanillaRecipe(level, vanillaInput);
             if (vanilla.isPresent()) {
                 recipeToStore = vanilla.get().value();
@@ -244,21 +244,20 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
         if (!(resultContainer.getRecipeUsed() instanceof CraftingRecipe recipe)) {
             return ItemStack.EMPTY;
         }
-        CraftingInput.Positioned positioned = craftingInventory.asPositionedCraftInput();
-        CraftingInput input = positioned.input();
+        CraftingContainer input = craftingInventory.asVanillaCraftingInput(this);
         if (!recipe.matches(input, level)) {
             return ItemStack.EMPTY;
         }
         WorkbenchCraftingStore store = new WorkbenchCraftingStore(
                 craftingInventory,
                 serverPlayer,
-                positioned.left(),
-                positioned.top(),
-                input.width(),
-                input.height(),
+                0,
+                0,
+                input.getWidth(),
+                input.getHeight(),
                 remainders::add);
         IArcaneCraftingStore.Consumption consumption = new IArcaneCraftingStore.Consumption(
-                input.items(), recipe.getRemainingItems(input), AspectList.EMPTY, craftingInventory.wandStack());
+                input.getItems(), recipe.getRemainingItems(input), AspectList.EMPTY, craftingInventory.wandStack());
         ItemStack output = recipe.assemble(input, level.registryAccess());
         if (!ItemStack.matches(output, expected)) return ItemStack.EMPTY;
         try (Transaction transaction = Transaction.openRoot()) {
@@ -277,7 +276,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
         return tile.craftingContext(serverPlayer);
     }
 
-    private Optional<RecipeHolder<CraftingRecipe>> findVanillaRecipe(ServerLevel level, CraftingInput input) {
+    private Optional<RecipeHolder<CraftingRecipe>> findVanillaRecipe(ServerLevel level, CraftingContainer input) {
         return RecipeAccess.of(level.getRecipeManager()).getRecipeFor(RecipeType.CRAFTING, input, level);
     }
 
