@@ -45,6 +45,7 @@
     "world.entity.LivingEntityThaumicShieldMixin",
     "world.entity.EntityShowcaseProtectionMixin",
     "world.entity.MobShowcaseProtectionMixin",
+    "world.entity.player.PlayerAttachmentsMixin",
     "world.entity.player.PlayerDamagePhaseMixin",
     "world.entity.player.PlayerHoverFallMixin",
     "world.entity.player.PlayerMiningEfficiencyMixin",

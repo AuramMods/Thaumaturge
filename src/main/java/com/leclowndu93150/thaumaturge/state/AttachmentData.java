@@ -23,6 +23,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import org.jspecify.annotations.Nullable;
 
 /** Lifecycle, persistence and synchronization for the mod's Forge state capability. */
 public final class AttachmentData {
@@ -54,6 +55,11 @@ public final class AttachmentData {
     }
 
     public static AttachmentStorage storage(Object owner) {
+        // Mods can invalidate a dying player's Forge capabilities while that player still joins, ticks or renders.
+        if (owner instanceof PlayerAccess player) {
+            AttachmentStorage attachments = player.thaumaturge$getAttachments();
+            if (attachments != null) return attachments;
+        }
         if (!(owner instanceof ICapabilityProvider provider)) {
             throw new IllegalArgumentException("Not a Forge capability owner: " + owner);
         }
@@ -96,7 +102,8 @@ public final class AttachmentData {
 
     private static void attachEntity(AttachCapabilitiesEvent<Entity> event) {
         Entity owner = event.getObject();
-        attach(event, () -> owner.level().registryAccess(), () -> {});
+        AttachmentStorage attachments = attach(event, () -> owner.level().registryAccess(), () -> {});
+        if (owner instanceof PlayerAccess player) player.thaumaturge$setAttachments(attachments);
     }
 
     private static void attachLevel(AttachCapabilitiesEvent<Level> event) {
@@ -108,21 +115,17 @@ public final class AttachmentData {
         attach(event, () -> owner.getLevel().registryAccess(), () -> owner.setUnsaved(true));
     }
 
-    private static void attach(AttachCapabilitiesEvent<?> event, Supplier<RegistryAccess> registries, Runnable changed) {
-        var provider = new AttachmentCapabilityProvider(CAPABILITY,
-                new AttachmentStorage(registry(), registries, changed));
+    private static AttachmentStorage attach(
+            AttachCapabilitiesEvent<?> event, Supplier<RegistryAccess> registries, Runnable changed) {
+        var attachments = new AttachmentStorage(registry(), registries, changed);
+        var provider = new AttachmentCapabilityProvider(CAPABILITY, attachments);
         event.addCapability(CAP_ID, provider);
         event.addListener(provider::invalidate);
+        return attachments;
     }
 
     private static void clonePlayer(PlayerEvent.Clone event) {
-        var original = event.getOriginal();
-        original.reviveCaps();
-        try {
-            storage(original).copyPersistentTo(storage(event.getEntity()), event.isWasDeath());
-        } finally {
-            original.invalidateCaps();
-        }
+        storage(event.getOriginal()).copyPersistentTo(storage(event.getEntity()), event.isWasDeath());
     }
 
     private static void login(PlayerEvent.PlayerLoggedInEvent event) { syncSelf(event); }
@@ -159,4 +162,9 @@ public final class AttachmentData {
         }
     }
 
+    public interface PlayerAccess {
+        @Nullable AttachmentStorage thaumaturge$getAttachments();
+
+        void thaumaturge$setAttachments(AttachmentStorage storage);
+    }
 }
