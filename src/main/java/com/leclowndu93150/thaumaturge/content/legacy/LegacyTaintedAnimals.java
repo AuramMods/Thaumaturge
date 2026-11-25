@@ -8,7 +8,9 @@ import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +19,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import com.leclowndu93150.thaumaturge.event.tick.EntityTickEvent;
 
@@ -30,8 +34,21 @@ public final class LegacyTaintedAnimals {
             new Replacement("taint_chicken", TTEntities.LEGACY_TAINT_CHICKEN, () -> EntityType.CHICKEN, false),
             new Replacement("taint_sheep", TTEntities.LEGACY_TAINT_SHEEP, () -> EntityType.SHEEP, false),
             new Replacement("taint_villager", TTEntities.LEGACY_TAINT_VILLAGER, () -> EntityType.VILLAGER, false));
+    private static volatile Map<EntityType<?>, Replacement> byLegacyType;
 
     private LegacyTaintedAnimals() {}
+
+    @SubscribeEvent
+    public static void onServerStarted(ServerStartedEvent event) {
+        Map<EntityType<?>, Replacement> index = new IdentityHashMap<>();
+        for (Replacement replacement : REPLACEMENTS) index.putIfAbsent(replacement.legacy().get(), replacement);
+        byLegacyType = index;
+    }
+
+    @SubscribeEvent
+    public static void onServerStopped(ServerStoppedEvent event) {
+        byLegacyType = null;
+    }
 
     @SubscribeEvent
     public static void onEntityTick(EntityTickEvent.Pre event) {
@@ -39,14 +56,17 @@ public final class LegacyTaintedAnimals {
         if (!(entity instanceof Mob legacy) || !(entity.level() instanceof ServerLevel level) || legacy.isRemoved()) {
             return;
         }
+        Replacement replacement = replacementFor(legacy.getType());
+        if (replacement != null && replace(level, legacy, replacement)) event.setCanceled(true);
+    }
+
+    private static Replacement replacementFor(EntityType<?> type) {
+        var index = byLegacyType;
+        if (index != null) return index.get(type);
         for (Replacement replacement : REPLACEMENTS) {
-            if (legacy.getType() == replacement.legacy().get()) {
-                if (replace(level, legacy, replacement)) {
-                    event.setCanceled(true);
-                }
-                return;
-            }
+            if (type == replacement.legacy().get()) return replacement;
         }
+        return null;
     }
 
     private static boolean replace(ServerLevel level, Mob legacy, Replacement mapping) {
