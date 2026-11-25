@@ -15,8 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Pseudo
 @Mixin(targets = "art.arcane.auram.vapor.client.VaporAmbient", remap = false)
 abstract class AuramVaporMixin {
-    private static final String SAMPLE = "sample(Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/core/BlockPos;";
-    private static final String SOURCES = ")Lart/arcane/auram/vapor/client/VaporAmbient$Sources;";
+    // Regex selectors preserve the descriptor when Mixin enables permissive matching in development.
+    private static final String SAMPLE = "name=/^sample$/ desc=/^\\(Lnet\\/minecraft\\/client\\/multiplayer\\/ClientLevel;"
+            + "Lnet\\/minecraft\\/core\\/BlockPos;";
+    private static final String ORIGIN = "Lart\\/arcane\\/auram\\/field\\/VoxelGrid\\$Position;";
+    private static final String SOURCES = "\\)Lart\\/arcane\\/auram\\/vapor\\/client\\/VaporAmbient\\$Sources;$/";
 
     @Inject(method = SAMPLE + SOURCES, at = @At("RETURN"), cancellable = true, require = 0)
     private static void thaumaturge$addLegacyVapor(
@@ -24,8 +27,7 @@ abstract class AuramVaporMixin {
         thaumaturge$addVapor(level, camera, null, callback);
     }
 
-    @Inject(method = SAMPLE + "Lart/arcane/auram/field/VoxelGrid$Position;" + SOURCES,
-            at = @At("RETURN"), cancellable = true, require = 0)
+    @Inject(method = SAMPLE + ORIGIN + SOURCES, at = @At("RETURN"), cancellable = true, require = 0)
     private static void thaumaturge$addWindowedVapor(
             ClientLevel level, BlockPos camera, @Coerce Object origin, CallbackInfoReturnable<Object> callback) {
         thaumaturge$addVapor(level, camera, origin, callback);
