@@ -8,9 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
-/** Adapter for the sparse local sources and dynamic light volume in AuramCore 1.0.40. */
+/** Adapter for AuramCore's sparse Vapor sources and dynamic voxel lighting. */
 public final class AuramVoxelBridge {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final String FIELD_PACKAGE = "art.arcane.auram.field.VoxelGrid";
@@ -26,12 +27,14 @@ public final class AuramVoxelBridge {
         AuramVisualSources.discardExpired(level);
         if (AuramVisualSources.LIGHTS.isEmpty() || lightUnavailable) return;
         try {
-            var window = grid().window(origin);
+            Grid layout = grid();
+            var window = layout.window(origin, layout.lightSide());
             var lights = AuramVisualSources.LIGHTS.long2IntEntrySet().fastIterator();
             while (lights.hasNext()) {
                 var entry = lights.next();
                 int index = window.index(BlockPos.of(entry.getLongKey()));
-                if (index >= 0) colors.putIfAbsent(index, entry.getIntValue());
+                int light = entry.getIntValue();
+                if (index >= 0 && (light >>> 24) > (colors.get(index) >>> 24)) colors.put(index, light);
             }
         } catch (ReflectiveOperationException | RuntimeException failure) {
             lightUnavailable = true;
@@ -39,14 +42,15 @@ public final class AuramVoxelBridge {
         }
     }
 
-    public static Object addVapor(ClientLevel level, BlockPos camera, Object ambient) {
+    public static Object addVapor(ClientLevel level, BlockPos camera, @Nullable Object origin, Object ambient) {
         AuramVisualSources.discardExpired(level);
         var essentia = AuramVisualSources.LIGHTS;
         var rifts = AuramVisualSources.RIFTS;
         if (vaporUnavailable || (essentia.isEmpty() && rifts.isEmpty())) return ambient;
         try {
             var access = vapor();
-            var window = grid().around(camera);
+            Grid layout = grid();
+            var window = origin == null ? layout.around(camera) : layout.window(origin, layout.vaporSide());
             List<Object> additions = new ArrayList<>();
             var essentiaCells = essentia.keySet().iterator();
             while (essentiaCells.hasNext()) {
@@ -87,8 +91,15 @@ public final class AuramVoxelBridge {
         if (grid == null) {
             Class<?> type = Class.forName(FIELD_PACKAGE);
             Class<?> position = Class.forName(FIELD_PACKAGE + "$Position");
-            Object blocks = type.getField("BLOCKS").get(null);
-            grid = new Grid((int) type.getMethod("side").invoke(blocks),
+            Method side = type.getMethod("side");
+            int lightSide = (int) side.invoke(type.getField("BLOCKS").get(null));
+            int vaporSide = lightSide;
+            try {
+                vaporSide = (int) side.invoke(type.getField("VAPOR").get(null));
+            } catch (NoSuchFieldException legacy) {
+                // Older cores used the same grid size for light and Vapor.
+            }
+            grid = new Grid(lightSide, vaporSide,
                     type.getMethod("originAround", int.class, int.class, int.class),
                     position.getMethod("x"), position.getMethod("y"), position.getMethod("z"));
         }
@@ -122,13 +133,13 @@ public final class AuramVoxelBridge {
     private record Vapor(Constructor<?> position, Constructor<?> source, Constructor<?> ambient,
                          Method puffs, Method continuous) {}
 
-    private record Grid(int side, Method originAround, Method x, Method y, Method z) {
-        Window window(Object origin) throws ReflectiveOperationException {
+    private record Grid(int lightSide, int vaporSide, Method originAround, Method x, Method y, Method z) {
+        Window window(Object origin, int side) throws ReflectiveOperationException {
             return new Window((int) x.invoke(origin), (int) y.invoke(origin), (int) z.invoke(origin), side);
         }
 
         Window around(BlockPos camera) throws ReflectiveOperationException {
-            return window(originAround.invoke(null, camera.getX(), camera.getY(), camera.getZ()));
+            return window(originAround.invoke(null, camera.getX(), camera.getY(), camera.getZ()), vaporSide);
         }
     }
 

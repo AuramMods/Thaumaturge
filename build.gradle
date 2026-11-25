@@ -428,6 +428,7 @@ sourceSets {
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/multiplayer/ClientLevelEntityTickMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/multiplayer/ClientPacketListenerEffectMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/particle/ItemPickupParticleMixin.java'
+        java.include 'com/leclowndu93150/thaumaturge/mixin/client/particle/ParticleEngineAccessor.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/particle/ParticleEngineMixin.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/renderer/RenderStateShardAccessor.java'
         java.include 'com/leclowndu93150/thaumaturge/mixin/client/renderer/entity/LivingEntityRenderScaleMixin.java'

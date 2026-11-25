@@ -5,7 +5,6 @@ import com.leclowndu93150.thaumaturge.client.effect.geometry.TubeMesh;
 import com.leclowndu93150.thaumaturge.client.effect.instance.EssentiaStreamInstance;
 import com.leclowndu93150.thaumaturge.client.effect.instance.StreamInstance;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.EssentiaStreamRenderType;
-import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.effect.StreamPathfinder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -126,11 +125,12 @@ public final class EssentiaStreamManager extends AbstractFXManager<EssentiaStrea
 
     @Override
     public void renderAll(PoseStack poseStack, Camera camera, float partialTick) {
+        render(poseStack, camera, partialTick, Minecraft.getInstance().renderBuffers().bufferSource());
+    }
+
+    void render(PoseStack poseStack, Camera camera, float partialTick, MultiBufferSource.BufferSource bufferSource) {
         if (ACTIVE.isEmpty()) return;
-        MultiBufferSource.BufferSource bufferSource =
-                Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer consumer =
-                IrisCompat.entityEffectBuffers(bufferSource).getBuffer(EssentiaStreamRenderType.RENDER_TYPE);
+        VertexConsumer consumer = bufferSource.getBuffer(EssentiaStreamRenderType.RENDER_TYPE);
         double cx = camera.getPosition().x;
         double cy = camera.getPosition().y;
         double cz = camera.getPosition().z;
@@ -151,6 +151,10 @@ public final class EssentiaStreamManager extends AbstractFXManager<EssentiaStrea
             poseStack.popPose();
         }
         bufferSource.endBatch();
+    }
+
+    public void collectVisualSources(ClientLevel level) {
+        for (EssentiaStreamInstance instance : ACTIVE.values()) instance.collectVisualSource(level);
     }
 
     @Override

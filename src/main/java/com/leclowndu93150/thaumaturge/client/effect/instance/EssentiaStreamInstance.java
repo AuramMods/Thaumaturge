@@ -118,9 +118,6 @@ public final class EssentiaStreamInstance extends StreamInstance {
 
     @Override
     protected void afterStep(ClientLevel level) {
-        if (this.radiusBase > MIN_RADIUS && AuramVisualSources.available()) {
-            AuramVisualSources.essentia(level, position(), this.color, 1.0F);
-        }
         if (this.age % REROUTE_INTERVAL == 0) {
             reroute(level);
         }
@@ -141,6 +138,10 @@ public final class EssentiaStreamInstance extends StreamInstance {
                     this.colorB,
                     DROP_SCALE);
         }
+    }
+
+    public void collectVisualSource(ClientLevel level) {
+        if (this.radiusBase > MIN_RADIUS) AuramVisualSources.essentia(level, position(), this.color, 1.0F);
     }
 
     private void reroute(ClientLevel level) {

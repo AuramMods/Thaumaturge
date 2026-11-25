@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.effect;
 
+import com.leclowndu93150.thaumaturge.client.particle.BubbleParticle;
 import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.particle.BlockRunesParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.BubbleParticleOptions;
@@ -24,6 +25,8 @@ public final class ClientEffects {
     private ClientEffects() {}
 
     public static void essentiaDrop(Level level, double x, double y, double z, float r, float g, float b, float alpha) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level != level) return;
         RandomSource rand = level.getRandom();
         BubbleParticleOptions options = new BubbleParticleOptions(
                 ARGB32.colorFromFloat(1.0F, r, g, b),
@@ -32,7 +35,9 @@ public final class ClientEffects {
                 20 + rand.nextInt(10),
                 0.01F,
                 false);
-        spawn(options, x, y, z, rand.nextGaussian() * 0.005, rand.nextGaussian() * 0.005, rand.nextGaussian() * 0.005);
+        Vec3 at = ClientSpaces.renderPosition(mc.level, new Vec3(x, y, z));
+        mc.particleEngine.add(BubbleParticle.flowingEssentia(mc.level, at,
+                rand.nextGaussian() * 0.005, rand.nextGaussian() * 0.005, rand.nextGaussian() * 0.005, options));
     }
 
     public static void smokeSpiral(

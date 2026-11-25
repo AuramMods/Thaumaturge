@@ -1,23 +1,25 @@
 package com.leclowndu93150.thaumaturge.client.particle;
 
+import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
 import com.leclowndu93150.thaumaturge.compat.auram.AuramVisualSources;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.particle.EssentiaDropParticleOptions;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
-import com.leclowndu93150.thaumaturge.compat.Colors.ARGB32;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
-public final class EssentiaDropParticle extends TTQuadParticle {
-    private final ParticleSheet sheet;
+public final class EssentiaDropParticle extends TTQuadParticle implements EssentiaParticles.Source {
     private final int color;
     private final float baseAlpha;
     private final float baseScale;
+    private volatile EssentiaParticles.Sample lightSample;
 
     private EssentiaDropParticle(
-            ClientLevel level, double x, double y, double z, EssentiaDropParticleOptions data, ParticleSheet sheet) {
+            ClientLevel level, double x, double y, double z, EssentiaDropParticleOptions data) {
         super(
                 level,
                 x,
@@ -26,7 +28,6 @@ public final class EssentiaDropParticle extends TTQuadParticle {
                 level.getRandom().nextGaussian() * 0.005,
                 level.getRandom().nextGaussian() * 0.005,
                 level.getRandom().nextGaussian() * 0.005);
-        this.sheet = sheet;
         this.color = data.color();
         this.rCol = ARGB32.red(data.color()) / 255.0F;
         this.gCol = ARGB32.green(data.color()) / 255.0F;
@@ -39,6 +40,7 @@ public final class EssentiaDropParticle extends TTQuadParticle {
         this.gravity = 0.01F;
         this.hasPhysics = true;
         this.friction = 0.98F;
+        updateLightSample();
     }
 
     @Override
@@ -58,14 +60,33 @@ public final class EssentiaDropParticle extends TTQuadParticle {
         float fade = 1.0F - (float) this.age / this.lifetime;
         this.alpha = this.baseAlpha * fade;
         this.quadSize = this.baseScale * (0.5F + fade * 0.5F);
+        updateLightSample();
+    }
+
+    private void updateLightSample() {
         if (AuramVisualSources.available()) {
-            AuramVisualSources.essentia(this.level, new Vec3(this.x, this.y, this.z), this.color, this.alpha);
+            this.lightSample = new EssentiaParticles.Sample(new Vec3(this.x, this.y, this.z), this.color, this.alpha);
         }
     }
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TTParticleLayers.translucent(this.sheet);
+        return EssentiaParticles.DROP_LAYER;
+    }
+
+    @Override
+    public void render(VertexConsumer buffer, Camera camera, float partialTick) {
+        if (!IrisCompat.shadersActive()) super.render(buffer, camera, partialTick);
+    }
+
+    @Override
+    public void renderEssentia(VertexConsumer buffer, Camera camera, float partialTick) {
+        super.render(buffer, camera, partialTick);
+    }
+
+    @Override
+    public EssentiaParticles.Sample lightSample() {
+        return this.lightSample;
     }
 
     @Override
@@ -89,8 +110,6 @@ public final class EssentiaDropParticle extends TTQuadParticle {
     }
 
     public static final class Provider implements ParticleProvider<EssentiaDropParticleOptions> {
-        private static final ParticleSheet SHEET = TTParticleSheets.sheet("essentia_drop");
-
         @Override
         public Particle createParticle(
                 EssentiaDropParticleOptions options,
@@ -101,8 +120,7 @@ public final class EssentiaDropParticle extends TTQuadParticle {
                 double xAux,
                 double yAux,
                 double zAux) {
-            RandomSource random = level.getRandom();
-            return new EssentiaDropParticle(level, x, y, z, options, SHEET);
+            return new EssentiaDropParticle(level, x, y, z, options);
         }
     }
 }

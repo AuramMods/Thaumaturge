@@ -90,6 +90,7 @@
     "client.multiplayer.ClientLevelEntityTickMixin",
     "client.multiplayer.ClientPacketListenerEffectMixin",
     "client.particle.ItemPickupParticleMixin",
+    "client.particle.ParticleEngineAccessor",
     "client.particle.ParticleEngineMixin",
     "client.renderer.RenderStateShardAccessor",
     "client.renderer.entity.LivingEntityRenderScaleMixin",

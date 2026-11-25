@@ -27,16 +27,16 @@ public final class AuramVisualSources {
         return AVAILABLE;
     }
 
+    public static void beginEssentiaTick(Level level) {
+        useWorld(level);
+        LIGHTS.clear();
+        essentiaTick = level.getGameTime();
+    }
+
     public static void essentia(Level level, Vec3 point, int rgb, float opacity) {
         if (!AVAILABLE || opacity <= 0.0F) return;
-        BlockPos pos = BlockPos.containing(point);
-        if (!open(level, pos)) return;
-        useWorld(level);
-        long now = level.getGameTime();
-        if (essentiaTick != now) {
-            LIGHTS.clear();
-            essentiaTick = now;
-        }
+        BlockPos pos = closestOpenCell(level, point);
+        if (pos == null) return;
         long key = pos.asLong();
         int intensity = Math.max(1, Math.round(Math.min(1.0F, opacity) * ESSENTIA_LIGHT));
         int previous = LIGHTS.get(key);
@@ -81,6 +81,22 @@ public final class AuramVisualSources {
 
     public static void clear(Level level) {
         if (level == world) useWorld(null);
+    }
+
+    static @Nullable BlockPos closestOpenCell(Level level, Vec3 point) {
+        BlockPos containing = BlockPos.containing(point);
+        if (open(level, containing)) return containing;
+
+        BlockPos closest = null;
+        double closestDistance = Double.POSITIVE_INFINITY;
+        for (BlockPos candidate : BlockPos.betweenClosed(containing.offset(-1, -1, -1), containing.offset(1, 1, 1))) {
+            double distance = candidate.distToCenterSqr(point);
+            if (distance < closestDistance && open(level, candidate)) {
+                closest = candidate.immutable();
+                closestDistance = distance;
+            }
+        }
+        return closest;
     }
 
     private static boolean open(Level level, BlockPos pos) {
