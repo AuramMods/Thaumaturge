@@ -1,0 +1,22 @@
+{
+  "category": "thaumaturge:thaumic_energistics",
+  "name": "research.thaumaturge.ae2_arcane.title",
+  "parents": [
+    "thaumaturge:ae2_essentia",
+    "thaumaturge:base_auromancy"
+  ],
+  "column": 3,
+  "row": 0,
+  "icons": [
+    "thaumaturge:arcane_terminal"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.ae2_arcane.details",
+      "recipes": [
+        "thaumaturge:ae2/arcane_terminal",
+        "thaumaturge:ae2/arcane_charging_card"
+      ]
+    }
+  ]
+}

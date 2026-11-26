@@ -1,0 +1,36 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "thaumaturge:crucible",
+        "aspects": [
+          {
+            "amount": 4,
+            "aspect": "thaumaturge:vitreus"
+          },
+          {
+            "amount": 2,
+            "aspect": "thaumaturge:aqua"
+          }
+        ],
+        "catalyst": {
+          "item": "ae2:certus_quartz_crystal"
+        },
+        "research": {
+          "entry": "thaumaturge:ae2_quartz"
+        },
+        "result": {
+          "count": 2,
+          "id": "ae2:certus_quartz_crystal"
+        }
+      }
+    }
+  ]
+}

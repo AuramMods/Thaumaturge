@@ -1,0 +1,36 @@
+{
+  "category": "thaumaturge:thaumic_energistics",
+  "name": "research.thaumaturge.ae2_dense_storage.title",
+  "parents": [
+    "thaumaturge:ae2_essentia"
+  ],
+  "column": 0,
+  "row": -3,
+  "icons": [
+    "thaumaturge:essentia_cell_64k"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.ae2_dense_storage.study",
+      "obtain": [
+        {
+          "items": [
+            "ae2:cell_component_4k"
+          ],
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.ae2_dense_storage.details",
+      "recipes": [
+        "thaumaturge:ae2/essentia_component_4k",
+        "thaumaturge:ae2/essentia_cell_4k",
+        "thaumaturge:ae2/essentia_component_16k",
+        "thaumaturge:ae2/essentia_cell_16k",
+        "thaumaturge:ae2/essentia_component_64k",
+        "thaumaturge:ae2/essentia_cell_64k"
+      ]
+    }
+  ]
+}

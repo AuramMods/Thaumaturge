@@ -1,0 +1,23 @@
+{
+  "category": "thaumaturge:thaumic_energistics",
+  "name": "research.thaumaturge.ae2_golems.title",
+  "parents": [
+    "thaumaturge:ae2_wireless",
+    "thaumaturge:base_golemancy"
+  ],
+  "column": 6,
+  "row": 3,
+  "icons": [
+    "thaumaturge:wireless_golem_backpack"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.ae2_golems.details",
+      "recipes": [
+        "thaumaturge:ae2/wireless_golem_backpack",
+        "thaumaturge:ae2/seal_wireless_import",
+        "thaumaturge:ae2/seal_wireless_export"
+      ]
+    }
+  ]
+}

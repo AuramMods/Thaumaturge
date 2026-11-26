@@ -9,3 +9,4 @@ See ThaumaEnergistics-MIT.txt for its license.
 The Arcane Assembler and Knowledge Core textures are also from AE2-RV3.
 The Vis Relay Interface texture is also from AE2-RV3.
 The Wireless Golem Backpack textures are also from AE2-RV3.
+The Vibration Chamber, Gearbox base, Wrench Focus, and Thaumonomicon tab and background artwork are from AE2-RV3. The Thaumium Gearbox recolors the original Gearbox artwork.

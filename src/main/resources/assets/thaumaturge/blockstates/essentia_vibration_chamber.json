@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "burning=0": {
+      "model": "thaumaturge:block/essentia_vibration_chamber_off"
+    },
+    "burning=1": {
+      "model": "thaumaturge:block/essentia_vibration_chamber_ignis"
+    },
+    "burning=2": {
+      "model": "thaumaturge:block/essentia_vibration_chamber_potentia"
+    }
+  }
+}

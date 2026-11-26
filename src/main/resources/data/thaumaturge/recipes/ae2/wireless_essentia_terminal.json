@@ -9,8 +9,7 @@
         }
       ],
       "recipe": {
-        "type": "minecraft:crafting_shapeless",
-        "category": "misc",
+        "type": "thaumaturge:arcane_workbench_shapeless",
         "ingredients": [
           {
             "item": "ae2:wireless_terminal"
@@ -20,8 +19,18 @@
           }
         ],
         "result": {
-          "item": "thaumaturge:wireless_essentia_terminal"
-        }
+          "id": "thaumaturge:wireless_essentia_terminal",
+          "count": 1
+        },
+        "research": {
+          "entry": "thaumaturge:ae2_wireless"
+        },
+        "crystals": [
+          {
+            "aspect": "thaumaturge:aer"
+          }
+        ],
+        "vis": 15
       }
     }
   ]

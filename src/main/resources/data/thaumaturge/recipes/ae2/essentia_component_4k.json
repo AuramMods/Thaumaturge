@@ -9,8 +9,7 @@
         }
       ],
       "recipe": {
-        "type": "minecraft:crafting_shaped",
-        "category": "misc",
+        "type": "thaumaturge:arcane_workbench_shaped",
         "pattern": [
           "RCR",
           "CPC",
@@ -31,8 +30,14 @@
           }
         },
         "result": {
-          "item": "thaumaturge:essentia_component_4k"
-        }
+          "id": "thaumaturge:essentia_component_4k",
+          "count": 1
+        },
+        "research": {
+          "entry": "thaumaturge:ae2_dense_storage"
+        },
+        "crystals": [],
+        "vis": 15
       }
     }
   ]

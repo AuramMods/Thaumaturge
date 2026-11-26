@@ -1,0 +1,23 @@
+{
+  "category": "thaumaturge:thaumic_energistics",
+  "name": "research.thaumaturge.ae2_transport.title",
+  "parents": [
+    "thaumaturge:ae2_essentia"
+  ],
+  "column": -3,
+  "row": 0,
+  "icons": [
+    "thaumaturge:essentia_provider"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.ae2_transport.details",
+      "recipes": [
+        "thaumaturge:ae2/essentia_provider",
+        "thaumaturge:ae2/essentia_storage_monitor",
+        "thaumaturge:ae2/essentia_conversion_monitor",
+        "thaumaturge:ae2/essentia_level_emitter"
+      ]
+    }
+  ]
+}

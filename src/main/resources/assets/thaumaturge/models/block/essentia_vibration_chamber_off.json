@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "thaumaturge:block/ae2/vibration_off",
+    "side": "thaumaturge:block/ae2/vibration_input",
+    "top": "thaumaturge:block/ae2/vibration_input"
+  }
+}

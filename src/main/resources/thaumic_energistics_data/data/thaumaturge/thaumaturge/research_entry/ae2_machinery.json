@@ -1,0 +1,34 @@
+{
+  "category": "thaumaturge:thaumic_energistics",
+  "name": "research.thaumaturge.ae2_machinery.title",
+  "parents": [
+    "thaumaturge:ae2_transport",
+    "thaumaturge:essentia_smelter"
+  ],
+  "column": -3,
+  "row": 3,
+  "icons": [
+    "thaumaturge:essentia_vibration_chamber"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.ae2_machinery.study",
+      "obtain": [
+        {
+          "items": [
+            "ae2:vibration_chamber"
+          ],
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.ae2_machinery.details",
+      "recipes": [
+        "thaumaturge:ae2/essentia_vibration_chamber",
+        "thaumaturge:ae2/iron_gearbox",
+        "thaumaturge:ae2/thaumium_gearbox"
+      ]
+    }
+  ]
+}

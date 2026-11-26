@@ -44,6 +44,13 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.wireless_golem_backpack.linked", "Backpack paired with this ME access point.");
         add("item.thaumaturge.seal_wireless_import", "Control Seal: Wireless Import");
         add("item.thaumaturge.seal_wireless_export", "Control Seal: Wireless Export");
+        add("block.thaumaturge.essentia_vibration_chamber", "Essentia Vibration Chamber");
+        add("block.thaumaturge.iron_gearbox", "Iron Gearbox");
+        add("block.thaumaturge.thaumium_gearbox", "Thaumium Gearbox");
+        add("item.thaumaturge.focus_ae_wrench", "Focus: ME Wrench");
+        add("thaumaturge.pack.thaumic_energistics", "Thaumic Energistics Research");
+        add("research_category.thaumaturge.thaumic_energistics", "Thaumic Energistics");
+        thaumicResearch();
         add("gui.thaumaturge.arcane_terminal.cost", "%s vis");
         add("gui.thaumaturge.arcane_terminal.unpaid", "Requires %s vis and the recipe's crystals");
         add("gui.thaumaturge.arcane_terminal.locked", "Research required");
@@ -1841,6 +1848,41 @@ public final class TTEnglishProvider extends LanguageProvider {
 
     private void addon(String key, String name, String text) {
         partLang("addon", key, name, text);
+    }
+
+    private void thaumicResearch() {
+        thaumicEntry("essentia", "Essentia Storage",
+                "Study an ME Calculation Processor after researching essentia tubes.",
+                "Install an essentia cell in an ME Drive. Add an Essentia Terminal to search by aspect name and use jars or phials to move essentia into or out of storage. Partition cells in an ME Cell Workbench with an aspect crystal or filled vessel.");
+        thaumicEntry("dense_storage", "Dense Essentia Cells", "Study a 4k ME Storage Component.",
+                "Higher tiers hold more essentia per aspect. They use the same ME Drive and Cell Workbench as the 1k cell.");
+        thaumicEntry("transport", "Essentia Transport", null,
+                "ME Import, Export, and Storage Buses work with essentia tubes and jars. Set a bus filter with a crystal or a filled vessel. An ME Essentia Provider supplies a tube when the tube draws a matching aspect. Monitors show a selected aspect, conversion monitors exchange it, and level emitters report it as redstone.");
+        thaumicEntry("infusion", "ME Infusion", null,
+                "Place a powered Infusion Provider where the matrix can draw from a warded jar. The matrix selects the essentia and drains it from ME storage while the ritual runs.");
+        thaumicEntry("arcane", "Arcane Crafting Terminal", null,
+                "Put a wand in the terminal and supply vis and aspect crystals. The terminal can source crystals from ME storage. An Arcane Charging Card lets the terminal draw ambient vis for a docked wand.");
+        thaumicEntry("automation", "Thaumic Patterns", "Study an ME Pattern Provider.",
+                "Use the arcane terminal to encode a knowledge pattern with a blank ME pattern. Put the pattern in a provider next to the Arcane Assembler and supply a charged wand. The pattern uses its author's research while the author is in the same dimension. For distillation, place the material in the first crafting slot and encode its guaranteed yield for an Advanced Alchemical Furnace.");
+        thaumicEntry("vis", "Vis P2P", null,
+                "Pair Vis P2P tunnels with an ME Memory Card. The input receives vis from a Thaumaturge relay. Put a Vis Relay Interface against each output to route primal vis into another relay network.");
+        thaumicEntry("wireless", "Wireless Thaumaturgy", "Study an ME Wireless Access Point.",
+                "Link a wireless terminal in the Wireless Access Point's menu and use it while in range of that powered network. Charge the handheld terminal separately from the wand used for crafting.");
+        thaumicEntry("golems", "Wireless Golem Backpack", null,
+                "Use the backpack on an ME Wireless Access Point to pair it before attaching it to your golem. A linked golem deposits gathered items into ME storage and works Wireless Import and Export seals. Filter with an item, filled fluid container, or an aspect crystal. The indicator changes as the golem moves in and out of range.");
+        thaumicEntry("machinery", "Essentia Power and Gearboxes", "Study an ME Vibration Chamber.",
+                "The Essentia Vibration Chamber turns Ignis or Potentia into ME power. Feed a port with tubes or an ME Export Bus. Use a bare hand, AE2 crank, or bare-handed Use seal on a gearbox. Iron alternates between adjacent machines that accept a crank. Thaumium turns each eligible machine.");
+        thaumicEntry("wrench", "Wrench Focus", null,
+                "Socket this focus in a wand. Right-click to rotate an ME machine, or sneak and right-click to dismantle a machine or cable part where you have permission. A successful use costs a small amount of Aer and Ignis vis.");
+        thaumicEntry("quartz", "Quartz Duplication", null,
+                "Use a crucible to grow a Certus Quartz Crystal from another with Vitreus and Aqua. Nether Quartz additionally needs Potentia. Use AE2's Cable Facade recipe with decorative Thaumaturge blocks to conceal ME cables.");
+    }
+
+    private void thaumicEntry(String name, String title, String study, String details) {
+        String key = "research.thaumaturge.ae2_" + name;
+        add(key + ".title", title);
+        if (study != null) add(key + ".study", study);
+        add(key + ".details", details);
     }
 
     private void addJade() {

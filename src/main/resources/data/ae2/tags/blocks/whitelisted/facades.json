@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "thaumaturge:amber_block",
+    "thaumaturge:amber_brick",
+    "thaumaturge:warded_glass",
+    "thaumaturge:obsidian_tile",
+    "thaumaturge:metal_thaumium",
+    "thaumaturge:tallow_block",
+    "thaumaturge:stone_arcane",
+    "thaumaturge:stone_arcane_brick",
+    "thaumaturge:stone_ancient",
+    "thaumaturge:stone_ancient_rock",
+    "thaumaturge:plank_greatwood",
+    "thaumaturge:plank_silverwood",
+    "thaumaturge:taint_crust",
+    "thaumaturge:flesh_block"
+  ]
+}

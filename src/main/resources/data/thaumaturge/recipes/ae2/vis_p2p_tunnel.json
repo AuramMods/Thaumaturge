@@ -9,8 +9,7 @@
         }
       ],
       "recipe": {
-        "type": "minecraft:crafting_shapeless",
-        "category": "misc",
+        "type": "thaumaturge:arcane_workbench_shapeless",
         "ingredients": [
           {
             "item": "ae2:me_p2p_tunnel"
@@ -20,8 +19,14 @@
           }
         ],
         "result": {
-          "item": "thaumaturge:vis_p2p_tunnel"
-        }
+          "id": "thaumaturge:vis_p2p_tunnel",
+          "count": 1
+        },
+        "research": {
+          "entry": "thaumaturge:ae2_vis"
+        },
+        "crystals": [],
+        "vis": 15
       }
     }
   ]

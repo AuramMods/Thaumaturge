@@ -9,8 +9,7 @@
         }
       ],
       "recipe": {
-        "type": "minecraft:crafting_shaped",
-        "category": "misc",
+        "type": "thaumaturge:arcane_workbench_shaped",
         "pattern": [
           "C",
           "H"
@@ -24,8 +23,14 @@
           }
         },
         "result": {
-          "item": "thaumaturge:essentia_cell_1k"
-        }
+          "id": "thaumaturge:essentia_cell_1k",
+          "count": 1
+        },
+        "research": {
+          "entry": "thaumaturge:ae2_essentia"
+        },
+        "crystals": [],
+        "vis": 10
       }
     }
   ]

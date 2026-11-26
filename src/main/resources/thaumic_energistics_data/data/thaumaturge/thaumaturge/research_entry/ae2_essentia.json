@@ -1,0 +1,35 @@
+{
+  "category": "thaumaturge:thaumic_energistics",
+  "name": "research.thaumaturge.ae2_essentia.title",
+  "parents": [
+    "thaumaturge:tubes",
+    "thaumaturge:base_artifice"
+  ],
+  "column": 0,
+  "row": 0,
+  "icons": [
+    "thaumaturge:essentia_terminal"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.ae2_essentia.study",
+      "obtain": [
+        {
+          "items": [
+            "ae2:calculation_processor"
+          ],
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.ae2_essentia.details",
+      "recipes": [
+        "thaumaturge:ae2/essentia_terminal",
+        "thaumaturge:ae2/essentia_cell_housing",
+        "thaumaturge:ae2/essentia_component_1k",
+        "thaumaturge:ae2/essentia_cell_1k"
+      ]
+    }
+  ]
+}

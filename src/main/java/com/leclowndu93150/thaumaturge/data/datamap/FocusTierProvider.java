@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.datamap;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.spell.FocusTier;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.concurrent.CompletableFuture;
@@ -7,6 +8,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 
 public final class FocusTierProvider extends DataMapProvider {
     private static final FocusTier LESSER = new FocusTier(20, 6, 0, 1);
@@ -23,6 +25,7 @@ public final class FocusTierProvider extends DataMapProvider {
         builder.add(TTItems.FOCUS_1, LESSER, false);
         builder.add(TTItems.FOCUS_2, ADVANCED, false);
         builder.add(TTItems.FOCUS_3, GREATER, false);
+        builder.add(TTIds.rl("focus_ae_wrench"), LESSER, false, new ModLoadedCondition(TTIds.AE2));
     }
 
     @Override

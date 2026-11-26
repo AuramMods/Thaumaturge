@@ -9,8 +9,7 @@
         }
       ],
       "recipe": {
-        "type": "minecraft:crafting_shapeless",
-        "category": "misc",
+        "type": "thaumaturge:arcane_workbench_shapeless",
         "ingredients": [
           {
             "item": "ae2:interface"
@@ -23,8 +22,18 @@
           }
         ],
         "result": {
-          "item": "thaumaturge:essentia_provider"
-        }
+          "id": "thaumaturge:essentia_provider",
+          "count": 1
+        },
+        "research": {
+          "entry": "thaumaturge:ae2_transport"
+        },
+        "crystals": [
+          {
+            "aspect": "thaumaturge:ordo"
+          }
+        ],
+        "vis": 10
       }
     }
   ]

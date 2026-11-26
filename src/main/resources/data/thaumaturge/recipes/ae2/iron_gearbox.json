@@ -1,0 +1,36 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "thaumaturge:arcane_workbench_shapeless",
+        "ingredients": [
+          {
+            "item": "ae2:crank"
+          },
+          {
+            "item": "minecraft:iron_block"
+          },
+          {
+            "item": "thaumaturge:mechanism_simple"
+          }
+        ],
+        "result": {
+          "id": "thaumaturge:iron_gearbox",
+          "count": 1
+        },
+        "research": {
+          "entry": "thaumaturge:ae2_machinery"
+        },
+        "crystals": [],
+        "vis": 15
+      }
+    }
+  ]
+}

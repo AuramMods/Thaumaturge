@@ -20,6 +20,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.SealFilterMode;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.compat.ae2.client.Ae2Client;
 import com.leclowndu93150.thaumaturge.content.golem.ItemSealPlacer;
+import com.leclowndu93150.thaumaturge.content.spell.item.FocusItem;
 import com.leclowndu93150.thaumaturge.registry.TTCreativeTabs;
 import java.util.List;
 import net.minecraft.core.registries.Registries;
@@ -114,6 +115,24 @@ public final class ThaumaturgeAe2 {
             "wireless_golem_backpack", () -> new WirelessBackpackItem(new Item.Properties()));
     public static final RegistryObject<ItemSealPlacer> WIRELESS_IMPORT_SEAL = exchangeSeal("wireless_import", false);
     public static final RegistryObject<ItemSealPlacer> WIRELESS_EXPORT_SEAL = exchangeSeal("wireless_export", true);
+    public static final RegistryObject<EssentiaVibrationChamber> ESSENTIA_VIBRATION_CHAMBER =
+            BLOCKS.register("essentia_vibration_chamber",
+                    () -> new EssentiaVibrationChamber(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
+    public static final RegistryObject<BlockEntityType<EssentiaVibrationChamber.ChamberEntity>>
+            ESSENTIA_VIBRATION_CHAMBER_ENTITY = BLOCK_ENTITIES.register("essentia_vibration_chamber",
+                    () -> BlockEntityType.Builder.of(EssentiaVibrationChamber.ChamberEntity::new,
+                            ESSENTIA_VIBRATION_CHAMBER.get()).build(null));
+    public static final RegistryObject<BlockItem> ESSENTIA_VIBRATION_CHAMBER_ITEM = blockItem(ESSENTIA_VIBRATION_CHAMBER);
+    public static final RegistryObject<CrankGearbox> IRON_GEARBOX = gearbox("iron_gearbox", false);
+    public static final RegistryObject<CrankGearbox> THAUMIUM_GEARBOX = gearbox("thaumium_gearbox", true);
+    public static final RegistryObject<BlockEntityType<CrankGearbox.GearboxEntity>> IRON_GEARBOX_ENTITY =
+            gearboxEntity(IRON_GEARBOX, false);
+    public static final RegistryObject<BlockEntityType<CrankGearbox.GearboxEntity>> THAUMIUM_GEARBOX_ENTITY =
+            gearboxEntity(THAUMIUM_GEARBOX, true);
+    public static final RegistryObject<BlockItem> IRON_GEARBOX_ITEM = blockItem(IRON_GEARBOX);
+    public static final RegistryObject<BlockItem> THAUMIUM_GEARBOX_ITEM = blockItem(THAUMIUM_GEARBOX);
+    public static final RegistryObject<FocusItem> WRENCH_FOCUS =
+            ITEMS.register("focus_ae_wrench", () -> new FocusItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<PartItem<EssentiaMonitorPart>> ESSENTIA_STORAGE_MONITOR =
             monitor("essentia_storage_monitor", false);
     public static final RegistryObject<PartItem<EssentiaMonitorPart>> ESSENTIA_CONVERSION_MONITOR =
@@ -137,6 +156,7 @@ public final class ThaumaturgeAe2 {
         bus.addListener(ThaumaturgeAe2::registerKeyType);
         bus.addListener(ThaumaturgeAe2::setup);
         bus.addListener(ThaumaturgeAe2::addCreativeItems);
+        bus.addListener(ThaumicResearchPack::register);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Ae2Client.register(bus));
     }
 
@@ -178,6 +198,10 @@ public final class ThaumaturgeAe2 {
             event.accept(WIRELESS_GOLEM_BACKPACK);
             event.accept(WIRELESS_IMPORT_SEAL);
             event.accept(WIRELESS_EXPORT_SEAL);
+            event.accept(ESSENTIA_VIBRATION_CHAMBER_ITEM);
+            event.accept(IRON_GEARBOX_ITEM);
+            event.accept(THAUMIUM_GEARBOX_ITEM);
+            event.accept(WRENCH_FOCUS);
             COMPONENTS.forEach(event::accept);
             CELLS.forEach(event::accept);
         }
@@ -200,6 +224,16 @@ public final class ThaumaturgeAe2 {
 
     private static RegistryObject<BlockItem> blockItem(RegistryObject<? extends Block> block) {
         return ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties()));
+    }
+
+    private static RegistryObject<CrankGearbox> gearbox(String id, boolean thaumium) {
+        return BLOCKS.register(id, () -> new CrankGearbox(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK), thaumium));
+    }
+
+    private static RegistryObject<BlockEntityType<CrankGearbox.GearboxEntity>> gearboxEntity(
+            RegistryObject<CrankGearbox> block, boolean thaumium) {
+        return BLOCK_ENTITIES.register(block.getId().getPath(), () -> BlockEntityType.Builder
+                .of((pos, state) -> new CrankGearbox.GearboxEntity(pos, state, thaumium), block.get()).build(null));
     }
 
     private static RegistryObject<PartItem<EssentiaMonitorPart>> monitor(String name, boolean conversion) {

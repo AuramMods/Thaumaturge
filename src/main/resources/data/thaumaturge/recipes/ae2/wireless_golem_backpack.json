@@ -9,8 +9,7 @@
         }
       ],
       "recipe": {
-        "type": "minecraft:crafting_shapeless",
-        "category": "misc",
+        "type": "thaumaturge:arcane_workbench_shapeless",
         "ingredients": [
           {
             "item": "ae2:wireless_receiver"
@@ -23,8 +22,18 @@
           }
         ],
         "result": {
-          "item": "thaumaturge:wireless_golem_backpack"
-        }
+          "id": "thaumaturge:wireless_golem_backpack",
+          "count": 1
+        },
+        "research": {
+          "entry": "thaumaturge:ae2_golems"
+        },
+        "crystals": [
+          {
+            "aspect": "thaumaturge:ordo"
+          }
+        ],
+        "vis": 20
       }
     }
   ]

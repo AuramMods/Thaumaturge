@@ -9,8 +9,7 @@
         }
       ],
       "recipe": {
-        "type": "minecraft:crafting_shapeless",
-        "category": "misc",
+        "type": "thaumaturge:arcane_workbench_shapeless",
         "ingredients": [
           {
             "item": "thaumaturge:vis_relay"
@@ -23,8 +22,18 @@
           }
         ],
         "result": {
-          "item": "thaumaturge:vis_relay_interface"
-        }
+          "id": "thaumaturge:vis_relay_interface",
+          "count": 1
+        },
+        "research": {
+          "entry": "thaumaturge:ae2_vis"
+        },
+        "crystals": [
+          {
+            "aspect": "thaumaturge:aer"
+          }
+        ],
+        "vis": 15
       }
     }
   ]

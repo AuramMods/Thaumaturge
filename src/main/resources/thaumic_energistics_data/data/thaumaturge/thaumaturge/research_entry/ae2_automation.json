@@ -1,0 +1,31 @@
+{
+  "category": "thaumaturge:thaumic_energistics",
+  "name": "research.thaumaturge.ae2_automation.title",
+  "parents": [
+    "thaumaturge:ae2_arcane"
+  ],
+  "column": 6,
+  "row": 0,
+  "icons": [
+    "thaumaturge:arcane_assembler"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.ae2_automation.study",
+      "obtain": [
+        {
+          "items": [
+            "ae2:pattern_provider"
+          ],
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.ae2_automation.details",
+      "recipes": [
+        "thaumaturge:ae2/arcane_assembler"
+      ]
+    }
+  ]
+}
