@@ -25,6 +25,7 @@ import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.api.wands.WandAccess;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.client.ThaumaturgeClient;
+import com.leclowndu93150.thaumaturge.compat.ae2.ThaumaturgeAe2;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
 import com.leclowndu93150.thaumaturge.compat.dynamictrees.DynamicTreesClimate;
 import com.leclowndu93150.thaumaturge.compat.sable.SableLevelSpaces;
@@ -157,6 +158,7 @@ public final class Thaumaturge {
 
         LabyrinthHelper.bind(new LabyrinthBindings());
         if (ModList.get().isLoaded(TTIds.CURIOS)) ThaumaturgeCuriosCompat.init(modBus);
+        if (ModList.get().isLoaded(TTIds.AE2)) ThaumaturgeAe2.register(modBus);
         if (ModList.get().isLoaded(TTIds.DYNAMIC_TREES)) DynamicTreesClimate.register(modBus);
         if (ModList.get().isLoaded(TTIds.SABLE)) LevelSpaces.install(new SableLevelSpaces());
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ThaumaturgeClient::register);

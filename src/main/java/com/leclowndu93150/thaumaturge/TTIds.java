@@ -14,6 +14,7 @@ public final class TTIds {
     public static final ResourceLocation LABYRINTH_SCALING = rl("labyrinth_scaling");
     public static final String MODID = "thaumaturge";
     public static final String CURIOS = "curios";
+    public static final String AE2 = "ae2";
     public static final String DISTANT_HORIZONS = "distanthorizons";
     public static final String FTB_LIBRARY = "ftblibrary";
     public static final String JADE = "jade";

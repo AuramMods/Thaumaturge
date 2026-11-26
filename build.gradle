@@ -571,6 +571,7 @@ repositories {
     maven { url = 'https://maven.theillusivec4.top/'; content { includeGroup 'top.theillusivec4.curios' } }
     maven { url = 'https://maven.ftb.dev/releases'; content { includeGroup 'dev.ftb.mods' } }
     maven { url = 'https://api.modrinth.com/maven'; content { includeGroup 'maven.modrinth' } }
+    maven { url = 'https://modmaven.dev/'; content { includeGroup 'appeng' } }
 }
 
 dependencies {
@@ -584,6 +585,7 @@ dependencies {
     compileOnly fg.deobf("maven.modrinth:distanthorizons:${distant_horizons_version}")
     compileOnly fg.deobf("maven.modrinth:vdjF5PL5:${dynamic_trees_version}")
     compileOnly fg.deobf("maven.modrinth:oculus:${oculus_version}")
+    compileOnly fg.deobf("appeng:appliedenergistics2-forge:${ae2_version}")
     // The universal JAR already includes ZenCode. ForgeGradle also resolves the
     // original coordinate, so use an artifact-only declaration for both paths.
     compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${minecraft_version}:${crafttweaker_version}@jar")
@@ -634,6 +636,10 @@ dependencies {
         runtimeOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${minecraft_version}:${crafttweaker_version}@jar")
         runtimeOnly fg.deobf("net.darkhax.gamestages:GameStages-Forge-${minecraft_version}:${gamestages_version}@jar")
         runtimeOnly fg.deobf("net.darkhax.bookshelf:Bookshelf-Forge-${minecraft_version}:20.2.15@jar")
+    }
+    if (providers.gradleProperty('portAe2').isPresent()) {
+        runtimeOnly fg.deobf("appeng:appliedenergistics2-forge:${ae2_version}")
+        runtimeOnly fg.deobf("maven.modrinth:guideme:9YGnKYDF")
     }
 }
 

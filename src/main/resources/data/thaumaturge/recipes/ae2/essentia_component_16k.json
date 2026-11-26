@@ -1,0 +1,39 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "pattern": [
+          "RCR",
+          "CPC",
+          "RGR"
+        ],
+        "key": {
+          "R": {
+            "item": "minecraft:redstone"
+          },
+          "C": {
+            "item": "thaumaturge:essentia_component_4k"
+          },
+          "P": {
+            "item": "ae2:calculation_processor"
+          },
+          "G": {
+            "item": "ae2:quartz_glass"
+          }
+        },
+        "result": {
+          "item": "thaumaturge:essentia_component_16k"
+        }
+      }
+    }
+  ]
+}

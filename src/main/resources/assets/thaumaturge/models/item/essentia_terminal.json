@@ -1,0 +1,9 @@
+{
+  "parent": "ae2:item/display_base",
+  "textures": {
+    "front": "ae2:part/terminal",
+    "front_bright": "thaumaturge:part/essentia_terminal/bright",
+    "front_medium": "thaumaturge:part/essentia_terminal/medium",
+    "front_dark": "thaumaturge:part/essentia_terminal/dark"
+  }
+}

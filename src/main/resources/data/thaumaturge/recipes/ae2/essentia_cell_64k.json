@@ -1,0 +1,32 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "pattern": [
+          "C",
+          "H"
+        ],
+        "key": {
+          "C": {
+            "item": "thaumaturge:essentia_component_64k"
+          },
+          "H": {
+            "item": "thaumaturge:essentia_cell_housing"
+          }
+        },
+        "result": {
+          "item": "thaumaturge:essentia_cell_64k"
+        }
+      }
+    }
+  ]
+}

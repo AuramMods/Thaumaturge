@@ -23,6 +23,14 @@ public final class TTEnglishProvider extends LanguageProvider {
 
         addJade();
         add("jade.thaumaturge.essentia.combined", "Essentia: %s %s/%s");
+        add("gui.thaumaturge.essentia", "Essentia");
+        add("item.thaumaturge.essentia_terminal", "ME Essentia Terminal");
+        add("item.thaumaturge.essentia_cell_housing", "Essentia Cell Housing");
+        add("item.thaumaturge.essentia_cell_creative", "Creative ME Essentia Storage Cell");
+        for (String tier : new String[]{"1k", "4k", "16k", "64k"}) {
+            add("item.thaumaturge.essentia_cell_" + tier, tier + " ME Essentia Storage Cell");
+            add("item.thaumaturge.essentia_component_" + tier, tier + " Essentia Storage Component");
+        }
 
         aspect("aer", "Aer", "Air", "air");
         aspect("terra", "Terra", "Earth", "earth");

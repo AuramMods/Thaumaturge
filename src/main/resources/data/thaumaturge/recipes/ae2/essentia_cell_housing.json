@@ -1,0 +1,39 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "pattern": [
+          "GJG",
+          "R R",
+          "III"
+        ],
+        "key": {
+          "G": {
+            "item": "ae2:quartz_glass"
+          },
+          "J": {
+            "item": "thaumaturge:jar_normal"
+          },
+          "R": {
+            "item": "minecraft:redstone"
+          },
+          "I": {
+            "item": "minecraft:iron_ingot"
+          }
+        },
+        "result": {
+          "item": "thaumaturge:essentia_cell_housing"
+        }
+      }
+    }
+  ]
+}
