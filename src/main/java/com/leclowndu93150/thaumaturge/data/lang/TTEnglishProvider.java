@@ -22,6 +22,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("attribute.name.player.mining_efficiency", "Mining Efficiency");
 
         addJade();
+        addProTips();
         add("jade.thaumaturge.essentia.combined", "Essentia: %s %s/%s");
         add("gui.thaumaturge.essentia", "Essentia");
         add("item.thaumaturge.essentia_terminal", "ME Essentia Terminal");
@@ -1848,6 +1849,82 @@ public final class TTEnglishProvider extends LanguageProvider {
 
     private void addon(String key, String name, String text) {
         partLang("addon", key, name, text);
+    }
+
+    private void addProTips() {
+        add("tip.thaumaturge.title", "Thaumaturge Pro Tip");
+        add("tip.thaumaturge.first_thaumonomicon",
+                "Use Salis Mundus on a bookshelf to make a Thaumonomicon. The book will tell you what to study next.");
+        add("tip.thaumaturge.first_workbench", "Use Salis Mundus on a crafting table to make an Arcane Workbench.");
+        add("tip.thaumaturge.scan_containers",
+                "Sneak and use a Thaumometer on a chest to scan the items inside. Borrowing the chest is unnecessary.");
+        add("tip.thaumaturge.look_for_scans",
+                "Look through a Thaumometer for things you haven't scanned yet. Familiar blocks can still teach you new aspects.");
+        add("tip.thaumaturge.charged_wand",
+                "Keep a charged wand in the Arcane Workbench's wand slot to cover some of its primal crystal costs.");
+        add("tip.thaumaturge.tap_a_node",
+                "Hold use on an aura node with a wand to draw primal vis. Compound aspects stay in the node.");
+        add("tip.thaumaturge.focus_pouch",
+                "Carry a Focus Pouch. When you swap foci, your wand checks it before the rest of your inventory.");
+        add("tip.thaumaturge.prepare_crucible",
+                "Set the Crucible over a heat source and wait for the water to boil before adding ingredients.");
+        add("tip.thaumaturge.catalyst_last",
+                "In a Crucible recipe, add the items that supply essentia first. Add the catalyst once the pot has the right aspects.");
+        add("tip.thaumaturge.finish_the_batch",
+                "Plan a second Crucible recipe around the leftover aspects. Dumping them into the aura makes flux.");
+        add("tip.thaumaturge.fill_from_alembic",
+                "Use an empty Warded Jar on an alembic to collect its essentia directly.");
+        add("tip.thaumaturge.phial_labels",
+                "Craft a Jar Label with a filled phial to assign its aspect. You get the phial back.");
+        add("tip.thaumaturge.label_empty_jar",
+                "Put an assigned Jar Label on an empty jar to reserve it for that aspect before hooking up the tubes.");
+        add("tip.thaumaturge.jar_top_connection",
+                "Essentia tubes connect to the top of a Warded Jar. Leave room above the shelf for fittings.");
+        add("tip.thaumaturge.jar_label_removal",
+                "Sneak-use the label face with an empty hand to peel it off. Sneak-use another face and you'll empty the jar.");
+        add("tip.thaumaturge.read_suction",
+                "Use an Essentia Resonator on a tube to see what it's pulling. Check suction before taking the plumbing apart.");
+        add("tip.thaumaturge.tube_direction",
+                "Essentia moves toward stronger suction. A labelled jar can pull its own aspect past an unlabelled jar.");
+        add("tip.thaumaturge.jar_lid_brace",
+                "Fit a Brass Lid Brace to a jar you want to reserve for tubes. The brace comes off when you pick up the jar.");
+        add("tip.thaumaturge.infusion_layout",
+                "Give each side pedestal a partner opposite the central pedestal. Symmetry keeps an infusion more stable.");
+        add("tip.thaumaturge.infusion_stabilizers",
+                "Put matching candles or skulls opposite each other around an Infusion Altar to improve stability.");
+        add("tip.thaumaturge.infusion_ingredients",
+                "Put the item you're upgrading on the central pedestal. Use the side pedestals for the other ingredients.");
+        add("tip.thaumaturge.infusion_payment",
+                "Stock every required aspect before starting an infusion. Pausing for a missing jar gives instability time to build.");
+        add("tip.thaumaturge.check_aura",
+                "Check the Thaumometer's flux bar before running another alchemy batch. Flux can slow the local aura's recovery.");
+        add("tip.thaumaturge.flux_scrubber",
+                "Use a Flux Scrubber for physical flux. A Flux Condenser is the machine that removes flux from the aura.");
+        add("tip.thaumaturge.golem_follow",
+                "After Golem Mastery, use the Golemancer's Bell to toggle following. A following golem ignores its seals.");
+        add("tip.thaumaturge.golem_delivery",
+                "With Golem Logistics, sneak-use the Golemancer's Bell on an inventory to request a delivery to that face.");
+        add("tip.thaumaturge.arcane_bore_pickaxe",
+                "An Arcane Bore needs a pickaxe and a redstone signal. The pickaxe's enchantments apply to its mining.");
+        add("tip.thaumaturge.me_essentia_cells",
+                "Fit an ME Essentia Storage Cell in your drive, then use an Essentia Terminal and a single jar or phial to withdraw.");
+        add("tip.thaumaturge.me_infusion",
+                "A powered ME Infusion Provider lets the matrix draw from ME storage. Put it within reach of the altar.");
+        add("tip.thaumaturge.me_wireless_link",
+                "Link wireless thaumic terminals in the ME Wireless Access Point's menu. Charge the terminal before you leave.");
+        add("tip.thaumaturge.me_distillation",
+                "Encode distillation patterns for the Advanced Alchemical Furnace. Its yield is known before you start the job.");
+        add("tip.thaumaturge.me_assembler_wand",
+                "Dock a charged wand in your ME Arcane Assembler. Knowledge patterns use their online author's research.");
+        add("tip.thaumaturge.kitchen_cauldron", "Keep a separate cauldron for soup. This rule was added after lunch.");
+        add("tip.thaumaturge.golem_supervisor",
+                "Give a golem a fez and call it management. It will continue to do the work.");
+        add("tip.thaumaturge.dummy_shutoff",
+                "Put a spare valve by the door and label it MAIN SHUTOFF. See which guest reaches for it first.");
+        add("tip.thaumaturge.replication", "The first rift was an accident. The second was independent replication.");
+        add("tip.thaumaturge.pedestal_floor",
+                "A pedestal can be empty for ceremonial reasons. Check the floor before deciding this is one of them.");
+        add("tip.thaumaturge.peer_review", "If the voices start grading your work, assume the review is anonymous.");
     }
 
     private void thaumicResearch() {

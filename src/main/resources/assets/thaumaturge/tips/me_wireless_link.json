@@ -1,0 +1,18 @@
+{
+  "title": {
+    "translate": "tip.thaumaturge.title",
+    "color": "light_purple",
+    "bold": true
+  },
+  "tip": {
+    "translate": "tip.thaumaturge.me_wireless_link"
+  },
+  "bookshelf:load_conditions": [
+    {
+      "type": "bookshelf:mod_loaded",
+      "mods": [
+        "ae2"
+      ]
+    }
+  ]
+}

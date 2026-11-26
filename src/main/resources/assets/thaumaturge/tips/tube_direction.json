@@ -1,0 +1,10 @@
+{
+  "title": {
+    "translate": "tip.thaumaturge.title",
+    "color": "light_purple",
+    "bold": true
+  },
+  "tip": {
+    "translate": "tip.thaumaturge.tube_direction"
+  }
+}
