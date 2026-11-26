@@ -9,6 +9,7 @@ import appeng.items.contents.CellConfig;
 import appeng.items.parts.PartItem;
 import appeng.items.storage.BasicStorageCell;
 import appeng.items.storage.CreativeCellItem;
+import appeng.parts.automation.StorageLevelEmitterPart;
 import appeng.util.ConfigInventory;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.compat.ae2.client.Ae2Client;
@@ -16,8 +17,13 @@ import com.leclowndu93150.thaumaturge.registry.TTCreativeTabs;
 import java.util.List;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -32,6 +38,9 @@ public final class ThaumaturgeAe2 {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TTIds.MODID);
     private static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(ForgeRegistries.MENU_TYPES, TTIds.MODID);
+    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, TTIds.MODID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
+            DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, TTIds.MODID);
 
     public static final List<RegistryObject<Item>> COMPONENTS = List.of(
             component("1k"), component("4k"), component("16k"), component("64k"));
@@ -52,10 +61,29 @@ public final class ThaumaturgeAe2 {
     public static final RegistryObject<MenuType<EssentiaTerminalMenu>> ESSENTIA_TERMINAL_MENU =
             MENUS.register("essentia_terminal", () -> Ae2Menus.create(ITerminalHost.class,
                     EssentiaTerminalMenu::new, host -> host.getMainMenuIcon().getHoverName()));
+    public static final RegistryObject<EssentiaProviderBlock> INFUSION_PROVIDER =
+            BLOCKS.register("infusion_provider", () -> new EssentiaProviderBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK), true));
+    public static final RegistryObject<EssentiaProviderBlock> ESSENTIA_PROVIDER =
+            BLOCKS.register("essentia_provider", () -> new EssentiaProviderBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK), false));
+    public static final RegistryObject<BlockEntityType<EssentiaProviderBlockEntity>> INFUSION_PROVIDER_ENTITY =
+            providerEntity(INFUSION_PROVIDER, true);
+    public static final RegistryObject<BlockEntityType<EssentiaProviderBlockEntity>> ESSENTIA_PROVIDER_ENTITY =
+            providerEntity(ESSENTIA_PROVIDER, false);
+    public static final RegistryObject<BlockItem> INFUSION_PROVIDER_ITEM = blockItem(INFUSION_PROVIDER);
+    public static final RegistryObject<BlockItem> ESSENTIA_PROVIDER_ITEM = blockItem(ESSENTIA_PROVIDER);
+    public static final RegistryObject<PartItem<EssentiaMonitorPart>> ESSENTIA_STORAGE_MONITOR =
+            monitor("essentia_storage_monitor", false);
+    public static final RegistryObject<PartItem<EssentiaMonitorPart>> ESSENTIA_CONVERSION_MONITOR =
+            monitor("essentia_conversion_monitor", true);
+    public static final RegistryObject<PartItem<StorageLevelEmitterPart>> ESSENTIA_LEVEL_EMITTER =
+            ITEMS.register("essentia_level_emitter", () -> new PartItem<>(new Item.Properties(),
+                    StorageLevelEmitterPart.class, StorageLevelEmitterPart::new));
 
     private ThaumaturgeAe2() {}
 
     public static void register(IEventBus bus) {
+        BLOCKS.register(bus);
+        BLOCK_ENTITIES.register(bus);
         ITEMS.register(bus);
         MENUS.register(bus);
         PartModels.registerModels(EssentiaTerminalPart.models());
@@ -75,8 +103,9 @@ public final class ThaumaturgeAe2 {
     private static void setup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             var type = EssentiaKeyType.INSTANCE;
-            ContainerItemStrategy.register(type, EssentiaKey.class, new EssentiaVessels());
+            ContainerItemStrategy.register(type, EssentiaKey.class, EssentiaVessels.INSTANCE);
             GenericSlotCapacities.register(type, 64L);
+            EssentiaBusAccess.register();
         });
     }
 
@@ -84,6 +113,11 @@ public final class ThaumaturgeAe2 {
         if (event.getTabKey().location().equals(TTCreativeTabs.THAUMATURGE.getId())) {
             event.accept(ESSENTIA_TERMINAL);
             event.accept(CELL_HOUSING);
+            event.accept(INFUSION_PROVIDER_ITEM);
+            event.accept(ESSENTIA_PROVIDER_ITEM);
+            event.accept(ESSENTIA_STORAGE_MONITOR);
+            event.accept(ESSENTIA_CONVERSION_MONITOR);
+            event.accept(ESSENTIA_LEVEL_EMITTER);
             COMPONENTS.forEach(event::accept);
             CELLS.forEach(event::accept);
         }
@@ -97,5 +131,21 @@ public final class ThaumaturgeAe2 {
         return ITEMS.register("essentia_cell_" + tier, () -> new BasicStorageCell(
                 new Item.Properties().stacksTo(1), COMPONENTS.get(component).get(), CELL_HOUSING.get(),
                 idleDrain, kilobytes, kilobytes * 8, 63, EssentiaKeyType.INSTANCE));
+    }
+
+    private static RegistryObject<BlockItem> blockItem(RegistryObject<? extends Block> block) {
+        return ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties()));
+    }
+
+    private static RegistryObject<PartItem<EssentiaMonitorPart>> monitor(String name, boolean conversion) {
+        return ITEMS.register(name, () -> new PartItem<>(new Item.Properties(),
+                EssentiaMonitorPart.class, item -> new EssentiaMonitorPart(item, conversion)));
+    }
+
+    private static RegistryObject<BlockEntityType<EssentiaProviderBlockEntity>> providerEntity(
+            RegistryObject<EssentiaProviderBlock> block, boolean infusion) {
+        return BLOCK_ENTITIES.register(block.getId().getPath(), () ->
+                BlockEntityType.Builder.of((pos, state) -> new EssentiaProviderBlockEntity(pos, state, infusion),
+                        block.get()).build(null));
     }
 }

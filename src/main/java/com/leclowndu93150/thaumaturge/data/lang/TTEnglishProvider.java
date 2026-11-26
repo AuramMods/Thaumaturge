@@ -27,6 +27,11 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.essentia_terminal", "ME Essentia Terminal");
         add("item.thaumaturge.essentia_cell_housing", "Essentia Cell Housing");
         add("item.thaumaturge.essentia_cell_creative", "Creative ME Essentia Storage Cell");
+        add("block.thaumaturge.essentia_provider", "ME Essentia Provider");
+        add("block.thaumaturge.infusion_provider", "ME Infusion Provider");
+        add("item.thaumaturge.essentia_storage_monitor", "ME Essentia Storage Monitor");
+        add("item.thaumaturge.essentia_conversion_monitor", "ME Essentia Conversion Monitor");
+        add("item.thaumaturge.essentia_level_emitter", "ME Essentia Level Emitter");
         for (String tier : new String[]{"1k", "4k", "16k", "64k"}) {
             add("item.thaumaturge.essentia_cell_" + tier, tier + " ME Essentia Storage Cell");
             add("item.thaumaturge.essentia_component_" + tier, tier + " Essentia Storage Component");

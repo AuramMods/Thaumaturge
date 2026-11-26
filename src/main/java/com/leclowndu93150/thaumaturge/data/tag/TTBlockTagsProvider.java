@@ -34,6 +34,9 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                 .add(TTBlocks.ELDRITCH_STONE_INERT.get())
                 .add(TTBlocks.STAIRS_ELDRITCH.get());
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                .addOptional(TTIds.rl("essentia_provider"))
+                .addOptional(TTIds.rl("infusion_provider"));
+        tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(TTBlocks.WALL_ARCANE_STONE.get())
                 .add(TTBlocks.WALL_ARCANE_BRICK.get())
                 .add(TTBlocks.STONE_ARCANE_PILLAR.get())
@@ -482,7 +485,11 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                 .add(TTBlocks.PILLAR_ELDRITCH.get())
                 .add(TTBlocks.RECHARGE_PEDESTAL.get());
 
-        tag(BlockTags.NEEDS_STONE_TOOL).add(TTBlocks.ORE_AMBER.get()).add(TTBlocks.DEEPSLATE_ORE_AMBER.get());
+        tag(BlockTags.NEEDS_STONE_TOOL)
+                .add(TTBlocks.ORE_AMBER.get())
+                .add(TTBlocks.DEEPSLATE_ORE_AMBER.get())
+                .addOptional(TTIds.rl("essentia_provider"))
+                .addOptional(TTIds.rl("infusion_provider"));
 
         tag(BlockTags.NEEDS_IRON_TOOL).add(TTBlocks.ORE_CINNABAR.get()).add(TTBlocks.DEEPSLATE_ORE_CINNABAR.get());
 

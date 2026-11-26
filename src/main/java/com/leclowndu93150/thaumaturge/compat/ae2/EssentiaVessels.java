@@ -14,6 +14,10 @@ import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 final class EssentiaVessels implements ContainerItemStrategy<EssentiaKey, EssentiaVessels.Slot> {
+    static final EssentiaVessels INSTANCE = new EssentiaVessels();
+
+    private EssentiaVessels() {}
+
     record Slot(Player player, Supplier<ItemStack> get, Consumer<ItemStack> set) {}
 
     @Override

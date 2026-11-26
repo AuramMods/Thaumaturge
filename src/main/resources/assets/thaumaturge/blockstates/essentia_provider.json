@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "thaumaturge:block/essentia_provider"
+    }
+  }
+}

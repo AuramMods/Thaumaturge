@@ -1,0 +1,31 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "thaumaturge:essentia_provider"
+          },
+          {
+            "item": "thaumaturge:ingot_thaumium"
+          },
+          {
+            "item": "ae2:engineering_processor"
+          }
+        ],
+        "result": {
+          "item": "thaumaturge:infusion_provider"
+        }
+      }
+    }
+  ]
+}

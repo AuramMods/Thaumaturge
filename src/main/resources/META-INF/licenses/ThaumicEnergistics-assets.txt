@@ -1,3 +1,5 @@
-Thaumic Energistics cell, component, and terminal textures
+Thaumic Energistics cell, component, terminal, and provider textures
 https://github.com/Nividica/ThaumicEnergistics/tree/142468577d6f0a1fa0509e1d9f99b6b816d1d6f1
 The original project credits CyanideX for textures. See ThaumicEnergistics-MIT.txt.
+The Essentia Provider texture is from the AE2-RV3 branch at f7a5d31f60f3b351bf76c35e6aa7a676dcc2b0fc.
+See ThaumicEnergistics-RV3-MIT.txt for the license for that branch.

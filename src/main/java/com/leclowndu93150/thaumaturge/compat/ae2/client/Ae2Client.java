@@ -24,7 +24,9 @@ public final class Ae2Client {
     }
 
     private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        event.register(new StaticItemColor(AEColor.TRANSPARENT), ThaumaturgeAe2.ESSENTIA_TERMINAL.get());
+        event.register(new StaticItemColor(AEColor.TRANSPARENT), ThaumaturgeAe2.ESSENTIA_TERMINAL.get(),
+                ThaumaturgeAe2.ESSENTIA_STORAGE_MONITOR.get(), ThaumaturgeAe2.ESSENTIA_CONVERSION_MONITOR.get(),
+                ThaumaturgeAe2.ESSENTIA_LEVEL_EMITTER.get());
     }
 
     private static void setup(FMLClientSetupEvent event) {

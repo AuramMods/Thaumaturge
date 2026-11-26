@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -14,8 +15,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import org.jspecify.annotations.Nullable;
 
 /** ME storage identity for an aspect, independent of world and datapack lifetimes. */
@@ -89,6 +92,13 @@ public final class EssentiaKey extends AEKey {
             drops.add(result.resultingStack());
             amount -= result.amountMoved();
         }
+    }
+
+    void dropAt(ServerLevel level, BlockPos pos, long amount) {
+        if (amount <= 0) return;
+        var drops = new ArrayList<ItemStack>();
+        addDrops(amount, drops, level, pos);
+        drops.forEach(stack -> Block.popResource(level, pos, stack));
     }
 
     @Override
