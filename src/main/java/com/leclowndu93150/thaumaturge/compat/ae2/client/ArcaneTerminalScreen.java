@@ -16,6 +16,14 @@ final class ArcaneTerminalScreen extends MEStorageScreen<ArcaneTerminalMenu> {
         clear.setHalfSize(true);
         clear.setDisableBackground(true);
         widgets.add("clearToPlayerInv", clear);
+        var knowledge = new ActionButton(ActionItems.ENCODE, button -> menu.encode(false));
+        knowledge.setHalfSize(true);
+        knowledge.setMessage(Component.translatable("gui.thaumaturge.arcane_terminal.encode_knowledge"));
+        widgets.add("encodeKnowledge", knowledge);
+        var distillation = new ActionButton(ActionItems.CYCLE_PROCESSING_OUTPUT, button -> menu.encode(true));
+        distillation.setHalfSize(true);
+        distillation.setMessage(Component.translatable("gui.thaumaturge.arcane_terminal.encode_distillation"));
+        widgets.add("encodeDistillation", distillation);
     }
 
     @Override

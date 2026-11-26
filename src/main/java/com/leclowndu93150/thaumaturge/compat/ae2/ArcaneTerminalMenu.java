@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.compat.ae2;
 
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNode;
+import appeng.core.definitions.AEItems;
 import appeng.helpers.IMenuCraftingPacket;
 import appeng.helpers.InventoryAction;
 import appeng.menu.SlotSemantics;
@@ -37,6 +38,8 @@ import net.minecraftforge.event.ForgeEventFactory;
 public final class ArcaneTerminalMenu extends MEStorageMenu implements IMenuCraftingPacket {
     private static final int GRID_SIZE = InventoryArcaneWorkbench.CRAFTING_SLOTS;
     private static final String CLEAR_GRID = "clearArcaneGrid";
+    private static final String ENCODE_KNOWLEDGE = "encodeKnowledge";
+    private static final String ENCODE_DISTILLATION = "encodeDistillation";
 
     public static final SlotSemantic CRYSTALS = SlotSemantics.register("THAUMATURGE_CRYSTALS", false);
     public static final SlotSemantic WAND = SlotSemantics.register("THAUMATURGE_WAND", false);
@@ -88,6 +91,8 @@ public final class ArcaneTerminalMenu extends MEStorageMenu implements IMenuCraf
             addSlot(new AppEngSlot(terminal.getUpgrades(), 0), SlotSemantics.UPGRADE);
         }
         registerClientAction(CLEAR_GRID, this::clearGrid);
+        registerClientAction(ENCODE_KNOWLEDGE, () -> encode(false));
+        registerClientAction(ENCODE_DISTILLATION, () -> encode(true));
     }
 
     @Override
@@ -139,6 +144,38 @@ public final class ArcaneTerminalMenu extends MEStorageMenu implements IMenuCraf
             }
             refresh();
         }
+    }
+
+    public void encode(boolean distillation) {
+        if (isClientSide()) {
+            sendClientAction(distillation ? ENCODE_DISTILLATION : ENCODE_KNOWLEDGE);
+            return;
+        }
+        if (!(getPlayer() instanceof ServerPlayer player) || !canInteractWithGrid()) return;
+        ItemStack[] slots = new ItemStack[GRID_SIZE];
+        for (int slot = 0; slot < slots.length; slot++) slots[slot] = grid.getStackInSlot(slot);
+        var inputs = List.of(slots);
+        ItemStack blank = player.getInventory().items.stream()
+                .filter(stack -> stack.is(AEItems.BLANK_PATTERN.asItem())).findFirst().orElse(ItemStack.EMPTY);
+        if (blank.isEmpty()) {
+            player.displayClientMessage(Component.translatable("gui.thaumaturge.arcane_terminal.blank_pattern"), true);
+            return;
+        }
+        ItemStack output;
+        if (distillation) {
+            var occupied = inputs.stream().filter(stack -> !stack.isEmpty()).toList();
+            output = occupied.size() == 1 ? ThaumicPatterns.distillation(occupied.get(0)) : ItemStack.EMPTY;
+        } else {
+            var job = new ArcaneTerminalCrafting(terminal, player, storage, powerSource, getActionSource());
+            output = ThaumicPatterns.knowledge(player, inputs, job.inspect());
+        }
+        if (output.isEmpty()) {
+            player.displayClientMessage(Component.translatable("gui.thaumaturge.arcane_terminal.no_pattern"), true);
+            return;
+        }
+        blank.shrink(1);
+        player.getInventory().placeItemBackInInventory(output);
+        player.getInventory().setChanged();
     }
 
     private void refresh() {

@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.compat.ae2;
 
-import appeng.api.features.IPlayerRegistry;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,7 +33,7 @@ final class EssentiaProviderBlock extends Block implements EntityBlock {
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (placer instanceof ServerPlayer player && level.getBlockEntity(pos) instanceof EssentiaProviderBlockEntity be) {
-            be.setOwner(IPlayerRegistry.getPlayerId(player));
+            be.setOwner(player);
         }
     }
 }

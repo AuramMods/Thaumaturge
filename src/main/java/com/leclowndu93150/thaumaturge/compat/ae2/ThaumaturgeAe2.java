@@ -69,6 +69,9 @@ public final class ThaumaturgeAe2 {
                     ArcaneTerminalPart.class, ArcaneTerminalPart::new));
     public static final RegistryObject<Item> ARCANE_CHARGING_CARD =
             ITEMS.register("arcane_charging_card", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<PartItem<VisP2PTunnelPart>> VIS_P2P_TUNNEL =
+            ITEMS.register("vis_p2p_tunnel", () -> new PartItem<>(new Item.Properties(),
+                    VisP2PTunnelPart.class, VisP2PTunnelPart::new));
     public static final RegistryObject<WirelessThaumicTerminalItem> WIRELESS_ARCANE_TERMINAL =
             ITEMS.register("wireless_arcane_terminal", () -> new WirelessThaumicTerminalItem(new Item.Properties(), true));
     public static final RegistryObject<WirelessThaumicTerminalItem> WIRELESS_ESSENTIA_TERMINAL =
@@ -86,6 +89,22 @@ public final class ThaumaturgeAe2 {
             providerEntity(ESSENTIA_PROVIDER, false);
     public static final RegistryObject<BlockItem> INFUSION_PROVIDER_ITEM = blockItem(INFUSION_PROVIDER);
     public static final RegistryObject<BlockItem> ESSENTIA_PROVIDER_ITEM = blockItem(ESSENTIA_PROVIDER);
+    public static final RegistryObject<ArcaneAssemblerBlock> ARCANE_ASSEMBLER =
+            BLOCKS.register("arcane_assembler",
+                    () -> new ArcaneAssemblerBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
+    public static final RegistryObject<BlockEntityType<ArcaneAssemblerBlockEntity>> ARCANE_ASSEMBLER_ENTITY =
+            BLOCK_ENTITIES.register("arcane_assembler", () -> BlockEntityType.Builder
+                    .of(ArcaneAssemblerBlockEntity::new, ARCANE_ASSEMBLER.get()).build(null));
+    public static final RegistryObject<BlockItem> ARCANE_ASSEMBLER_ITEM = blockItem(ARCANE_ASSEMBLER);
+    public static final RegistryObject<KnowledgePatternItem> KNOWLEDGE_PATTERN = ITEMS.register("knowledge_pattern",
+            () -> new KnowledgePatternItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<VisRelayInterfaceBlock> VIS_RELAY_INTERFACE =
+            BLOCKS.register("vis_relay_interface",
+                    () -> new VisRelayInterfaceBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
+    public static final RegistryObject<BlockEntityType<VisRelayInterfaceBlock.InterfaceEntity>> VIS_RELAY_INTERFACE_ENTITY =
+            BLOCK_ENTITIES.register("vis_relay_interface", () -> BlockEntityType.Builder
+                    .of(VisRelayInterfaceBlock.InterfaceEntity::new, VIS_RELAY_INTERFACE.get()).build(null));
+    public static final RegistryObject<BlockItem> VIS_RELAY_INTERFACE_ITEM = blockItem(VIS_RELAY_INTERFACE);
     public static final RegistryObject<PartItem<EssentiaMonitorPart>> ESSENTIA_STORAGE_MONITOR =
             monitor("essentia_storage_monitor", false);
     public static final RegistryObject<PartItem<EssentiaMonitorPart>> ESSENTIA_CONVERSION_MONITOR =
@@ -103,6 +122,7 @@ public final class ThaumaturgeAe2 {
         MENUS.register(bus);
         PartModels.registerModels(EssentiaTerminalPart.models());
         PartModels.registerModels(ArcaneTerminalPart.models());
+        PartModels.registerModels(VisP2PTunnelPart.MODEL);
         bus.addListener(ThaumaturgeAe2::registerKeyType);
         bus.addListener(ThaumaturgeAe2::setup);
         bus.addListener(ThaumaturgeAe2::addCreativeItems);
@@ -141,6 +161,9 @@ public final class ThaumaturgeAe2 {
             event.accept(ESSENTIA_STORAGE_MONITOR);
             event.accept(ESSENTIA_CONVERSION_MONITOR);
             event.accept(ESSENTIA_LEVEL_EMITTER);
+            event.accept(ARCANE_ASSEMBLER_ITEM);
+            event.accept(VIS_P2P_TUNNEL);
+            event.accept(VIS_RELAY_INTERFACE_ITEM);
             COMPONENTS.forEach(event::accept);
             CELLS.forEach(event::accept);
         }

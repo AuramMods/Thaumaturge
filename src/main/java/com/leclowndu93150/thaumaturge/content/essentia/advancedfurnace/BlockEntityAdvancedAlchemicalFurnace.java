@@ -40,6 +40,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.IItemHandler;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEntity implements OwnedProcessing {
@@ -112,6 +114,45 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
 
     public BlockEntityAdvancedAlchemicalFurnace(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), pos, state);
+        var hatch = new IItemHandler() {
+            @Override
+            public int getSlots() {
+                return 1;
+            }
+
+            @Override
+            public ItemStack getStackInSlot(int slot) {
+                return slot == 0 ? input.copy() : ItemStack.EMPTY;
+            }
+
+            @Override
+            public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+                if (slot != 0 || !canReceiveInput(stack)) return stack;
+                if (simulate) {
+                    var output = distillationOutput(stack);
+                    if (output.isEmpty() || !stageAllows((ServerLevel) level, stack, output)) return stack;
+                } else if (!insertInput(stack)) {
+                    return stack;
+                }
+                return stack.copyWithCount(stack.getCount() - 1);
+            }
+
+            @Override
+            public ItemStack extractItem(int slot, int amount, boolean simulate) {
+                return ItemStack.EMPTY;
+            }
+
+            @Override
+            public int getSlotLimit(int slot) {
+                return slot == 0 ? 1 : 0;
+            }
+
+            @Override
+            public boolean isItemValid(int slot, ItemStack stack) {
+                return slot == 0 && !distillationOutput(stack).isEmpty();
+            }
+        };
+        exposeCapability(ForgeCapabilities.ITEM_HANDLER, side -> side != Direction.DOWN ? hatch : null);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             nozzles[direction.get2DDataValue()] = new AdvancedFurnaceNozzle(this, direction);
         }
@@ -291,12 +332,18 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends RegistryBlockEnt
         return points > 0 && points <= MAX_ESSENTIA && points * HEAT_PER_ASPECT <= MAX_POWER;
     }
 
+    /** Deterministic output from one item in the advanced furnace. */
+    public static AspectList distillationOutput(ItemStack input) {
+        AspectList content = DistillationRules.contents(DistillationRules.ADVANCED, input);
+        return fitsFurnace(content.totalAmount()) ? content : AspectList.EMPTY;
+    }
+
     public boolean insertInput(ItemStack stack) {
         if (!(level instanceof ServerLevel server) || !canReceiveInput(stack)) {
             return false;
         }
-        AspectList content = DistillationRules.contents(DistillationRules.ADVANCED, stack);
-        if (!fitsFurnace(content.totalAmount()) || !stageAllows(server, stack, content)) {
+        AspectList content = distillationOutput(stack);
+        if (content.isEmpty() || !stageAllows(server, stack, content)) {
             return false;
         }
         input = stack.copyWithCount(1);

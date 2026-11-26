@@ -36,9 +36,17 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.wireless_arcane_terminal", "Wireless Arcane Crafting Terminal");
         add("item.thaumaturge.wireless_essentia_terminal", "Wireless Essentia Terminal");
         add("item.thaumaturge.arcane_charging_card", "Arcane Charging Card");
+        add("block.thaumaturge.arcane_assembler", "ME Arcane Assembler");
+        add("block.thaumaturge.vis_relay_interface", "ME Vis Relay Interface");
+        add("item.thaumaturge.vis_p2p_tunnel", "Vis P2P Tunnel");
+        add("item.thaumaturge.knowledge_pattern", "Arcane Knowledge Pattern");
         add("gui.thaumaturge.arcane_terminal.cost", "%s vis");
         add("gui.thaumaturge.arcane_terminal.unpaid", "Requires %s vis and the recipe's crystals");
         add("gui.thaumaturge.arcane_terminal.locked", "Research required");
+        add("gui.thaumaturge.arcane_terminal.encode_knowledge", "Encode arcane knowledge pattern");
+        add("gui.thaumaturge.arcane_terminal.encode_distillation", "Encode advanced furnace distillation pattern");
+        add("gui.thaumaturge.arcane_terminal.blank_pattern", "A blank ME pattern is required.");
+        add("gui.thaumaturge.arcane_terminal.no_pattern", "The grid does not contain ingredients for this pattern.");
         for (String tier : new String[]{"1k", "4k", "16k", "64k"}) {
             add("item.thaumaturge.essentia_cell_" + tier, tier + " ME Essentia Storage Cell");
             add("item.thaumaturge.essentia_component_" + tier, tier + " Essentia Storage Component");

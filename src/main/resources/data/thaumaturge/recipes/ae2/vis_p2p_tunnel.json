@@ -1,0 +1,28 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "ae2:me_p2p_tunnel"
+          },
+          {
+            "item": "thaumaturge:vis_relay"
+          }
+        ],
+        "result": {
+          "item": "thaumaturge:vis_p2p_tunnel"
+        }
+      }
+    }
+  ]
+}

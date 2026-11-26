@@ -87,6 +87,14 @@
     "clearToPlayerInv": {
       "left": 102,
       "bottom": 155
+    },
+    "encodeKnowledge": {
+      "left": 94,
+      "bottom": 137
+    },
+    "encodeDistillation": {
+      "left": 94,
+      "bottom": 123
     }
   }
 }

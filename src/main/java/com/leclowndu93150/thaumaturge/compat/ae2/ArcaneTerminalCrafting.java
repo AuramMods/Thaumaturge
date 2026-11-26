@@ -78,6 +78,10 @@ final class ArcaneTerminalCrafting {
         return ArcaneCraftingTransaction.preview(host.context(player), player, input);
     }
 
+    ArcaneCraftingTransaction.Inspection inspect() {
+        return ArcaneCraftingTransaction.inspect(host.context(player), player, input);
+    }
+
     ArcaneCraftingTransaction.Result craft(TransactionContext transaction) {
         return ArcaneCraftingTransaction.craft(host.context(player), player, input, this::consume, transaction);
     }

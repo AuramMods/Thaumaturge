@@ -1,0 +1,31 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "thaumaturge:vis_relay"
+          },
+          {
+            "item": "ae2:interface"
+          },
+          {
+            "item": "thaumaturge:essentia_component_1k"
+          }
+        ],
+        "result": {
+          "item": "thaumaturge:vis_relay_interface"
+        }
+      }
+    }
+  ]
+}
