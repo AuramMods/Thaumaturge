@@ -40,6 +40,10 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.vis_relay_interface", "ME Vis Relay Interface");
         add("item.thaumaturge.vis_p2p_tunnel", "Vis P2P Tunnel");
         add("item.thaumaturge.knowledge_pattern", "Arcane Knowledge Pattern");
+        add("item.thaumaturge.wireless_golem_backpack", "Wireless Golem Backpack");
+        add("item.thaumaturge.wireless_golem_backpack.linked", "Backpack paired with this ME access point.");
+        add("item.thaumaturge.seal_wireless_import", "Control Seal: Wireless Import");
+        add("item.thaumaturge.seal_wireless_export", "Control Seal: Wireless Export");
         add("gui.thaumaturge.arcane_terminal.cost", "%s vis");
         add("gui.thaumaturge.arcane_terminal.unpaid", "Requires %s vis and the recipe's crystals");
         add("gui.thaumaturge.arcane_terminal.locked", "Research required");

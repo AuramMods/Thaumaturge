@@ -1,0 +1,31 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "thaumaturge:seal_fill"
+          },
+          {
+            "item": "ae2:export_bus"
+          },
+          {
+            "item": "thaumaturge:essentia_component_1k"
+          }
+        ],
+        "result": {
+          "item": "thaumaturge:seal_wireless_export"
+        }
+      }
+    }
+  ]
+}

@@ -21,6 +21,7 @@ public final class Ae2Client {
     public static void register(IEventBus bus) {
         bus.addListener(Ae2Client::setup);
         bus.addListener(Ae2Client::registerItemColors);
+        bus.addListener(WirelessBackpackRenderer::register);
     }
 
     private static void registerItemColors(RegisterColorHandlersEvent.Item event) {

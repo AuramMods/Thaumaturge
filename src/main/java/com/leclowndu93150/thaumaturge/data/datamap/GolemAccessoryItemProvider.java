@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.datamap;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessory;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryItem;
 import com.leclowndu93150.thaumaturge.registry.TTGolemAccessories;
@@ -10,6 +11,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import com.leclowndu93150.thaumaturge.datamap.DataMapProvider;
 import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 
 public final class GolemAccessoryItemProvider extends DataMapProvider {
     public GolemAccessoryItemProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
@@ -24,6 +26,8 @@ public final class GolemAccessoryItemProvider extends DataMapProvider {
         add(builder, TTItems.GOLEM_GLASSES, TTGolemAccessories.GLASSES);
         add(builder, TTItems.GOLEM_BOWTIE, TTGolemAccessories.BOWTIE);
         add(builder, TTItems.GOLEM_VISOR, TTGolemAccessories.VISOR);
+        var backpack = TTIds.rl("wireless_golem_backpack");
+        builder.add(backpack, new GolemAccessoryItem(backpack), false, new ModLoadedCondition(TTIds.AE2));
     }
 
     @Override

@@ -8,3 +8,4 @@ Wireless terminal textures are from Velron-Devs/Thauma-Energistics at 99a5bef.
 See ThaumaEnergistics-MIT.txt for its license.
 The Arcane Assembler and Knowledge Core textures are also from AE2-RV3.
 The Vis Relay Interface texture is also from AE2-RV3.
+The Wireless Golem Backpack textures are also from AE2-RV3.

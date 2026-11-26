@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals.behavior;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemDispatch;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealBehavior;
@@ -8,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealArea;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.api.items.StackFilter;
+import com.leclowndu93150.thaumaturge.compat.ae2.GolemWirelessBackpack;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandoff;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.List;
@@ -16,6 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fml.ModList;
 import org.jspecify.annotations.Nullable;
 
 public final class CollectBehavior implements ISealBehavior {
@@ -65,6 +68,8 @@ public final class CollectBehavior implements ISealBehavior {
     public boolean completeTask(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
         ItemEntity item = claimedItem(task);
         if (item != null && !item.getItem().isEmpty() && wanted(seal, item.getItem())) {
+            int stored = gatherWirelessly(seal, golem, item.getItem(), false);
+            if (stored > 0) item.getItem().shrink(stored);
             ItemStack leftover = golem.hands().hold(item.getItem());
             if (leftover.isEmpty()) {
                 item.discard();
@@ -101,6 +106,13 @@ public final class CollectBehavior implements ISealBehavior {
             task.end();
             return false;
         }
-        return golem.hands().canTake(item.getItem(), true);
+        return golem.hands().canTake(item.getItem(), true)
+                || gatherWirelessly(seal, golem, item.getItem(), true) > 0;
+    }
+
+    private static int gatherWirelessly(ISealEntity seal, IGolemAPI golem, ItemStack stack, boolean simulate) {
+        var mods = ModList.get();
+        return mods != null && mods.isLoaded(TTIds.AE2)
+                ? GolemWirelessBackpack.gather(golem, seal.owner(), stack, simulate) : 0;
     }
 }

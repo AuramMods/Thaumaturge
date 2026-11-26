@@ -15,7 +15,11 @@ import appeng.items.tools.powered.WirelessTerminalItem;
 import appeng.parts.automation.StorageLevelEmitterPart;
 import appeng.util.ConfigInventory;
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessories;
+import com.leclowndu93150.thaumaturge.api.golems.seals.SealFilterMode;
+import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.compat.ae2.client.Ae2Client;
+import com.leclowndu93150.thaumaturge.content.golem.ItemSealPlacer;
 import com.leclowndu93150.thaumaturge.registry.TTCreativeTabs;
 import java.util.List;
 import net.minecraft.core.registries.Registries;
@@ -44,6 +48,7 @@ public final class ThaumaturgeAe2 {
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, TTIds.MODID);
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, TTIds.MODID);
+    private static final DeferredRegister<SealType> SEALS = DeferredRegister.create(SealType.REGISTRY_KEY, TTIds.MODID);
 
     public static final List<RegistryObject<Item>> COMPONENTS = List.of(
             component("1k"), component("4k"), component("16k"), component("64k"));
@@ -105,6 +110,10 @@ public final class ThaumaturgeAe2 {
             BLOCK_ENTITIES.register("vis_relay_interface", () -> BlockEntityType.Builder
                     .of(VisRelayInterfaceBlock.InterfaceEntity::new, VIS_RELAY_INTERFACE.get()).build(null));
     public static final RegistryObject<BlockItem> VIS_RELAY_INTERFACE_ITEM = blockItem(VIS_RELAY_INTERFACE);
+    public static final RegistryObject<WirelessBackpackItem> WIRELESS_GOLEM_BACKPACK = ITEMS.register(
+            "wireless_golem_backpack", () -> new WirelessBackpackItem(new Item.Properties()));
+    public static final RegistryObject<ItemSealPlacer> WIRELESS_IMPORT_SEAL = exchangeSeal("wireless_import", false);
+    public static final RegistryObject<ItemSealPlacer> WIRELESS_EXPORT_SEAL = exchangeSeal("wireless_export", true);
     public static final RegistryObject<PartItem<EssentiaMonitorPart>> ESSENTIA_STORAGE_MONITOR =
             monitor("essentia_storage_monitor", false);
     public static final RegistryObject<PartItem<EssentiaMonitorPart>> ESSENTIA_CONVERSION_MONITOR =
@@ -120,6 +129,8 @@ public final class ThaumaturgeAe2 {
         BLOCK_ENTITIES.register(bus);
         ITEMS.register(bus);
         MENUS.register(bus);
+        SEALS.register(bus);
+        GolemAccessories.register(GolemWirelessBackpack.ACCESSORY);
         PartModels.registerModels(EssentiaTerminalPart.models());
         PartModels.registerModels(ArcaneTerminalPart.models());
         PartModels.registerModels(VisP2PTunnelPart.MODEL);
@@ -164,6 +175,9 @@ public final class ThaumaturgeAe2 {
             event.accept(ARCANE_ASSEMBLER_ITEM);
             event.accept(VIS_P2P_TUNNEL);
             event.accept(VIS_RELAY_INTERFACE_ITEM);
+            event.accept(WIRELESS_GOLEM_BACKPACK);
+            event.accept(WIRELESS_IMPORT_SEAL);
+            event.accept(WIRELESS_EXPORT_SEAL);
             COMPONENTS.forEach(event::accept);
             CELLS.forEach(event::accept);
         }
@@ -191,6 +205,15 @@ public final class ThaumaturgeAe2 {
     private static RegistryObject<PartItem<EssentiaMonitorPart>> monitor(String name, boolean conversion) {
         return ITEMS.register(name, () -> new PartItem<>(new Item.Properties(),
                 EssentiaMonitorPart.class, item -> new EssentiaMonitorPart(item, conversion)));
+    }
+
+    private static RegistryObject<ItemSealPlacer> exchangeSeal(String name, boolean export) {
+        var item = ITEMS.register("seal_" + name, () -> new ItemSealPlacer(TTIds.rl(name), new Item.Properties()));
+        SEALS.register(name, () -> SealType.builder(() -> new WirelessExchangeSeal(export))
+                .filter(1, SealFilterMode.PLAIN)
+                .icon(TTIds.rl(export ? "textures/item/seal_fill.png" : "textures/item/seal_empty.png"))
+                .placer(item).build());
+        return item;
     }
 
     private static RegistryObject<BlockEntityType<EssentiaProviderBlockEntity>> providerEntity(
