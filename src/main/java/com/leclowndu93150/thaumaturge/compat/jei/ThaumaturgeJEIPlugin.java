@@ -308,6 +308,9 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
+        if (net.minecraftforge.fml.ModList.get().isLoaded(TTIds.AE2)) {
+            com.leclowndu93150.thaumaturge.compat.ae2.client.Ae2JeiTransfers.register(registration);
+        }
         registration.addRecipeTransferHandler(
                 new ArcaneWorkbenchTransferHandler(registration.getTransferHelper()),
                 ArcaneWorkbenchCategory.RECIPE_TYPE);

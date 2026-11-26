@@ -3,3 +3,6 @@ https://github.com/Nividica/ThaumicEnergistics/tree/142468577d6f0a1fa0509e1d9f99
 The original project credits CyanideX for textures. See ThaumicEnergistics-MIT.txt.
 The Essentia Provider texture is from the AE2-RV3 branch at f7a5d31f60f3b351bf76c35e6aa7a676dcc2b0fc.
 See ThaumicEnergistics-RV3-MIT.txt for the license for that branch.
+The arcane terminal artwork is also from the original project.
+Wireless terminal textures are from Velron-Devs/Thauma-Energistics at 99a5bef.
+See ThaumaEnergistics-MIT.txt for its license.

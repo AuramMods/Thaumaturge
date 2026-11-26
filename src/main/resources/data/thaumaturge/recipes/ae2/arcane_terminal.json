@@ -1,0 +1,31 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "ae2:crafting_terminal"
+          },
+          {
+            "item": "thaumaturge:essentia_component_1k"
+          },
+          {
+            "item": "thaumaturge:ingot_thaumium"
+          }
+        ],
+        "result": {
+          "item": "thaumaturge:arcane_terminal"
+        }
+      }
+    }
+  ]
+}

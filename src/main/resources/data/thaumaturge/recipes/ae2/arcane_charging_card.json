@@ -1,0 +1,31 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "ae2:advanced_card"
+          },
+          {
+            "item": "thaumaturge:essentia_crystal"
+          },
+          {
+            "item": "thaumaturge:ingot_thaumium"
+          }
+        ],
+        "result": {
+          "item": "thaumaturge:arcane_charging_card"
+        }
+      }
+    }
+  ]
+}

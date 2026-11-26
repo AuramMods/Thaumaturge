@@ -26,7 +26,7 @@ public final class Ae2Client {
     private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         event.register(new StaticItemColor(AEColor.TRANSPARENT), ThaumaturgeAe2.ESSENTIA_TERMINAL.get(),
                 ThaumaturgeAe2.ESSENTIA_STORAGE_MONITOR.get(), ThaumaturgeAe2.ESSENTIA_CONVERSION_MONITOR.get(),
-                ThaumaturgeAe2.ESSENTIA_LEVEL_EMITTER.get());
+                ThaumaturgeAe2.ESSENTIA_LEVEL_EMITTER.get(), ThaumaturgeAe2.ARCANE_TERMINAL.get());
     }
 
     private static void setup(FMLClientSetupEvent event) {
@@ -35,6 +35,8 @@ public final class Ae2Client {
             InitScreens.<EssentiaTerminalMenu, MEStorageScreen<EssentiaTerminalMenu>>register(
                     ThaumaturgeAe2.ESSENTIA_TERMINAL_MENU.get(), MEStorageScreen::new,
                     "/screens/terminals/terminal.json");
+            InitScreens.register(ThaumaturgeAe2.ARCANE_TERMINAL_MENU.get(), ArcaneTerminalScreen::new,
+                    "/screens/terminals/thaumaturge_arcane_terminal.json");
             ThaumaturgeAe2.CELLS.forEach(cell ->
                     StorageCellModels.registerModel(cell.get(), TTIds.rl("block/drive/" + cell.getId().getPath())));
         });

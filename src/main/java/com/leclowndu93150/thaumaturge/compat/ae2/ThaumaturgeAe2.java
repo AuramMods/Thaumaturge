@@ -2,6 +2,8 @@ package com.leclowndu93150.thaumaturge.compat.ae2;
 
 import appeng.api.behaviors.ContainerItemStrategy;
 import appeng.api.behaviors.GenericSlotCapacities;
+import appeng.api.features.GridLinkables;
+import appeng.api.upgrades.Upgrades;
 import appeng.api.parts.PartModels;
 import appeng.api.stacks.AEKeyTypes;
 import appeng.api.storage.ITerminalHost;
@@ -9,6 +11,7 @@ import appeng.items.contents.CellConfig;
 import appeng.items.parts.PartItem;
 import appeng.items.storage.BasicStorageCell;
 import appeng.items.storage.CreativeCellItem;
+import appeng.items.tools.powered.WirelessTerminalItem;
 import appeng.parts.automation.StorageLevelEmitterPart;
 import appeng.util.ConfigInventory;
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -61,6 +64,18 @@ public final class ThaumaturgeAe2 {
     public static final RegistryObject<MenuType<EssentiaTerminalMenu>> ESSENTIA_TERMINAL_MENU =
             MENUS.register("essentia_terminal", () -> Ae2Menus.create(ITerminalHost.class,
                     EssentiaTerminalMenu::new, host -> host.getMainMenuIcon().getHoverName()));
+    public static final RegistryObject<PartItem<ArcaneTerminalPart>> ARCANE_TERMINAL =
+            ITEMS.register("arcane_terminal", () -> new PartItem<>(new Item.Properties(),
+                    ArcaneTerminalPart.class, ArcaneTerminalPart::new));
+    public static final RegistryObject<Item> ARCANE_CHARGING_CARD =
+            ITEMS.register("arcane_charging_card", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<WirelessThaumicTerminalItem> WIRELESS_ARCANE_TERMINAL =
+            ITEMS.register("wireless_arcane_terminal", () -> new WirelessThaumicTerminalItem(new Item.Properties(), true));
+    public static final RegistryObject<WirelessThaumicTerminalItem> WIRELESS_ESSENTIA_TERMINAL =
+            ITEMS.register("wireless_essentia_terminal", () -> new WirelessThaumicTerminalItem(new Item.Properties(), false));
+    public static final RegistryObject<MenuType<ArcaneTerminalMenu>> ARCANE_TERMINAL_MENU =
+            MENUS.register("arcane_terminal", () -> Ae2Menus.create(ArcaneTerminalHost.class,
+                    ThaumaturgeAe2::createArcaneTerminalMenu, host -> host.getMainMenuIcon().getHoverName()));
     public static final RegistryObject<EssentiaProviderBlock> INFUSION_PROVIDER =
             BLOCKS.register("infusion_provider", () -> new EssentiaProviderBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK), true));
     public static final RegistryObject<EssentiaProviderBlock> ESSENTIA_PROVIDER =
@@ -87,6 +102,7 @@ public final class ThaumaturgeAe2 {
         ITEMS.register(bus);
         MENUS.register(bus);
         PartModels.registerModels(EssentiaTerminalPart.models());
+        PartModels.registerModels(ArcaneTerminalPart.models());
         bus.addListener(ThaumaturgeAe2::registerKeyType);
         bus.addListener(ThaumaturgeAe2::setup);
         bus.addListener(ThaumaturgeAe2::addCreativeItems);
@@ -106,12 +122,19 @@ public final class ThaumaturgeAe2 {
             ContainerItemStrategy.register(type, EssentiaKey.class, EssentiaVessels.INSTANCE);
             GenericSlotCapacities.register(type, 64L);
             EssentiaBusAccess.register();
+            Upgrades.add(ARCANE_CHARGING_CARD.get(), ARCANE_TERMINAL.get(), 1);
+            GridLinkables.register(WIRELESS_ARCANE_TERMINAL.get(), WirelessTerminalItem.LINKABLE_HANDLER);
+            GridLinkables.register(WIRELESS_ESSENTIA_TERMINAL.get(), WirelessTerminalItem.LINKABLE_HANDLER);
         });
     }
 
     private static void addCreativeItems(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey().location().equals(TTCreativeTabs.THAUMATURGE.getId())) {
             event.accept(ESSENTIA_TERMINAL);
+            event.accept(ARCANE_TERMINAL);
+            event.accept(ARCANE_CHARGING_CARD);
+            event.accept(WIRELESS_ARCANE_TERMINAL);
+            event.accept(WIRELESS_ESSENTIA_TERMINAL);
             event.accept(CELL_HOUSING);
             event.accept(INFUSION_PROVIDER_ITEM);
             event.accept(ESSENTIA_PROVIDER_ITEM);
@@ -125,6 +148,11 @@ public final class ThaumaturgeAe2 {
 
     private static RegistryObject<Item> component(String tier) {
         return ITEMS.register("essentia_component_" + tier, () -> new Item(new Item.Properties()));
+    }
+
+    private static ArcaneTerminalMenu createArcaneTerminalMenu(
+            int id, net.minecraft.world.entity.player.Inventory player, ArcaneTerminalHost terminal) {
+        return new ArcaneTerminalMenu(ARCANE_TERMINAL_MENU.get(), id, player, terminal);
     }
 
     private static RegistryObject<BasicStorageCell> cell(String tier, int component, int kilobytes, double idleDrain) {

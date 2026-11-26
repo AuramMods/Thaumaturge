@@ -32,6 +32,13 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.essentia_storage_monitor", "ME Essentia Storage Monitor");
         add("item.thaumaturge.essentia_conversion_monitor", "ME Essentia Conversion Monitor");
         add("item.thaumaturge.essentia_level_emitter", "ME Essentia Level Emitter");
+        add("item.thaumaturge.arcane_terminal", "ME Arcane Crafting Terminal");
+        add("item.thaumaturge.wireless_arcane_terminal", "Wireless Arcane Crafting Terminal");
+        add("item.thaumaturge.wireless_essentia_terminal", "Wireless Essentia Terminal");
+        add("item.thaumaturge.arcane_charging_card", "Arcane Charging Card");
+        add("gui.thaumaturge.arcane_terminal.cost", "%s vis");
+        add("gui.thaumaturge.arcane_terminal.unpaid", "Requires %s vis and the recipe's crystals");
+        add("gui.thaumaturge.arcane_terminal.locked", "Research required");
         for (String tier : new String[]{"1k", "4k", "16k", "64k"}) {
             add("item.thaumaturge.essentia_cell_" + tier, tier + " ME Essentia Storage Cell");
             add("item.thaumaturge.essentia_component_" + tier, tier + " Essentia Storage Component");
