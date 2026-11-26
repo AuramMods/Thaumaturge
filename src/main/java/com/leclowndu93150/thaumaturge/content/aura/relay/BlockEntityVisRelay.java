@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayCapabilities;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.blockentity.BlockCapabilityAccess;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.BlockSightline;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -236,7 +237,7 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
         BlockEntityVisRelay current = this;
         for (int hops = 0; hops <= HOP_CAP; hops++) {
             BlockPos parent = current.parentPos;
-            if (parent == null) {
+            if (parent == null || !LoadedChunks.contains(level, parent)) {
                 return null;
             }
             if (level.getBlockEntity(parent) instanceof BlockEntityVisRelay relay) {

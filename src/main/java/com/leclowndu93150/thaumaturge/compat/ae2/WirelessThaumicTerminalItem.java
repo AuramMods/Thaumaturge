@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 final class WirelessThaumicTerminalItem extends WirelessTerminalItem {
+    private static final String WORKBENCH_ID = "arcaneWorkbenchId";
     private final boolean arcane;
 
     WirelessThaumicTerminalItem(Properties properties, boolean arcane) {
@@ -37,10 +38,15 @@ final class WirelessThaumicTerminalItem extends WirelessTerminalItem {
         return new ArcaneHost(player, slot, stack, (p, submenu) -> openFromInventory(p, slot, true));
     }
 
+    static boolean ownsWorkbench(Player player, UUID id) {
+        var item = ThaumaturgeAe2.WIRELESS_ARCANE_TERMINAL.get();
+        return player.getInventory().items.stream().anyMatch(stack -> stack.is(item) && stack.hasTag()
+                && stack.getTag().hasUUID(WORKBENCH_ID) && id.equals(stack.getTag().getUUID(WORKBENCH_ID)));
+    }
+
     private static final class ArcaneHost extends WirelessTerminalMenuHost
             implements ArcaneTerminalHost, InternalInventoryHost {
         private static final String WORKBENCH = "arcaneWorkbench";
-        private static final String ID = "arcaneWorkbenchId";
         private final Player player;
         private final AppEngInternalInventory workbench;
 
@@ -59,11 +65,11 @@ final class WirelessThaumicTerminalItem extends WirelessTerminalItem {
         @Override
         public ArcaneWorkbenchContext context(ServerPlayer actor) {
             var tag = getItemStack().getOrCreateTag();
-            if (!tag.hasUUID(ID)) {
-                tag.putUUID(ID, UUID.randomUUID());
+            if (!tag.hasUUID(WORKBENCH_ID)) {
+                tag.putUUID(WORKBENCH_ID, UUID.randomUUID());
                 player.getInventory().setChanged();
             }
-            return ArcaneWorkbenchContext.virtual(actor, tag.getUUID(ID), actor.getUUID());
+            return ArcaneWorkbenchContext.virtual(actor, tag.getUUID(WORKBENCH_ID), actor.getUUID());
         }
 
         @Override

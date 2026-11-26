@@ -1,6 +1,8 @@
 def scriptIntegrations = providers.gradleProperty('portScriptIntegrations').isPresent()
+def ae2Integration = providers.gradleProperty('portAe2').isPresent()
 def profileName = scriptIntegrations ? 'with-scripts' :
-        (providers.gradleProperty('portIntegrations').isPresent() ? 'with-integrations' : 'required-mods')
+        (ae2Integration ? 'with-ae2' :
+                (providers.gradleProperty('portIntegrations').isPresent() ? 'with-integrations' : 'required-mods'))
 def profile = layout.buildDirectory.dir("forge-game-tests/${profileName}")
 def report = layout.buildDirectory.file('test-results/forgeGameTest/TEST-world.xml')
 
@@ -8,6 +10,7 @@ sourceSets {
     forgeGameTest {
         java.srcDir 'porting/testing/forge-game-tests/java'
         if (scriptIntegrations) java.srcDir 'porting/testing/script-game-tests/java'
+        if (ae2Integration) java.srcDir 'porting/testing/ae2-game-tests/java'
         compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
     }
 }

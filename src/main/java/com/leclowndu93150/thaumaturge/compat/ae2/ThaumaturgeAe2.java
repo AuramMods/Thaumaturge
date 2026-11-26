@@ -5,6 +5,7 @@ import appeng.api.behaviors.GenericSlotCapacities;
 import appeng.api.features.GridLinkables;
 import appeng.api.upgrades.Upgrades;
 import appeng.api.parts.PartModels;
+import appeng.api.parts.PartHelper;
 import appeng.api.stacks.AEKeyTypes;
 import appeng.api.storage.ITerminalHost;
 import appeng.items.contents.CellConfig;
@@ -16,6 +17,8 @@ import appeng.parts.automation.StorageLevelEmitterPart;
 import appeng.util.ConfigInventory;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessories;
+import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.api.recipe.RegisterWorkbenchAuraSourcesEvent;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealFilterMode;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.compat.ae2.client.Ae2Client;
@@ -157,6 +160,7 @@ public final class ThaumaturgeAe2 {
         bus.addListener(ThaumaturgeAe2::setup);
         bus.addListener(ThaumaturgeAe2::addCreativeItems);
         bus.addListener(ThaumicResearchPack::register);
+        bus.addListener(ThaumaturgeAe2::registerWorkbenchAura);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Ae2Client.register(bus));
     }
 
@@ -176,6 +180,28 @@ public final class ThaumaturgeAe2 {
             Upgrades.add(ARCANE_CHARGING_CARD.get(), ARCANE_TERMINAL.get(), 1);
             GridLinkables.register(WIRELESS_ARCANE_TERMINAL.get(), WirelessTerminalItem.LINKABLE_HANDLER);
             GridLinkables.register(WIRELESS_ESSENTIA_TERMINAL.get(), WirelessTerminalItem.LINKABLE_HANDLER);
+        });
+    }
+
+    private static void registerWorkbenchAura(RegisterWorkbenchAuraSourcesEvent event) {
+        event.register((context, player, inventory, requested, transaction) -> {
+            var level = context.level();
+            var pos = context.position();
+            if (pos == null) {
+                if (!WirelessThaumicTerminalItem.ownsWorkbench(player, context.hostIdentity())) return 0;
+                pos = player.blockPosition();
+            } else if (!(level.getBlockEntity(pos) instanceof ArcaneAssemblerBlockEntity)) {
+                boolean terminal = false;
+                for (var side : net.minecraft.core.Direction.values()) {
+                    var part = PartHelper.getPart(ARCANE_TERMINAL.get(), level, pos, side);
+                    if (part != null && part.context(player).equals(context)) {
+                        terminal = true;
+                        break;
+                    }
+                }
+                if (!terminal) return 0;
+            }
+            return (int) AuraHelper.drainVis(level, pos, requested, transaction);
         });
     }
 

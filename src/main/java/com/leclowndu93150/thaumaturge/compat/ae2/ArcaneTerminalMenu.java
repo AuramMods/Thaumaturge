@@ -127,11 +127,11 @@ public final class ArcaneTerminalMenu extends MEStorageMenu implements IMenuCraf
 
     @Override
     public void broadcastChanges() {
+        super.broadcastChanges();
         if (isServerSide() && --refreshDelay <= 0) {
             refreshDelay = 5;
             refresh();
         }
-        super.broadcastChanges();
     }
 
     public void clearGrid() {

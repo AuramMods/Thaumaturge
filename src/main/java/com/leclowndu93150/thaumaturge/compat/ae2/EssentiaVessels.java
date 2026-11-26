@@ -4,6 +4,7 @@ import appeng.api.behaviors.ContainerItemStrategy;
 import appeng.api.config.Actionable;
 import appeng.api.stacks.GenericStack;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCrystalAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaTransferFeedback;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaItemStorage;
 import java.util.function.Consumer;
@@ -23,7 +24,12 @@ final class EssentiaVessels implements ContainerItemStrategy<EssentiaKey, Essent
     @Override
     public @Nullable GenericStack getContainedStack(ItemStack stack) {
         var storage = storage(stack);
-        if (storage == null || storage.contents().isEmpty()) return null;
+        if (storage == null) {
+            var aspect = EssentiaCrystalAccess.aspect(stack);
+            var key = aspect == null ? null : EssentiaKey.of(aspect);
+            return key == null ? null : new GenericStack(key, 1);
+        }
+        if (storage.contents().isEmpty()) return null;
         var first = storage.contents().entries().get(0);
         var key = EssentiaKey.of(first.aspect());
         return key == null ? null : new GenericStack(key, first.amount());

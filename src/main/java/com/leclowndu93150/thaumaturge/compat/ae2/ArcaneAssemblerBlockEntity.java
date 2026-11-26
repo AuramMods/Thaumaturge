@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 final class ArcaneAssemblerBlockEntity extends ThaumicGridBlockEntity implements ICraftingMachine {
     private static final String PENDING = "PendingCraft";
     private final List<ItemStack> pending = new ArrayList<>();
+    private ItemStack wand = ItemStack.EMPTY;
 
     ArcaneAssemblerBlockEntity(BlockPos pos, BlockState state) {
         super(ThaumaturgeAe2.ARCANE_ASSEMBLER_ENTITY.get(), pos, state, 2.0);
@@ -82,6 +83,7 @@ final class ArcaneAssemblerBlockEntity extends ThaumicGridBlockEntity implements
         }
         supplied.removeZeros();
         if (!supplied.isEmpty()) return false;
+        workbench.setItem(InventoryArcaneWorkbench.WAND_SLOT, wand.copy());
 
         String location = server.dimension().location() + "/" + worldPosition.asLong() + "/arcane_assembler";
         UUID host = UUID.nameUUIDFromBytes(location.getBytes(StandardCharsets.UTF_8));
@@ -98,10 +100,12 @@ final class ArcaneAssemblerBlockEntity extends ThaumicGridBlockEntity implements
             }
             var produced = new ArrayList<ItemStack>();
             produced.add(craft.output());
-            for (ItemStack remainder : workbench.getItems()) {
+            for (int slot = 0; slot < InventoryArcaneWorkbench.WAND_SLOT; slot++) {
+                var remainder = workbench.getItem(slot);
                 if (!remainder.isEmpty()) produced.add(remainder.copy());
             }
             new RootCommitJournal(() -> {
+                wand = workbench.wandStack().copy();
                 pending.addAll(produced);
                 setChanged();
             }).updateSnapshots(transaction);
@@ -127,14 +131,27 @@ final class ArcaneAssemblerBlockEntity extends ThaumicGridBlockEntity implements
     }
 
     List<ItemStack> removeOutput() {
-        var result = List.copyOf(pending);
+        var result = new ArrayList<>(pending);
         pending.clear();
+        if (!wand.isEmpty()) result.add(exchangeWand(ItemStack.EMPTY));
         return result;
+    }
+
+    boolean hasWand() {
+        return !wand.isEmpty();
+    }
+
+    ItemStack exchangeWand(ItemStack replacement) {
+        var previous = wand;
+        wand = replacement;
+        setChanged();
+        return previous;
     }
 
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
+        wand = ItemStack.of(input.getCompound("Wand"));
         pending.clear();
         var list = input.getList(PENDING, Tag.TAG_COMPOUND);
         for (int index = 0; index < list.size(); index++) {
@@ -146,6 +163,7 @@ final class ArcaneAssemblerBlockEntity extends ThaumicGridBlockEntity implements
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
+        if (!wand.isEmpty()) output.put("Wand", wand.save(new CompoundTag()));
         var list = new ListTag();
         pending.forEach(stack -> list.add(stack.save(new CompoundTag())));
         output.put(PENDING, list);
