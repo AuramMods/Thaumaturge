@@ -3,8 +3,6 @@ package com.leclowndu93150.thaumaturge.client.particle;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.auram.AuramVisualSources;
 import com.leclowndu93150.thaumaturge.mixin.client.particle.ParticleEngineAccessor;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.List;
 import net.minecraft.client.Camera;
@@ -49,29 +47,19 @@ public final class EssentiaParticles {
     }
 
     public static void renderAfterLevel(ParticleEngine engine, MultiBufferSource.BufferSource buffers,
-            PoseStack pose, Camera camera, float partialTick) {
+            Camera camera, float partialTick) {
         var queues = ((ParticleEngineAccessor) engine).thaumaturge$particles();
-        if (!queues.containsKey(DROP_LAYER) && !queues.containsKey(FLOW_LAYER)) return;
-        var modelView = RenderSystem.getModelViewStack();
-        modelView.pushPose();
-        modelView.mulPoseMatrix(pose.last().pose());
-        RenderSystem.applyModelViewMatrix();
-        try {
-            for (Layer layer : LAYERS) {
-                var particles = queues.get(layer.type());
-                if (particles == null || particles.isEmpty()) continue;
-                var type = TTRenderTypes.fxTranslucent(layer.sheet().texture());
-                VertexConsumer buffer = buffers.getBuffer(type);
-                for (var particle : particles) {
-                    if (particle.isAlive() && particle instanceof Source source) {
-                        source.renderEssentia(buffer, camera, partialTick);
-                    }
+        for (Layer layer : LAYERS) {
+            var particles = queues.get(layer.type());
+            if (particles == null || particles.isEmpty()) continue;
+            var type = TTRenderTypes.fxTranslucent(layer.sheet().texture());
+            VertexConsumer buffer = buffers.getBuffer(type);
+            for (var particle : particles) {
+                if (particle.isAlive() && particle instanceof Source source) {
+                    source.renderEssentia(buffer, camera, partialTick);
                 }
-                buffers.endBatch(type);
             }
-        } finally {
-            modelView.popPose();
-            RenderSystem.applyModelViewMatrix();
+            buffers.endBatch(type);
         }
     }
 }

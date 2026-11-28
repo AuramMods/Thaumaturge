@@ -2,9 +2,11 @@ package com.leclowndu93150.thaumaturge.client.effect.manager;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.particle.EssentiaParticles;
+import com.leclowndu93150.thaumaturge.client.particle.SparkleParticle;
 import com.leclowndu93150.thaumaturge.client.render.WorldRenderPose;
 import com.leclowndu93150.thaumaturge.compat.auram.AuramVisualSources;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
@@ -23,7 +25,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class FXManagerRegistry {
-    private static final MultiBufferSource.BufferSource ESSENTIA_BUFFERS =
+    private static final MultiBufferSource.BufferSource AFTER_LEVEL_BUFFERS =
             MultiBufferSource.immediate(new BufferBuilder(8192));
     private static final List<AbstractFXManager<?>> MANAGERS = List.of(
             BeamManager.INSTANCE,
@@ -66,18 +68,28 @@ public final class FXManagerRegistry {
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
-    public static void renderEssentiaAfterLevel(RenderLevelStageEvent event) {
+    public static void renderAfterLevel(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL
                 || !IrisCompat.shadersActive() || IrisCompat.isShadowPass()) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
-        // Bliss has composited the sky and DH terrain/water. The main target still has local world depth.
+        // Draw after shader composition, using the local world depth on the main target.
         mc.getMainRenderTarget().bindWrite(false);
         PoseStack pose = WorldRenderPose.forStage(event);
         Camera camera = event.getCamera();
         float partialTick = event.getPartialTick();
-        EssentiaStreamManager.INSTANCE.render(pose, camera, partialTick, ESSENTIA_BUFFERS);
-        EssentiaParticles.renderAfterLevel(mc.particleEngine, ESSENTIA_BUFFERS, pose, camera, partialTick);
+        EssentiaStreamManager.INSTANCE.render(pose, camera, partialTick, AFTER_LEVEL_BUFFERS);
+        var modelView = RenderSystem.getModelViewStack();
+        modelView.pushPose();
+        modelView.mulPoseMatrix(pose.last().pose());
+        RenderSystem.applyModelViewMatrix();
+        try {
+            EssentiaParticles.renderAfterLevel(mc.particleEngine, AFTER_LEVEL_BUFFERS, camera, partialTick);
+            SparkleParticle.renderAfterLevel(mc.particleEngine, AFTER_LEVEL_BUFFERS, camera, partialTick);
+        } finally {
+            modelView.popPose();
+            RenderSystem.applyModelViewMatrix();
+        }
     }
 
     @SubscribeEvent

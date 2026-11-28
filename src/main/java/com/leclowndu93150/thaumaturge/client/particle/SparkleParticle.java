@@ -1,13 +1,25 @@
 package com.leclowndu93150.thaumaturge.client.particle;
 
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.particle.SparkleParticleOptions;
+import com.leclowndu93150.thaumaturge.mixin.client.particle.ParticleEngineAccessor;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 
 public final class SparkleParticle extends TTParticle {
+    private static final ParticleSheet SHEET = TTParticleSheets.sheet("sparkle");
+    // Keep the particle engine queue addressable across shader and resource reloads.
+    private static final ParticleRenderType LAYER = TTParticleLayers.additive(SHEET);
     private static final int LOOP_FRAMES = 16;
     private static final int LOW_LOOP_START = 0;
     private static final int HIGH_LOOP_START = 16;
@@ -35,9 +47,8 @@ public final class SparkleParticle extends TTParticle {
             double vx,
             double vy,
             double vz,
-            SparkleParticleOptions options,
-            ParticleSheet sheet) {
-        super(level, x, y, z, vx, vy, vz, sheet);
+            SparkleParticleOptions options) {
+        super(level, x, y, z, vx, vy, vz, SHEET);
         setColor(options.color());
         this.flicker = options.flicker();
         this.lifetime = lifetimeFor(options.baseAge(), this.random);
@@ -88,9 +99,40 @@ public final class SparkleParticle extends TTParticle {
         }
     }
 
-    public static final class Provider implements ParticleProvider<SparkleParticleOptions> {
-        private static final ParticleSheet SHEET = TTParticleSheets.sheet("sparkle");
+    @Override
+    public ParticleRenderType getRenderType() {
+        return LAYER;
+    }
 
+    @Override
+    public void render(VertexConsumer buffer, Camera camera, float partialTick) {
+        if (!IrisCompat.shadersActive()) super.render(buffer, camera, partialTick);
+    }
+
+    @Override
+    protected int getLightColor(float partialTick) {
+        return IrisCompat.shadersActive() ? LightTexture.FULL_BRIGHT : super.getLightColor(partialTick);
+    }
+
+    private void renderAfterLevel(VertexConsumer buffer, Camera camera, float partialTick) {
+        super.render(buffer, camera, partialTick);
+    }
+
+    public static void renderAfterLevel(ParticleEngine engine, MultiBufferSource.BufferSource buffers,
+            Camera camera, float partialTick) {
+        var particles = ((ParticleEngineAccessor) engine).thaumaturge$particles().get(LAYER);
+        if (particles == null || particles.isEmpty()) return;
+        var type = TTRenderTypes.fxAlphaAdditive(SHEET.texture());
+        VertexConsumer buffer = buffers.getBuffer(type);
+        for (Particle particle : particles) {
+            if (particle instanceof SparkleParticle sparkle && sparkle.isAlive()) {
+                sparkle.renderAfterLevel(buffer, camera, partialTick);
+            }
+        }
+        buffers.endBatch(type);
+    }
+
+    public static final class Provider implements ParticleProvider<SparkleParticleOptions> {
         @Override
         public Particle createParticle(
                 SparkleParticleOptions options,
@@ -101,8 +143,7 @@ public final class SparkleParticle extends TTParticle {
                 double vx,
                 double vy,
                 double vz) {
-            RandomSource random = level.getRandom();
-            return new SparkleParticle(level, x, y, z, vx, vy, vz, options, SHEET);
+            return new SparkleParticle(level, x, y, z, vx, vy, vz, options);
         }
     }
 }
