@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.content.aura.node.NodeFeatureConfig;
 import com.leclowndu93150.thaumaturge.content.manabean.ManaPodFeature;
 import com.leclowndu93150.thaumaturge.content.world.crystal.CrystalClusterConfig;
 import com.leclowndu93150.thaumaturge.content.world.crystal.CrystalClusterFeature;
+import com.leclowndu93150.thaumaturge.content.world.crystal.DimensionalCrystalFeature;
 import com.leclowndu93150.thaumaturge.content.world.objects.CrimsonPortalFeature;
 import com.leclowndu93150.thaumaturge.content.world.objects.HilltopStonesFeature;
 import com.leclowndu93150.thaumaturge.content.world.objects.MagicalCaveBushFeature;
@@ -32,6 +33,8 @@ public final class TTFeatures {
 
     public static final RegistryObject<CrystalClusterFeature> CRYSTAL_CLUSTER =
             FEATURES.register("crystal_cluster", () -> new CrystalClusterFeature(CrystalClusterConfig.CODEC));
+    public static final RegistryObject<DimensionalCrystalFeature> DIMENSIONAL_CRYSTALS =
+            FEATURES.register("dimensional_crystals", DimensionalCrystalFeature::new);
 
     public static final RegistryObject<MagicForestFloraFeature> MAGIC_FOREST_FLORA =
             FEATURES.register("magic_forest_flora", () -> new MagicForestFloraFeature(MagicForestFloraConfig.CODEC));

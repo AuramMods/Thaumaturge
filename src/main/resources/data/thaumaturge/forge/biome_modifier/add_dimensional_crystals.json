@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": { "type": "forge:any" },
+  "features": "thaumaturge:dimensional_crystals",
+  "step": "underground_ores"
+}

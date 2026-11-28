@@ -122,6 +122,7 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
             BlockState neighbor = level.getBlockState(neighborPos.set(pos).move(direction));
             if (neighbor.is(BlockTags.BASE_STONE_OVERWORLD)
                     || neighbor.is(TTBlockTags.STONES)
+                    || neighbor.is(TTBlockTags.CRYSTAL_CLUSTER_ROCK)
                     || neighbor.is(Tags.Blocks.ORES)
                     || neighbor.is(BlockTags.BASE_STONE_NETHER)) {
                 return true;

@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeFeatureConfig;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.world.crystal.CrystalClusterConfig;
+import com.leclowndu93150.thaumaturge.content.world.crystal.DimensionalCrystalFeature;
 import com.leclowndu93150.thaumaturge.content.world.plant.MagicForestFloraConfig;
 import com.leclowndu93150.thaumaturge.content.world.taint.TaintBiomeConfig;
 import com.leclowndu93150.thaumaturge.content.world.tree.TTTreeGrowers;
@@ -22,6 +23,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTFeatures;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
@@ -31,9 +33,11 @@ import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.data.worldgen.features.VegetationFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HugeMushroomBlock;
@@ -89,6 +93,7 @@ public final class TTConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> MAGICAL_CAVE_CRYSTALS = key("magical_cave_crystals");
     public static final ResourceKey<ConfiguredFeature<?, ?>> MANA_PODS = key("mana_pods");
     public static final ResourceKey<ConfiguredFeature<?, ?>> CRYSTALS = key("crystals");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> DIMENSIONAL_CRYSTALS = key("dimensional_crystals");
     public static final ResourceKey<ConfiguredFeature<?, ?>> NODES_WILD = key("nodes_wild");
     public static final ResourceKey<ConfiguredFeature<?, ?>> NODES_EERIE = key("nodes_eerie");
     public static final ResourceKey<ConfiguredFeature<?, ?>> OBSIDIAN_TOTEM = key("obsidian_totem");
@@ -164,6 +169,15 @@ public final class TTConfiguredFeatures {
 
     private static ResourceKey<ConfiguredFeature<?, ?>> key(String path) {
         return ResourceKey.create(Registries.CONFIGURED_FEATURE, TTIds.rl(path));
+    }
+
+    private static ResourceKey<Level> dimension(String namespace, String path) {
+        return ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(namespace, path));
+    }
+
+    private static CrystalClusterConfig crystalClusters(List<CrystalClusterConfig.Entry> crystals, int density) {
+        return new CrystalClusterConfig(
+                crystals, CRYSTAL_ATTEMPTS * density, CRYSTAL_MAX_TOTAL * density, CRYSTAL_BIOME_ASPECT_CHANCE);
     }
 
     private static VegetationPatchConfiguration caveGround(Block ground) {
@@ -515,19 +529,28 @@ public final class TTConfiguredFeatures {
                 HILLTOP_STONES,
                 new ConfiguredFeature<>(TTFeatures.HILLTOP_STONES.get(), NoneFeatureConfiguration.INSTANCE));
 
-        List<CrystalClusterConfig.Entry> crystals = List.of(
-                new CrystalClusterConfig.Entry(TTAspects.AER, TTBlocks.CRYSTAL_AER.get()),
-                new CrystalClusterConfig.Entry(TTAspects.IGNIS, TTBlocks.CRYSTAL_IGNIS.get()),
-                new CrystalClusterConfig.Entry(TTAspects.AQUA, TTBlocks.CRYSTAL_AQUA.get()),
-                new CrystalClusterConfig.Entry(TTAspects.TERRA, TTBlocks.CRYSTAL_TERRA.get()),
-                new CrystalClusterConfig.Entry(TTAspects.ORDO, TTBlocks.CRYSTAL_ORDO.get()),
-                new CrystalClusterConfig.Entry(TTAspects.PERDITIO, TTBlocks.CRYSTAL_PERDITIO.get()));
+        var aer = new CrystalClusterConfig.Entry(TTAspects.AER, TTBlocks.CRYSTAL_AER.get());
+        var ignis = new CrystalClusterConfig.Entry(TTAspects.IGNIS, TTBlocks.CRYSTAL_IGNIS.get());
+        var aqua = new CrystalClusterConfig.Entry(TTAspects.AQUA, TTBlocks.CRYSTAL_AQUA.get());
+        var terra = new CrystalClusterConfig.Entry(TTAspects.TERRA, TTBlocks.CRYSTAL_TERRA.get());
+        var ordo = new CrystalClusterConfig.Entry(TTAspects.ORDO, TTBlocks.CRYSTAL_ORDO.get());
+        var perditio = new CrystalClusterConfig.Entry(TTAspects.PERDITIO, TTBlocks.CRYSTAL_PERDITIO.get());
+        var vitium = new CrystalClusterConfig.Entry(TTAspects.VITIUM, TTBlocks.CRYSTAL_VITIUM.get());
+        var crystals = List.of(aer, ignis, aqua, terra, ordo, perditio);
         context.register(
                 CRYSTALS,
+                new ConfiguredFeature<>(TTFeatures.CRYSTAL_CLUSTER.get(), crystalClusters(crystals, 1)));
+        context.register(
+                DIMENSIONAL_CRYSTALS,
                 new ConfiguredFeature<>(
-                        TTFeatures.CRYSTAL_CLUSTER.get(),
-                        new CrystalClusterConfig(
-                                crystals, CRYSTAL_ATTEMPTS, CRYSTAL_MAX_TOTAL, CRYSTAL_BIOME_ASPECT_CHANCE)));
+                        TTFeatures.DIMENSIONAL_CRYSTALS.get(),
+                        new DimensionalCrystalFeature.Config(Map.of(
+                                dimension("twilightforest", "twilight_forest"), crystalClusters(crystals, 2),
+                                dimension("atum", "atum"), crystalClusters(List.of(aer, ignis), 1),
+                                Level.END, crystalClusters(List.of(ordo, vitium), 1),
+                                dimension("midnight", "the_midnight"), crystalClusters(List.of(vitium, perditio), 1),
+                                dimension("aether", "the_aether"), crystalClusters(List.of(terra, aer, ordo), 1),
+                                Level.NETHER, crystalClusters(List.of(perditio, ignis), 1)))));
         context.register(
                 MAGICAL_CAVE_CRYSTALS,
                 new ConfiguredFeature<>(

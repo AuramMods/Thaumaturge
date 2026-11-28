@@ -60,6 +60,7 @@ public final class TTPlacedFeatures {
     public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_NODES = key("magical_cave_nodes");
     public static final ResourceKey<PlacedFeature> MANA_PODS = key("mana_pods");
     public static final ResourceKey<PlacedFeature> CRYSTALS = key("crystals");
+    public static final ResourceKey<PlacedFeature> DIMENSIONAL_CRYSTALS = key("dimensional_crystals");
     public static final ResourceKey<PlacedFeature> NODES_WILD = key("nodes_wild");
     public static final ResourceKey<PlacedFeature> NODES_MAGICAL = key("nodes_magical");
     public static final ResourceKey<PlacedFeature> NODES_EERIE = key("nodes_eerie");
@@ -320,6 +321,10 @@ public final class TTPlacedFeatures {
         context.register(
                 CRYSTALS,
                 new PlacedFeature(configured.getOrThrow(TTConfiguredFeatures.CRYSTALS), List.of(BiomeFilter.biome())));
+        context.register(
+                DIMENSIONAL_CRYSTALS,
+                new PlacedFeature(
+                        configured.getOrThrow(TTConfiguredFeatures.DIMENSIONAL_CRYSTALS), List.of(BiomeFilter.biome())));
 
         context.register(
                 NODES_WILD,
